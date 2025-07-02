@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembuat Iklan Dummy - Advanced</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip-utils/0.1.0/jszip-utils.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f8ff;
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 102, 177, 0.15);
+        }
+        h1 {
+            text-align: center;
+            color: #0066B1;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        .form-section {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        select, input[type="file"], input[type="text"], textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        select:focus, input[type="file"]:focus, input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #0066B1;
+            box-shadow: 0 0 0 3px rgba(0, 102, 177, 0.1);
+        }
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        .size-info {
+            background: #0066B1;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .size-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .upload-area {
+            border: 3px dashed #cbd5e0;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-area:hover {
+            border-color: #0066B1;
+            background: #f8fbff;
+        }
+        .upload-area.dragover {
+            border-color: #0066B1;
+            background: #f0f8ff;
+            transform: scale(1.02);
+        }
+        .upload-icon {
+            font-size: 48px;
+            color: #a0aec0;
+            margin-bottom: 15px;
+        }
+        button {
+            background: #db1f25;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        button:hover {
+            background: #c51e24;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(219, 31, 37, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .preview-area {
+            margin-top: 40px;
+            border-top: 3px solid #e2e8f0;
+            padding-top: 30px;
+        }
+        .preview-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .preview-header h2 {
+            color: #0066B1;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        iframe {
+            width: 100%;
+            min-height: 800px;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative; /* For overlay positioning */
+        }
+        .file-info {
+            background: #e6fffa;
+            border: 1px solid #38b2ac;
+            color: #234e52;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .error {
+            background: #fed7d7;
+            border: 1px solid #e53e3e;
+            color: #742a2a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0066B1;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Styles for radio buttons */
+        .ad-type-selection {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .ad-type-selection label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 500;
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 16px;
+        }
+        .ad-type-selection input[type="radio"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        /* Overlay for click-through */
+        .ad-overlay-container {
+            position: relative; /* Important for absolute positioning of overlay */
+            width: 100%;
+            height: 100%;
+            display: block; /* To ensure it takes full space */
+        }
+
+        .ad-click-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0); /* Transparent */
+            z-index: 10; /* Ensure it's above the iframe/image */
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Advanced Ad Builder</h1>
+        <p class="subtitle">Buat iklan dummy dengan berbagai format dan template profesional</p>
+
+        <div class="form-section">
+            <div class="form-group">
+                <label>Pilih Tipe Iklan:</label>
+                <div class="ad-type-selection">
+                    <label>
+                        <input type="radio" name="ad_type" value="image" checked onchange="toggleAdInputs()"> Gambar Iklan
+                    </label>
+                    <label>
+                        <input type="radio" name="ad_type" value="script" onchange="toggleAdInputs()"> Script Iklan
+                    </label>
+                    <label>
+                        <input type="radio" name="ad_type" value="html5_zip" onchange="toggleAdInputs()"> HTML5 ZIP
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="adSlotSelect">Pilih Format Iklan:</label>
+                <select id="adSlotSelect" onchange="updateGenerateButton()">
+                    <option value="">-- Pilih Format Iklan --</option>
+                    <optgroup label="Desktop">
+                        <option value="728x90">Leaderboard (728x90)</option>
+                        <option value="970x250">Billboard (970x250)</option>
+                        <option value="300x600">Giant Banner (300x600)</option>
+                        <option value="300x250_mr1">MR 1 (300x250)</option>
+                        <option value="300x250_mr2">MR 2 (300x250)</option>
+                        <option value="300x250_mr3">MR 3 (300x250)</option>
+                        <option value="1100x50">Horizontal Ad (1100x50)</option>
+                        <option value="120x600">Skin Ad (120x600)</option>
+                        <option value="160x600">Skyscraper (160x600)</option>
+                    </optgroup>
+                    <optgroup label="Mobile">
+                        <option value="300x250_top">Top Banner (300x250)</option>
+                        <option value="320x480">Pushdown (320x480)</option>
+                        <option value="300x250_middle">Middle Banner (300x250)</option>
+                        <option value="320x50">Horizontal Ad (320x50)</option>
+                        <option value="300x600_mobile">Giant Banner (300x600)</option>
+                        <option value="300x200">Roll Up (300x200)</option>
+                    </optgroup>
+                </select>
+                <div id="sizeInfo" class="size-info" style="display: none;">
+                    <div class="size-details">
+                        <span id="slotName"></span>
+                        <span id="slotDimensions"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="imageAdInputs">
+                <div class="form-group">
+                    <label for="adImage">Upload Gambar Iklan:</label>
+                    <div class="upload-area" onclick="document.getElementById('adImage').click()" 
+                        ondragover="handleDragOver(event)" ondrop="handleDrop(event)">
+                        <div class="upload-icon">📎</div>
+                        <p><strong>Klik untuk upload</strong> atau drag & drop file di sini</p>
+                        <p>Format: JPG, PNG, GIF | Ukuran akan disesuaikan otomatis</p>
+                    </div>
+                    <input type="file" id="adImage" accept="image/png, image/jpeg, image/gif" 
+                            onchange="handleFileSelect()" style="display: none;">
+                    <div id="fileInfo"></div>
+                </div>
+            </div>
+
+            <div id="scriptAdInputs" style="display: none;">
+                <div class="form-group">
+                    <label for="adScript">Tempel Script Iklan Anda:</label>
+                    <textarea id="adScript" placeholder="Tempel kode script iklan di sini (misal: Google AdSense, DCM, dll.)" onkeyup="updateGenerateButton()"></textarea>
+                </div>
+                <p style="font-size: 0.9em; color: #718096;">*Pastikan script iklan memiliki dimensi yang sesuai atau fleksibel.</p>
+            </div>
+
+            <div id="html5ZipInputs" style="display: none;">
+                <div class="form-group">
+                    <label for="html5ZipFile">Upload File ZIP HTML5:</label>
+                    <div class="upload-area" onclick="document.getElementById('html5ZipFile').click()" 
+                         ondragover="handleDragOverZip(event)" ondrop="handleDropZip(event)">
+                        <div class="upload-icon">📦</div>
+                        <p><strong>Klik untuk upload</strong> atau drag & drop file ZIP di sini</p>
+                        <p>Pastikan berisi file `index.html` di root direktori.</p>
+                    </div>
+                    <input type="file" id="html5ZipFile" accept=".zip" 
+                            onchange="handleHtml5ZipSelect()" style="display: none;">
+                    <div id="zipFileInfo"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="landingPageUrl">URL Landing Page (Opsional):</label>
+                <input type="text" id="landingPageUrl" placeholder="Contoh: www.example.com atau example.com" onkeyup="updateGenerateButton()">
+            </div>
+
+            <button id="generateBtn" onclick="generateAd()" disabled>
+                🚀 Generate Preview
+            </button>
+            
+            <button id="downloadBtn" onclick="downloadAdContent()" disabled style="margin-top: 15px; background: #0066B1;">
+                💾 Download Iklan
+            </button>
+        </div>
+
+        <div class="preview-area">
+            <div class="preview-header">
+                <h2>📋 Preview Template</h2>
+                <p id="previewSubtitle">Iklan Anda akan ditampilkan dalam konteks template website</p>
+            </div>
+            <iframe id="adPreview" src="about:blank"></iframe>
+        </div>
+    </div>
+
+    <script>
+        const adSlots = {
+            // Desktop
+            "728x90": { name: "Leaderboard", width: 728, height: 90, template: "template_leaderboard.html" },
+            "970x250": { name: "Billboard", width: 970, height: 250, template: "template_billboard.html" },
+            "300x600": { name: "Giant Banner (Desktop)", width: 300, height: 600, template: "template_giant_banner_desktop.html" },
+            "300x250_mr1": { name: "MR 1", width: 300, height: 250, template: "template_mr1.html" },
+            "300x250_mr2": { name: "MR 2", width: 300, height: 250, template: "template_mr2.html" },
+            "300x250_mr3": { name: "MR 3", width: 300, height: 250, template: "template_mr3.html" },
+            "1100x50": { name: "Horizontal Ad (Desktop)", width: 1100, height: 50, template: "template_horizontal_ad_desktop.html" },
+            "120x600": { name: "Skin Ad", width: 120, height: 600, template: "template_skin_ad.html" },
+            "160x600": { name: "Skyscraper", width: 160, height: 600, template: "template_skyscraper.html" },
+            // Mobile
+            "300x250_top": { name: "Top Banner (Mobile)", width: 300, height: 250, template: "template_top_banner_mobile.html" },
+            "320x480": { name: "Pushdown", width: 320, height: 480, template: "template_pushdown.html" },
+            "300x250_middle": { name: "Middle Banner (Mobile)", width: 300, height: 250, template: "template_middle_banner_mobile.html" },
+            "320x50": { name: "Horizontal Ad (Mobile)", width: 320, height: 50, template: "template_horizontal_ad_mobile.html" },
+            "300x600_mobile": { name: "Giant Banner (Mobile)", width: 300, height: 600, template: "template_giant_banner_mobile.html" },
+            "300x200": { name: "Roll Up", width: 300, height: 200, template: "template_roll_up.html" }
+        };
+
+        let selectedImageFile = null;
+        let selectedZipFile = null;
+        let generatedHTML = null; // HTML of the *main template* with ad content for preview
+        let html5AdBlobUrls = {}; // Stores { path: blobUrl } for HTML5 ad assets in preview
+        let html5AdFilesForDownload = {}; // Stores { path: blob } for HTML5 ad assets for download
+        let html5AdOriginalIndexHtmlContent = ''; // Store original index.html content from ZIP for download
+
+        function getSelectedAdType() {
+            return document.querySelector('input[name="ad_type"]:checked').value;
+        }
+
+        // Toggles visibility of ad content input sections
+        function toggleAdInputs() {
+            const adType = getSelectedAdType();
+            const imageAdInputs = document.getElementById('imageAdInputs');
+            const scriptAdInputs = document.getElementById('scriptAdInputs');
+            const html5ZipInputs = document.getElementById('html5ZipInputs');
+            const fileInfo = document.getElementById('fileInfo'); 
+            const zipFileInfo = document.getElementById('zipFileInfo');
+            const adScriptTextarea = document.getElementById('adScript');
+            const previewSubtitle = document.getElementById('previewSubtitle');
+
+            // Reset all ad content specific inputs
+            selectedImageFile = null;
+            selectedZipFile = null;
+            fileInfo.innerHTML = '';
+            zipFileInfo.innerHTML = '';
+            adScriptTextarea.value = '';
+
+            // Clear any previously generated blob URLs for HTML5 ads preview
+            clearHtml5BlobUrls();
+
+            imageAdInputs.style.display = 'none';
+            scriptAdInputs.style.display = 'none';
+            html5ZipInputs.style.display = 'none';
+
+            if (adType === 'image') {
+                imageAdInputs.style.display = 'block';
+                previewSubtitle.textContent = 'Iklan Anda akan ditampilkan dalam konteks template website';
+            } else if (adType === 'script') {
+                scriptAdInputs.style.display = 'block';
+                previewSubtitle.textContent = 'Script iklan Anda akan ditampilkan dalam iframe. Pastikan ukurannya sesuai.';
+            } else if (adType === 'html5_zip') {
+                html5ZipInputs.style.display = 'block';
+                previewSubtitle.textContent = 'Iklan HTML5 akan dimuat dari file ZIP yang diunggah.';
+            }
+            updateGenerateButton();
+        }
+
+        // Cleans up blob URLs to prevent memory leaks (for preview only)
+        function clearHtml5BlobUrls() {
+            for (const path in html5AdBlobUrls) {
+                URL.revokeObjectURL(html5AdBlobUrls[path]);
+            }
+            html5AdBlobUrls = {};
+        }
+
+        function updateSlotInfo() {
+            const select = document.getElementById('adSlotSelect');
+            const sizeInfo = document.getElementById('sizeInfo');
+            const slotName = document.getElementById('slotName');
+            const slotDimensions = document.getElementById('slotDimensions');
+            const iframe = document.getElementById('adPreview'); // Get the iframe element
+
+            if (select.value) {
+                const slot = adSlots[select.value];
+                sizeInfo.style.display = 'block';
+                slotName.textContent = slot.name;
+                slotDimensions.textContent = `${slot.width} × ${slot.height} pixels`;
+
+                // NEW: Adjust iframe width and centering based on mobile/desktop
+                // Updated condition to include '300x250_top' and '300x250_middle'
+                if (select.value.includes('_mobile') || 
+                    select.value === '320x480' || 
+                    select.value === '320x50' || 
+                    select.value === '300x200' || 
+                    select.value === '300x250_top' || // Added this
+                    select.value === '300x250_middle') { // Added this
+                    // These are explicitly mobile formats
+                    iframe.style.width = '400px'; 
+                    iframe.style.margin = '0 auto'; // Center the iframe
+                    iframe.style.display = 'block'; // Ensure it behaves as a block for margin auto
+                } else {
+                    // Default for desktop or other formats
+                    iframe.style.width = '100%';
+                    iframe.style.margin = ''; // Reset margin
+                }
+
+            } else {
+                sizeInfo.style.display = 'none';
+                // Reset iframe styles if no slot is selected
+                iframe.style.width = '100%';
+                iframe.style.margin = '';
+            }
+            updateGenerateButton();
+        }
+
+        // --- Image Upload Handlers ---
+        function handleDragOver(e) { 
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDrop(e) { 
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const fileInput = document.getElementById('adImage');
+                fileInput.files = files;
+                handleFileSelect();
+            }
+        }
+
+        function handleFileSelect() { 
+            const fileInput = document.getElementById('adImage');
+            const fileInfo = document.getElementById('fileInfo');
+            
+            if (fileInput.files.length > 0) {
+                selectedImageFile = fileInput.files[0];
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (!validTypes.includes(selectedImageFile.type)) {
+                    fileInfo.innerHTML = '<div class="error">❌ Format file tidak didukung. Gunakan JPG, PNG, atau GIF.</div>';
+                    selectedImageFile = null;
+                    updateGenerateButton();
+                    return;
+                }
+                const fileSize = (selectedImageFile.size / 1024 / 1024).toFixed(2);
+                fileInfo.innerHTML = `
+                    <div class="file-info">
+                        ✅ <strong>${selectedImageFile.name}</strong><br>
+                        Ukuran: ${fileSize} MB | Tipe: ${selectedImageFile.type}
+                    </div>
+                `;
+                updateGenerateButton();
+            } else {
+                selectedImageFile = null;
+                fileInfo.innerHTML = '';
+                updateGenerateButton();
+            }
+        }
+
+        // --- HTML5 ZIP Upload Handlers ---
+        function handleDragOverZip(e) { 
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDropZip(e) { 
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const fileInput = document.getElementById('html5ZipFile');
+                fileInput.files = files;
+                handleHtml5ZipSelect();
+            }
+        }
+
+        async function handleHtml5ZipSelect() { // Made async to process ZIP immediately
+            const fileInput = document.getElementById('html5ZipFile');
+            const zipFileInfo = document.getElementById('zipFileInfo');
+            
+            if (fileInput.files.length > 0) {
+                selectedZipFile = fileInput.files[0];
+                if (selectedZipFile.type !== 'application/zip' && selectedZipFile.type !== 'application/x-zip-compressed') {
+                    zipFileInfo.innerHTML = '<div class="error">❌ Format file tidak didukung. Mohon upload file .zip.</div>';
+                    selectedZipFile = null;
+                    updateGenerateButton();
+                    return;
+                }
+                const fileSize = (selectedZipFile.size / 1024 / 1024).toFixed(2);
+                zipFileInfo.innerHTML = `
+                    <div class="file-info">
+                        ✅ <strong>${selectedZipFile.name}</strong><br>
+                        Ukuran: ${fileSize} MB | Tipe: ${selectedZipFile.type}
+                        <div class="loading" style="margin-top: 10px; padding: 0;">
+                            <div class="spinner" style="width: 20px; height: 20px; border-width: 3px;"></div>
+                            <p style="margin-top: 5px;">Membaca file ZIP...</p>
+                        </div>
+                    </div>
+                `;
+
+                try {
+                    const zip = new JSZip();
+                    const zipData = await selectedZipFile.arrayBuffer();
+                    const loadedZip = await zip.loadAsync(zipData);
+
+                    let mainHtmlFound = false;
+                    html5AdFilesForDownload = {}; // Reset for new upload
+                    html5AdOriginalIndexHtmlContent = ''; // Reset
+
+                    // Store all file blobs and find index.html
+                    const filePromises = [];
+                    loadedZip.forEach((relativePath, zipEntry) => {
+                        const normalizedPath = relativePath.replace(/\\/g, '/'); 
+                        if (!zipEntry.dir) {
+                            filePromises.push(zipEntry.async('blob').then(blob => {
+                                if (normalizedPath === 'index.html' || normalizedPath.endsWith('/index.html')) {
+                                    mainHtmlFound = true;
+                                    // Store original index.html content (as string)
+                                    zipEntry.async('string').then(content => html5AdOriginalIndexHtmlContent = content);
+                                }
+                                html5AdFilesForDownload[normalizedPath] = blob; // Store blob directly for download
+                            }));
+                        }
+                    });
+
+                    await Promise.all(filePromises); // Wait for all blobs and index.html content to be stored
+
+                    if (!mainHtmlFound) {
+                        zipFileInfo.innerHTML = '<div class="error">❌ File `index.html` tidak ditemukan di root direktori ZIP.</div>';
+                        selectedZipFile = null;
+                        updateGenerateButton();
+                        return;
+                    }
+
+                    zipFileInfo.innerHTML = `
+                        <div class="file-info">
+                            ✅ <strong>${selectedZipFile.name}</strong><br>
+                            Ukuran: ${fileSize} MB | Tipe: ${selectedZipFile.type}<br>
+                            Status: File ZIP berhasil dibaca.
+                        </div>
+                    `;
+                } catch (error) {
+                    zipFileInfo.innerHTML = `<div class="error">❌ Gagal membaca file ZIP: ${error.message}</div>`;
+                    selectedZipFile = null;
+                }
+                updateGenerateButton();
+            } else {
+                selectedZipFile = null;
+                zipFileInfo.innerHTML = '';
+                updateGenerateButton();
+            }
+        }
+
+        function updateGenerateButton() {
+            const select = document.getElementById('adSlotSelect');
+            const generateBtn = document.getElementById('generateBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const adType = getSelectedAdType();
+            const adScriptTextarea = document.getElementById('adScript');
+
+            let canGenerate = false;
+
+            if (adType === 'image') {
+                canGenerate = select.value && selectedImageFile;
+            } else if (adType === 'script') {
+                canGenerate = select.value && adScriptTextarea.value.trim() !== '';
+            } else if (adType === 'html5_zip') {
+                // For HTML5 ZIP, we need the file selected AND it needs to have been successfully processed
+                canGenerate = select.value && selectedZipFile && Object.keys(html5AdFilesForDownload).length > 0;
+            }
+            
+            generateBtn.disabled = !canGenerate;
+            
+            // Download button enabled only if a preview has been generated OR a ZIP is ready for download
+            if ((!generatedHTML && adType !== 'html5_zip' && adType !== 'image') || (adType === 'html5_zip' && !selectedZipFile) || (adType === 'image' && !selectedImageFile)) {
+                 downloadBtn.disabled = true;
+            } else {
+                 downloadBtn.disabled = false;
+            }
+
+            // Update button text dynamically
+            if (adType === 'html5_zip') {
+                downloadBtn.textContent = '💾 Download Bundel HTML5';
+            } else if (adType === 'image') {
+                downloadBtn.textContent = '💾 Download Bundel Gambar';
+            } else {
+                downloadBtn.textContent = '💾 Download HTML';
+            }
+            
+            updateSlotInfo();
+        }
+
+        function ensureUrlProtocol(urlString) {
+            if (!urlString) {
+                return '';
+            }
+            const hasProtocol = /^(https?:\/\/|\/\/)/i.test(urlString);
+            if (!hasProtocol) {
+                return `https://${urlString}`;
+            }
+            return urlString;
+        }
+
+        async function generateAd() {
+        const select = document.getElementById('adSlotSelect');
+        const iframe = document.getElementById('adPreview');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const adType = getSelectedAdType();
+        const slot = adSlots[select.value];
+        const landingPageUrlInput = document.getElementById('landingPageUrl');
+        let landingPageUrl = landingPageUrlInput.value.trim();
+        landingPageUrl = ensureUrlProtocol(landingPageUrl);
+
+        if (!select.value) {
+            alert('Mohon pilih format iklan terlebih dahulu!');
+            return;
+        }
+
+        clearHtml5BlobUrls();
+
+        iframe.src = 'about:blank';
+        iframe.contentDocument.body.innerHTML = `
+            <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; font-family: Arial, sans-serif;">
+                <div class="spinner"></div>
+                <p style="color: #718096;">Sedang memuat ${adType === 'html5_zip' ? 'file ZIP...' : 'template...'}</p>
+            </div>
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+                .spinner {
+                    border: 4px solid #f3f3f3; border-top: 4px solid #0066B1; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px;
+                }
+            </style>
+        `;
+
+        try {
+            const response = await fetch(slot.template);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
+            }
+            const htmlContent = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlContent, 'text/html');
+            
+            // --- MODIFIKASI DIMULAI DI SINI ---
+            const adSlotsInTemplate = doc.querySelectorAll('.ad-slot'); // Menggunakan querySelectorAll
+            
+            if (adSlotsInTemplate.length === 0) {
+                throw new Error('Elemen .ad-slot tidak ditemukan di template. Pastikan template HTML Anda memiliki div dengan class="ad-slot".');
+            }
+
+            let finalAdContentHtml = ''; 
+
+            // Logic untuk mendapatkan finalAdContentHtml tetap sama
+            if (adType === 'image') {
+                if (!selectedImageFile) {
+                    alert('Mohon upload gambar iklan terlebih dahulu!');
+                    return;
+                }
+                const reader = new FileReader();
+                const readPromise = new Promise(resolve => {
+                    reader.onload = e => resolve(e.target.result);
+                    reader.onerror = e => reject(new Error('Failed to read image file.'));
+                });
+                
+                reader.readAsDataURL(selectedImageFile);
+                const imageUrl = await readPromise;
+                
+                finalAdContentHtml = `<img src="${imageUrl}" alt="Advertisement" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+            } 
+            else if (adType === 'script') {
+                const adScriptTextarea = document.getElementById('adScript');
+                const adScriptContent = adScriptTextarea.value.trim();
+
+                if (!adScriptContent) {
+                    alert('Mohon tempel script iklan terlebih dahulu!');
+                    return;
+                }
+                finalAdContentHtml = adScriptContent;
+            }
+            else if (adType === 'html5_zip') {
+                if (!selectedZipFile || Object.keys(html5AdFilesForDownload).length === 0) {
+                    alert('Mohon upload dan tunggu file ZIP HTML5 diproses terlebih dahulu!');
+                    return;
+                }
+
+                for (const path in html5AdFilesForDownload) {
+                    html5AdBlobUrls[path] = URL.createObjectURL(html5AdFilesForDownload[path]);
+                }
+
+                let iframeSrcContent = html5AdOriginalIndexHtmlContent;
+                for (const path in html5AdBlobUrls) {
+                    const filename = path.split('/').pop();
+                    const blobUrl = html5AdBlobUrls[path];
+                    const escapedFilename = filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(`(["'])(?!data:|http:\/\/|https:\/\/|ftp:\/\/|file:\/\/\/)(?:\\.\\.\\/)*${escapedFilename}(["'])`, 'g');
+                    iframeSrcContent = iframeSrcContent.replace(regex, `$1${blobUrl}$2`);
+                }
+
+                const htmlBlob = new Blob([iframeSrcContent], { type: 'text/html' });
+                const iframeSrcUrl = URL.createObjectURL(htmlBlob); 
+
+                finalAdContentHtml = `
+                    <iframe src="${iframeSrcUrl}" 
+                            style="width:100%; height:100%; border:none; display:block;"
+                            allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen=""
+                            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation">
+                    </iframe>
+                `;
+            }
+
+            // Loop melalui setiap adSlot yang ditemukan dan sisipkan konten iklan
+            adSlotsInTemplate.forEach(adSlot => {
+                if (landingPageUrl && (adType === 'script' || adType === 'html5_zip')) {
+                    adSlot.innerHTML = `
+                        <div class="ad-overlay-container">
+                            ${finalAdContentHtml}
+                            <a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" class="ad-click-overlay"></a>
+                        </div>
+                    `;
+                } else if (adType === 'image' && landingPageUrl) {
+                    adSlot.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${finalAdContentHtml}</a>`;
+                } else {
+                    adSlot.innerHTML = finalAdContentHtml;
+                }
+            });
+            // --- MODIFIKASI BERAKHIR DI SINI ---
+
+            generatedHTML = doc.documentElement.outerHTML; 
+            iframe.contentDocument.open();
+            iframe.contentDocument.write(generatedHTML);
+            iframe.contentDocument.close();
+            downloadBtn.disabled = false;
+
+        } catch (error) {
+            console.error('Error in generateAd:', error);
+            iframe.contentDocument.body.innerHTML = `
+                <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; font-family: Arial, sans-serif; color: #e53e3e;">
+                    <h2>❌ Error Memuat Iklan</h2>
+                    <p>${error.message}</p>
+                    <p><small>Pastikan format iklan dipilih, gambar/script/ZIP diupload dengan benar. Untuk ZIP, pastikan ada 'index.html' di root.</small></p>
+                </div>
+            `;
+            generatedHTML = null;
+            downloadBtn.disabled = true;
+        }
+    }
+
+        async function downloadAdContent() {
+            const select = document.getElementById('adSlotSelect');
+            const slot = adSlots[select.value];
+            const adType = getSelectedAdType();
+            const landingPageUrlInput = document.getElementById('landingPageUrl');
+            let landingPageUrl = landingPageUrlInput.value.trim();
+            landingPageUrl = ensureUrlProtocol(landingPageUrl);
+
+            const downloadZip = new JSZip(); // New JSZip instance for the download bundle
+
+            if (adType === 'html5_zip') {
+                if (!selectedZipFile || Object.keys(html5AdFilesForDownload).length === 0 || !html5AdOriginalIndexHtmlContent) {
+                    alert('Mohon upload dan tunggu file ZIP HTML5 diproses, lalu generate preview terlebih dahulu!');
+                    return;
+                }
+
+                // --- 1. Add HTML5 Ad files to a subfolder in the download ZIP ---
+                const html5AdFolderName = 'html5_ad'; // Name of the subfolder for the HTML5 ad
+                let modifiedHtml5IndexHtmlContent = html5AdOriginalIndexHtmlContent;
+
+                // Modify index.html of the HTML5 ad to include clickTag overlay
+                if (landingPageUrl) {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(modifiedHtml5IndexHtmlContent, 'text/html');
+                    const body = doc.querySelector('body');
+                    if (body) {
+                        const overlayDiv = doc.createElement('a');
+                        overlayDiv.href = landingPageUrl;
+                        overlayDiv.target = "_blank";
+                        overlayDiv.rel = "noopener noreferrer";
+                        overlayDiv.style.cssText = `
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(255, 255, 255, 0); /* Transparent */
+                            z-index: 9999; /* Ensure it's on top */
+                            cursor: pointer;
+                            display: block;
+                        `;
+                        body.style.position = 'relative'; // Ensure body is positioned for overlay
+                        body.appendChild(overlayDiv);
+                        modifiedHtml5IndexHtmlContent = doc.documentElement.outerHTML;
+                    }
+                }
+                
+                // Add all files from the uploaded ZIP to the 'html5_ad' subfolder
+                for (const path in html5AdFilesForDownload) {
+                    if (path === 'index.html') {
+                        // Use the modified index.html content
+                        downloadZip.file(`${html5AdFolderName}/${path}`, modifiedHtml5IndexHtmlContent);
+                    } else {
+                        // Use the original blob for other files
+                        downloadZip.file(`${html5AdFolderName}/${path}`, html5AdFilesForDownload[path]);
+                    }
+                }
+
+                // --- 2. Create the main template HTML with iframe pointing to the subfolder ---
+                const response = await fetch(slot.template);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
+                }
+                const templateHtmlContent = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(templateHtmlContent, 'text/html');
+                const adSlot = doc.querySelector('.ad-slot');
+
+                if (!adSlot) {
+                    throw new Error('Elemen .ad-slot tidak ditemukan di template download. Pastikan template HTML Anda memiliki div dengan class="ad-slot".');
+                }
+
+                // Insert an iframe pointing to the HTML5 ad's index.html within the subfolder
+                adSlot.innerHTML = `
+                    <iframe src="${html5AdFolderName}/index.html" 
+                            style="width:100%; height:100%; border:none; display:block;"
+                            allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen=""
+                            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation">
+                    </iframe>
+                `;
+
+                // Add the modified main template HTML to the root of the download ZIP
+                downloadZip.file(`index.html`, doc.documentElement.outerHTML);
+
+                // --- 3. Generate and download the complete ZIP bundle ---
+                const downloadFilename = `iklan_bundle_html5_${slot.name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}.zip`;
+                const newZipBlob = await downloadZip.generateAsync({ type: "blob" });
+
+                const url = window.URL.createObjectURL(newZipBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = downloadFilename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+
+                const originalText = document.getElementById('downloadBtn').innerHTML;
+                document.getElementById('downloadBtn').innerHTML = '✅ Bundel Downloaded!';
+                setTimeout(() => {
+                    document.getElementById('downloadBtn').innerHTML = originalText;
+                }, 2000);
+
+            } else if (adType === 'image') { // NEW LOGIC FOR IMAGE AD BUNDLE
+                if (!selectedImageFile || !generatedHTML) {
+                    alert('Mohon upload gambar, pilih format, dan generate preview terlebih dahulu!');
+                    return;
+                }
+
+                const imageFileName = selectedImageFile.name;
+                const imageFileExtension = imageFileName.split('.').pop();
+                const adImageFolderName = 'images'; // Subfolder for image
+
+                // Read image file as ArrayBuffer to add to JSZip
+                const imageArrayBuffer = await selectedImageFile.arrayBuffer();
+
+                // Create a temporary DOM parser to modify the generatedHTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(generatedHTML, 'text/html');
+                const adSlot = doc.querySelector('.ad-slot');
+
+                if (!adSlot) {
+                    throw new Error('Elemen .ad-slot tidak ditemukan di template download untuk gambar. Pastikan template HTML Anda memiliki div dengan class="ad-slot".');
+                }
+
+                // Find the image element within the ad slot and change its src to relative path
+                let imgElement = adSlot.querySelector('img');
+                let anchorElement = null; // Check if it's wrapped in an anchor
+                if (!imgElement) { // If direct img not found, check if it's inside an anchor
+                    anchorElement = adSlot.querySelector('a');
+                    if (anchorElement) {
+                        imgElement = anchorElement.querySelector('img');
+                    }
+                }
+                
+                if (imgElement) {
+                    imgElement.src = `${adImageFolderName}/${imageFileName}`; // Update src to relative path
+                } else {
+                    // Fallback if somehow the image isn't directly found or wrapped
+                    console.warn("Could not find image element in adSlot for download modification.");
+                    // Reconstruct the image HTML with relative path
+                    let imageHtml = `<img src="${adImageFolderName}/${imageFileName}" alt="Advertisement" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                    if (landingPageUrl) {
+                        imageHtml = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${imageHtml}</a>`;
+                    }
+                    adSlot.innerHTML = imageHtml;
+                }
+                
+                // Add the modified HTML template to the ZIP
+                downloadZip.file('index.html', doc.documentElement.outerHTML);
+                // Add the image file to the 'images' subfolder in the ZIP
+                downloadZip.file(`${adImageFolderName}/${imageFileName}`, imageArrayBuffer);
+
+                const downloadFilename = `iklan_bundle_gambar_${slot.name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}.zip`;
+                const newZipBlob = await downloadZip.generateAsync({ type: "blob" });
+
+                const url = window.URL.createObjectURL(newZipBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = downloadFilename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+
+                const originalText = document.getElementById('downloadBtn').innerHTML;
+                document.getElementById('downloadBtn').innerHTML = '✅ Bundel Downloaded!';
+                setTimeout(() => {
+                    document.getElementById('downloadBtn').innerHTML = originalText;
+                }, 2000);
+
+            } else { // For Script Ads (Download HTML Template)
+                if (!generatedHTML) {
+                    alert('Mohon generate preview terlebih dahulu!');
+                    return;
+                }
+
+                const filename = `iklan_script_${slot.name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}.html`;
+                
+                // For script, we simply download the generatedHTML (the modified main template)
+                const blob = new Blob([generatedHTML], { type: 'text/html' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                const originalText = document.getElementById('downloadBtn').innerHTML;
+                document.getElementById('downloadBtn').innerHTML = '✅ HTML Downloaded!';
+                setTimeout(() => {
+                    document.getElementById('downloadBtn').innerHTML = originalText;
+                }, 2000);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            window.addEventListener('unload', function() {
+                clearHtml5BlobUrls(); // Ensure all blob URLs are revoked on page unload
+            });
+
+            document.querySelectorAll('.upload-area').forEach(area => {
+                area.addEventListener('dragleave', function(e) {
+                    if (!this.contains(e.relatedTarget)) {
+                        this.classList.remove('dragover');
+                    }
+                });
+            });
+            toggleAdInputs();
+            updateGenerateButton();
+        });
+    </script>
+</body>
+</html>

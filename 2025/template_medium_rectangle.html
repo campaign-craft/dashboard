@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple News Article Template</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .news-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .news-header h1 {
+            color: #0056b3;
+            margin-bottom: 10px;
+        }
+        .news-image {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .news-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .news-content {
+            margin-bottom: 30px;
+        }
+        .ad-slot {
+            width: 300px; /* Medium Rectangle standard width */
+            height: 250px; /* Medium Rectangle standard height */
+            background-color: #e0e0e0; /* Default background for empty slot */
+            border: 1px dashed #999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-style: italic;
+            color: #666;
+            margin: 20px auto; /* Center the ad slot */
+            overflow: hidden; /* Ensure image fits */
+        }
+        .ad-slot p {
+            margin: 0;
+            padding: 10px;
+        }
+        .ad-slot img {
+            max-width: 100%;
+            max-height: 100%;
+            display: block; /* Remove extra space below image */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="news-header">
+            <h1>Judul Berita Menarik di Sini</h1>
+            <p><em>Oleh: Nama Penulis | Tanggal: 20 Juni 2025</em></p>
+        </header>
+
+        <div class="news-image">
+            <img src="https://via.placeholder.com/600x300?text=Gambar+Berita" alt="Gambar Berita Utama">
+            <p><small>Keterangan gambar yang relevan.</small></p>
+        </div>
+
+        <div class="news-content">
+            <p>Ini adalah paragraf pertama dari artikel berita Anda. Anda bisa mulai dengan pengantar yang menarik untuk menarik perhatian pembaca. Pastikan untuk menyampaikan poin-poin utama dengan jelas.</p>
+            <p>Paragraf kedua bisa mengembangkan ide-ide yang telah disebutkan sebelumnya, memberikan detail lebih lanjut, atau menambahkan konteks. Ingatlah untuk menjaga agar bahasanya tetap mudah dipahami.</p>
+            <p>Paragraf selanjutnya dapat berisi informasi tambahan, kutipan, atau data pendukung. Tujuan utamanya adalah untuk memberikan gambaran lengkap tentang topik berita.</p>
+        </div>
+
+        <div class="ad-slot">
+            <p>Tempat Iklan Akan Dimuat di Sini</p>
+            </div>
+
+        <div class="news-content">
+            <p>Terakhir, tambahkan paragraf penutup atau kesimpulan untuk merangkum berita Anda. Anda juga bisa menyertakan ajakan bertindak jika diperlukan.</p>
+        </div>
+    </div>
+</body>
+</html>
