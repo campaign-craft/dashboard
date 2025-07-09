@@ -6,6 +6,7 @@
     <title>Dashboard Tim Produksi Iklan Tribun</title>
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <script>
+      // Konfigurasi Tailwind CSS kustom
       tailwind.config = {
         theme: {
           extend: {
@@ -20,7 +21,7 @@
               "2xl": "24px",
               "3xl": "32px",
               full: "9999px",
-              button: "8px",
+              button: "8px", // Kustom untuk tombol
             },
           },
         },
@@ -37,14 +38,13 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
     />
     <style>
-      /* Gaya dasar untuk ikon Remixicon */
-      :where([class^="ri-"])::before {
-        content: "\f3c2"; /* Default content, will be overridden by specific icon classes */
-      }
+      /* Gaya dasar untuk body dan font */
       body {
         font-family: "Inter", sans-serif;
         background-color: #f9fafb;
       }
+
+      /* Efek transisi untuk kartu */
       .card-container {
         transition: all 0.3s ease;
       }
@@ -57,6 +57,8 @@
       .card-container:hover .card-icon {
         transform: scale(1.1);
       }
+
+      /* Gaya untuk judul grup dengan garis bawah */
       .group-title {
         position: relative;
       }
@@ -69,109 +71,6 @@
         height: 3px;
         background-color: #3b82f6;
         border-radius: 2px;
-      }
-
-      /* Gaya untuk chatbot */
-      .chatbot-button {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 1000;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-      .chatbot-modal {
-        position: fixed;
-        bottom: 90px; /* Di atas tombol float */
-        right: 20px;
-        width: 350px;
-        height: 500px;
-        background-color: white;
-        border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        z-index: 999;
-        transform: translateY(10px); /* Sedikit animasi masuk */
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease-in-out;
-      }
-      .chatbot-modal.open {
-        transform: translateY(0);
-        opacity: 1;
-        visibility: visible;
-      }
-      .chat-messages {
-        flex-grow: 1;
-        padding: 16px;
-        overflow-y: auto;
-        background-color: #f0f2f5;
-        display: flex;
-        flex-direction: column;
-      }
-      .message {
-        margin-bottom: 8px;
-        padding: 8px 12px;
-        border-radius: 12px;
-        max-width: 80%;
-      }
-      .message.user {
-        align-self: flex-end;
-        background-color: #3b82f6;
-        color: white;
-        border-bottom-right-radius: 2px;
-      }
-      .message.bot {
-        align-self: flex-start;
-        background-color: #e2e8f0;
-        color: #333;
-        border-bottom-left-radius: 2px;
-      }
-      .chat-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 16px;
-        background-color: #f8fafc;
-        border-bottom: 1px solid #e2e8f0;
-        border-top-left-radius: 12px;
-        border-top-right-radius: 12px;
-      }
-      .chat-input-area {
-        display: flex;
-        padding: 12px 16px;
-        border-top: 1px solid #e2e8f0;
-        background-color: #f8fafc;
-        border-bottom-left-radius: 12px;
-        border-bottom-right-radius: 12px;
-      }
-      .chat-input-area input {
-        flex-grow: 1;
-        border: 1px solid #cbd5e0;
-        border-radius: 20px;
-        padding: 8px 16px;
-        font-size: 14px;
-        outline: none;
-        transition: border-color 0.2s ease;
-      }
-      .chat-input-area input:focus {
-        border-color: #3b82f6;
-      }
-      .chat-input-area button {
-        background-color: #3b82f6;
-        color: white;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: 10px;
-        transition: background-color 0.2s ease;
-      }
-      .chat-input-area button:hover {
-        background-color: #2563eb;
       }
     </style>
   </head>
@@ -507,55 +406,6 @@
       </div>
     </footer>
 
-    <!-- Tombol Chatbot Float -->
-    <button
-      id="chatbot-toggle-button"
-      class="chatbot-button bg-primary text-white p-4 rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-    >
-      <i class="ri-chat-3-line ri-2x"></i>
-    </button>
-
-    <!-- Modal Chatbot -->
-    <div id="chatbot-modal" class="chatbot-modal">
-      <div class="chat-header">
-        <h3 class="text-lg font-semibold text-gray-800">Asisten Virtual</h3>
-        <div class="flex space-x-2">
-          <button
-            id="chatbot-clear-button"
-            class="text-gray-500 hover:text-gray-700 focus:outline-none"
-            title="Bersihkan Obrolan"
-          >
-            <i class="ri-delete-bin-line ri-lg"></i>
-          </button>
-          <button
-            id="chatbot-close-button"
-            class="text-gray-500 hover:text-gray-700 focus:outline-none"
-            title="Tutup Chatbot"
-          >
-            <i class="ri-close-line ri-lg"></i>
-          </button>
-        </div>
-      </div>
-      <div id="chat-messages" class="chat-messages">
-        <!-- Pesan akan ditambahkan di sini oleh JavaScript -->
-        <div class="message bot">Halo! Ada yang bisa saya bantu?</div>
-      </div>
-      <div class="chat-input-area">
-        <input
-          type="text"
-          id="chat-input"
-          placeholder="Ketik pertanyaan Anda..."
-          class="focus:ring-primary"
-        />
-        <button id="send-button">
-          <i class="ri-send-plane-fill"></i>
-        </button>
-      </div>
-      <div class="text-center text-xs text-gray-400 mt-2 pb-2">
-        Informasi dari AI mungkin tidak akurat
-      </div>
-    </div>
-
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const dateElement = document.getElementById("current-date");
@@ -564,7 +414,7 @@
         if (dateElement && piketInfoElement) {
           // Mengatur ulang urutan nama sesuai rotasi yang diinginkan: Septian -> Cenot -> Andy -> Fenty
           const names = ["Septian", "Cenot", "Andy", "Fenty"];
-          
+
           // Tanggal mulai piket Septian (Senin, 23 Juni 2025)
           const startDatePiketSeptian = new Date("2025-06-23T00:00:00");
 
@@ -575,7 +425,7 @@
             // Sesuaikan hari agar Senin (1) menjadi awal minggu (indeks 0)
             const adjustedDay = day === 0 ? 6 : day - 1; // Jika Minggu (0), jadi 6 (hari ke-6 dari Senin). Jika Senin (1), jadi 0.
             const diff = d.getDate() - adjustedDay;
-            return new Date(d.getFullYear(), d.getMonth(), diff);
+            return new Date(d.getFullYear(), d.getMonth(), diff); // Pastikan waktu diatur ke tengah malam
           }
 
           function updatePiketInfo() {
@@ -591,12 +441,16 @@
             const oneWeekInMs = 1000 * 60 * 60 * 24 * 7;
 
             // Hitung berapa minggu telah berlalu sejak startDatePiketSeptian
-            const diffTime = startOfCurrentWeek.getTime() - getStartOfWeek(startDatePiketSeptian).getTime();
-            const diffWeeks = Math.round(diffTime / oneWeekInMs);
+            const diffTime =
+              startOfCurrentWeek.getTime() -
+              getStartOfWeek(startDatePiketSeptian).getTime();
+            // Gunakan Math.floor() untuk memastikan penghitungan minggu penuh yang telah berlalu
+            const diffWeeks = Math.floor(diffTime / oneWeekInMs);
 
             // Tentukan piket minggu ini
             // Septian adalah indeks 0 di array 'names' yang baru
-            const currentPiketIndex = (names.indexOf("Septian") + diffWeeks) % names.length;
+            const currentPiketIndex =
+              (names.indexOf("Septian") + diffWeeks) % names.length;
             const currentPiket = names[currentPiketIndex];
 
             // Tentukan piket selanjutnya (cukup orang berikutnya dalam rotasi)
@@ -604,10 +458,10 @@
             const nextPiket = names[nextPiketIndex];
 
             dateElement.textContent = formattedDate;
-            piketInfoElement.innerHTML =
-              `<strong class="text-blue-600">(Piket Minggu ini: ${currentPiket})</strong> | (Selanjutnya: ${nextPiket})`;
+            piketInfoElement.innerHTML = `<strong class="text-blue-600">(Piket Minggu ini: ${currentPiket})</strong> | (Selanjutnya: ${nextPiket})`;
           }
 
+          // Panggil fungsi updatePiketInfo saat halaman dimuat
           updatePiketInfo();
         }
 
@@ -617,107 +471,6 @@
           const currentYear = new Date().getFullYear();
           copyrightElement.textContent = `Copyright © ${currentYear} Tim Produksi Iklan Tribun. All rights reserved.`;
         }
-
-        // --- JavaScript untuk fungsionalitas Chatbot ---
-        const chatbotToggleButton = document.getElementById("chatbot-toggle-button");
-        const chatbotModal = document.getElementById("chatbot-modal");
-        const chatbotCloseButton = document.getElementById("chatbot-close-button");
-        const chatbotClearButton = document.getElementById("chatbot-clear-button");
-        const chatMessages = document.getElementById("chat-messages");
-        const chatInput = document.getElementById("chat-input");
-        const sendButton = document.getElementById("send-button");
-
-        // Fungsi untuk membuka/menutup modal chatbot
-        chatbotToggleButton.addEventListener("click", () => {
-          chatbotModal.classList.toggle("open");
-          if (chatbotModal.classList.contains("open")) {
-            chatInput.focus(); // Fokuskan input saat dibuka
-            chatMessages.scrollTop = chatMessages.scrollHeight; // Gulir ke bawah
-          }
-        });
-
-        // Fungsi untuk menutup modal chatbot
-        chatbotCloseButton.addEventListener("click", () => {
-          chatbotModal.classList.remove("open");
-        });
-
-        // Fungsi untuk membersihkan pesan obrolan
-        chatbotClearButton.addEventListener("click", () => {
-          chatMessages.innerHTML = '<div class="message bot">Halo! Ada yang bisa saya bantu?</div>'; // Reset ke pesan awal
-          chatMessages.scrollTop = chatMessages.scrollHeight; // Gulir ke bawah
-        });
-
-        // Fungsi untuk menambahkan pesan ke area obrolan
-        function addMessage(text, sender) {
-          const messageDiv = document.createElement("div");
-          messageDiv.classList.add("message", sender);
-          messageDiv.textContent = text;
-          chatMessages.appendChild(messageDiv);
-          chatMessages.scrollTop = chatMessages.scrollHeight; // Gulir ke bawah secara otomatis
-        }
-
-        // Fungsi untuk mengirim pesan
-        async function sendMessage() {
-          const userMessage = chatInput.value.trim();
-          if (userMessage === "") return; // Jangan kirim pesan kosong
-
-          addMessage(userMessage, "user");
-          chatInput.value = ""; // Bersihkan input
-
-          // Tampilkan indikator loading atau "mengetik"
-          const loadingMessage = document.createElement("div");
-          loadingMessage.classList.add("message", "bot", "loading-indicator");
-          loadingMessage.textContent = "Kodee sedang mengetik...";
-          chatMessages.appendChild(loadingMessage);
-          chatMessages.scrollTop = chatMessages.scrollHeight;
-
-          try {
-            // Panggil Gemini API untuk menghasilkan respons
-            let chatHistory = [];
-            chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
-            const payload = { contents: chatHistory };
-            const apiKey = ""; // Biarkan kosong, Canvas akan menyediakannya saat runtime
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-            const response = await fetch(apiUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
-
-            const result = await response.json();
-
-            // Hapus indikator loading
-            chatMessages.removeChild(loadingMessage);
-
-            if (result.candidates && result.candidates.length > 0 &&
-                result.candidates[0].content && result.candidates[0].content.parts &&
-                result.candidates[0].content.parts.length > 0) {
-              const botResponse = result.candidates[0].content.parts[0].text;
-              addMessage(botResponse, "bot");
-            } else {
-              addMessage("Maaf, saya tidak dapat menghasilkan respons saat ini.", "bot");
-            }
-          } catch (error) {
-            console.error("Error calling Gemini API:", error);
-            // Hapus indikator loading jika ada error
-            const currentLoadingMessage = chatMessages.querySelector(".loading-indicator");
-            if (currentLoadingMessage) {
-              chatMessages.removeChild(currentLoadingMessage);
-            }
-            addMessage("Terjadi kesalahan. Silakan coba lagi.", "bot");
-          }
-        }
-
-        // Kirim pesan saat tombol kirim diklik
-        sendButton.addEventListener("click", sendMessage);
-
-        // Kirim pesan saat tombol Enter ditekan di input teks
-        chatInput.addEventListener("keypress", (e) => {
-          if (e.key === "Enter") {
-            sendMessage();
-          }
-        });
       });
     </script>
   </body>
