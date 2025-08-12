@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>LOCAL URBAN FEST VIRTUAL EXHIBITION</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui" />
+    <!-- fb meta -->
+    <meta property="fb:admins" content="1386097730" />
+    <meta property="fb:app_id" content="161133340609176" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="" />
+    <meta property="og:title" content="LOCAL URBAN FEST VIRTUAL EXHIBITION" />
+    <meta property="og:image" content="https://cdn-3.tstatic.net/ads/microsite/localurbanfest/1.1.3/virtual/img/thumbnail.jpg" />
+    <meta property="og:description" content="Buat perubahan dengan karyamu di Local Urban Fest!" />
+    <!-- twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tribunnews" />
+    <meta name="twitter:creator" content="@tribunnews">
+    <meta name="twitter:title" content="LOCAL URBAN FEST VIRTUAL EXHIBITION" />
+    <meta name="twitter:description" content="Buat perubahan dengan karyamu di Local Urban Fest!" />
+    <meta name="twitter:image" content="https://cdn-3.tstatic.net/ads/microsite/localurbanfest/1.1.3/virtual/img/thumbnail.jpg" />
+    <style>
+        @-ms-viewport {
+            width: device-width;
+        }
+    </style>
+    <link rel="shortcut icon" href="https://cdn-1.tstatic.net/img/icon/tribun-icon_32.png" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css">
+    <link rel="stylesheet" href="vendor/reset.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="multiple-scenes ">
+
+    <div id="pano"></div>
+    <div class="logo-tribun">
+        <img src="img/logo.png" alt="logo tribunnews">
+    </div>
+    <div class="box-preload">
+        <div class="box-preload__bg">
+            <div class="box-preload__logo2">
+                <img src="img/logo-tribun-hp.png" alt="logo-tribun-hp">
+                <p>Please wait.. something cool is coming...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="menuIcon">
+        <input type="checkbox" id="control">
+        <label id="main-menu" for="control">
+    <img src="img/more.png">
+    </label>
+        <div class="icon-container">
+            <a href="javascript:void(0)" id="autorotateToggle">
+                <img class="icon off" src="img/play.png">
+                <img class="icon on" src="img/pause.png">
+            </a>
+        </div>
+        <div class="icon-container">
+            <a href="javascript:void(0)" id="fullscreenToggle">
+                <img class="icon off" src="img/fullscreen.png">
+                <img class="icon on" src="img/windowed.png">
+            </a>
+        </div>
+        <div class="icon-container">
+            <div class="box-sound">
+                <div class="pause" onclick="togglePlay()">
+                    <img src="img/sound.png">
+                </div>
+                <div class="player">
+                    <audio class="audio" src="img/music.mp3" autoplay="" type="audio" loop=""></audio>
+                </div>
+            </div>
+        </div>
+        <div class="icon-container">
+            <a href="https://bit.ly/LocalUrbanFest" target="_blank">
+                <div class="box-map">
+                    <img src="img/localurbanfest.png">
+                </div>
+            </a>
+        </div>
+        <div class="icon-container">
+            <a href="mailto:marcomm@tribunnews.com" target="_blank">
+                <div class="box-map">
+                    <img src="img/email.png">
+                </div>
+            </a>
+        </div>
+        <div class="icon-container">
+            <a href="https://www.instagram.com/tribunnews/?hl=en" target="_blank">
+                <div class="box-map">
+                    <img src="img/instagram.png">
+                </div>
+            </a>
+        </div>
+    </div>
+    <div id="sceneList">
+        <ul class="scenes">
+            <a href="javascript:void(0)" class="scene" data-id="0-gate">
+                <div class="gate__icon">
+                    <img src="img/open.png" alt="">
+                </div>
+                <li class="text">GATE</li>
+            </a>
+            <a href="javascript:void(0)" class="scene" data-id="1-lobby" onclick="togglePlay()">
+                <div class="gate__icon">
+                    <img src="img/open.png" alt="">
+                </div>
+                <li class="text">LOBBY</li>
+            </a>
+            <a href="javascript:void(0)" class="scene" data-id="2-art_1">
+                <div class="gate__icon">
+                    <img src="img/open.png" alt="">
+                </div>
+                <li class="text">ART<br> GALLERY </li>
+            </a>
+            <a href="javascript:void(0)" class="scene" data-id="3-art_2" style="display: none;">
+                <div class="gate__icon">
+                    <img src="img/open.png" alt="">
+                </div>
+                <li class="text">ART<br> GALLERY 2 </li>
+            </a>
+            <a href="javascript:void(0)" class="scene" data-id="4-art3" style="display: none;">
+                <div class="gate__icon">
+                    <img src="img/open.png" alt="">
+                </div>
+                <li class="text">ART<br> GALLERY 3 </li>
+            </a>
+            <a href="javascript:void(0)" class="scene" data-id="5-art_4" style="display: none;">
+                <div class="gate__icon">
+                    <img src="img/open.png" alt="">
+                </div>
+                <li class="text">ART<br> GALLERY 4 </li>
+            </a>
+            <a href="javascript:void(0)" class="scene" data-id="6-mulmed">
+                <div class="gate__icon">
+                    <img src="img/open.png" alt="">
+                </div>
+                <li class="text">MULTIMEDIA<br> ROOM</li>
+            </a>
+        </ul>
+    </div>
+
+    <div id="titleBar">
+        <h1 class="sceneName"></h1>
+    </div>
+
+    <a href="javascript:void(0)" id="sceneListToggle">
+        <img class="icon off" src="img/expand.png">
+        <img class="icon on" src="img/collapse.png">
+    </a>
+
+    <a href="javascript:void(0)" id="viewUp" class="viewControlButton viewControlButton-1">
+        <img class="icon" src="img/up.png">
+    </a>
+    <a href="javascript:void(0)" id="viewDown" class="viewControlButton viewControlButton-2">
+        <img class="icon" src="img/down.png">
+    </a>
+    <a href="javascript:void(0)" id="viewLeft" class="viewControlButton viewControlButton-3">
+        <img class="icon" src="img/left.png">
+    </a>
+    <a href="javascript:void(0)" id="viewRight" class="viewControlButton viewControlButton-4">
+        <img class="icon" src="img/right.png">
+    </a>
+    <a href="javascript:void(0)" id="viewIn" class="viewControlButton viewControlButton-5">
+        <img class="icon" src="img/plus.png">
+    </a>
+    <a href="javascript:void(0)" id="viewOut" class="viewControlButton viewControlButton-6">
+        <img class="icon" src="img/minus.png">
+    </a>
+
+
+
+    <div class="modal" id="art1">
+        <div class="box">
+            <div class="content__modal__box">
+                <div class="modal__wrap">
+                    <div class="modal__left">
+                        <img class="lazy" data-src="img/art1.jpg">
+                    </div>
+                    <div class="modal__right">
+                        <div class="modal__close" id="modal__close" close-modal="">
+                            <img src="img/close.png">
+                        </div>
+                        <label>Judul Artwork</label>
+                        <div class="modal__right--title">PAGISENJA | Handwoven Ikat</div>
+                        <label>Artist</label>
+                        <div class="modal__right--name">Denica - Sukkha Citta</div>
+                        <label>Deskripsi</label>
+                        <div class="modal__right--deskripsi">
+                            <p>
+                                PAGISENJA helps you simplify. Look closer and you'll see these beautiful lines and textures. Crafted through the Double Ikat technique, each is manually inserted by our master weaver. An everyday reminder of the process that makes your piece truly meaningful.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="art2">
+        <div class="box">
+            <div class="content__modal__box">
+                <div class="modal__wrap">
+                    <div class="modal__left">
+                        <img class="lazy" data-src="img/art2.jpg">
+                    </div>
+                    <div class="modal__right">
+                        <div class="modal__close" id="modal__close" close-modal="">
+                            <img src="img/close.png">
+                        </div>
+                        <label>Judul Artwork</label>
+                        <div class="modal__right--title">4. #ReMadeRight</div>
+                        <label>Artist</label>
+                        <div class="modal__right--name">Denica - Sukkha Citta</div>
+                        <label>Deskripsi</label>
+                        <div class="modal__right--deskripsi">
+                            <p>
+                                Handcrafted from our #MadeRight offcuts to celebrate love. For 5 years, our Ibus lovingly collect each of our offcuts. Sorting them by color and arranging them like a tapestry, before re-stitching them together into a canvas that tell your story.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="art3">
+        <div class="box">
+            <div class="content__modal__box">
+                <div class="modal__wrap">
+                    <div class="modal__left">
+                        <img class="lazy" data-src="img/art3.jpg">
+                    </div>
+                    <div class="modal__right">
+                        <div class="modal__close" id="modal__close" close-modal="">
+                            <img src="img/close.png">
+                        </div>
+                        <label>Judul Artwork</label>
+                        <div class="modal__right--title">ANGKASA | Hand-drawn Batik</div>
+                        <label>Artist</label>
+                        <div class="modal__right--name">Denica - Sukkha Citta</div>
+                        <label>Deskripsi</label>
+                        <div class="modal__right--deskripsi">
+                            <p>
+                                Reinterpreting the traditional Jlamprang 'Patola' motif, this art piece features a constellation of 12 star signs. Each star meaningfully drawn by hand, with a tjanting and hot wax. Crafted, dyed and handroll-stitched by the 32 Ibus who received scholarships
+                                in Rumah SukkhaCitta Jlamprang.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="art4">
+        <div class="box">
+            <div class="content__modal__box">
+                <div class="modal__wrap">
+                    <div class="modal__left">
+                        <img class="lazy" data-src="img/art4.jpg">
+                    </div>
+                    <div class="modal__right">
+                        <div class="modal__close" id="modal__close" close-modal="">
+                            <img src="img/close.png">
+                        </div>
+                        <label>Judul Artwork</label>
+                        <div class="modal__right--title">Old Skool Barber</div>
+                        <label>Artist</label>
+                        <div class="modal__right--name">Bagoes Kresnawan</div>
+                        <label>Deskripsi</label>
+                        <div class="modal__right--deskripsi">
+                            <p>2017</p>
+                            <p>Black and White</p>
+                            <p>Media : Film</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="art5">
+        <div class="box">
+            <div class="content__modal__box">
+                <div class="modal__wrap">
+                    <div class="modal__left">
+                        <img class="lazy" data-src="img/art5.jpg">
+                    </div>
+                    <div class="modal__right">
+                        <div class="modal__close" id="modal__close" close-modal="">
+                            <img src="img/close.png">
+                        </div>
+                        <label>Judul Artwork</label>
+                        <div class="modal__right--title">Tempe Master</div>
+                        <label>Artist</label>
+                        <div class="modal__right--name">Bagoes Kresnawan</div>
+                        <label>Deskripsi</label>
+                        <div class="modal__right--deskripsi">
+                            <p>2019</p>
+                            <p>Color</p>
+                            <p>Media : Digital</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="art6">
+        <div class="box">
+            <div class="content__modal__box">
+                <div class="modal__wrap">
+                    <div class="modal__left">
+                        <img class="lazy" data-src="img/art6.jpg">
+                    </div>
+                    <div class="modal__right">
+                        <div class="modal__close" id="modal__close" close-modal="">
+                            <img src="img/close.png">
+                        </div>
+                        <label>Judul Artwork</label>
+                        <div class="modal__right--title">MENARA PINISI - Universitas Negeri Makassar</div>
+                        <label>Artist</label>
+                        <div class="modal__right--name">YU SING – AKANOMA STUDIO</div>
+                        <label>Deskripsi</label>
+                        <div class="modal__right--deskripsi">
+                            <p>
+                                Karya ini merupakan pemenang pertama sayembara Gedung Pusat Pelayanan Akademik Universitas Negeri Makassar. Juga merupakan karya perdana Yu Sing bersama Akanoma Studio untuk perancangan gedung tinggi (17 lantai).
+                            </p>
+                            <p>
+                                Gedung Pusat Pelayanan Akademik UNM didesain sebagai ikon baru bagi UNM, kota Makassar, dan sekaligus Sulawesi Selatan.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="art7">
+        <div class="box">
+            <div class="content__modal__box">
+                <div class="modal__wrap">
+                    <div class="modal__left">
+                        <img class="lazy" data-src="img/art7.jpg">
+                    </div>
+                    <div class="modal__right">
+                        <div class="modal__close" id="modal__close" close-modal="">
+                            <img src="img/close.png">
+                        </div>
+                        <label>Judul Artwork</label>
+                        <div class="modal__right--title">WIKASATRIAN - Tempat Pelatihan Kepemimpinan WIKA, Bogor</div>
+                        <label>Artist</label>
+                        <div class="modal__right--name">YU SING – AKANOMA STUDIO</div>
+                        <label>Deskripsi</label>
+                        <div class="modal__right--deskripsi">
+                            <p>
+                                Wikasatrian adalah nama terpilih untuk memaknai keseluruhan aktivitas yang diwadahi oleh bangunan. Karya ini adalah kelanjutan dari sayembara tertutup WIKA (Wijaya Karya) Leadership Center di Pasir Angin, Gadog, Bogor. Akanoma Studio dipilih menjadi salah
+                                satu dari 5 tim konsultan arsitek lain untuk mengembangkan perbaikan desainnya.
+                            </p>
+                            <p>
+                                Lokasi Wikasatrian dikelilingi beberapa gunung seperti Gede, Pangrango, Gunung Salak, dan Gunung Geulies, sehingga konsep bentuk bangunan terwujud dari lapisan-lapisan yang tidak memiliki kesamaan bentuk dan tidak sejajar sebagai representasi dari kreativitas
+                                yang tidak terbatas.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="example">
+        <div class="box">
+            <div class="content__modal__box">
+                <div class="modal__wrap">
+                    <div class="modal__left">
+                        <img class="lazy" data-src="img/photo.jpg">
+                    </div>
+                    <div class="modal__right">
+                        <div class="modal__close" id="modal__close" close-modal="">
+                            <img src="img/close.png">
+                        </div>
+                        <label>Judul Artwork</label>
+                        <div class="modal__right--title">Space ini buat kamu!</div>
+                        <label>Artist</label>
+                        <div class="modal__right--name">Mau nama kamu ada di sini?</div>
+                        <label>Deskripsi</label>
+                        <div class="modal__right--deskripsi">
+                            <p>Jadi bagian dari Movement Generasi Muda bareng HP di Local Urban Fest.</p>
+                            <p>Submit karya visual fotografi, fashion design, atau arsitektur yang memiliki nilai lokal dan berdampak lingkungan, sosial, atau bisnis.</p>
+                            <p>Tunjukkan <strong>#AkuLokalAkuBangga</strong> lewat karyamu dan menangkan hadiah jutaan rupiah!</p>
+                            <a href="https://bit.ly/LocalUrbanFest" target="_blank">
+                                <button>DAFTAR</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal -->
+
+    <div class="modal-video fade" id="videoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
+        <div class="modal-overlay modal-toggle"></div>
+        <div class="modal-wrapper modal-transition">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <button class="modal-close modal-toggle">X</button>
+                    <div class="modal-body">
+                        <div class="ratio">
+                            <iframe src="" allow="autoplay;" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="vendor/screenfull.min.js"></script>
+    <script src="vendor/bowser.min.js"></script>
+    <script src="vendor/marzipano.js"></script>
+    <script src="data.js"></script>
+    <script src="index.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+    <script src="js/lottie.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        $(function() {
+            $('.lazy').lazy();
+        });
+    </script>
+
+
+</body>
+
+</html>

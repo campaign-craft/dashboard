@@ -1,0 +1,374 @@
+/*
+=========================================================================================
+    Company      : Digital Advertising Division - kgmedia.id | Kompas Gramedia
+    Document     : CSS
+    Author       : Pramuda Angga Aditya - IOBITDEV - iobit.dev
+    Project Name : ATRBPN - Microsites
+    Date         : February 13th, 2020
+=========================================================================================
+*/
+
+@font-face {
+	font-family: MuseoMed;
+	src: url("../type/MuseoSans_500.woff2");
+}
+@font-face {
+	font-family: MuseoBold;
+	src: url("../type/MuseoSans_700.woff2");
+}
+@font-face {
+	font-family: MuseoBlack;
+	src: url("../type/MuseoSans_900.woff2");
+}
+* {
+	box-sizing: border-box;
+}
+html,
+body {
+	margin: 0;
+	padding: 0;
+	font-family: 'MuseoMed', sans-serif;
+	font-weight: 500;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-text-size-adjust: none;
+	line-height: 1.2;
+	font-size: 20px;
+	color: #000;
+	max-width: 100%;
+	overflow-x: hidden;
+}
+a {
+	text-decoration: none;
+	color: inherit;
+}
+img {
+	object-fit: cover;
+	object-position: 50% 50%;
+	vertical-align: middle;
+	width: 100%;
+}
+::selection {
+	background: #F4C40D;
+	color: #fff;
+}
+::-moz-selection {
+	background: #F4C40D;
+	color: #fff;
+}
+::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+	background-color: #F5F5F5;
+}
+::-webkit-scrollbar {
+	width: 5px;
+	background-color: #F5F5F5;
+}
+::-webkit-scrollbar-thumb {
+	background-color: #F4C40D;
+}
+.iobitdev-grid {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+	align-content: flex-start;
+}
+h1,
+h2,
+h3 {
+	margin-block-start: 0;
+	margin-block-end: 0;
+}
+.navMenu {
+    width: 100%;
+    position: fixed;
+    background: #fff;
+    z-index: 10;
+    -webkit-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.3);
+    -moz-box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.3);
+    box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.3);
+    top: 0px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    transition: 0.5s ease;
+}
+.navMenu__fixed {
+    width: 1000px;
+    margin: auto;
+    left: 0;
+    right: 0;
+    border-radius: 50px;
+    top: 15px;
+}
+.spaceNav {
+    width: 100%;
+    height: 61px;
+}
+.navWrapper {
+    justify-content: space-between;
+    max-width: 800px;
+    margin: auto;
+}
+nav ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+    font-size: 14px;
+    font-family: 'MuseoBlack', sans-serif;
+	color: #707070;
+	z-index: 1;
+}
+nav a {
+    text-decoration: none;
+    display: inline;
+    position: relative;
+    line-height: 60px;
+    width: 72px;
+    text-align: center;
+    transition: 0.3s ease;
+}
+nav a:hover {
+    opacity: 0.7;
+}
+.mainLogo {
+    max-width: 362px;
+    padding: 12px 0;
+}
+.navButton ul,
+.navButton li,
+.navButton a {
+    height: 61px;
+}
+.navActive {
+    background-color: #F4C40D;
+    color: #002C83;
+    pointer-events: none;
+}
+.sectionTitle {
+    font-size: 28px;
+    font-family: 'MuseoBlack', sans-serif;
+    color: #707070;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.sectionTitle__white {
+    color: #fff;
+}
+section.berita {
+    position: relative;
+}
+section.berita::before {
+    width: 50%;
+    height: 30px;
+    content: " ";
+    position: absolute;
+    z-index: 0;
+    top: 0px;
+    pointer-events: none;
+    background-color: #F4C40D;
+    margin: auto;
+    left: 0;
+    right: 0;
+    border-radius: 0 0 50px 50px;
+}
+.beritaWrap {
+    max-width: 1000px;
+    margin: auto;
+    padding: 65px 0 65px 0;
+}
+.contentberitaWrap {
+    flex-wrap: wrap;
+    align-content: flex;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+.beritaEach {
+    width: 270px;
+    margin: 15px;
+}
+.beritaEach .thumb {
+    width: 90%;
+    margin: auto;
+    z-index: 1;
+    position: relative;
+}
+.beritaEach .thumb img {
+    height: 135px;
+    border-radius: 12px;
+}
+.beritaEach .summaryWrap {
+    background-color: #F4C40D;
+    position: relative;
+    border-radius: 0 0 12px 12px;
+}
+.beritaEach .summaryWrap::before {
+    width: 100%;
+    height: 100px;
+    content: " ";
+    background-image: url('../img/obj-beritaeach.png');
+    background-repeat: no-repeat;
+    background-position: top;
+    background-size: contain;
+    position: absolute;
+    z-index: 0;
+    top: -85px;
+    pointer-events: none;
+}
+.beritaEach .summarySubWrap {
+    min-height: 158px;
+}
+.beritaEach .title {
+    font-family: 'MuseoBlack', sans-serif;
+    font-size: 15px;
+    color: #002C83;
+}
+.beritaEach .paragraph {
+    font-size: 14px;
+    min-height: 45px;
+    margin-bottom: 5px;
+}
+.beritaEach .postdate {
+    font-size: 11px;
+    color: #002C83;
+    font-family: 'MuseoBold', sans-serif;
+}
+a.btn-readmore {
+    font-family: 'MuseoBlack', sans-serif;
+    font-size: 12px;
+    color: #002C83;
+    background-color: #fff;
+    display: inline-block;
+    text-transform: uppercase;
+    padding: 5px 25px;
+    border-radius: 100px;
+}
+a.btn-more {
+    font-family: 'MuseoBlack', sans-serif;
+    font-size: 16px;
+    color: #fff;
+    background-color: #002C83;
+    margin: auto;
+    width: 250px;
+    display: block;
+    text-align: center;
+    padding: 10px;
+    border-radius: 100px;
+    text-transform: uppercase;
+}
+a.btn-more__color2 {
+    color: #002C83;;
+    background-color: #fff;
+}
+.beritaEach .meta {
+    justify-content: space-between;
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+}
+.summarySubWrap .paragraph,
+.summarySubWrap .meta {
+    padding: 0 10px;
+}
+.summarySubWrap .title {
+    padding: 10px;
+}
+section.galerifoto {
+    background: #002C83 url('../img/bg-pattern.png');
+    width: 100%;
+    background-size: 10%;
+    position: relative;
+}
+section.galerifoto::before {
+    width: 80%;
+    height: 30px;
+    content: " ";
+    position: absolute;
+    z-index: 0;
+    top: 0px;
+    pointer-events: none;
+    background-color: #F4C40D;
+    margin: auto;
+    left: 0;
+    right: 0;
+    border-radius: 0 0 50px 50px;
+}
+.galerifotoWrap {
+    padding: 80px 0;
+}
+.galerifotoContent .gallery {
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+}
+.galerifotoContent .gallery a {
+    width: 25%;
+    padding: 3px;
+}
+.sl-wrapper .sl-image .sl-caption {
+    font-size: 14px;
+    letter-spacing: 1px;
+    background: rgba(0,0,0,0.7);
+}
+.sl-wrapper .sl-counter {
+    display: none!important;
+}
+section.galerivideo {
+    width: 100%;
+    position: relative;
+}
+section.galerivideo::before {
+    width: 50%;
+    height: 30px;
+    content: " ";
+    position: absolute;
+    z-index: 0;
+    top: 0px;
+    pointer-events: none;
+    background-color: #F4C40D;
+    margin: auto;
+    left: 0;
+    right: 0;
+    border-radius: 0 0 50px 50px;
+}
+section.galerivideo::after {
+    width: 90%;
+    height: 30px;
+    content: " ";
+    position: absolute;
+    z-index: 0;
+    bottom: 0px;
+    pointer-events: none;
+    background-color: #F4C40D;
+    margin: auto;
+    left: 0;
+    right: 0;
+    border-radius: 50px 50px 0 0;
+}
+.galerivideoWrap {
+    max-width: 1000px;
+    margin: auto;
+    padding: 65px 0 75px 0;
+}
+.videoBig iframe {
+    width: 100%;
+    height: 480px;
+}
+.videoSmall div {
+    width: 50%;
+}
+.videoSmall iframe {
+    width: 100%;
+    height: 240px;
+}
+.videogaleriContent {
+    margin-bottom: 50px;
+}
+footer {
+    background-color: #232323;
+    color: #fff;
+    text-align: center;
+    font-size: 14px;
+    padding: 30px 10px;
+}
