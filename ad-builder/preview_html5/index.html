@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribunnews.com - HTML5 Banner Ad Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #0066B1;
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .upload-section {
+            padding: 20px;
+            background: #f0f8ff;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .upload-area {
+            border: 2px dashed #0066B1;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            background: white;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            background: #f8f9ff;
+            border-color: #db1f25;
+        }
+
+        .upload-area.dragover {
+            background: #f0f8ff;
+            border-color: #db1f25;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #0066B1;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .preview-container {
+            display: flex;
+            height: 600px;
+        }
+
+        .files-panel {
+            width: 300px;
+            background: #fafafa;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .files-header {
+            background: #0066B1;
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .files-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .file-item {
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .file-item:hover {
+            background: #f0f8ff;
+            border-color: #0066B1;
+        }
+
+        .file-item.active {
+            background: #0066B1;
+            color: white;
+            border-color: #0066B1;
+        }
+
+        .file-icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .preview-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            background: #0066B1;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .banner-sizes {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .size-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .size-btn:hover, .size-btn.active {
+            background: #db1f25;
+        }
+
+        .preview-frame {
+            flex: 1;
+            border: none;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .banner-container {
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            display: inline-block;
+            position: relative;
+        }
+
+        .banner-frame {
+            border: none;
+            display: block;
+        }
+
+        .banner-info {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            font-size: 11px;
+            color: #666;
+            background: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+        }
+
+        .controls {
+            padding: 15px 20px;
+            background: #f0f8ff;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background: #db1f25;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #b8181d;
+        }
+
+        .btn-secondary {
+            background: #0066B1;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #004d85;
+        }
+
+        .status {
+            margin-left: auto;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+
+        .file-info {
+            background: #f8f9fa;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #db1f25;
+            width: 0;
+            transition: width 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .preview-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .files-panel {
+                width: 100%;
+                max-height: 200px;
+            }
+            
+            .preview-panel {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            Tribunnews.com - HTML5 Banner Ad Preview - Upload ZIP file
+        </div>
+        
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Drop your ZIP file here or click to browse</div>
+                <div class="upload-subtext">Supports ZIP files containing HTML5 banner ads</div>
+                <div class="progress-bar" id="progressBar" style="display: none;">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+            <input type="file" class="file-input" id="fileInput" accept=".zip" />
+        </div>
+        
+        <div class="preview-container">
+            <div class="files-panel">
+                <div class="files-header">
+                    Files in ZIP
+                </div>
+                <div class="files-list" id="filesList">
+                    <div class="empty-state">
+                        <div class="empty-icon">📄</div>
+                        <div>No files loaded</div>
+                    </div>
+                </div>
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <div>Total files: <span id="totalFiles">0</span></div>
+                    <div>ZIP size: <span id="zipSize">0 KB</span></div>
+                </div>
+            </div>
+            
+            <div class="preview-panel">
+                <div class="preview-header">
+                    <span id="previewTitle">Preview</span>
+                    <div class="banner-sizes">
+                        <span style="font-size: 12px; margin-right: 10px;">Common sizes:</span>
+                        <button class="size-btn" data-size="728x90">728x90</button>
+                        <button class="size-btn" data-size="300x250">300x250</button>
+                        <button class="size-btn" data-size="160x600">160x600</button>
+                        <button class="size-btn" data-size="320x50">320x50</button>
+                        <button class="size-btn" data-size="custom">Custom</button>
+                    </div>
+                </div>
+                <div class="preview-frame" id="previewFrame">
+                    <div class="empty-state">
+                        <div class="empty-icon">🖼️</div>
+                        <div>Select an HTML file to preview</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" id="refreshBtn" disabled>
+                Refresh Preview
+            </button>
+            <button class="btn btn-secondary" id="clearBtn">
+                Clear All
+            </button>
+            <button class="btn btn-secondary" id="downloadBtn" disabled>
+                Download Current File
+            </button>
+            <button class="btn btn-secondary" id="fullscreenBtn" disabled>
+                Fullscreen Preview
+            </button>
+            <div class="status" id="statusText">
+                Ready - Upload a ZIP file to start
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        let currentZip = null;
+        let currentFiles = {};
+        let currentPreviewFile = null;
+        let activeObjectUrls = []; // To keep track of created object URLs for revocation
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const filesList = document.getElementById('filesList');
+        const previewFrame = document.getElementById('previewFrame');
+        const previewTitle = document.getElementById('previewTitle');
+        const statusText = document.getElementById('statusText');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const fileInfo = document.getElementById('fileInfo');
+        const totalFiles = document.getElementById('totalFiles');
+        const zipSize = document.getElementById('zipSize');
+
+        // Upload area events
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Button events
+        document.getElementById('refreshBtn').addEventListener('click', refreshPreview);
+        document.getElementById('clearBtn').addEventListener('click', clearAll);
+        document.getElementById('downloadBtn').addEventListener('click', downloadCurrentFile);
+        document.getElementById('fullscreenBtn').addEventListener('click', openFullscreen);
+
+        // Size buttons
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const size = btn.dataset.size;
+                if (size === 'custom') {
+                    const customSize = prompt('Enter custom size (WIDTHxHEIGHT):', '300x250');
+                    if (customSize && customSize.match(/^\d+x\d+$/)) {
+                        resizeBanner(customSize);
+                    } else {
+                        // Re-activate the previously active button or default
+                        const currentActive = document.querySelector('.size-btn.active');
+                        if (!currentActive) { // If no button was active before custom
+                            document.querySelector('[data-size="300x250"]').classList.add('active');
+                        }
+                    }
+                } else {
+                    resizeBanner(size);
+                }
+            });
+        });
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].name.endsWith('.zip')) {
+                processZipFile(files[0]);
+            } else {
+                alert('Please upload a ZIP file');
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file && file.name.endsWith('.zip')) {
+                processZipFile(file);
+            } else {
+                alert('Please select a ZIP file');
+            }
+        }
+
+        async function processZipFile(file) {
+            clearObjectUrls(); // Clear existing URLs before processing new ZIP
+            showProgress(true);
+            statusText.textContent = 'Processing ZIP file...';
+            
+            try {
+                const zip = new JSZip();
+                const zipContent = await zip.loadAsync(file, { update: (metadata) => {
+                    updateProgress(metadata.percent);
+                    statusText.textContent = `Extracting: ${metadata.percent.toFixed(0)}%`;
+                }});
+                
+                currentZip = zipContent;
+                currentFiles = {};
+                
+                const files = [];
+                // Collect all files first
+                zipContent.forEach((relativePath, zipEntry) => {
+                    if (!zipEntry.dir) {
+                        files.push({
+                            name: relativePath,
+                            entry: zipEntry
+                        });
+                    }
+                });
+
+                // Extract content for each file
+                let processedCount = 0;
+                for (const fileData of files) {
+                    const content = await fileData.entry.async('blob');
+                    currentFiles[fileData.name] = {
+                        name: fileData.name,
+                        content: content,
+                        type: getFileType(fileData.name),
+                        size: content.size
+                    };
+                    processedCount++;
+                    // Update progress more frequently for extraction phase
+                    updateProgress(50 + (processedCount / files.length) * 50); // From 50% to 100%
+                }
+
+                displayFiles();
+                updateFileInfo(files.length, file.size);
+                statusText.textContent = `Loaded ${files.length} files from ZIP`;
+                
+            } catch (error) {
+                console.error('Error processing ZIP:', error);
+                statusText.textContent = 'Error processing ZIP file';
+                alert('Error processing ZIP file. Please check if it\'s a valid ZIP.');
+            } finally {
+                showProgress(false);
+            }
+        }
+
+        function showProgress(show) {
+            progressBar.style.display = show ? 'block' : 'none';
+            if (!show) {
+                progressFill.style.width = '0%';
+            }
+        }
+
+        function updateProgress(percent) {
+            progressFill.style.width = percent + '%';
+        }
+
+        function getFileType(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const types = {
+                'html': 'html',
+                'htm': 'html',
+                'js': 'javascript',
+                'css': 'stylesheet',
+                'png': 'image',
+                'jpg': 'image',
+                'jpeg': 'image',
+                'gif': 'image',
+                'svg': 'image',
+                'json': 'data'
+            };
+            return types[ext] || 'file';
+        }
+
+        function getFileIcon(type) {
+            const icons = {
+                'html': '🌐',
+                'javascript': '📜',
+                'stylesheet': '🎨',
+                'image': '🖼️',
+                'data': '📊',
+                'file': '📄'
+            };
+            return icons[type] || '📄';
+        }
+
+        function displayFiles() {
+            const fileEntries = Object.values(currentFiles);
+            
+            if (fileEntries.length === 0) {
+                filesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📄</div>
+                        <div>No files loaded</div>
+                    </div>
+                `;
+                return;
+            }
+
+            filesList.innerHTML = fileEntries
+                .sort((a, b) => {
+                    // HTML files first, then alphabetically
+                    if (a.type === 'html' && b.type !== 'html') return -1;
+                    if (b.type === 'html' && a.type !== 'html') return 1;
+                    return a.name.localeCompare(b.name);
+                })
+                .map(file => `
+                    <div class="file-item" data-filename="${file.name}">
+                        <span class="file-icon">${getFileIcon(file.type)}</span>
+                        <span>${file.name}</span>
+                    </div>
+                `).join('');
+
+            // Add click events
+            document.querySelectorAll('.file-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.file-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    const filename = item.dataset.filename;
+                    previewFile(filename);
+                });
+            });
+
+            // Auto-select first HTML file
+            const firstHtmlFile = fileEntries.find(f => f.type === 'html');
+            if (firstHtmlFile) {
+                const firstHtmlItem = document.querySelector(`[data-filename="${firstHtmlFile.name}"]`);
+                if (firstHtmlItem) {
+                    firstHtmlItem.click();
+                }
+            }
+        }
+
+        async function previewFile(filename) {
+            const file = currentFiles[filename];
+            if (!file) return;
+
+            clearObjectUrls(); // Clear previous object URLs
+            currentPreviewFile = filename;
+            previewTitle.textContent = `Preview: ${filename}`;
+
+            if (file.type === 'html') {
+                try {
+                    // Read HTML content as text
+                    const htmlContent = await file.content.text();
+                    
+                    // Create an Object URL for each file in the ZIP to resolve relative paths
+                    const htmlBlobURLs = {};
+                    for (const key in currentFiles) {
+                        const blob = currentFiles[key].content;
+                        const blobUrl = URL.createObjectURL(blob);
+                        activeObjectUrls.push(blobUrl); // Store for later revocation
+                        htmlBlobURLs[key] = blobUrl;
+                    }
+
+                    // Dynamically modify the HTML content to use blob URLs
+                    let modifiedHtmlContent = htmlContent;
+                    
+                    // Replace relative paths in the HTML with absolute Blob URLs
+                    // This is a simplified approach and might need refinement for complex cases
+                    Object.keys(htmlBlobURLs).forEach(originalPath => {
+                        // Attempt to replace common relative path patterns
+                        const pathSegments = originalPath.split('/');
+                        const fileName = pathSegments[pathSegments.length - 1];
+
+                        // Replace direct file name references (e.g., <img src="image.png">)
+                        modifiedHtmlContent = modifiedHtmlContent.replace(new RegExp(`(["'])${fileName}(["'])`, 'g'), `$1${htmlBlobURLs[originalPath]}$2`);
+                        
+                        // Replace common relative paths like ../images/image.png or ./js/script.js
+                        // This is a more general but still basic replacement.
+                        // For a robust solution, consider parsing the HTML DOM within the iframe.
+                        modifiedHtmlContent = modifiedHtmlContent.replace(new RegExp(`(["'])(\.{1,2}\/)*${originalPath.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}(["'])`, 'g'), `$1${htmlBlobURLs[originalPath]}$3`);
+
+                        // Replace just the filename without a path (for files in the same directory as index.html)
+                        modifiedHtmlContent = modifiedHtmlContent.replace(new RegExp(`(["'])${fileName}(["'])`, 'g'), `$1${htmlBlobURLs[originalPath]}$2`);
+                    });
+
+                    // Create a Blob for the modified HTML content
+                    const modifiedHtmlBlob = new Blob([modifiedHtmlContent], { type: 'text/html' });
+                    const url = URL.createObjectURL(modifiedHtmlBlob);
+                    activeObjectUrls.push(url); // Store for later revocation
+
+                    previewFrame.innerHTML = `
+                        <div class="banner-container" id="bannerContainer">
+                            <div class="banner-info" id="bannerInfo">Loading...</div>
+                            <iframe class="banner-frame" id="bannerFrame" src="${url}"></iframe>
+                        </div>
+                    `;
+
+                    const bannerFrame = document.getElementById('bannerFrame');
+                    const bannerInfo = document.getElementById('bannerInfo');
+                    
+                    bannerFrame.onload = () => {
+                        let width, height;
+                        try {
+                            const frameDoc = bannerFrame.contentDocument || bannerFrame.contentWindow.document;
+                            const body = frameDoc.body;
+                            if (body) {
+                                // Try to get dimensions from body or direct elements
+                                width = body.scrollWidth > 0 ? body.scrollWidth : (body.clientWidth > 0 ? body.clientWidth : 300);
+                                height = body.scrollHeight > 0 ? body.scrollHeight : (body.clientHeight > 0 ? body.clientHeight : 250);
+                                
+                                // Attempt to find explicit dimensions from meta tags or common ad div
+                                const metaViewport = frameDoc.querySelector('meta[name="viewport"]');
+                                if (metaViewport && metaViewport.content.includes('width=')) {
+                                    const matchWidth = metaViewport.content.match(/width=(\d+)/);
+                                    if (matchWidth) width = parseInt(matchWidth[1]);
+                                    const matchHeight = metaViewport.content.match(/height=(\d+)/);
+                                    if (matchHeight) height = parseInt(matchHeight[1]);
+                                }
+
+                                // Look for common banner div with style (e.g., Google Web Designer output)
+                                const adDiv = frameDoc.querySelector('div[style*="width:"][style*="height:"]');
+                                if (adDiv) {
+                                    const styleWidth = adDiv.style.width;
+                                    const styleHeight = adDiv.style.height;
+                                    if (styleWidth) width = parseInt(styleWidth);
+                                    if (styleHeight) height = parseInt(styleHeight);
+                                }
+                                
+                                bannerFrame.style.width = width + 'px';
+                                bannerFrame.style.height = height + 'px';
+                                bannerInfo.textContent = `${width} × ${height}`;
+                            } else {
+                                bannerInfo.textContent = 'Banner loaded (dimensions unknown)';
+                            }
+                        } catch (e) {
+                            console.warn("Could not access iframe content (possibly due to security restrictions or content not fully loaded):", e);
+                            bannerInfo.textContent = 'Banner loaded (dimensions unknown/error)';
+                            bannerFrame.style.width = '300px'; // Default fallback
+                            bannerFrame.style.height = '250px';
+                        }
+                    };
+
+                    bannerFrame.onerror = () => {
+                        bannerInfo.textContent = 'Error loading banner';
+                        console.error('Iframe failed to load content for:', filename);
+                    };
+
+                } catch (error) {
+                    console.error('Error reading HTML content or creating blob URLs:', error);
+                    previewFrame.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">⚠️</div>
+                            <div>Could not preview HTML file. Error processing content.</div>
+                            <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                                ${error.message}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Enable buttons
+                document.getElementById('refreshBtn').disabled = false;
+                document.getElementById('downloadBtn').disabled = false;
+                document.getElementById('fullscreenBtn').disabled = false;
+                
+            } else if (file.type === 'image') {
+                const url = URL.createObjectURL(file.content);
+                activeObjectUrls.push(url); // Store for later revocation
+
+                previewFrame.innerHTML = `
+                    <div class="banner-container">
+                        <div class="banner-info" id="bannerInfo">Loading image...</div>
+                        <img id="previewImage" src="${url}" style="max-width: 100%; max-height: 100%; border: 1px solid #eee;">
+                    </div>
+                `;
+                const previewImage = document.getElementById('previewImage');
+                const bannerInfo = document.getElementById('bannerInfo');
+
+                previewImage.onload = () => {
+                    bannerInfo.textContent = `${previewImage.naturalWidth} × ${previewImage.naturalHeight} (Image Preview)`;
+                };
+                previewImage.onerror = () => {
+                    bannerInfo.textContent = 'Error loading image';
+                };
+
+                document.getElementById('refreshBtn').disabled = false;
+                document.getElementById('downloadBtn').disabled = false;
+                document.getElementById('fullscreenBtn').disabled = true; // Fullscreen less relevant for raw images
+            } else {
+                // For other file types
+                previewFrame.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">${getFileIcon(file.type)}</div>
+                        <div>${filename}</div>
+                        <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                            ${(file.size / 1024).toFixed(1)} KB
+                        </div>
+                        <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                            (Cannot preview this file type directly)
+                        </div>
+                    </div>
+                `;
+                document.getElementById('refreshBtn').disabled = true;
+                document.getElementById('downloadBtn').disabled = false;
+                document.getElementById('fullscreenBtn').disabled = true;
+            }
+        }
+
+        function refreshPreview() {
+            if (currentPreviewFile) {
+                previewFile(currentPreviewFile);
+                statusText.textContent = 'Preview refreshed';
+            }
+        }
+
+        function clearAll() {
+            if (confirm('Clear all loaded files?')) {
+                currentZip = null;
+                currentFiles = {};
+                currentPreviewFile = null;
+                clearObjectUrls(); // Clear all object URLs
+
+                filesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📄</div>
+                        <div>No files loaded</div>
+                    </div>
+                `;
+                
+                previewFrame.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🖼️</div>
+                        <div>Select an HTML file to preview</div>
+                    </div>
+                `;
+                
+                previewTitle.textContent = 'Preview';
+                fileInfo.style.display = 'none';
+                
+                // Disable buttons
+                document.getElementById('refreshBtn').disabled = true;
+                document.getElementById('downloadBtn').disabled = true;
+                document.getElementById('fullscreenBtn').disabled = true;
+                
+                statusText.textContent = 'Ready - Upload a ZIP file to start';
+            }
+        }
+
+        function downloadCurrentFile() {
+            if (!currentPreviewFile) return;
+            
+            const file = currentFiles[currentPreviewFile];
+            const url = URL.createObjectURL(file.content);
+            activeObjectUrls.push(url); // Add to list to ensure it's eventually revoked
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = file.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // Revoke immediately after download initiated
+            // For longer-lived URLs, consider revoking with clearObjectUrls() or a timeout
+            setTimeout(() => URL.revokeObjectURL(url), 100); 
+            statusText.textContent = `Downloaded ${file.name}`;
+        }
+
+        function openFullscreen() {
+            if (!currentPreviewFile) return;
+            
+            const file = currentFiles[currentPreviewFile];
+            if (file.type === 'html') {
+                const url = URL.createObjectURL(file.content); // New URL for the new window
+                activeObjectUrls.push(url); // Store for eventual revocation
+                const newWindow = window.open(url, '_blank', 'width=800,height=600');
+                
+                // Revoke URL after a short delay, hoping the new window has loaded it
+                setTimeout(() => {
+                    URL.revokeObjectURL(url);
+                    // Also attempt to remove from activeObjectUrls if it's there
+                    const index = activeObjectUrls.indexOf(url);
+                    if (index > -1) {
+                        activeObjectUrls.splice(index, 1);
+                    }
+                }, 1000); // Give the new window a second to load
+            }
+        }
+
+        function resizeBanner(size) {
+            const bannerFrame = document.getElementById('bannerFrame');
+            if (!bannerFrame) return;
+            
+            const [width, height] = size.split('x').map(Number);
+            bannerFrame.style.width = width + 'px';
+            bannerFrame.style.height = height + 'px';
+            
+            const bannerInfo = document.getElementById('bannerInfo');
+            if (bannerInfo) {
+                bannerInfo.textContent = `${width} × ${height}`;
+            }
+        }
+
+        function updateFileInfo(fileCount, zipSizeBytes) {
+            totalFiles.textContent = fileCount;
+            zipSize.textContent = (zipSizeBytes / 1024).toFixed(1) + ' KB';
+            fileInfo.style.display = 'block';
+        }
+
+        function clearObjectUrls() {
+            activeObjectUrls.forEach(url => URL.revokeObjectURL(url));
+            activeObjectUrls = [];
+        }
+
+        // Ensure all object URLs are revoked when the page is closed or navigated away
+        window.addEventListener('beforeunload', clearObjectUrls);
+    </script>
+</body>
+</html>

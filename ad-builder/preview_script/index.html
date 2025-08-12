@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribunnews.com - Cek Materi Script</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #0066B1;
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .editor-container {
+            display: flex;
+            height: 600px;
+        }
+
+        .editor-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #ddd;
+        }
+
+        .editor-header {
+            background: #0f87dd;
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .editor-textarea {
+            flex: 1;
+            border: none;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            background: #fafafa;
+        }
+
+        .preview-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            background: #00b17c;
+            color: white;
+            padding: 10px 15px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-frame {
+            flex: 1;
+            border: none;
+            background: white;
+        }
+
+        .controls {
+            padding: 15px 20px;
+            background: #f0f8ff;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background: #db1f25;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #b8181d;
+        }
+
+        .btn-secondary {
+            background: #0066B1;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #004d85;
+        }
+
+        .status {
+            margin-left: auto;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .ruler {
+            height: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .ruler-marks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+        }
+
+        .ruler-mark {
+            position: absolute;
+            top: 0;
+            width: 1px;
+            height: 15px;
+            background: #ccc;
+        }
+
+        .ruler-number {
+            position: absolute;
+            top: 2px;
+            font-size: 9px;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .editor-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .editor-panel, .preview-panel {
+                min-height: 300px;
+            }
+            
+            .editor-panel {
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            Tribunnews.com - Cek Materi Script
+        </div>
+        
+        <div class="editor-container">
+            <div class="editor-panel">
+                <div class="editor-header">
+                    HTML Code
+                </div>
+                <textarea 
+                    class="editor-textarea" 
+                    id="htmlEditor" 
+                    placeholder="Masukkan kode HTML Anda di sini..."
+                    spellcheck="false"
+                >&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Contoh HTML&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #0066B1; }
+        p { line-height: 1.6; }
+        .highlight { background: #f0f8ff; color: #db1f25; font-weight: bold; }
+        .button { background: #db1f25; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        .button:hover { background: #b8181d; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Selamat Datang di HTML Editor&lt;/h1&gt;
+    &lt;p&gt;Ini adalah &lt;span class="highlight"&gt;contoh&lt;/span&gt; halaman HTML dengan tema baru.&lt;/p&gt;
+    &lt;p&gt;Anda bisa mengubah kode di sebelah kiri dan melihat hasilnya di sini.&lt;/p&gt;
+    &lt;button class="button"&gt;Tombol Interaktif&lt;/button&gt;
+    &lt;ul&gt;
+        &lt;li&gt;Item pertama&lt;/li&gt;
+        &lt;li&gt;Item kedua&lt;/li&gt;
+        &lt;li&gt;Item ketiga&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+            </div>
+            
+            <div class="preview-panel">
+                <div class="preview-header">
+                    <span>Preview</span>
+                    <span id="previewStatus">✓ Live Preview</span>
+                </div>
+                <iframe class="preview-frame" id="previewFrame"></iframe>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" onclick="updatePreview()">
+                Refresh Preview
+            </button>
+            <button class="btn btn-secondary" onclick="clearEditor()">
+                Clear
+            </button>
+            <button class="btn btn-secondary" onclick="copyCode()">
+                Copy Code
+            </button>
+            <button class="btn btn-secondary" onclick="downloadHTML()">
+                Download HTML
+            </button>
+            <div class="status" id="statusText">
+                Ready - Type HTML code to see live preview
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const editor = document.getElementById('htmlEditor');
+        const previewFrame = document.getElementById('previewFrame');
+        const statusText = document.getElementById('statusText');
+        const previewStatus = document.getElementById('previewStatus');
+        
+        let updateTimeout;
+
+        // Initialize
+        window.onload = function() {
+            updatePreview();
+        };
+
+        // Auto-update preview saat mengetik
+        editor.addEventListener('input', function() {
+            clearTimeout(updateTimeout);
+            previewStatus.textContent = '⏳ Updating...';
+            
+            updateTimeout = setTimeout(() => {
+                updatePreview();
+                previewStatus.textContent = '✓ Live Preview';
+            }, 500);
+            
+            updateStatus();
+        });
+
+        function updatePreview() {
+            const htmlCode = editor.value;
+            const blob = new Blob([htmlCode], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            previewFrame.src = url;
+            
+            // Clean up previous URL
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 1000);
+        }
+
+        function clearEditor() {
+            if (confirm('Apakah Anda yakin ingin menghapus semua kode?')) {
+                editor.value = '';
+                updatePreview();
+                updateStatus();
+            }
+        }
+
+        function copyCode() {
+            editor.select();
+            document.execCommand('copy');
+            
+            const originalStatus = statusText.textContent;
+            statusText.textContent = 'Code copied to clipboard!';
+            setTimeout(() => {
+                statusText.textContent = originalStatus;
+            }, 2000);
+        }
+
+        function downloadHTML() {
+            const htmlCode = editor.value;
+            const blob = new Blob([htmlCode], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'my-html-file.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            URL.revokeObjectURL(url);
+            
+            const originalStatus = statusText.textContent;
+            statusText.textContent = 'HTML file downloaded!';
+            setTimeout(() => {
+                statusText.textContent = originalStatus;
+            }, 2000);
+        }
+
+        function updateStatus() {
+            const lines = editor.value.split('\n').length;
+            const chars = editor.value.length;
+            statusText.textContent = `Lines: ${lines} | Characters: ${chars}`;
+        }
+
+        // Keyboard shortcuts
+        editor.addEventListener('keydown', function(e) {
+            // Ctrl+S untuk update preview
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                updatePreview();
+            }
+            
+            // Tab untuk indent
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                
+                this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
+                this.selectionStart = this.selectionEnd = start + 4;
+            }
+        });
+    </script>
+</body>
+</html>

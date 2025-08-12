@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribun - Cek Materi Iklan Cetak</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f8ff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #0066B1;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .upload-section {
+            background: #f8f9fa;
+            border: 2px dashed #ddd;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-section:hover {
+            border-color: #0066B1;
+            background: rgba(0, 102, 177, 0.05);
+        }
+        
+        .upload-section.drag-over {
+            border-color: #0066B1;
+            background: rgba(0, 102, 177, 0.1);
+            transform: scale(1.02);
+        }
+        
+        .upload-icon {
+            font-size: 3em;
+            color: #0066B1;
+            margin-bottom: 20px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: #db1f25;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(219, 31, 37, 0.3);
+            background: #c01e24;
+        }
+        
+        .media-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .media-option {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 15px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .media-option.active {
+            background: #0066B1;
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 102, 177, 0.3);
+        }
+        
+        .preview-section {
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .results {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1em;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .result-value {
+            color: #0066B1;
+            font-weight: 600;
+        }
+        
+        .column-match {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .error {
+            background: #db1f25;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #0066B1;
+            font-size: 1.1em;
+        }
+        
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .specs-table th,
+        .specs-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .specs-table th {
+            background: #0066B1;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .specs-table tr:hover {
+            background: rgba(0, 102, 177, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📰 Cek Materi Iklan Cetak</h1>
+            <p>Upload materi iklan JPG/PNG/TIFF/PDF untuk mengecek ukuran kolom</p>
+        </div>
+        
+        <div class="media-selector">
+            <div class="media-option active" data-media="umum">
+                Tribun Umum
+            </div>
+            <div class="media-option" data-media="jabar">
+                Tribun Jabar
+            </div>
+        </div>
+        
+        <div class="upload-section" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <h3>Drag & Drop file atau klik untuk upload</h3>
+            <p>Mendukung format JPG, PNG, TIFF, dan PDF</p>
+            <input type="file" id="fileInput" class="file-input" accept=".jpg,.jpeg,.png,.pdf,.tiff,.tif">
+            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                Pilih File
+            </button>
+        </div>
+        
+        <div id="previewSection" class="preview-section" style="display: none;">
+            <img id="previewImage" class="preview-image" alt="Preview">
+        </div>
+        
+        <div id="loadingSection" class="loading" style="display: none;">
+            <div>⏳ Menganalisis file...</div>
+        </div>
+        
+        <div id="errorSection" class="error" style="display: none;"></div>
+        
+        <div id="resultsSection" class="results" style="display: none;">
+            <h3 style="margin-bottom: 20px; color: #333;">📊 Hasil Analisis</h3>
+            <div id="resultsList"></div>
+            <div id="columnMatch"></div>
+        </div>
+        
+        <div style="margin-top: 40px;">
+            <h3 style="color: #333; margin-bottom: 15px;">📏 Spesifikasi Ukuran Kolom</h3>
+            <table class="specs-table" id="specsTable">
+                <thead>
+                    <tr>
+                        <th>Kolom</th>
+                        <th>Lebar (mm)</th>
+                    </tr>
+                </thead>
+                <tbody id="specsTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const COLUMN_SPECS = {
+            umum: {
+                name: "Tribun Umum",
+                columns: [
+                    { col: 1, width: 40 },
+                    { col: 2, width: 84 },
+                    { col: 3, width: 128 },
+                    { col: 4, width: 172 },
+                    { col: 5, width: 216 },
+                    { col: 6, width: 260 },
+                    { col: 7, width: 304 }
+                ],
+                maxHeight: 540
+            },
+            jabar: {
+                name: "Tribun Jabar",
+                columns: [
+                    { col: 1, width: 34 },
+                    { col: 2, width: 73 },
+                    { col: 3, width: 112 },
+                    { col: 4, width: 150 },
+                    { col: 5, width: 188 },
+                    { col: 6, width: 227 },
+                    { col: 7, width: 265 },
+                    { col: 8, width: 304 }
+                ],
+                maxHeight: 540
+            }
+        };
+
+        let currentMedia = 'umum';
+        let currentImageDimensions = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSpecsTable();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            const fileInput = document.getElementById('fileInput');
+            const uploadArea = document.getElementById('uploadArea');
+            const mediaOptions = document.querySelectorAll('.media-option');
+
+            // File input change
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('dragleave', handleDragLeave);
+            uploadArea.addEventListener('drop', handleDrop);
+            uploadArea.addEventListener('click', () => fileInput.click());
+
+            // Media selection
+            mediaOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    mediaOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentMedia = this.dataset.media;
+                    updateSpecsTable();
+                    if (currentImageDimensions) {
+                        analyzeImage(currentImageDimensions);
+                    }
+                });
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('uploadArea').classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('uploadArea').classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('uploadArea').classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                processFile(files[0]);
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                processFile(file);
+            }
+        }
+
+        function processFile(file) {
+            hideAllSections();
+            showLoading();
+
+            if (file.type === 'application/pdf') {
+                processPDF(file);
+            } else if (file.type.startsWith('image/') || file.type === 'image/tiff') {
+                processImage(file);
+            } else {
+                showError('Format file tidak didukung. Gunakan JPG, PNG, TIFF, atau PDF.');
+            }
+        }
+
+        function processImage(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const dimensions = {
+                        width: img.naturalWidth,
+                        height: img.naturalHeight,
+                        widthMM: pixelsToMM(img.naturalWidth),
+                        heightMM: pixelsToMM(img.naturalHeight)
+                    };
+                    
+                    currentImageDimensions = dimensions;
+                    showPreview(e.target.result);
+                    analyzeImage(dimensions);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function processPDF(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                const pages = pdfDoc.getPages();
+                const firstPage = pages[0];
+                const { width, height } = firstPage.getSize();
+                
+                // Convert points to mm (1 point = 0.352778 mm)
+                const widthMM = width * 0.352778;
+                const heightMM = height * 0.352778;
+                
+                const dimensions = {
+                    width: Math.round(width),
+                    height: Math.round(height),
+                    widthMM: Math.round(widthMM),
+                    heightMM: Math.round(heightMM)
+                };
+                
+                currentImageDimensions = dimensions;
+                hidePreview();
+                analyzeImage(dimensions);
+            } catch (error) {
+                showError('Error memproses PDF: ' + error.message);
+            }
+        }
+
+        function pixelsToMM(pixels, dpi = 300) {
+            // Convert pixels to mm assuming 300 DPI
+            // 1 inch = 25.4 mm, 1 inch = DPI pixels
+            return Math.round((pixels / dpi) * 25.4);
+        }
+
+        function analyzeImage(dimensions) {
+            hideLoading();
+            const specs = COLUMN_SPECS[currentMedia];
+            
+            // Find best matching column
+            let bestMatch = null;
+            let minDifference = Infinity;
+            
+            specs.columns.forEach(col => {
+                const difference = Math.abs(dimensions.widthMM - col.width);
+                if (difference < minDifference) {
+                    minDifference = difference;
+                    bestMatch = col;
+                }
+            });
+            
+            // Check if height exceeds maximum
+            const heightExceeded = dimensions.heightMM > specs.maxHeight;
+            
+            // Display results
+            displayResults(dimensions, bestMatch, minDifference, heightExceeded, specs);
+        }
+
+        function displayResults(dimensions, bestMatch, difference, heightExceeded, specs) {
+            const resultsList = document.getElementById('resultsList');
+            const columnMatch = document.getElementById('columnMatch');
+            
+            // Calculate differences for width and height
+            const widthDiff = Math.abs(dimensions.widthMM - bestMatch.width);
+            const heightDiff = dimensions.heightMM > specs.maxHeight ? 
+                dimensions.heightMM - specs.maxHeight : 0;
+            
+            // Format width result with difference
+            let widthResult = `${dimensions.widthMM} mm (${dimensions.width}px)`;
+            if (widthDiff > 0) {
+                widthResult += ` - Selisih: ${widthDiff}mm dari ${bestMatch.col} kolom`;
+            }
+            
+            // Format height result with difference
+            let heightResult = `${dimensions.heightMM} mm (${dimensions.height}px)`;
+            if (heightDiff > 0) {
+                heightResult += ` - Kelebihan: ${heightDiff}mm dari batas maksimal`;
+            }
+            
+            resultsList.innerHTML = `
+                <div class="result-item">
+                    <span class="result-label">Lebar Material:</span>
+                    <span class="result-value">${widthResult}</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Tinggi Material:</span>
+                    <span class="result-value">${heightResult}</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Media:</span>
+                    <span class="result-value">${specs.name}</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Tinggi Maksimal:</span>
+                    <span class="result-value">${specs.maxHeight} mm</span>
+                </div>
+            `;
+            
+            let matchText = '';
+            let matchClass = 'column-match';
+            
+            if (difference <= 2) {
+                matchText = `✅ Perfect Match: ${bestMatch.col} Kolom (${bestMatch.width}mm)`;
+            } else if (difference <= 5) {
+                matchText = `✅ Close Match: ${bestMatch.col} Kolom (${bestMatch.width}mm) - Selisih: ${difference}mm`;
+            } else {
+                matchText = `⚠️ Approximate Match: ${bestMatch.col} Kolom (${bestMatch.width}mm) - Selisih: ${difference}mm`;
+                matchClass += ' error';
+            }
+            
+            if (heightExceeded) {
+                matchText += `<br>❌ Tinggi melebihi batas maksimal (${dimensions.heightMM}mm > ${specs.maxHeight}mm)`;
+                matchClass = 'error';
+            }
+            
+            columnMatch.innerHTML = matchText;
+            columnMatch.className = matchClass;
+            
+            showResults();
+        }
+
+        function updateSpecsTable() {
+            const specs = COLUMN_SPECS[currentMedia];
+            const tbody = document.getElementById('specsTableBody');
+            
+            tbody.innerHTML = specs.columns.map(col => `
+                <tr>
+                    <td>${col.col} Kolom</td>
+                    <td>${col.width} mm</td>
+                </tr>
+            `).join('') + `
+                <tr style="background: rgba(0, 102, 177, 0.1);">
+                    <td><strong>Tinggi Maksimal</strong></td>
+                    <td><strong>${specs.maxHeight} mm</strong></td>
+                </tr>
+            `;
+        }
+
+        function showPreview(src) {
+            document.getElementById('previewImage').src = src;
+            document.getElementById('previewSection').style.display = 'block';
+        }
+
+        function hidePreview() {
+            document.getElementById('previewSection').style.display = 'none';
+        }
+
+        function showLoading() {
+            document.getElementById('loadingSection').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSection').style.display = 'none';
+        }
+
+        function showResults() {
+            document.getElementById('resultsSection').style.display = 'block';
+        }
+
+        function showError(message) {
+            document.getElementById('errorSection').textContent = message;
+            document.getElementById('errorSection').style.display = 'block';
+            hideLoading();
+        }
+
+        function hideAllSections() {
+            document.getElementById('previewSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('errorSection').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
