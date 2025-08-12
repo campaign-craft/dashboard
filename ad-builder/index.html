@@ -340,6 +340,31 @@
                 <label for="landingPageUrl">URL Landing Page (Opsional):</label>
                 <input type="text" id="landingPageUrl" placeholder="Contoh: www.example.com atau example.com" onkeyup="updateGenerateButton()">
             </div>
+            
+            <!-- NEW: Logo Replacement Tool -->
+            <div class="form-section">
+                <label for="logoReplacementSelect">Ganti URL Logo (Opsional):</label>
+                <select id="logoReplacementSelect" onchange="updateGenerateButton()">
+                    <option value="default">-- Biarkan Logo Default --</option>
+                    <option value="jabar">Logo Jabar</option>
+                    <option value="bali">Logo Bali</option>
+                    <option value="jateng">Logo Jateng</option>
+                    <option value="serambi">Logo Serambi</option>
+                    <option value="banten">Logo Banten</option>
+                    <option value="surya">Logo Surya</option>
+                    <option value="suryamalang">Logo Surya Malang</option>
+                    <option value="timur">Logo Tribun Timur</option>
+                    <option value="medan">Logo Tribun Medan</option>
+                    <option value="sripo">Logo Sriwijaya Post</option>
+                    <option value="lampung">Logo Tribun Lampung</option>
+                    <option value="banjarmasin">Logo Banjarmasin Post</option>
+                    <option value="papua">Logo Tribun Papua</option>
+                    <option value="jogja">Logo Tribun Jogja</option>
+                    <option value="solo">Logo Tribun Solo</option>
+                </select>
+                <p style="font-size: 0.9em; color: #718096; margin-top: 10px;">*Akan mengganti URL logo 'tribunnews.svg' di template.</p>
+            </div>
+            <!-- END NEW: Logo Replacement Tool -->
 
             <button id="generateBtn" onclick="generateAd()" disabled>
                 🚀 Generate Preview
@@ -365,7 +390,8 @@
             "728x90": { name: "Leaderboard", width: 728, height: 90, template: "template_leaderboard.html" },
             "970x250": { name: "Billboard", width: 970, height: 250, template: "template_billboard.html" },
             "300x600": { name: "Giant Banner (Desktop)", width: 300, height: 600, template: "template_giant_banner_desktop.html" },
-            "300x250_mr1": { name: "MR 1", width: 300, height: 250, template: "template_mr1.html" },
+            "300x250_mr1": { name: "MR 1", width: 300, height: 250, template: "template_medium_rectangle.html" },
+
             "300x250_mr2": { name: "MR 2", width: 300, height: 250, template: "template_mr2.html" },
             "300x250_mr3": { name: "MR 3", width: 300, height: 250, template: "template_mr3.html" },
             "1100x50": { name: "Horizontal Ad (Desktop)", width: 1100, height: 50, template: "template_horizontal_ad_desktop.html" },
@@ -379,6 +405,27 @@
             "300x600_mobile": { name: "Giant Banner (Mobile)", width: 300, height: 600, template: "template_giant_banner_mobile.html" },
             "300x200": { name: "Roll Up", width: 300, height: 200, template: "template_roll_up.html" }
         };
+
+        // NEW: Define logo URLs
+        const logoUrls = {
+            "default": "https://asset-1.tstatic.net/img/logo/tribun/svg/tribunnews.svg",
+            "jabar": "https://asset-1.tstatic.net/img/logo/daerah/svg3/tribunjabar5.svg",
+            "bali": "https://asset-1.tstatic.net/img/logo/daerah/svg3/tribunbali.svg",
+            "jateng": "https://asset-1.tstatic.net/img/logo/daerah/svg3/tribunjateng.svg",
+            "serambi": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/serambiindonesia.svg',
+            "banten": 'https://asset-1.tribunnews.com/img/logo/tribun/svg/tribunbanten2.svg',
+            "surya": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/suryamalang.svg',
+            "suryamalang": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/suryamalang.svg',
+            "timur": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribuntimur.svg',
+            "medan": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunmedan.svg',
+            "sripo": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/sriwijayapost.svg',
+            "lampung": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunlampung.svg',
+            "banjarmasin": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/banjarmasinpost.svg',
+            "papua": 'https://asset-1.tribunnews.com/img/logo/tribun/svg/tribunpapua2.svg',
+            "jogja": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunjogja.svg',
+            "solo": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunsolo.svg'
+        };
+        const defaultTribunnewsLogoUrl = "https://asset-1.tstatic.net/img/logo/tribun/svg/tribunnews.svg";
 
         let selectedImageFile = null;
         let selectedZipFile = null;
@@ -668,152 +715,199 @@
             return urlString;
         }
 
-        async function generateAd() {
-        const select = document.getElementById('adSlotSelect');
-        const iframe = document.getElementById('adPreview');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const adType = getSelectedAdType();
-        const slot = adSlots[select.value];
-        const landingPageUrlInput = document.getElementById('landingPageUrl');
-        let landingPageUrl = landingPageUrlInput.value.trim();
-        landingPageUrl = ensureUrlProtocol(landingPageUrl);
-
-        if (!select.value) {
-            alert('Mohon pilih format iklan terlebih dahulu!');
-            return;
-        }
-
-        clearHtml5BlobUrls();
-
-        iframe.src = 'about:blank';
-        iframe.contentDocument.body.innerHTML = `
-            <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; font-family: Arial, sans-serif;">
-                <div class="spinner"></div>
-                <p style="color: #718096;">Sedang memuat ${adType === 'html5_zip' ? 'file ZIP...' : 'template...'}</p>
-            </div>
-            <style>
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
-                .spinner {
-                    border: 4px solid #f3f3f3; border-top: 4px solid #0066B1; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px;
-                }
-            </style>
-        `;
-
-        try {
-            const response = await fetch(slot.template);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
-            }
-            const htmlContent = await response.text();
+        /**
+         * Replaces a specific logo URL in the given HTML content.
+         * @param {string} htmlString - The HTML content as a string.
+         * @param {string} oldUrl - The URL to be replaced.
+         * @param {string} newUrl - The new URL to replace with.
+         * @returns {string} The HTML content with the logo URL replaced.
+         */
+        function replaceLogoUrl(htmlString, oldUrl, newUrl) {
+            // Create a temporary DOM parser
             const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlContent, 'text/html');
-            
-            // --- MODIFIKASI DIMULAI DI SINI ---
-            const adSlotsInTemplate = doc.querySelectorAll('.ad-slot'); // Menggunakan querySelectorAll
-            
-            if (adSlotsInTemplate.length === 0) {
-                throw new Error('Elemen .ad-slot tidak ditemukan di template. Pastikan template HTML Anda memiliki div dengan class="ad-slot".');
-            }
+            const doc = parser.parseFromString(htmlString, 'text/html');
 
-            let finalAdContentHtml = ''; 
-
-            // Logic untuk mendapatkan finalAdContentHtml tetap sama
-            if (adType === 'image') {
-                if (!selectedImageFile) {
-                    alert('Mohon upload gambar iklan terlebih dahulu!');
-                    return;
-                }
-                const reader = new FileReader();
-                const readPromise = new Promise(resolve => {
-                    reader.onload = e => resolve(e.target.result);
-                    reader.onerror = e => reject(new Error('Failed to read image file.'));
-                });
-                
-                reader.readAsDataURL(selectedImageFile);
-                const imageUrl = await readPromise;
-                
-                finalAdContentHtml = `<img src="${imageUrl}" alt="Advertisement" style="width:100%; height:100%; object-fit:cover; display:block;">`;
-            } 
-            else if (adType === 'script') {
-                const adScriptTextarea = document.getElementById('adScript');
-                const adScriptContent = adScriptTextarea.value.trim();
-
-                if (!adScriptContent) {
-                    alert('Mohon tempel script iklan terlebih dahulu!');
-                    return;
-                }
-                finalAdContentHtml = adScriptContent;
-            }
-            else if (adType === 'html5_zip') {
-                if (!selectedZipFile || Object.keys(html5AdFilesForDownload).length === 0) {
-                    alert('Mohon upload dan tunggu file ZIP HTML5 diproses terlebih dahulu!');
-                    return;
-                }
-
-                for (const path in html5AdFilesForDownload) {
-                    html5AdBlobUrls[path] = URL.createObjectURL(html5AdFilesForDownload[path]);
-                }
-
-                let iframeSrcContent = html5AdOriginalIndexHtmlContent;
-                for (const path in html5AdBlobUrls) {
-                    const filename = path.split('/').pop();
-                    const blobUrl = html5AdBlobUrls[path];
-                    const escapedFilename = filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                    const regex = new RegExp(`(["'])(?!data:|http:\/\/|https:\/\/|ftp:\/\/|file:\/\/\/)(?:\\.\\.\\/)*${escapedFilename}(["'])`, 'g');
-                    iframeSrcContent = iframeSrcContent.replace(regex, `$1${blobUrl}$2`);
-                }
-
-                const htmlBlob = new Blob([iframeSrcContent], { type: 'text/html' });
-                const iframeSrcUrl = URL.createObjectURL(htmlBlob); 
-
-                finalAdContentHtml = `
-                    <iframe src="${iframeSrcUrl}" 
-                            style="width:100%; height:100%; border:none; display:block;"
-                            allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen=""
-                            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation">
-                    </iframe>
-                `;
-            }
-
-            // Loop melalui setiap adSlot yang ditemukan dan sisipkan konten iklan
-            adSlotsInTemplate.forEach(adSlot => {
-                if (landingPageUrl && (adType === 'script' || adType === 'html5_zip')) {
-                    adSlot.innerHTML = `
-                        <div class="ad-overlay-container">
-                            ${finalAdContentHtml}
-                            <a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" class="ad-click-overlay"></a>
-                        </div>
-                    `;
-                } else if (adType === 'image' && landingPageUrl) {
-                    adSlot.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${finalAdContentHtml}</a>`;
-                } else {
-                    adSlot.innerHTML = finalAdContentHtml;
+            // Find all image elements
+            const images = doc.querySelectorAll('img');
+            images.forEach(img => {
+                // Check if the image's src matches the oldUrl
+                if (img.src === oldUrl) {
+                    img.src = newUrl;
                 }
             });
-            // --- MODIFIKASI BERAKHIR DI SINI ---
 
-            generatedHTML = doc.documentElement.outerHTML; 
-            iframe.contentDocument.open();
-            iframe.contentDocument.write(generatedHTML);
-            iframe.contentDocument.close();
-            downloadBtn.disabled = false;
+            // Find all elements that might have background-image style
+            // This is a more general approach, might need refinement based on actual templates
+            const allElements = doc.querySelectorAll('*');
+            allElements.forEach(element => {
+                const style = element.getAttribute('style');
+                if (style && style.includes(`url("${oldUrl}")`)) {
+                    element.style.backgroundImage = `url("${newUrl}")`;
+                }
+            });
 
-        } catch (error) {
-            console.error('Error in generateAd:', error);
-            iframe.contentDocument.body.innerHTML = `
-                <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; font-family: Arial, sans-serif; color: #e53e3e;">
-                    <h2>❌ Error Memuat Iklan</h2>
-                    <p>${error.message}</p>
-                    <p><small>Pastikan format iklan dipilih, gambar/script/ZIP diupload dengan benar. Untuk ZIP, pastikan ada 'index.html' di root.</small></p>
-                </div>
-            `;
-            generatedHTML = null;
-            downloadBtn.disabled = true;
+            // Return the modified HTML string
+            return doc.documentElement.outerHTML;
         }
-    }
+
+
+        async function generateAd() {
+            const select = document.getElementById('adSlotSelect');
+            const iframe = document.getElementById('adPreview');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const adType = getSelectedAdType();
+            const slot = adSlots[select.value];
+            const landingPageUrlInput = document.getElementById('landingPageUrl');
+            let landingPageUrl = landingPageUrlInput.value.trim();
+            landingPageUrl = ensureUrlProtocol(landingPageUrl);
+
+            // NEW: Get selected logo replacement option
+            const logoReplacementSelect = document.getElementById('logoReplacementSelect');
+            const selectedLogoKey = logoReplacementSelect.value;
+            const newLogoUrl = logoUrls[selectedLogoKey];
+
+            if (!select.value) {
+                alert('Mohon pilih format iklan terlebih dahulu!');
+                return;
+            }
+
+            clearHtml5BlobUrls();
+
+            iframe.src = 'about:blank';
+            iframe.contentDocument.body.innerHTML = `
+                <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; font-family: Arial, sans-serif;">
+                    <div class="spinner"></div>
+                    <p style="color: #718096;">Sedang memuat ${adType === 'html5_zip' ? 'file ZIP...' : 'template...'}</p>
+                </div>
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                    .spinner {
+                        border: 4px solid #f3f3f3; border-top: 4px solid #0066B1; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px;
+                    }
+                </style>
+            `;
+
+            try {
+                const response = await fetch(slot.template);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
+                }
+                let htmlContent = await response.text();
+                
+                // NEW: Apply logo replacement if not default
+                if (selectedLogoKey !== 'default') {
+                    htmlContent = replaceLogoUrl(htmlContent, defaultTribunnewsLogoUrl, newLogoUrl);
+                }
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlContent, 'text/html');
+                
+                // --- MODIFIKASI DIMULAI DI SINI ---
+                const adSlotsInTemplate = doc.querySelectorAll('.ad-slot'); // Menggunakan querySelectorAll
+                
+                if (adSlotsInTemplate.length === 0) {
+                    throw new Error('Elemen .ad-slot tidak ditemukan di template. Pastikan template HTML Anda memiliki div dengan class="ad-slot".');
+                }
+
+                let finalAdContentHtml = ''; 
+
+                // Logic untuk mendapatkan finalAdContentHtml tetap sama
+                if (adType === 'image') {
+                    if (!selectedImageFile) {
+                        alert('Mohon upload gambar iklan terlebih dahulu!');
+                        return;
+                    }
+                    const reader = new FileReader();
+                    const readPromise = new Promise(resolve => {
+                        reader.onload = e => resolve(e.target.result);
+                        reader.onerror = e => reject(new Error('Failed to read image file.'));
+                    });
+                    
+                    reader.readAsDataURL(selectedImageFile);
+                    const imageUrl = await readPromise;
+                    
+                    finalAdContentHtml = `<img src="${imageUrl}" alt="Advertisement" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                } 
+                else if (adType === 'script') {
+                    const adScriptTextarea = document.getElementById('adScript');
+                    const adScriptContent = adScriptTextarea.value.trim();
+
+                    if (!adScriptContent) {
+                        alert('Mohon tempel script iklan terlebih dahulu!');
+                        return;
+                    }
+                    finalAdContentHtml = adScriptContent;
+                }
+                else if (adType === 'html5_zip') {
+                    if (!selectedZipFile || Object.keys(html5AdFilesForDownload).length === 0) {
+                        alert('Mohon upload dan tunggu file ZIP HTML5 diproses terlebih dahulu!');
+                        return;
+                    }
+
+                    for (const path in html5AdFilesForDownload) {
+                        html5AdBlobUrls[path] = URL.createObjectURL(html5AdFilesForDownload[path]);
+                    }
+
+                    let iframeSrcContent = html5AdOriginalIndexHtmlContent;
+                    for (const path in html5AdBlobUrls) {
+                        const filename = path.split('/').pop();
+                        const blobUrl = html5AdBlobUrls[path];
+                        const escapedFilename = filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const regex = new RegExp(`(["'])(?!data:|http:\/\/|https:\/\/|ftp:\/\/|file:\/\/\/)(?:\\.\\.\\/)*${escapedFilename}(["'])`, 'g');
+                        iframeSrcContent = iframeSrcContent.replace(regex, `$1${blobUrl}$2`);
+                    }
+
+                    const htmlBlob = new Blob([iframeSrcContent], { type: 'text/html' });
+                    const iframeSrcUrl = URL.createObjectURL(htmlBlob); 
+
+                    finalAdContentHtml = `
+                        <iframe src="${iframeSrcUrl}" 
+                                style="width:100%; height:100%; border:none; display:block;"
+                                allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen=""
+                                sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation">
+                        </iframe>
+                    `;
+                }
+
+                // Loop melalui setiap adSlot yang ditemukan dan sisipkan konten iklan
+                adSlotsInTemplate.forEach(adSlot => {
+                    if (landingPageUrl && (adType === 'script' || adType === 'html5_zip')) {
+                        adSlot.innerHTML = `
+                            <div class="ad-overlay-container">
+                                ${finalAdContentHtml}
+                                <a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" class="ad-click-overlay"></a>
+                            </div>
+                        `;
+                    } else if (adType === 'image' && landingPageUrl) {
+                        adSlot.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${finalAdContentHtml}</a>`;
+                    } else {
+                        adSlot.innerHTML = finalAdContentHtml;
+                    }
+                });
+                // --- MODIFIKASI BERAKHIR DI SINI ---
+
+                generatedHTML = doc.documentElement.outerHTML; 
+                iframe.contentDocument.open();
+                iframe.contentDocument.write(generatedHTML);
+                iframe.contentDocument.close();
+                downloadBtn.disabled = false;
+
+            } catch (error) {
+                console.error('Error in generateAd:', error);
+                iframe.contentDocument.body.innerHTML = `
+                    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; font-family: Arial, sans-serif; color: #e53e3e;">
+                        <h2>❌ Error Memuat Iklan</h2>
+                        <p>${error.message}</p>
+                        <p><small>Pastikan format iklan dipilih, gambar/script/ZIP diupload dengan benar. Untuk ZIP, pastikan ada 'index.html' di root.</small></p>
+                    </div>
+                `;
+                generatedHTML = null;
+                downloadBtn.disabled = true;
+            }
+        }
 
         async function downloadAdContent() {
             const select = document.getElementById('adSlotSelect');
@@ -822,6 +916,11 @@
             const landingPageUrlInput = document.getElementById('landingPageUrl');
             let landingPageUrl = landingPageUrlInput.value.trim();
             landingPageUrl = ensureUrlProtocol(landingPageUrl);
+
+            // NEW: Get selected logo replacement option for download
+            const logoReplacementSelect = document.getElementById('logoReplacementSelect');
+            const selectedLogoKey = logoReplacementSelect.value;
+            const newLogoUrl = logoUrls[selectedLogoKey];
 
             const downloadZip = new JSZip(); // New JSZip instance for the download bundle
 
@@ -878,7 +977,13 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
                 }
-                const templateHtmlContent = await response.text();
+                let templateHtmlContent = await response.text();
+
+                // NEW: Apply logo replacement to the template HTML for download
+                if (selectedLogoKey !== 'default') {
+                    templateHtmlContent = replaceLogoUrl(templateHtmlContent, defaultTribunnewsLogoUrl, newLogoUrl);
+                }
+
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(templateHtmlContent, 'text/html');
                 const adSlot = doc.querySelector('.ad-slot');
@@ -933,7 +1038,13 @@
 
                 // Create a temporary DOM parser to modify the generatedHTML
                 const parser = new DOMParser();
-                const doc = parser.parseFromString(generatedHTML, 'text/html');
+                let doc = parser.parseFromString(generatedHTML, 'text/html');
+
+                // NEW: Apply logo replacement to the generatedHTML (for image ads, this is the main template)
+                if (selectedLogoKey !== 'default') {
+                    doc = parser.parseFromString(replaceLogoUrl(doc.documentElement.outerHTML, defaultTribunnewsLogoUrl, newLogoUrl), 'text/html');
+                }
+
                 const adSlot = doc.querySelector('.ad-slot');
 
                 if (!adSlot) {
@@ -992,10 +1103,19 @@
                     return;
                 }
 
+                // Create a temporary DOM parser to modify the generatedHTML for download
+                const parser = new DOMParser();
+                let doc = parser.parseFromString(generatedHTML, 'text/html');
+
+                // NEW: Apply logo replacement to the generatedHTML (for script ads, this is the main template)
+                if (selectedLogoKey !== 'default') {
+                    doc = parser.parseFromString(replaceLogoUrl(doc.documentElement.outerHTML, defaultTribunnewsLogoUrl, newLogoUrl), 'text/html');
+                }
+
                 const filename = `iklan_script_${slot.name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}.html`;
                 
                 // For script, we simply download the generatedHTML (the modified main template)
-                const blob = new Blob([generatedHTML], { type: 'text/html' });
+                const blob = new Blob([doc.documentElement.outerHTML], { type: 'text/html' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
