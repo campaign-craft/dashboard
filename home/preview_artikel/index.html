@@ -39,6 +39,22 @@
             border-top-left-radius: 0.5rem;
             border-top-right-radius: 0.5rem;
         }
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            background-color: #e2e8f0;
+            color: #4a5568;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .tag-remove {
+            margin-left: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
@@ -46,12 +62,12 @@
     <div class="bg-white rounded-xl shadow-2xl p-8 w-full flex flex-col gap-8" style="max-width: 1400px;">
         <div class="space-y-6">
             <h1 class="text-3xl font-bold text-gray-800">Preview Artikel Tribunnews.com</h1>
-            <p class="text-xs text-blue-500">
+            <p class="text-xs text-gray-500">
                 <a href="https://campaign-craft.github.io/dashboard/home/resize-image-adv/" target="_blank" class="hover:underline">Resize Image Artikel</a>
             </p>
             
             <div>
-                <label for="titleInput" class="block text-sm font-medium text-gray-700">Judul Artikel</label>
+                <label for="titleInput" class="block text-sm font-medium text-blue-700">Judul Artikel</label>
                 <input type="text" id="titleInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
             </div>
 
@@ -89,10 +105,10 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700">Tags (opsional)</label>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-1">
-                    <input type="text" id="tag1Input" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2" placeholder="Tag 1">
-                    <input type="text" id="tag2Input" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2" placeholder="Tag 2">
-                    <input type="text" id="tag3Input" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2" placeholder="Tag 3">
+                <div id="tags-container" class="flex flex-wrap items-center gap-2 mt-1"></div>
+                <div class="flex gap-2 mt-2">
+                    <input type="text" id="tagInput" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2" placeholder="Tambah tag baru">
+                    <button id="addTagButton" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200">Tambah</button>
                 </div>
             </div>
 
@@ -127,9 +143,11 @@
             const editorInput = document.getElementById('editorInput');
             const photoInput = document.getElementById('photoInput');
             const captionInput = document.getElementById('captionInput');
-            const tag1Input = document.getElementById('tag1Input');
-            const tag2Input = document.getElementById('tag2Input');
-            const tag3Input = document.getElementById('tag3Input');
+            
+            // New tag elements
+            const tagsContainer = document.getElementById('tags-container');
+            const tagInput = document.getElementById('tagInput');
+            const addTagButton = document.getElementById('addTagButton');
 
             // Tombol-tombol baru
             const previewDesktopButton = document.getElementById('previewDesktopButton');
@@ -140,6 +158,7 @@
             let photoDataUrl = 'https://placehold.co/800x450/e5e7eb/767676?text=Foto+Artikel';
             let desktopTemplate = '';
             let mobileTemplate = '';
+            let tags = [];
 
             // Inisialisasi Quill.js pada elemen div
             const quill = new Quill('#editor-container', {
@@ -203,9 +222,8 @@
                 const tagSpan = (tagText) => {
                     return tagText ? `<span style="display: inline-block; background-color: #e2e8f0; color: #4a5568; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem;">${tagText.trim()}</span>` : '';
                 };
-                let tag1Html = tagSpan(tag1Input.value);
-                let tag2Html = tagSpan(tag2Input.value);
-                let tag3Html = tagSpan(tag3Input.value);
+                
+                let tagsHtml = tags.map(tag => tagSpan(tag)).join('');
                 
                 let finalHtml = template
                     .replace(/{{judul}}/g, title)
@@ -215,15 +233,52 @@
                     .replace(/{{editor}}/g, editor)
                     .replace(/{{foto}}/g, photoDataUrl)
                     .replace(/{{caption}}/g, caption)
-                    .replace(/{{tag1}}/g, tag1Html)
-                    .replace(/{{tag2}}/g, tag2Html)
-                    .replace(/{{tag3}}/g, tag3Html);
+                    .replace(/{{tag1}}/g, tagsHtml) // Menggunakan tag1 untuk semua tag
+                    .replace(/{{tag2}}/g, '') // Menghapus tag2 dan tag3
+                    .replace(/{{tag3}}/g, '');
 
                 // Menghapus referensi {{sumber}} dari template
                 finalHtml = finalHtml.replace(/{{sumber}}/g, '');
                 
                 return `<!DOCTYPE html><html lang="id"><head><title>${title}</title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>${finalHtml}</body></html>`;
             };
+
+            // Fungsi untuk menambahkan tag
+            const addTag = () => {
+                const tagValue = tagInput.value.trim();
+                if (tagValue && !tags.includes(tagValue)) {
+                    tags.push(tagValue);
+                    renderTags();
+                    tagInput.value = '';
+                }
+            };
+
+            // Fungsi untuk menghapus tag
+            const removeTag = (tagToRemove) => {
+                tags = tags.filter(tag => tag !== tagToRemove);
+                renderTags();
+            };
+
+            // Fungsi untuk menampilkan tag di UI
+            const renderTags = () => {
+                tagsContainer.innerHTML = '';
+                tags.forEach(tag => {
+                    const tagElement = document.createElement('span');
+                    tagElement.classList.add('tag');
+                    tagElement.innerHTML = `${tag}<span class="tag-remove">&times;</span>`;
+                    tagElement.querySelector('.tag-remove').addEventListener('click', () => removeTag(tag));
+                    tagsContainer.appendChild(tagElement);
+                });
+            };
+
+            // Event listeners for tags
+            addTagButton.addEventListener('click', addTag);
+            tagInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    addTag();
+                }
+            });
 
             // Set nilai default untuk input tanggal, penulis, dan editor
             dateInput.value = getFormattedDate();
