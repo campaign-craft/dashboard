@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resize Image Artikel Tribunnews</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-top: 1.5rem;
+            border: 2px dashed #e5e7eb;
+            border-radius: 0.5rem;
+            background-color: #f9fafb;
+        }
+        #imageCanvas {
+            width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+        }
+        .cropper-mask {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .cropper-area {
+            position: absolute;
+            border: 2px solid #3b82f6;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+            cursor: move;
+            pointer-events: auto;
+        }
+        .cropper-handle {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #3b82f6;
+            border: 2px solid white;
+            border-radius: 50%;
+            bottom: -6px;
+            right: -6px;
+            cursor: se-resize;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body onpaste="handlePaste(event)">
+    <div class="container">
+        <h1 class="text-3xl font-bold text-gray-800 text-center mb-4">Resize Image Artikel Tribunnews</h1>
+        <p class="text-sm text-gray-500 mb-6 text-center">
+            Unggah gambar atau tempel dari clipboard untuk memulai.
+        </p>
+
+        <div class="w-full max-w-lg mb-6 flex flex-col items-center">
+            <label class="w-full cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-full transition-colors duration-200 text-center shadow-lg">
+                Unggah Gambar
+                <input type="file" id="imageInput" class="hidden" accept="image/*" />
+            </label>
+            <div id="paste-info" class="text-gray-400 text-sm mt-2">
+                (kalo ga berhasil Unggah/Paste, coba lagi biasanya masih nyangkut😁)
+            </div>
+        </div>
+
+        <div id="controls" class="hidden w-full flex flex-col items-center mb-6">
+            <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-4">
+                <div class="flex items-center space-x-2">
+                    <label for="widthInput" class="text-gray-700">Lebar:</label>
+                    <input type="number" id="widthInput" value="700" class="w-24 px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div class="flex items-center space-x-2">
+                    <label for="heightInput" class="text-gray-700">Tinggi:</label>
+                    <input type="number" id="heightInput" value="393" class="w-24 px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 w-full max-w-sm">
+                <button id="downloadButton" class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-6 rounded-full transition-colors duration-200 text-center shadow-lg mb-2 sm:mb-0">
+                    Unduh Gambar
+                </button>
+                <button id="copyButton" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-full transition-colors duration-200 text-center shadow-lg whitespace-nowrap">
+                    Salin ke Clipboard
+                </button>
+            </div>
+        </div>
+
+        <div id="canvas-wrapper" class="hidden w-full max-w-4xl">
+            <div class="relative w-full overflow-hidden rounded-lg shadow-xl">
+                <canvas id="imageCanvas" class="w-full h-auto"></canvas>
+                <div id="cropper-mask" class="absolute inset-0">
+                    <div id="cropper-area" class="absolute border-2 border-blue-500 bg-black bg-opacity-50">
+                        <div class="cropper-handle"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="preview-container" class="mt-8 hidden w-full">
+                <h2 class="text-xl font-semibold text-gray-800 text-center mb-4">Pratinjau Hasil</h2>
+                <div class="flex justify-center items-center p-2 border-2 border-gray-300 rounded-lg bg-gray-100">
+                    <canvas id="previewCanvas" class="rounded-lg shadow-inner"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const imageCanvas = document.getElementById('imageCanvas');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const controls = document.getElementById('controls');
+        const canvasWrapper = document.getElementById('canvas-wrapper');
+        const downloadButton = document.getElementById('downloadButton');
+        const copyButton = document.getElementById('copyButton');
+        const widthInput = document.getElementById('widthInput');
+        const heightInput = document.getElementById('heightInput');
+        const cropperArea = document.getElementById('cropper-area');
+        const previewContainer = document.getElementById('preview-container');
+        const cropperHandle = cropperArea.querySelector('.cropper-handle');
+
+        let originalImage = null;
+        let scale = 1;
+        let isDragging = false;
+        let isResizing = false;
+        let startX, startY;
+        let aspectRatio;
+
+        const defaultWidth = 700;
+        const defaultHeight = 393;
+
+        // Function to handle image loading
+        function loadImage(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    originalImage = img;
+                    aspectRatio = defaultWidth / defaultHeight;
+                    drawCanvas(img);
+                    setupCropper();
+                    updatePreview();
+                    controls.classList.remove('hidden');
+                    canvasWrapper.classList.remove('hidden');
+                    previewContainer.classList.remove('hidden');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Handle file input change
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                loadImage(file);
+            }
+        });
+
+        // Handle paste event for clipboard images
+        function handlePaste(e) {
+            const clipboardData = e.clipboardData || e.originalEvent.clipboardData;
+            if (clipboardData && clipboardData.items) {
+                for (let i = 0; i < clipboardData.items.length; i++) {
+                    const item = clipboardData.items[i];
+                    if (item.kind === 'file' && item.type.startsWith('image/')) {
+                        const blob = item.getAsFile();
+                        if (blob) {
+                            loadImage(blob);
+                            e.preventDefault();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Draw image on canvas
+        function drawCanvas(img) {
+            const ctx = imageCanvas.getContext('2d');
+            imageCanvas.width = img.naturalWidth;
+            imageCanvas.height = img.naturalHeight;
+            ctx.drawImage(img, 0, 0);
+            
+            // Adjust canvas display size to fit container
+            const containerWidth = canvasWrapper.offsetWidth;
+            scale = containerWidth / img.naturalWidth;
+            imageCanvas.style.width = containerWidth + 'px';
+            imageCanvas.style.height = (img.naturalHeight * scale) + 'px';
+        }
+
+        // Setup and position the cropper area
+        function setupCropper() {
+            const canvasWidth = imageCanvas.offsetWidth;
+            const canvasHeight = imageCanvas.offsetHeight;
+            
+            const cropperWidth = parseInt(widthInput.value, 10);
+            const cropperHeight = parseInt(heightInput.value, 10);
+
+            let displayWidth = cropperWidth * scale;
+            let displayHeight = cropperHeight * scale;
+
+            // Ensure cropper fits within canvas
+            if (displayWidth > canvasWidth) {
+                displayWidth = canvasWidth;
+                displayHeight = displayWidth / aspectRatio;
+            }
+            if (displayHeight > canvasHeight) {
+                displayHeight = canvasHeight;
+                displayWidth = displayHeight * aspectRatio;
+            }
+
+            // Set cropper dimensions and center it
+            cropperArea.style.width = displayWidth + 'px';
+            cropperArea.style.height = displayHeight + 'px';
+            cropperArea.style.left = (canvasWidth - displayWidth) / 2 + 'px';
+            cropperArea.style.top = (canvasHeight - displayHeight) / 2 + 'px';
+
+            updatePreview();
+        }
+
+        // Function to update the preview canvas
+        function updatePreview() {
+            if (!originalImage) return;
+
+            const cropperRect = cropperArea.getBoundingClientRect();
+            const canvasRect = imageCanvas.getBoundingClientRect();
+
+            const x = (cropperRect.left - canvasRect.left) / scale;
+            const y = (cropperRect.top - canvasRect.top) / scale;
+            const width = cropperRect.width / scale;
+            const height = cropperRect.height / scale;
+            
+            previewCanvas.width = defaultWidth;
+            previewCanvas.height = defaultHeight;
+
+            const ctx = previewCanvas.getContext('2d');
+            ctx.drawImage(originalImage, x, y, width, height, 0, 0, previewCanvas.width, previewCanvas.height);
+        }
+
+        // Handle cropper size changes from inputs
+        widthInput.addEventListener('input', () => {
+            const newWidth = parseInt(widthInput.value, 10);
+            const newHeight = newWidth / aspectRatio;
+            heightInput.value = Math.round(newHeight);
+            setupCropper();
+        });
+
+        heightInput.addEventListener('input', () => {
+            const newHeight = parseInt(heightInput.value, 10);
+            const newWidth = newHeight * aspectRatio;
+            widthInput.value = Math.round(newWidth);
+            setupCropper();
+        });
+
+        // Cropper dragging logic
+        cropperArea.addEventListener('mousedown', (e) => {
+            if (e.target === cropperHandle) {
+                isResizing = true;
+                return;
+            }
+            isDragging = true;
+            startX = e.clientX - cropperArea.getBoundingClientRect().left;
+            startY = e.clientY - cropperArea.getBoundingClientRect().top;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            isResizing = false;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging && !isResizing) return;
+
+            const rect = imageCanvas.getBoundingClientRect();
+
+            if (isResizing) {
+                const newWidth = e.clientX - cropperArea.getBoundingClientRect().left;
+                const newHeight = newWidth / aspectRatio;
+                
+                let finalWidth = newWidth;
+                let finalHeight = newHeight;
+
+                if (cropperArea.getBoundingClientRect().left + finalWidth > rect.right) {
+                    finalWidth = rect.right - cropperArea.getBoundingClientRect().left;
+                    finalHeight = finalWidth / aspectRatio;
+                }
+                if (cropperArea.getBoundingClientRect().top + finalHeight > rect.bottom) {
+                    finalHeight = rect.bottom - cropperArea.getBoundingClientRect().top;
+                    finalWidth = finalHeight * aspectRatio;
+                }
+
+                if (finalWidth > 0 && finalHeight > 0) {
+                    cropperArea.style.width = finalWidth + 'px';
+                    cropperArea.style.height = finalHeight + 'px';
+                    widthInput.value = Math.round(finalWidth / scale);
+                    heightInput.value = Math.round(finalHeight / scale);
+                }
+            } else if (isDragging) {
+                const newX = e.clientX - startX;
+                const newY = e.clientY - startY;
+                const cropperRect = cropperArea.getBoundingClientRect();
+
+                let finalX = Math.max(0, Math.min(newX - rect.left, rect.width - cropperRect.width));
+                let finalY = Math.max(0, Math.min(newY - rect.top, rect.height - cropperRect.height));
+
+                cropperArea.style.left = finalX + 'px';
+                cropperArea.style.top = finalY + 'px';
+            }
+            
+            updatePreview();
+        });
+
+        // Download button click handler
+        downloadButton.addEventListener('click', () => {
+            if (!originalImage) {
+                showMessageBox('Mohon unggah gambar terlebih dahulu.');
+                return;
+            }
+
+            const cropperRect = cropperArea.getBoundingClientRect();
+            const canvasRect = imageCanvas.getBoundingClientRect();
+
+            const x = (cropperRect.left - canvasRect.left) / scale;
+            const y = (cropperRect.top - canvasRect.top) / scale;
+            const width = cropperRect.width / scale;
+            const height = cropperRect.height / scale;
+
+            const outputCanvas = document.createElement('canvas');
+            outputCanvas.width = defaultWidth;
+            outputCanvas.height = defaultHeight;
+            const ctx = outputCanvas.getContext('2d');
+            
+            ctx.drawImage(originalImage, x, y, width, height, 0, 0, outputCanvas.width, outputCanvas.height);
+
+            const link = document.createElement('a');
+            link.download = 'cropped_image.png';
+            link.href = outputCanvas.toDataURL('image/png');
+            link.click();
+        });
+
+        // Copy button click handler
+        copyButton.addEventListener('click', () => {
+            if (!originalImage) {
+                showMessageBox('Mohon unggah gambar terlebih dahulu.');
+                return;
+            }
+
+            const cropperRect = cropperArea.getBoundingClientRect();
+            const canvasRect = imageCanvas.getBoundingClientRect();
+
+            const x = (cropperRect.left - canvasRect.left) / scale;
+            const y = (cropperRect.top - canvasRect.top) / scale;
+            const width = cropperRect.width / scale;
+            const height = cropperRect.height / scale;
+
+            const outputCanvas = document.createElement('canvas');
+            outputCanvas.width = defaultWidth;
+            outputCanvas.height = defaultHeight;
+            const ctx = outputCanvas.getContext('2d');
+            
+            ctx.drawImage(originalImage, x, y, width, height, 0, 0, outputCanvas.width, outputCanvas.height);
+            
+            // Convert canvas content to a blob
+            outputCanvas.toBlob((blob) => {
+                if (blob) {
+                    const item = new ClipboardItem({ 'image/png': blob });
+                    navigator.clipboard.write([item]).then(() => {
+                        showMessageBox('Gambar berhasil disalin ke clipboard!');
+                    }).catch(err => {
+                        console.error('Gagal menyalin gambar ke clipboard: ', err);
+                        showMessageBox('Gagal menyalin gambar ke clipboard. Pastikan browser Anda mendukung API ini dan Anda memberikan izin.');
+                    });
+                } else {
+                    showMessageBox('Gagal membuat gambar untuk disalin.');
+                }
+            }, 'image/png');
+        });
+
+        // Helper function to show a custom message box
+        function showMessageBox(message) {
+            const messageBox = document.createElement('div');
+            messageBox.innerHTML = `
+                <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center z-50">
+                    <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+                        <p class="text-lg font-medium text-gray-800 mb-4">${message}</p>
+                        <button onclick="this.parentNode.parentNode.remove()" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-full">OK</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+        }
+    </script>
+</body>
+</html>
