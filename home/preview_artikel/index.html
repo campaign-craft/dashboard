@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generator Artikel</title>
-    <!-- Tailwind CSS CDN untuk styling yang cepat dan responsif -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- CDN Quill.js CSS untuk editor WYSIWYG -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
     <style>
@@ -46,29 +44,35 @@
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
 
     <div class="bg-white rounded-xl shadow-2xl p-8 w-full flex flex-col gap-8" style="max-width: 1400px;">
-        <!-- Bagian Formulir Input -->
         <div class="space-y-6">
             <h1 class="text-3xl font-bold text-gray-800">Preview Artikel Tribunnews.com</h1>
             
-            <!-- Input untuk Judul -->
             <div>
                 <label for="titleInput" class="block text-sm font-medium text-gray-700">Judul Artikel</label>
                 <input type="text" id="titleInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
             </div>
 
-            <!-- Input untuk Isi Artikel, sekarang menggunakan editor Quill.js -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Isi Artikel</label>
                 <div id="editor-container"></div>
             </div>
 
-            <!-- Input untuk Tanggal Tayang -->
             <div>
                 <label for="dateInput" class="block text-sm font-medium text-gray-700">Tanggal Tayang</label>
                 <input type="text" id="dateInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
             </div>
+
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="w-full md:w-1/2">
+                    <label for="authorInput" class="block text-sm font-medium text-gray-700">Penulis</label>
+                    <input type="text" id="authorInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <label for="editorInput" class="block text-sm font-medium text-gray-700">Editor</label>
+                    <input type="text" id="editorInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
+                </div>
+            </div>
             
-            <!-- Input untuk Foto & Caption -->
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="w-full md:w-1/2">
                     <label for="photoInput" class="block text-sm font-medium text-gray-700">Unggah Foto</label>
@@ -80,7 +84,6 @@
                 </div>
             </div>
 
-            <!-- Input untuk Tags -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Tags (opsional)</label>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-1">
@@ -90,7 +93,6 @@
                 </div>
             </div>
 
-            <!-- Tombol Aksi -->
             <div class="flex flex-col gap-4">
                 <div class="flex gap-4">
                     <button id="previewDesktopButton" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors duration-200">
@@ -112,13 +114,14 @@
         </div>
     </div>
 
-    <!-- CDN Quill.js JS -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const titleInput = document.getElementById('titleInput');
             const dateInput = document.getElementById('dateInput');
+            const authorInput = document.getElementById('authorInput');
+            const editorInput = document.getElementById('editorInput');
             const photoInput = document.getElementById('photoInput');
             const captionInput = document.getElementById('captionInput');
             const tag1Input = document.getElementById('tag1Input');
@@ -190,7 +193,9 @@
                 let title = titleInput.value || 'Judul Artikel';
                 let content = quill.root.innerHTML || 'Tulis isi artikel Anda di sini.';
                 let date = dateInput.value;
-                let caption = captionInput.value || 'Caption Foto';
+                let author = authorInput.value || 'Content Writer';
+                let editor = editorInput.value || 'Content Writer';
+                let caption = captionInput.value || 'Istimewa';
                 
                 const tagSpan = (tagText) => {
                     return tagText ? `<span style="display: inline-block; background-color: #e2e8f0; color: #4a5568; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem;">${tagText.trim()}</span>` : '';
@@ -203,6 +208,8 @@
                     .replace(/{{judul}}/g, title)
                     .replace(/{{isi_artikel}}/g, content)
                     .replace(/{{tanggal}}/g, date)
+                    .replace(/{{penulis}}/g, author)
+                    .replace(/{{editor}}/g, editor)
                     .replace(/{{foto}}/g, photoDataUrl)
                     .replace(/{{caption}}/g, caption)
                     .replace(/{{tag1}}/g, tag1Html)
@@ -215,8 +222,11 @@
                 return `<!DOCTYPE html><html lang="id"><head><title>${title}</title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>${finalHtml}</body></html>`;
             };
 
-            // Set nilai default untuk input tanggal
+            // Set nilai default untuk input tanggal, penulis, dan editor
             dateInput.value = getFormattedDate();
+            authorInput.value = "Content Writer";
+            editorInput.value = "Content Writer";
+            captionInput.value = "Istimewa";
 
             // Event listener untuk unggahan foto
             photoInput.addEventListener('change', (event) => {
