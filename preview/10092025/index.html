@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Jakarta</title>
+</head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  #hero {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  #hero img {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-width: 100%;
+  }
+
+  #warning-message {
+    display: none; /* Sembunyikan pesan ini secara default */
+    text-align: center;
+    padding: 20px;
+    font-family: sans-serif;
+    color: #333;
+    font-size: 1.2em;
+  }
+
+  /* Media Query untuk perangkat tablet dan mobile */
+  @media screen and (max-width: 1023px) {
+    #hero {
+      display: none; /* Sembunyikan gambar hero */
+    }
+
+    #warning-message {
+      display: block; /* Tampilkan pesan peringatan */
+    }
+  }
+</style>
+
+
+
+<body>
+    <div id="hero">
+  <img src="img.jpg" alt="preview">
+</div>
+
+<div id="warning-message">
+  <p>Situs ini hanya dapat diakses melalui desktop.</p>
+</div>
+    
+</body>
+</html>
