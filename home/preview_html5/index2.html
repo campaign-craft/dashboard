@@ -469,7 +469,12 @@
             if (files.length > 0 && files[0].name.endsWith('.zip')) {
                 processZipFile(files[0]);
             } else {
-                alert('Please upload a ZIP file');
+                // Custom message box instead of alert()
+                const errorMessage = 'Please upload a ZIP file';
+                const customAlert = document.createElement('div');
+                customAlert.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #db1f25; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000;";
+                customAlert.innerHTML = `<strong>Error!</strong><p>${errorMessage}</p><button onclick="this.parentNode.remove()" style="margin-top: 10px; padding: 5px 10px; background: #db1f25; color: white; border: none; border-radius: 4px;">OK</button>`;
+                document.body.appendChild(customAlert);
             }
         }
 
@@ -478,7 +483,12 @@
             if (file && file.name.endsWith('.zip')) {
                 processZipFile(file);
             } else {
-                alert('Please select a ZIP file');
+                // Custom message box instead of alert()
+                const errorMessage = 'Please select a ZIP file';
+                const customAlert = document.createElement('div');
+                customAlert.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #db1f25; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000;";
+                customAlert.innerHTML = `<strong>Error!</strong><p>${errorMessage}</p><button onclick="this.parentNode.remove()" style="margin-top: 10px; padding: 5px 10px; background: #db1f25; color: white; border: none; border-radius: 4px;">OK</button>`;
+                document.body.appendChild(customAlert);
             }
         }
 
@@ -544,7 +554,7 @@
 
         /**
          * Creates a new ZIP file that includes all original files 
-         * plus a new '_wrapper.html' file.
+         * plus a new '_wrapper.html' file, with banner files moved to a subfolder.
          */
         async function downloadWrapperZip() {
             if (!currentZip || !currentPreviewFile) {
@@ -558,9 +568,9 @@
             }
 
             // 1. Get the main HTML file's name
-            const mainHtmlFileName = currentPreviewFile;
-
-            // 2. Determine Banner Size (optional, but good practice to include in wrapper style)
+            const mainHtmlFileName = currentPreviewFile.split('/').pop();
+            
+            // 2. Determine Banner Size and Folder Name
             let bannerWidth = 300;
             let bannerHeight = 250;
             const bannerFrame = document.getElementById('bannerFrame');
@@ -569,8 +579,14 @@
                 bannerHeight = parseInt(bannerFrame.style.height);
             }
             
+            // Try to extract size from the ZIP name as a fallback for the folder
+            const sizeMatch = currentZipName.match(/(\d{2,4}x\d{2,4})/i);
+            const folderSize = sizeMatch ? sizeMatch[1] : `${bannerWidth}x${bannerHeight}`;
+            
+            const bannerSubFolder = folderSize; // Use size as subfolder name
+
             // 3. Define the HTML content for the wrapper
-            // This wrapper HTML file will be placed directly in the root of the new ZIP.
+            // Note: The iframe src now points to the file inside the subfolder.
             const wrapperHtmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -612,33 +628,35 @@
 </head>
 <body>
     <div class="info">
-        Wrapper HTML (Banner Size: ${bannerWidth}x${bannerHeight})
+        Wrapper HTML (Banner Size: ${bannerWidth}x${bannerHeight}, Folder: /${bannerSubFolder})
     </div>
     <div class="banner-container">
-        <!-- The iframe loads the main banner file directly from the same folder -->
-        <iframe src="./${mainHtmlFileName}"></iframe>
+        <!-- The iframe loads the main banner file from the dedicated subfolder -->
+        <iframe src="./${bannerSubFolder}/${mainHtmlFileName}"></iframe>
     </div>
 </body>
 </html>
 `;
             
-            // 4. Create a new JSZip instance and clone the content
+            // 4. Create a new JSZip instance
             const newZip = new JSZip();
             
-            // Iterate over all files in the currentZip and add them to the new zip
+            // 5. Iterate over all files and move them to the subfolder
             currentZip.forEach((relativePath, zipEntry) => {
                 if (!zipEntry.dir) {
-                    // Use a temporary name for the file blob to avoid re-reading
                     const fileBlob = currentFiles[relativePath].content;
-                    newZip.file(relativePath, fileBlob);
+                    // Extract filename only, ignoring any nested folders in the original ZIP
+                    const baseFileName = relativePath.split('/').pop();
+                    const newPath = `${bannerSubFolder}/${baseFileName}`;
+                    newZip.file(newPath, fileBlob);
                 }
             });
 
-            // 5. Add the new wrapper HTML file
-            const wrapperFileName = `${currentZipName}_wrapper.html`;
+            // 6. Add the new wrapper HTML file to the root
+            const wrapperFileName = `wrapper.html`;
             newZip.file(wrapperFileName, wrapperHtmlContent);
 
-            // 6. Generate the ZIP file
+            // 7. Generate the ZIP file
             statusText.textContent = 'Generating wrapper ZIP...';
             downloadWrapperBtn.disabled = true;
 
@@ -648,7 +666,7 @@
                     statusText.textContent = `Zipping: ${metadata.percent.toFixed(0)}%`;
                 });
 
-                // 7. Trigger the download
+                // 8. Trigger the download
                 const a = document.createElement('a');
                 a.href = URL.createObjectURL(content);
                 a.download = `${currentZipName}_wrapped.zip`;
@@ -656,14 +674,14 @@
                 a.click();
                 document.body.removeChild(a);
                 
-                // 8. Clean up
+                // 9. Clean up
                 URL.revokeObjectURL(a.href); 
                 statusText.textContent = `Wrapper ZIP downloaded: ${a.download}`;
 
             } catch (error) {
                 console.error('Error generating wrapper ZIP:', error);
                 statusText.textContent = 'Error generating wrapper ZIP.';
-                // Menggunakan pesan box kustom sebagai ganti alert()
+                // Custom message box instead of alert()
                 const errorMessage = 'Error generating wrapper ZIP. See console for details.';
                 const customAlert = document.createElement('div');
                 customAlert.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #db1f25; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000;";
@@ -852,59 +870,69 @@
                     const bannerContainer = document.getElementById('bannerContainer');
                     const bannerInfo = document.getElementById('bannerInfo');
 
-                    // Set minimum dimensions before loading
-                    bannerFrame.style.width = '300px'; 
-                    bannerFrame.style.height = '250px';
-                    bannerContainer.style.width = '300px'; 
-                    bannerContainer.style.height = '250px';
+                    // Set default dimensions before loading
+                    let initialWidth = 300;
+                    let initialHeight = 250;
+                    
+                    // Try to detect size from ZIP name first, as a better default
+                    const sizeMatch = currentZipName.match(/(\d{2,4})x(\d{2,4})/i);
+                    if (sizeMatch) {
+                        initialWidth = parseInt(sizeMatch[1]);
+                        initialHeight = parseInt(sizeMatch[2]);
+                    }
+
+                    bannerFrame.style.width = initialWidth + 'px'; 
+                    bannerFrame.style.height = initialHeight + 'px';
+                    bannerContainer.style.width = initialWidth + 'px'; 
+                    bannerContainer.style.height = initialHeight + 'px';
 
                     // Use setTimeout to ensure the iframe content has time to settle
                     bannerFrame.onload = () => {
+                        // Longer delay for script execution, especially crucial for GWD banners
                         setTimeout(() => {
-                            let width = 300, height = 250;
+                            let width = initialWidth;
+                            let height = initialHeight;
+                            
                             try {
                                 const frameDoc = bannerFrame.contentDocument || bannerFrame.contentWindow.document;
-                                const body = frameDoc.body;
                                 
-                                // Try to get dimensions from document body or root elements
-                                if (body && body.scrollWidth > 0 && body.scrollHeight > 0) {
-                                    width = body.scrollWidth;
-                                    height = body.scrollHeight;
+                                // --- PRIORITY 1: Read GWD/Ad Engine Dimensions ---
+                                const adDiv = frameDoc.querySelector('div[style*="width:"][style*="height:"]');
+                                if (adDiv) {
+                                    const styleWidth = parseInt(adDiv.style.width);
+                                    const styleHeight = parseInt(adDiv.style.height);
+                                    if (!isNaN(styleWidth) && styleWidth > 10) width = styleWidth;
+                                    if (!isNaN(styleHeight) && styleHeight > 10) height = styleHeight;
+                                }
 
-                                    // Look for common banner div with style (e.g., Google Web Designer output)
-                                    const adDiv = frameDoc.querySelector('div[style*="width:"][style*="height:"]');
-                                    if (adDiv) {
-                                        const styleWidth = parseInt(adDiv.style.width);
-                                        const styleHeight = parseInt(adDiv.style.height);
-                                        if (!isNaN(styleWidth)) width = styleWidth;
-                                        if (!isNaN(styleHeight)) height = styleHeight;
-                                    } else {
-                                        // Fallback to meta viewport check for responsive banners
-                                        const metaViewport = frameDoc.querySelector('meta[name="viewport"]');
-                                        if (metaViewport && metaViewport.content) {
-                                            const matchWidth = metaViewport.content.match(/width=(\d+)/);
-                                            const matchHeight = metaViewport.content.match(/height=(\d+)/);
-                                            if (matchWidth) width = parseInt(matchWidth[1]);
-                                            if (matchHeight) height = parseInt(matchHeight[1]);
+                                // --- PRIORITY 2: Read Body/Viewport Dimensions ---
+                                if (width === initialWidth && height === initialHeight) {
+                                    const body = frameDoc.body;
+                                    if (body && body.scrollWidth > 0 && body.scrollHeight > 0) {
+                                        let detectedWidth = body.scrollWidth;
+                                        let detectedHeight = body.scrollHeight;
+
+                                        // Simple validation: If detected size is very different from GWD (1x1), use it.
+                                        if (detectedWidth > 10 && detectedHeight > 10) {
+                                            width = detectedWidth;
+                                            height = detectedHeight;
                                         }
                                     }
-
-                                    // Apply dimensions
-                                    bannerFrame.style.width = width + 'px';
-                                    bannerFrame.style.height = height + 'px';
-                                    bannerContainer.style.width = width + 'px';
-                                    bannerContainer.style.height = height + 'px';
-                                    bannerInfo.textContent = `${width} × ${height}`;
-                                } else {
-                                    // Fallback if dimensions are not easily found
-                                    bannerInfo.textContent = 'Banner loaded (dimensions unknown/default)';
                                 }
+
+                                // Apply final dimensions
+                                bannerFrame.style.width = width + 'px';
+                                bannerFrame.style.height = height + 'px';
+                                bannerContainer.style.width = width + 'px';
+                                bannerContainer.style.height = height + 'px';
+                                bannerInfo.textContent = `${width} × ${height}`;
+                                
 
                             } catch (e) {
                                 console.warn("Could not access iframe content (security/content loading issue):", e);
-                                bannerInfo.textContent = 'Banner loaded (dimensions unknown/error)';
+                                bannerInfo.textContent = `Banner loaded (Error reading dimensions, defaulted to ${width}x${height})`;
                             }
-                        }, 50); // Small delay to let all assets and scripts run
+                        }, 500); // Increased delay to 500ms for robust dimension detection
                     };
 
                     bannerFrame.onerror = () => {
