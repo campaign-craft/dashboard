@@ -580,13 +580,21 @@
             }
             
             // Try to extract size from the ZIP name as a fallback for the folder
-            const sizeMatch = currentZipName.match(/(\d{2,4}x\d{2,4})/i);
-            const folderSize = sizeMatch ? sizeMatch[1] : `${bannerWidth}x${bannerHeight}`;
+            const sizeMatch = currentZipName.match(/(\d{2,4})x(\d{2,4})/i);
+            if (sizeMatch) {
+                // Update banner dimensions if found in ZIP name, prioritizing detected dimensions
+                if (bannerWidth <= 10 && bannerHeight <= 10 || bannerWidth === 300 && bannerHeight === 250) {
+                    bannerWidth = parseInt(sizeMatch[1]);
+                    bannerHeight = parseInt(sizeMatch[2]);
+                }
+            }
             
+            const folderSize = `${bannerWidth}x${bannerHeight}`;
             const bannerSubFolder = folderSize; // Use size as subfolder name
+            const wrapperClassName = 'ads'; // Class name as requested in the screenshot
 
-            // 3. Define the HTML content for the wrapper
-            // Note: The iframe src now points to the file inside the subfolder.
+            // 3. Define the HTML content for the minimal wrapper
+            // This now uses the simple, clean CSS from your screenshot
             const wrapperHtmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -594,43 +602,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banner Wrapper Preview</title>
     <style>
-        body {
+        * {
+            padding: 0;
             margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            /* Optional: Centering for display */
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: Arial, sans-serif;
-            flex-direction: column;
         }
-        .banner-container {
+
+        .${wrapperClassName} {
+            /* Banner dimensions are applied here */
             width: ${bannerWidth}px;
             height: ${bannerHeight}px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            border: 1px solid #ccc;
-            background-color: white;
-            position: relative;
         }
+
+        /* Ensure iframe fills the container */
         iframe {
             width: 100%;
             height: 100%;
             border: none;
             display: block;
         }
-        .info {
-            margin-bottom: 15px;
-            font-size: 14px;
-            color: #555;
-        }
     </style>
 </head>
 <body>
-    <div class="info">
-        Wrapper HTML (Banner Size: ${bannerWidth}x${bannerHeight}, Folder: /${bannerSubFolder})
+    <div class="info" style="font-size: 11px; margin-bottom: 5px; color: #666; font-family: sans-serif;">
+        Wrapper: ${bannerWidth}x${bannerHeight}
     </div>
-    <div class="banner-container">
+    <div class="${wrapperClassName}">
         <!-- The iframe loads the main banner file from the dedicated subfolder -->
         <iframe src="./${bannerSubFolder}/${mainHtmlFileName}"></iframe>
     </div>
