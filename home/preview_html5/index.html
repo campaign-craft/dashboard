@@ -573,9 +573,9 @@
 
         /**
          * Creates a new ZIP file that includes all original files 
-         * plus a new 'index.html' (wrapper) file, with banner files moved to a subfolder 
+         * plus a new 'wrapper.html' file, with banner files moved to a subfolder 
          * while preserving their original folder structure.
-         * The index.html now includes an <a> tag around the <iframe> for a click-through URL.
+         * The wrapper.html now includes an <a> tag around the <iframe> for a click-through URL.
          */
         async function downloadWrapperZip() {
             if (!currentZip || !currentPreviewFile) {
@@ -588,8 +588,12 @@
                 return;
             }
 
-            // 1. Dapatkan nama file HTML utama
+            // 1. Dapatkan nama file HTML utama dan jalur dasarnya (base path)
             const mainHtmlFileName = currentPreviewFile.split('/').pop();
+            // Jalur dasar adalah bagian dari currentPreviewFile sebelum nama file.
+            // Contoh: Jika currentPreviewFile = '300x250/index.html', maka basePath = '300x250/'
+            // Jika currentPreviewFile = 'index.html', maka basePath = ''
+            const basePath = currentPreviewFile.substring(0, currentPreviewFile.lastIndexOf('/') + 1);
 
             // 2. Tentukan Ukuran Banner dan Nama Subfolder
             let bannerWidth = 300;
@@ -617,14 +621,12 @@
             const defaultLandingPage = 'https://www.yourlandingpage.com'; 
             const customLandingPage = landingPageInput.value.trim();
             const finalLandingPage = customLandingPage || defaultLandingPage; // Gunakan input kustom, atau default jika kosong
-            
-            // NAMA FILE WRAPPER UTAMA
-            const wrapperFileName = `index.html`; // <--- PERUBAHAN DI SINI
 
             // 3. Tentukan jalur ke file HTML utama di dalam wrapper baru
-            // newPathForIframe adalah jalur yang harus digunakan iframe di index.html (wrapper) untuk memuat file HTML utama.
-            const relativePathInsideSubfolder = currentPreviewFile; // File HTML asli (mungkin termasuk subfolder internal)
-            // Karena index.html (wrapper) berada di root ZIP, ia memuat file dari subfolder:
+            // Jika basePath = '300x250/', file HTML baru akan diakses melalui './300x250/300x250/index.html'
+            // Kita harus menghapus basePath, karena semua file di dalam basePath akan dipindahkan ke folderSubFolder.
+            // newPathForIframe adalah jalur yang harus digunakan iframe di wrapper.html untuk memuat file HTML utama.
+            const relativePathInsideSubfolder = currentPreviewFile; // Tidak perlu memotong basePath lagi, karena kita memindahkan semua file
             const newPathForIframe = `./${bannerSubFolder}/${relativePathInsideSubfolder}`;
             
             // 4. Definisikan konten HTML untuk wrapper minimal
@@ -633,7 +635,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banner Wrapper</title>
+    <title>Banner Wrapper Preview</title>
     <style>
         * {
             padding: 0;
@@ -708,7 +710,7 @@
             });
 
             // 7. Tambahkan file wrapper HTML baru ke root
-            // Gunakan wrapperFileName yang baru (index.html)
+            const wrapperFileName = `wrapper.html`;
             newZip.file(wrapperFileName, wrapperHtmlContent);
 
             // 8. Hasilkan file ZIP
