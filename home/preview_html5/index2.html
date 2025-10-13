@@ -218,6 +218,39 @@
             align-items: center;
             flex-wrap: wrap;
         }
+        
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            color: #333;
+            margin-right: 5px;
+            font-weight: bold;
+        }
+
+        .input-group input {
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 300px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #0066B1;
+            outline: none;
+        }
+
 
         .btn {
             padding: 8px 16px;
@@ -306,6 +339,16 @@
             .preview-panel {
                 min-height: 400px;
             }
+
+            .control-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .input-group input {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -366,23 +409,32 @@
         </div>
         
         <div class="controls">
-            <button class="btn btn-primary" id="refreshBtn" disabled>
-                Refresh Preview
-            </button>
-            <button class="btn btn-secondary" id="clearBtn">
-                Clear All
-            </button>
-            <button class="btn btn-secondary" id="downloadBtn" disabled>
-                Download Current File
-            </button>
-            <!-- NEW BUTTON FOR WRAPPER DOWNLOAD -->
-            <button class="btn btn-secondary" id="downloadWrapperBtn" disabled>
-                Download Wrapper ZIP
-            </button>
-            <!-- END NEW BUTTON -->
-            <button class="btn btn-secondary" id="fullscreenBtn" disabled>
-                Fullscreen Preview
-            </button>
+            <!-- INPUT FIELD FOR CLICKTAG URL -->
+            <div class="input-group">
+                <label for="clickTagInput">Landing Page URL (ClickTag):</label>
+                <input type="url" id="clickTagInput" value="https://example.com/landing-page" placeholder="https://..." required>
+            </div>
+            <!-- END INPUT FIELD -->
+
+            <div class="control-group">
+                <button class="btn btn-primary" id="refreshBtn" disabled>
+                    Refresh Preview
+                </button>
+                <button class="btn btn-secondary" id="clearBtn">
+                    Clear All
+                </button>
+                <button class="btn btn-secondary" id="downloadBtn" disabled>
+                    Download Current File
+                </button>
+                <!-- NEW BUTTON FOR WRAPPER DOWNLOAD -->
+                <button class="btn btn-secondary" id="downloadWrapperBtn" disabled>
+                    Download Wrapper ZIP
+                </button>
+                <!-- END NEW BUTTON -->
+                <button class="btn btn-secondary" id="fullscreenBtn" disabled>
+                    Fullscreen Preview
+                </button>
+            </div>
             <div class="status" id="statusText">
                 Ready - Upload a ZIP file to start
             </div>
@@ -408,6 +460,7 @@
         const fileInfo = document.getElementById('fileInfo');
         const totalFiles = document.getElementById('totalFiles');
         const zipSize = document.getElementById('zipSize');
+        const clickTagInput = document.getElementById('clickTagInput'); // New input reference
 
         // New button reference
         const downloadWrapperBtn = document.getElementById('downloadWrapperBtn');
@@ -567,6 +620,17 @@
                 return;
             }
 
+            const landingPageUrl = clickTagInput.value.trim();
+            if (landingPageUrl === '') {
+                 // Custom message box for missing URL
+                const errorMessage = 'Please enter a Landing Page URL (ClickTag) before downloading the wrapper ZIP.';
+                const customAlert = document.createElement('div');
+                customAlert.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #db1f25; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000;";
+                customAlert.innerHTML = `<strong>Warning!</strong><p>${errorMessage}</p><button onclick="this.parentNode.remove()" style="margin-top: 10px; padding: 5px 10px; background: #db1f25; color: white; border: none; border-radius: 4px;">OK</button>`;
+                document.body.appendChild(customAlert);
+                return;
+            }
+
             // 1. Get the main HTML file's name
             const mainHtmlFileName = currentPreviewFile.split('/').pop();
             
@@ -591,16 +655,19 @@
             
             const folderSize = `${bannerWidth}x${bannerHeight}`;
             const bannerSubFolder = folderSize; // Use size as subfolder name
-            const wrapperClassName = 'ads'; // Class name as requested in the screenshot
+            const wrapperClassName = 'ads'; // Class name for banner container
 
-            // 3. Define the HTML content for the minimal wrapper
-            // CSS has been simplified and 'div.info' element removed from the body.
+            // 3. Define the HTML content for the minimal wrapper with clickTag
             const wrapperHtmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banner Wrapper Preview</title>
+    <script type="text/javascript">
+        // Variable ini akan diisi dengan URL Landing Page yang diinput pengguna
+        var clickTag = "${landingPageUrl}";
+    </script>
     <style>
         * {
             padding: 0;
@@ -610,13 +677,32 @@
         body {
             padding: 0;
             margin: 0;
-            /* Centering style is removed here, aligning with the user's request. */
         }
 
         .${wrapperClassName} {
             /* Banner dimensions are applied here */
             width: ${bannerWidth}px;
             height: ${bannerHeight}px;
+            position: relative; /* Penting untuk menempatkan overlay click di atas iframe */
+        }
+        
+        .canvas {
+            width: ${bannerWidth}px;
+            height: ${bannerHeight}px;
+            position: relative;
+        }
+
+        /* Tombol/Area klik transparan yang menutupi seluruh banner */
+        .click-overlay {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 99999; 
+            opacity: 0; /* Membuat overlay tidak terlihat */
+            background-color: #000; /* Warna dasar (opsional) */
+            cursor: pointer;
         }
 
         /* Ensure iframe fills the container */
@@ -630,8 +716,14 @@
 </head>
 <body>
     <div class="${wrapperClassName}">
-        <!-- The iframe loads the main banner file from the dedicated subfolder -->
-        <iframe src="./${bannerSubFolder}/${mainHtmlFileName}"></iframe>
+        <div class="canvas">
+            <a href="javascript:window.open(window.clickTag, '_blank')" target="_blank">
+                <!-- Overlay transparan untuk menangkap klik -->
+                <div class="click-overlay"></div>
+                <!-- Iframe memuat banner utama dari subfolder -->
+                <iframe src="./${bannerSubFolder}/${mainHtmlFileName}" frameborder="0" width="${bannerWidth}px" height="${bannerHeight}px" scrolling="no"></iframe>
+            </a>
+        </div>
     </div>
 </body>
 </html>
