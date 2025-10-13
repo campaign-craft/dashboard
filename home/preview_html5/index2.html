@@ -554,7 +554,8 @@
 
         /**
          * Creates a new ZIP file that includes all original files 
-         * plus a new '_wrapper.html' file, with banner files moved to a subfolder.
+         * plus a new 'wrapper.html' file, with banner files moved to a subfolder.
+         * The wrapper.html now includes an <a> tag around the <iframe> for a click-through URL.
          */
         async function downloadWrapperZip() {
             if (!currentZip || !currentPreviewFile) {
@@ -592,9 +593,10 @@
             const folderSize = `${bannerWidth}x${bannerHeight}`;
             const bannerSubFolder = folderSize; // Use size as subfolder name
             const wrapperClassName = 'ads'; // Class name as requested in the screenshot
+            const landingPagePlaceholder = 'https://www.yourlandingpage.com'; // Placeholder URL
 
             // 3. Define the HTML content for the minimal wrapper
-            // CSS has been simplified and 'div.info' element removed from the body.
+            // MODIFIKASI UTAMA: Menambahkan tag <a> di sekitar <iframe>.
             const wrapperHtmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -610,28 +612,46 @@
         body {
             padding: 0;
             margin: 0;
-            /* Centering style is removed here, aligning with the user's request. */
         }
 
         .${wrapperClassName} {
             /* Banner dimensions are applied here */
             width: ${bannerWidth}px;
             height: ${bannerHeight}px;
+            position: relative; /* Penting untuk positioning tag <a> */
+            display: block; /* Memastikan div mengambil dimensi */
+        }
+        
+        /* Gaya untuk tag <a> agar menutupi seluruh area iklan */
+        .${wrapperClassName} a {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10; /* Memastikan <a> di atas iframe */
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
         }
 
-        /* Ensure iframe fills the container */
+        /* Ensure iframe fills the container and doesn't interfere with the <a> click */
         iframe {
             width: 100%;
             height: 100%;
             border: none;
             display: block;
+            pointer-events: none; /* MEMATIKAN KLIK PADA IFRAME */
         }
     </style>
 </head>
 <body>
     <div class="${wrapperClassName}">
-        <!-- The iframe loads the main banner file from the dedicated subfolder -->
-        <iframe src="./${bannerSubFolder}/${mainHtmlFileName}"></iframe>
+        <!-- Tag <a> dibungkus di sekitar iframe untuk landing page -->
+        <a href="${landingPagePlaceholder}" target="_blank">
+            <!-- The iframe loads the main banner file from the dedicated subfolder -->
+            <iframe src="./${bannerSubFolder}/${mainHtmlFileName}"></iframe>
+        </a>
     </div>
 </body>
 </html>
