@@ -218,6 +218,16 @@
             align-items: center;
             flex-wrap: wrap;
         }
+        
+        /* Style untuk input URL agar terlihat menyatu */
+        .controls input[type="url"] {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            flex-grow: 1; /* Biarkan input mengambil ruang yang tersedia */
+            min-width: 250px;
+        }
 
         .btn {
             padding: 8px 16px;
@@ -366,6 +376,9 @@
         </div>
         
         <div class="controls">
+            <!-- INPUT BARU UNTUK LANDING PAGE -->
+            <input type="url" id="landingPageInput" placeholder="Enter custom landing page URL (e.g., https://example.com)" />
+            
             <button class="btn btn-primary" id="refreshBtn" disabled>
                 Refresh Preview
             </button>
@@ -375,6 +388,11 @@
             <button class="btn btn-secondary" id="downloadBtn" disabled>
                 Download Current File
             </button>
+            <!-- NEW BUTTON FOR WRAPPER DOWNLOAD -->
+            <button class="btn btn-secondary" id="downloadWrapperBtn" disabled>
+                Download Wrapper ZIP
+            </button>
+            <!-- END NEW BUTTON -->
             <button class="btn btn-secondary" id="fullscreenBtn" disabled>
                 Fullscreen Preview
             </button>
@@ -389,7 +407,8 @@
         let currentZip = null;
         let currentFiles = {};
         let currentPreviewFile = null;
-        let activeObjectUrls = []; // To keep track of created object URLs for revocation
+        let activeObjectUrls = []; 
+        let currentZipName = ''; // Store the original ZIP name
 
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
@@ -402,6 +421,11 @@
         const fileInfo = document.getElementById('fileInfo');
         const totalFiles = document.getElementById('totalFiles');
         const zipSize = document.getElementById('zipSize');
+        // Referensi elemen baru
+        const landingPageInput = document.getElementById('landingPageInput');
+
+        // New button reference
+        const downloadWrapperBtn = document.getElementById('downloadWrapperBtn');
 
         // Upload area events
         uploadArea.addEventListener('click', () => fileInput.click());
@@ -415,6 +439,9 @@
         document.getElementById('clearBtn').addEventListener('click', clearAll);
         document.getElementById('downloadBtn').addEventListener('click', downloadCurrentFile);
         document.getElementById('fullscreenBtn').addEventListener('click', openFullscreen);
+        
+        // New button event
+        downloadWrapperBtn.addEventListener('click', downloadWrapperZip);
 
         // Size buttons
         document.querySelectorAll('.size-btn').forEach(btn => {
@@ -430,7 +457,7 @@
                     } else {
                         // Re-activate the previously active button or default
                         const currentActive = document.querySelector('.size-btn.active');
-                        if (!currentActive) { // If no button was active before custom
+                        if (!currentActive) { 
                             document.querySelector('[data-size="300x250"]').classList.add('active');
                         }
                     }
@@ -457,7 +484,12 @@
             if (files.length > 0 && files[0].name.endsWith('.zip')) {
                 processZipFile(files[0]);
             } else {
-                alert('Please upload a ZIP file');
+                // Custom message box instead of alert()
+                const errorMessage = 'Please upload a ZIP file';
+                const customAlert = document.createElement('div');
+                customAlert.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #db1f25; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000;";
+                customAlert.innerHTML = `<strong>Error!</strong><p>${errorMessage}</p><button onclick="this.parentNode.remove()" style="margin-top: 10px; padding: 5px 10px; background: #db1f25; color: white; border: none; border-radius: 4px;">OK</button>`;
+                document.body.appendChild(customAlert);
             }
         }
 
@@ -466,20 +498,26 @@
             if (file && file.name.endsWith('.zip')) {
                 processZipFile(file);
             } else {
-                alert('Please select a ZIP file');
+                // Custom message box instead of alert()
+                const errorMessage = 'Please select a ZIP file';
+                const customAlert = document.createElement('div');
+                customAlert.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #db1f25; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000;";
+                customAlert.innerHTML = `<strong>Error!</strong><p>${errorMessage}</p><button onclick="this.parentNode.remove()" style="margin-top: 10px; padding: 5px 10px; background: #db1f25; color: white; border: none; border-radius: 4px;">OK</button>`;
+                document.body.appendChild(customAlert);
             }
         }
 
         async function processZipFile(file) {
             clearObjectUrls(); // Clear existing URLs before processing new ZIP
+            currentZipName = file.name.replace('.zip', ''); // Store original name
             showProgress(true);
             statusText.textContent = 'Processing ZIP file...';
             
             try {
                 const zip = new JSZip();
                 const zipContent = await zip.loadAsync(file, { update: (metadata) => {
-                    updateProgress(metadata.percent);
-                    statusText.textContent = `Extracting: ${metadata.percent.toFixed(0)}%`;
+                    updateProgress(metadata.percent * 0.5); // Load progress 0-50%
+                    statusText.textContent = `Loading: ${metadata.percent.toFixed(0)}%`;
                 }});
                 
                 currentZip = zipContent;
@@ -488,6 +526,7 @@
                 const files = [];
                 // Collect all files first
                 zipContent.forEach((relativePath, zipEntry) => {
+                    // Hanya memproses file, bukan folder
                     if (!zipEntry.dir) {
                         files.push({
                             name: relativePath,
@@ -499,6 +538,9 @@
                 // Extract content for each file
                 let processedCount = 0;
                 for (const fileData of files) {
+                    // Menggunakan content.content alih-alih fileData.entry.async('blob') 
+                    // karena fileData.entry.async('blob') dapat gagal dalam beberapa kasus.
+                    // Namun, karena kode asli menggunakan ini, kita pertahankan dan bungkus dengan try/catch.
                     const content = await fileData.entry.async('blob');
                     currentFiles[fileData.name] = {
                         name: fileData.name,
@@ -513,16 +555,199 @@
 
                 displayFiles();
                 updateFileInfo(files.length, file.size);
-                statusText.textContent = `Loaded ${files.length} files from ZIP`;
+                statusText.textContent = `Loaded ${files.length} files from ZIP: ${currentZipName}`;
                 
             } catch (error) {
                 console.error('Error processing ZIP:', error);
                 statusText.textContent = 'Error processing ZIP file';
-                alert('Error processing ZIP file. Please check if it\'s a valid ZIP.');
+                // Menggunakan pesan box kustom sebagai ganti alert()
+                const errorMessage = 'Error processing ZIP file. Please check if it\'s a valid ZIP.';
+                const customAlert = document.createElement('div');
+                customAlert.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #db1f25; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000;";
+                customAlert.innerHTML = `<strong>Error!</strong><p>${errorMessage}</p><button onclick="this.parentNode.remove()" style="margin-top: 10px; padding: 5px 10px; background: #db1f25; color: white; border: none; border-radius: 4px;">OK</button>`;
+                document.body.appendChild(customAlert);
             } finally {
                 showProgress(false);
             }
         }
+
+        /**
+         * Creates a new ZIP file that includes all original files 
+         * plus a new 'index.html' (wrapper) file, with banner files moved to a subfolder 
+         * while preserving their original folder structure.
+         * The index.html now includes an <a> tag around the <iframe> for a click-through URL.
+         */
+        async function downloadWrapperZip() {
+            if (!currentZip || !currentPreviewFile) {
+                // Menggunakan pesan box kustom sebagai ganti alert()
+                const errorMessage = 'Please load a ZIP file and select an HTML file to create a wrapper.';
+                const customAlert = document.createElement('div');
+                customAlert.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #0066B1; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000;";
+                customAlert.innerHTML = `<strong>Error!</strong><p>${errorMessage}</p><button onclick="this.parentNode.remove()" style="margin-top: 10px; padding: 5px 10px; background: #0066B1; color: white; border: none; border-radius: 4px;">OK</button>`;
+                document.body.appendChild(customAlert);
+                return;
+            }
+
+            // 1. Dapatkan nama file HTML utama
+            const mainHtmlFileName = currentPreviewFile.split('/').pop();
+
+            // 2. Tentukan Ukuran Banner dan Nama Subfolder
+            let bannerWidth = 300;
+            let bannerHeight = 250;
+            const bannerFrame = document.getElementById('bannerFrame');
+            if (bannerFrame && bannerFrame.style.width) {
+                bannerWidth = parseInt(bannerFrame.style.width);
+                bannerHeight = parseInt(bannerFrame.style.height);
+            }
+            
+            // Coba ekstrak ukuran dari nama ZIP sebagai fallback
+            const sizeMatch = currentZipName.match(/(\d{2,4})x(\d{2,4})/i);
+            if (sizeMatch) {
+                if (bannerWidth <= 10 && bannerHeight <= 10 || bannerWidth === 300 && bannerHeight === 250) {
+                    bannerWidth = parseInt(sizeMatch[1]);
+                    bannerHeight = parseInt(sizeMatch[2]);
+                }
+            }
+            
+            const folderSize = `${bannerWidth}x${bannerHeight}`;
+            const bannerSubFolder = folderSize; // Gunakan ukuran sebagai nama subfolder wrapper
+            const wrapperClassName = 'ads'; 
+            
+            // AMBIL URL LANDING PAGE DARI INPUT BARU
+            const defaultLandingPage = 'https://www.yourlandingpage.com'; 
+            const customLandingPage = landingPageInput.value.trim();
+            const finalLandingPage = customLandingPage || defaultLandingPage; // Gunakan input kustom, atau default jika kosong
+            
+            // NAMA FILE WRAPPER UTAMA
+            const wrapperFileName = `index.html`; // <--- PERUBAHAN DI SINI
+
+            // 3. Tentukan jalur ke file HTML utama di dalam wrapper baru
+            // newPathForIframe adalah jalur yang harus digunakan iframe di index.html (wrapper) untuk memuat file HTML utama.
+            const relativePathInsideSubfolder = currentPreviewFile; // File HTML asli (mungkin termasuk subfolder internal)
+            // Karena index.html (wrapper) berada di root ZIP, ia memuat file dari subfolder:
+            const newPathForIframe = `./${bannerSubFolder}/${relativePathInsideSubfolder}`;
+            
+            // 4. Definisikan konten HTML untuk wrapper minimal
+            const wrapperHtmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner Wrapper</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .${wrapperClassName} {
+            /* Banner dimensions are applied here */
+            width: ${bannerWidth}px;
+            height: ${bannerHeight}px;
+            position: relative; /* Penting untuk positioning tag <a> */
+            display: block; /* Memastikan div mengambil dimensi */
+        }
+        
+        /* Gaya untuk tag <a> agar menutupi seluruh area iklan */
+        .${wrapperClassName} a {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10; /* Memastikan <a> di atas iframe */
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
+        }
+
+        /* Ensure iframe fills the container and doesn't interfere with the <a> click */
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            pointer-events: none; /* MEMATIKAN KLIK PADA IFRAME agar klik diarahkan ke tag <a> */
+        }
+    </style>
+</head>
+<body>
+    <div class="${wrapperClassName}">
+        <!-- Tag <a> dibungkus di sekitar iframe untuk landing page -->
+        <a href="${finalLandingPage}" target="_blank">
+            <!-- Iframe memuat file HTML utama dari subfolder, mempertahankan struktur aslinya -->
+            <iframe src="${newPathForIframe}"></iframe>
+        </a>
+    </div>
+</body>
+</html>
+`;
+            
+            // 5. Buat instance JSZip baru
+            const newZip = new JSZip();
+            
+            // 6. Ulangi semua file dan pindahkan ke subfolder, PERTAHANKAN JALUR RELATIFNYA
+            currentZip.forEach((relativePath, zipEntry) => {
+                if (!zipEntry.dir) {
+                    const fileBlob = currentFiles[relativePath].content;
+                    // newPath mempertahankan folder relatif/bersarang ASLI
+                    // Contoh:
+                    // Jika relativePath = 'index.html', newPath = '300x250/index.html'
+                    // Jika relativePath = 'images/logo.png', newPath = '300x250/images/logo.png'
+                    const newPath = `${bannerSubFolder}/${relativePath}`;
+                    newZip.file(newPath, fileBlob);
+                } else if (relativePath !== '') {
+                    // Tambahkan folder kosong untuk memastikan struktur folder (opsional, JSZip biasanya mengurus ini)
+                    newZip.folder(`${bannerSubFolder}/${relativePath}`);
+                }
+            });
+
+            // 7. Tambahkan file wrapper HTML baru ke root
+            // Gunakan wrapperFileName yang baru (index.html)
+            newZip.file(wrapperFileName, wrapperHtmlContent);
+
+            // 8. Hasilkan file ZIP
+            statusText.textContent = 'Generating wrapper ZIP...';
+            downloadWrapperBtn.disabled = true;
+
+            try {
+                const content = await newZip.generateAsync({ type: "blob" }, (metadata) => {
+                    updateProgress(metadata.percent);
+                    statusText.textContent = `Zipping: ${metadata.percent.toFixed(0)}%`;
+                });
+
+                // 9. Picu pengunduhan
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(content);
+                a.download = `${currentZipName}_wrapped.zip`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                // 10. Bersihkan
+                URL.revokeObjectURL(a.href); 
+                statusText.textContent = `Wrapper ZIP downloaded: ${a.download}`;
+
+            } catch (error) {
+                console.error('Error generating wrapper ZIP:', error);
+                statusText.textContent = 'Error generating wrapper ZIP.';
+                // Custom message box instead of alert()
+                const errorMessage = 'Error generating wrapper ZIP. See console for details.';
+                const customAlert = document.createElement('div');
+                customAlert.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #db1f25; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000;";
+                customAlert.innerHTML = `<strong>Error!</strong><p>${errorMessage}</p><button onclick="this.parentNode.remove()" style="margin-top: 10px; padding: 5px 10px; background: #db1f25; color: white; border: none; border-radius: 4px;">OK</button>`;
+                document.body.appendChild(customAlert);
+            } finally {
+                downloadWrapperBtn.disabled = false;
+                showProgress(false);
+            }
+        }
+
 
         function showProgress(show) {
             progressBar.style.display = show ? 'block' : 'none';
@@ -620,12 +845,15 @@
             currentPreviewFile = filename;
             previewTitle.textContent = `Preview: ${filename}`;
 
-            if (file.type === 'html') {
+            // Check if the file being previewed is HTML
+            const isHtml = file.type === 'html';
+
+            if (isHtml) {
                 try {
                     // Read HTML content as text
                     const htmlContent = await file.content.text();
                     
-                    // Create an Object URL for each file in the ZIP to resolve relative paths
+                    // 1. Create Object URLs for all assets
                     const htmlBlobURLs = {};
                     for (const key in currentFiles) {
                         const blob = currentFiles[key].content;
@@ -634,27 +862,52 @@
                         htmlBlobURLs[key] = blobUrl;
                     }
 
-                    // Dynamically modify the HTML content to use blob URLs
                     let modifiedHtmlContent = htmlContent;
                     
-                    // Replace relative paths in the HTML with absolute Blob URLs
-                    // This is a simplified approach and might need refinement for complex cases
+                    // 2. Determine the base path (directory of the main HTML file)
+                    const filePathParts = filename.split('/');
+                    filePathParts.pop(); // Remove the filename itself
+                    const basePath = filePathParts.join('/') + (filePathParts.length > 0 ? '/' : '');
+
+                    // 3. Replace relative paths in the HTML with absolute Blob URLs
                     Object.keys(htmlBlobURLs).forEach(originalPath => {
-                        // Attempt to replace common relative path patterns
-                        const pathSegments = originalPath.split('/');
-                        const fileName = pathSegments[pathSegments.length - 1];
-
-                        // Replace direct file name references (e.g., <img src="image.png">)
-                        modifiedHtmlContent = modifiedHtmlContent.replace(new RegExp(`(["'])${fileName}(["'])`, 'g'), `$1${htmlBlobURLs[originalPath]}$2`);
+                        // Calculate the relative path from the main HTML file to the asset
+                        let relativePathToAsset = originalPath;
                         
-                        // Replace common relative paths like ../images/image.png or ./js/script.js
-                        // This is a more general but still basic replacement.
-                        // For a robust solution, consider parsing the HTML DOM within the iframe.
-                        modifiedHtmlContent = modifiedHtmlContent.replace(new RegExp(`(["'])(\.{1,2}\/)*${originalPath.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}(["'])`, 'g'), `$1${htmlBlobURLs[originalPath]}$3`);
+                        // Simple logic for files in the same directory (most common case for banner index.html)
+                        const fileNameOnly = originalPath.split('/').pop();
+                        
+                        // Escape special characters for regex replacement
+                        const escapedFileName = fileNameOnly.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                        const escapedPath = originalPath.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 
-                        // Replace just the filename without a path (for files in the same directory as index.html)
-                        modifiedHtmlContent = modifiedHtmlContent.replace(new RegExp(`(["'])${fileName}(["'])`, 'g'), `$1${htmlBlobURLs[originalPath]}$2`);
+                        // --- REPLACEMENT STRATEGIES ---
+
+                        // A. Replace exact path reference (e.g., <img src="images/logo.png">)
+                        // This uses a non-capturing group (?:) to optionally match ../ or ./
+                        modifiedHtmlContent = modifiedHtmlContent.replace(
+                            new RegExp(`(["'])(?:\\.{1,2}\/)*?${escapedPath}(["'])`, 'g'), 
+                            `$1${htmlBlobURLs[originalPath]}$2`
+                        );
+                        
+                        // B. Replace filename only reference (e.g., <script src="script.js">)
+                        // This primarily covers assets in the same directory as the main HTML file.
+                        // We avoid replacing if the path already contains an http/blob URL or is complex path.
+                        modifiedHtmlContent = modifiedHtmlContent.replace(
+                            new RegExp(`(["'])${escapedFileName}(["'])`, 'g'), 
+                            (match, p1, p2) => {
+                                // Check if this file is actually in the same directory path or if it has already been replaced (simple check)
+                                if (originalPath === basePath + fileNameOnly) {
+                                     // Ensure we haven't already replaced it with the blob URL in step A
+                                    if (!match.includes('blob:')) {
+                                        return `${p1}${htmlBlobURLs[originalPath]}${p2}`;
+                                    }
+                                }
+                                return match; 
+                            }
+                        );
                     });
+
 
                     // Create a Blob for the modified HTML content
                     const modifiedHtmlBlob = new Blob([modifiedHtmlContent], { type: 'text/html' });
@@ -669,48 +922,72 @@
                     `;
 
                     const bannerFrame = document.getElementById('bannerFrame');
+                    const bannerContainer = document.getElementById('bannerContainer');
                     const bannerInfo = document.getElementById('bannerInfo');
-                    
-                    bannerFrame.onload = () => {
-                        let width, height;
-                        try {
-                            const frameDoc = bannerFrame.contentDocument || bannerFrame.contentWindow.document;
-                            const body = frameDoc.body;
-                            if (body) {
-                                // Try to get dimensions from body or direct elements
-                                width = body.scrollWidth > 0 ? body.scrollWidth : (body.clientWidth > 0 ? body.clientWidth : 300);
-                                height = body.scrollHeight > 0 ? body.scrollHeight : (body.clientHeight > 0 ? body.clientHeight : 250);
-                                
-                                // Attempt to find explicit dimensions from meta tags or common ad div
-                                const metaViewport = frameDoc.querySelector('meta[name="viewport"]');
-                                if (metaViewport && metaViewport.content.includes('width=')) {
-                                    const matchWidth = metaViewport.content.match(/width=(\d+)/);
-                                    if (matchWidth) width = parseInt(matchWidth[1]);
-                                    const matchHeight = metaViewport.content.match(/height=(\d+)/);
-                                    if (matchHeight) height = parseInt(matchHeight[1]);
-                                }
 
-                                // Look for common banner div with style (e.g., Google Web Designer output)
+                    // Set default dimensions before loading
+                    let initialWidth = 300;
+                    let initialHeight = 250;
+                    
+                    // Try to detect size from ZIP name first, as a better default
+                    const sizeMatch = currentZipName.match(/(\d{2,4})x(\d{2,4})/i);
+                    if (sizeMatch) {
+                        initialWidth = parseInt(sizeMatch[1]);
+                        initialHeight = parseInt(sizeMatch[2]);
+                    }
+
+                    bannerFrame.style.width = initialWidth + 'px'; 
+                    bannerFrame.style.height = initialHeight + 'px';
+                    bannerContainer.style.width = initialWidth + 'px'; 
+                    bannerContainer.style.height = initialHeight + 'px';
+
+                    // Use setTimeout to ensure the iframe content has time to settle
+                    bannerFrame.onload = () => {
+                        // Longer delay for script execution, especially crucial for GWD banners
+                        setTimeout(() => {
+                            let width = initialWidth;
+                            let height = initialHeight;
+                            
+                            try {
+                                const frameDoc = bannerFrame.contentDocument || bannerFrame.contentWindow.document;
+                                
+                                // --- PRIORITY 1: Read GWD/Ad Engine Dimensions ---
                                 const adDiv = frameDoc.querySelector('div[style*="width:"][style*="height:"]');
                                 if (adDiv) {
-                                    const styleWidth = adDiv.style.width;
-                                    const styleHeight = adDiv.style.height;
-                                    if (styleWidth) width = parseInt(styleWidth);
-                                    if (styleHeight) height = parseInt(styleHeight);
+                                    const styleWidth = parseInt(adDiv.style.width);
+                                    const styleHeight = parseInt(adDiv.style.height);
+                                    if (!isNaN(styleWidth) && styleWidth > 10) width = styleWidth;
+                                    if (!isNaN(styleHeight) && styleHeight > 10) height = styleHeight;
                                 }
-                                
+
+                                // --- PRIORITY 2: Read Body/Viewport Dimensions ---
+                                if (width === initialWidth && height === initialHeight) {
+                                    const body = frameDoc.body;
+                                    if (body && body.scrollWidth > 0 && body.scrollHeight > 0) {
+                                        let detectedWidth = body.scrollWidth;
+                                        let detectedHeight = body.scrollHeight;
+
+                                        // Simple validation: If detected size is very different from GWD (1x1), use it.
+                                        if (detectedWidth > 10 && detectedHeight > 10) {
+                                            width = detectedWidth;
+                                            height = detectedHeight;
+                                        }
+                                    }
+                                }
+
+                                // Apply final dimensions
                                 bannerFrame.style.width = width + 'px';
                                 bannerFrame.style.height = height + 'px';
+                                bannerContainer.style.width = width + 'px';
+                                bannerContainer.style.height = height + 'px';
                                 bannerInfo.textContent = `${width} × ${height}`;
-                            } else {
-                                bannerInfo.textContent = 'Banner loaded (dimensions unknown)';
+                                
+
+                            } catch (e) {
+                                console.warn("Could not access iframe content (security/content loading issue):", e);
+                                bannerInfo.textContent = `Banner loaded (Error reading dimensions, defaulted to ${width}x${height})`;
                             }
-                        } catch (e) {
-                            console.warn("Could not access iframe content (possibly due to security restrictions or content not fully loaded):", e);
-                            bannerInfo.textContent = 'Banner loaded (dimensions unknown/error)';
-                            bannerFrame.style.width = '300px'; // Default fallback
-                            bannerFrame.style.height = '250px';
-                        }
+                        }, 500); // Increased delay to 500ms for robust dimension detection
                     };
 
                     bannerFrame.onerror = () => {
@@ -730,15 +1007,10 @@
                         </div>
                     `;
                 }
-
-                // Enable buttons
-                document.getElementById('refreshBtn').disabled = false;
-                document.getElementById('downloadBtn').disabled = false;
-                document.getElementById('fullscreenBtn').disabled = false;
-                
             } else if (file.type === 'image') {
+                // ... (existing image preview logic) ...
                 const url = URL.createObjectURL(file.content);
-                activeObjectUrls.push(url); // Store for later revocation
+                activeObjectUrls.push(url); 
 
                 previewFrame.innerHTML = `
                     <div class="banner-container">
@@ -755,10 +1027,6 @@
                 previewImage.onerror = () => {
                     bannerInfo.textContent = 'Error loading image';
                 };
-
-                document.getElementById('refreshBtn').disabled = false;
-                document.getElementById('downloadBtn').disabled = false;
-                document.getElementById('fullscreenBtn').disabled = true; // Fullscreen less relevant for raw images
             } else {
                 // For other file types
                 previewFrame.innerHTML = `
@@ -773,10 +1041,14 @@
                         </div>
                     </div>
                 `;
-                document.getElementById('refreshBtn').disabled = true;
-                document.getElementById('downloadBtn').disabled = false;
-                document.getElementById('fullscreenBtn').disabled = true;
             }
+
+            // Update button states
+            const canPreview = isHtml || file.type === 'image';
+            document.getElementById('refreshBtn').disabled = !canPreview;
+            document.getElementById('downloadBtn').disabled = false;
+            document.getElementById('fullscreenBtn').disabled = !isHtml;
+            downloadWrapperBtn.disabled = !isHtml; // Only enable wrapper download for HTML files
         }
 
         function refreshPreview() {
@@ -787,36 +1059,60 @@
         }
 
         function clearAll() {
-            if (confirm('Clear all loaded files?')) {
-                currentZip = null;
-                currentFiles = {};
-                currentPreviewFile = null;
-                clearObjectUrls(); // Clear all object URLs
+            // Menggunakan pesan box kustom sebagai ganti confirm()
+            const customConfirm = document.createElement('div');
+            customConfirm.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #0066B1; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1000;";
+            customConfirm.innerHTML = `
+                <strong>Konfirmasi</strong>
+                <p>Bersihkan semua file yang dimuat?</p>
+                <div style="margin-top: 15px; text-align: right;">
+                    <button id="confirmYes" style="padding: 5px 10px; background: #db1f25; color: white; border: none; border-radius: 4px; margin-right: 10px;">Ya</button>
+                    <button id="confirmNo" style="padding: 5px 10px; background: #ccc; color: black; border: none; border-radius: 4px;">Tidak</button>
+                </div>
+            `;
+            document.body.appendChild(customConfirm);
 
-                filesList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📄</div>
-                        <div>No files loaded</div>
-                    </div>
-                `;
-                
-                previewFrame.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">🖼️</div>
-                        <div>Select an HTML file to preview</div>
-                    </div>
-                `;
-                
-                previewTitle.textContent = 'Preview';
-                fileInfo.style.display = 'none';
-                
-                // Disable buttons
-                document.getElementById('refreshBtn').disabled = true;
-                document.getElementById('downloadBtn').disabled = true;
-                document.getElementById('fullscreenBtn').disabled = true;
-                
-                statusText.textContent = 'Ready - Upload a ZIP file to start';
-            }
+            document.getElementById('confirmYes').onclick = () => {
+                customConfirm.remove();
+                executeClearAll();
+            };
+
+            document.getElementById('confirmNo').onclick = () => {
+                customConfirm.remove();
+            };
+        }
+
+        function executeClearAll() {
+            currentZip = null;
+            currentFiles = {};
+            currentPreviewFile = null;
+            currentZipName = ''; // Reset ZIP name
+            clearObjectUrls(); 
+
+            filesList.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📄</div>
+                    <div>No files loaded</div>
+                </div>
+            `;
+            
+            previewFrame.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🖼️</div>
+                    <div>Select an HTML file to preview</div>
+                </div>
+            `;
+            
+            previewTitle.textContent = 'Preview';
+            fileInfo.style.display = 'none';
+            
+            // Disable all buttons
+            document.getElementById('refreshBtn').disabled = true;
+            document.getElementById('downloadBtn').disabled = true;
+            downloadWrapperBtn.disabled = true; // Disable new button
+            document.getElementById('fullscreenBtn').disabled = true;
+            
+            statusText.textContent = 'Ready - Upload a ZIP file to start';
         }
 
         function downloadCurrentFile() {
@@ -824,7 +1120,7 @@
             
             const file = currentFiles[currentPreviewFile];
             const url = URL.createObjectURL(file.content);
-            activeObjectUrls.push(url); // Add to list to ensure it's eventually revoked
+            activeObjectUrls.push(url); 
             
             const a = document.createElement('a');
             a.href = url;
@@ -833,8 +1129,6 @@
             a.click();
             document.body.removeChild(a);
             
-            // Revoke immediately after download initiated
-            // For longer-lived URLs, consider revoking with clearObjectUrls() or a timeout
             setTimeout(() => URL.revokeObjectURL(url), 100); 
             statusText.textContent = `Downloaded ${file.name}`;
         }
@@ -844,29 +1138,30 @@
             
             const file = currentFiles[currentPreviewFile];
             if (file.type === 'html') {
-                const url = URL.createObjectURL(file.content); // New URL for the new window
-                activeObjectUrls.push(url); // Store for eventual revocation
+                const url = URL.createObjectURL(file.content); 
+                activeObjectUrls.push(url); 
                 const newWindow = window.open(url, '_blank', 'width=800,height=600');
                 
-                // Revoke URL after a short delay, hoping the new window has loaded it
                 setTimeout(() => {
                     URL.revokeObjectURL(url);
-                    // Also attempt to remove from activeObjectUrls if it's there
                     const index = activeObjectUrls.indexOf(url);
                     if (index > -1) {
                         activeObjectUrls.splice(index, 1);
                     }
-                }, 1000); // Give the new window a second to load
+                }, 1000); 
             }
         }
 
         function resizeBanner(size) {
             const bannerFrame = document.getElementById('bannerFrame');
-            if (!bannerFrame) return;
+            const bannerContainer = document.getElementById('bannerContainer');
+            if (!bannerFrame || !bannerContainer) return;
             
             const [width, height] = size.split('x').map(Number);
             bannerFrame.style.width = width + 'px';
             bannerFrame.style.height = height + 'px';
+            bannerContainer.style.width = width + 'px';
+            bannerContainer.style.height = height + 'px';
             
             const bannerInfo = document.getElementById('bannerInfo');
             if (bannerInfo) {
@@ -885,7 +1180,6 @@
             activeObjectUrls = [];
         }
 
-        // Ensure all object URLs are revoked when the page is closed or navigated away
         window.addEventListener('beforeunload', clearObjectUrls);
     </script>
 </body>
