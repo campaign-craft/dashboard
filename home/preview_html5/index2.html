@@ -594,7 +594,7 @@
             const wrapperClassName = 'ads'; // Class name as requested in the screenshot
 
             // 3. Define the HTML content for the minimal wrapper
-            // This now uses the simple, clean CSS from your screenshot
+            // CSS has been simplified and 'div.info' element removed from the body.
             const wrapperHtmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -610,11 +610,7 @@
         body {
             padding: 0;
             margin: 0;
-            /* Optional: Centering for display */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            /* Centering style is removed here, aligning with the user's request. */
         }
 
         .${wrapperClassName} {
@@ -633,9 +629,6 @@
     </style>
 </head>
 <body>
-    <div class="info" style="font-size: 11px; margin-bottom: 5px; color: #666; font-family: sans-serif;">
-        Wrapper: ${bannerWidth}x${bannerHeight}
-    </div>
     <div class="${wrapperClassName}">
         <!-- The iframe loads the main banner file from the dedicated subfolder -->
         <iframe src="./${bannerSubFolder}/${mainHtmlFileName}"></iframe>
