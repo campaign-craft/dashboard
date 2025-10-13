@@ -218,6 +218,16 @@
             align-items: center;
             flex-wrap: wrap;
         }
+        
+        /* Style untuk input URL agar terlihat menyatu */
+        .controls input[type="url"] {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            flex-grow: 1; /* Biarkan input mengambil ruang yang tersedia */
+            min-width: 250px;
+        }
 
         .btn {
             padding: 8px 16px;
@@ -366,6 +376,9 @@
         </div>
         
         <div class="controls">
+            <!-- INPUT BARU UNTUK LANDING PAGE -->
+            <input type="url" id="landingPageInput" placeholder="Enter custom landing page URL (e.g., https://example.com)" />
+            
             <button class="btn btn-primary" id="refreshBtn" disabled>
                 Refresh Preview
             </button>
@@ -408,6 +421,8 @@
         const fileInfo = document.getElementById('fileInfo');
         const totalFiles = document.getElementById('totalFiles');
         const zipSize = document.getElementById('zipSize');
+        // Referensi elemen baru
+        const landingPageInput = document.getElementById('landingPageInput');
 
         // New button reference
         const downloadWrapperBtn = document.getElementById('downloadWrapperBtn');
@@ -601,7 +616,11 @@
             const folderSize = `${bannerWidth}x${bannerHeight}`;
             const bannerSubFolder = folderSize; // Gunakan ukuran sebagai nama subfolder wrapper
             const wrapperClassName = 'ads'; 
-            const landingPagePlaceholder = 'https://www.yourlandingpage.com'; 
+            
+            // AMBIL URL LANDING PAGE DARI INPUT BARU
+            const defaultLandingPage = 'https://www.yourlandingpage.com'; 
+            const customLandingPage = landingPageInput.value.trim();
+            const finalLandingPage = customLandingPage || defaultLandingPage; // Gunakan input kustom, atau default jika kosong
 
             // 3. Tentukan jalur ke file HTML utama di dalam wrapper baru
             // Jika basePath = '300x250/', file HTML baru akan diakses melalui './300x250/300x250/index.html'
@@ -662,7 +681,7 @@
 <body>
     <div class="${wrapperClassName}">
         <!-- Tag <a> dibungkus di sekitar iframe untuk landing page -->
-        <a href="${landingPagePlaceholder}" target="_blank">
+        <a href="${finalLandingPage}" target="_blank">
             <!-- Iframe memuat file HTML utama dari subfolder, mempertahankan struktur aslinya -->
             <iframe src="${newPathForIframe}"></iframe>
         </a>
