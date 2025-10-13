@@ -242,6 +242,27 @@
             color: #666;
         }
 
+        .download-btn {
+            background: #0066B1;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .download-btn:hover {
+            background: #004d87;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 102, 177, 0.3);
+        }
+
         .reset-btn {
             background: #6c757d;
             color: white;
@@ -287,7 +308,7 @@
         
         <div class="content">
             <div class="upload-section" id="uploadSection">
-                <div class="upload-icon">📎</div>
+                <div class="upload-icon">📤</div>
                 <div class="upload-text">Drag & Drop gambar di sini</div>
                 <div class="upload-subtext">atau klik untuk memilih file</div>
                 <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
@@ -354,6 +375,8 @@
         const uploadSection = document.getElementById('uploadSection');
         const fileInput = document.getElementById('fileInput');
         const results = document.getElementById('results');
+        let currentImage = null;
+        let currentFileName = '';
 
         // Drag and drop functionality
         uploadSection.addEventListener('dragover', (e) => {
@@ -390,10 +413,13 @@
                 return;
             }
 
+            currentFileName = file.name;
+            
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
+                    currentImage = img;
                     analyzeImage(img, file);
                 };
                 img.src = e.target.result;
@@ -447,11 +473,19 @@
                 const standardItem = document.createElement('div');
                 standardItem.className = `standard-item ${matchType.class}`;
                 
+                let downloadButton = '';
+                if (matchType.class === 'exact-match' || matchType.class === 'scale-match') {
+                    if (width !== standard.width || height !== standard.height) {
+                        downloadButton = `<button class="download-btn" onclick="downloadResizedImage(${standard.width}, ${standard.height}, '${standard.name.replace(/'/g, "\\'").replace(/ /g, '_')}')">⬇️ Download ${standard.width}×${standard.height}</button>`;
+                    }
+                }
+                
                 standardItem.innerHTML = `
                     <div>
                         <div class="standard-size">${standard.size}</div>
                         <div class="standard-name">${standard.name}</div>
                         ${scaleInfo ? `<div class="scale-info">${scaleInfo}</div>` : ''}
+                        ${downloadButton}
                     </div>
                     <span class="match-badge ${matchType.class}">${matchType.text}</span>
                 `;
@@ -486,17 +520,41 @@
             if (Math.abs(imgRatio - stdRatio) <= ratioTolerance && 
                 (imgWidth !== stdWidth || imgHeight !== stdHeight)) {
                 const scaleX = (imgWidth / stdWidth).toFixed(2);
-                const scaleY = (imgHeight / stdHeight).toFixed(2);
                 return `Scale: ${scaleX}x`;
             }
 
             return null;
         }
 
+        function downloadResizedImage(targetWidth, targetHeight, standardName) {
+            if (!currentImage) return;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(currentImage, 0, 0, targetWidth, targetHeight);
+            
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const fileName = currentFileName.replace(/\.[^/.]+$/, '');
+                a.href = url;
+                a.download = `${fileName}_${targetWidth}x${targetHeight}_${standardName}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 'image/png');
+        }
+
         function resetChecker() {
             results.style.display = 'none';
             uploadSection.style.display = 'block';
             fileInput.value = '';
+            currentImage = null;
+            currentFileName = '';
         }
     </script>
 </body>
