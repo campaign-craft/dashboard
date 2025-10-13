@@ -639,20 +639,27 @@
             let bannerHeight = 250;
             const bannerFrame = document.getElementById('bannerFrame');
             if (bannerFrame && bannerFrame.style.width) {
+                // Use detected size from the preview frame
                 bannerWidth = parseInt(bannerFrame.style.width);
                 bannerHeight = parseInt(bannerFrame.style.height);
             }
             
-            // Try to extract size from the ZIP name as a fallback for the folder
+            // Fallback: Try to extract size from the ZIP name 
             const sizeMatch = currentZipName.match(/(\d{2,4})x(\d{2,4})/i);
             if (sizeMatch) {
-                // Update banner dimensions if found in ZIP name, prioritizing detected dimensions
-                if (bannerWidth <= 10 && bannerHeight <= 10 || bannerWidth === 300 && bannerHeight === 250) {
+                // Only update if current detected size is still default/unreliable (e.g., 300x250)
+                if (bannerWidth === 300 && bannerHeight === 250) {
                     bannerWidth = parseInt(sizeMatch[1]);
                     bannerHeight = parseInt(sizeMatch[2]);
                 }
             }
             
+            // *** PENINGKATAN KEANDALAN ***
+            // Pastikan bannerWidth dan bannerHeight adalah angka positif. Jika tidak, gunakan default 300x250
+            if (isNaN(bannerWidth) || bannerWidth <= 0) bannerWidth = 300;
+            if (isNaN(bannerHeight) || bannerHeight <= 0) bannerHeight = 250;
+            // *****************************
+
             const folderSize = `${bannerWidth}x${bannerHeight}`;
             const bannerSubFolder = folderSize; // Use size as subfolder name
             const wrapperClassName = 'ads'; // Class name for banner container
@@ -677,18 +684,23 @@
         body {
             padding: 0;
             margin: 0;
+            /* Tambahkan margin untuk memberi sedikit ruang dari tepi browser saat dibuka langsung */
+            /* Ini membantu memastikan banner terlihat jelas tanpa style centering */
+            padding: 10px;
         }
 
         .${wrapperClassName} {
             /* Banner dimensions are applied here */
             width: ${bannerWidth}px;
             height: ${bannerHeight}px;
-            position: relative; /* Penting untuk menempatkan overlay click di atas iframe */
+            position: relative; 
+            /* Opsional: Tambahkan border agar terlihat batas banner */
+            border: 1px solid #ccc; 
         }
         
         .canvas {
-            width: ${bannerWidth}px;
-            height: ${bannerHeight}px;
+            width: 100%; /* Menggunakan 100% dari .ads */
+            height: 100%; /* Menggunakan 100% dari .ads */
             position: relative;
         }
 
@@ -701,7 +713,7 @@
             top: 0;
             z-index: 99999; 
             opacity: 0; /* Membuat overlay tidak terlihat */
-            background-color: #000; /* Warna dasar (opsional) */
+            background-color: #000; 
             cursor: pointer;
         }
 
