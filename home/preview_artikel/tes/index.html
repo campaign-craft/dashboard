@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Artikel (dengan Gate)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* Styling untuk artikel yang dihasilkan */
+        .generated-article img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .generated-article p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .generated-article h1, .generated-article h2, .generated-article h3 {
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        /* Styling untuk Quill.js editor */
+        #editor-container {
+            height: 500px;
+            background-color: #fff;
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+        }
+        .ql-toolbar.ql-snow {
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+        }
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            background-color: #e2e8f0;
+            color: #4a5568;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .tag-remove {
+            margin-left: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white rounded-xl shadow-2xl p-8 w-full flex flex-col gap-8" style="max-width: 1400px;">
+        <div class="space-y-6">
+            <h1 class="text-3xl font-bold text-gray-800">Generator Artikel Tribunnews.com</h1>
+            <p class="text-xs text-blue-500">
+                <a href="https://campaign-craft.github.io/dashboard/home/resize-image-adv/" target="_blank" class="hover:underline">Resize Image Artikel</a>
+            </p>
+            
+            <div>
+                <label for="titleInput" class="block text-sm font-medium text-gray-700">Judul Artikel</label>
+                <input type="text" id="titleInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Isi Artikel</label>
+                <div id="editor-container"></div>
+            </div>
+
+            <div>
+                <label for="dateInput" class="block text-sm font-medium text-gray-700">Tanggal Tayang</label>
+                <input type="text" id="dateInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="w-full md:w-1/2">
+                    <label for="authorInput" class="block text-sm font-medium text-gray-700">Penulis</label>
+                    <input type="text" id="authorInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <label for="editorInput" class="block text-sm font-medium text-gray-700">Editor</label>
+                    <input type="text" id="editorInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
+                </div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="w-full md:w-1/2">
+                    <label for="photoInput" class="block text-sm font-medium text-gray-700">Unggah Foto</label>
+                    <input type="file" id="photoInput" accept="image/*" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <label for="captionInput" class="block text-sm font-medium text-gray-700">Caption Foto</label>
+                    <input type="text" id="captionInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Tags (opsional)</label>
+                <div id="tags-container" class="flex flex-wrap items-center gap-2 mt-1"></div>
+                <div class="flex gap-2 mt-2">
+                    <input type="text" id="tagInput" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2" placeholder="Tambah tag baru">
+                    <button id="addTagButton" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200">Tambah</button>
+                </div>
+            </div>
+            
+            <!-- --- FITUR GATE BARU START --- -->
+            <div class="space-y-4 pt-4 border-t border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800">Fitur Gate (Opsional)</h2>
+
+                <!-- Gate Desktop Options -->
+                <div>
+                    <label for="gateDesktopSelect" class="block text-sm font-medium text-gray-700">Pilih Gate untuk Desktop</label>
+                    <select id="gateDesktopSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
+                        <option value="">Tidak Menggunakan Gate</option>
+                        <option value="Sponsored Headline">Sponsored Headline</option>
+                        <option value="Bizzinsight">Bizzinsight</option>
+                        <option value="Latest News">Latest News</option>
+                        <option value="Popular News">Popular News</option>
+                        <option value="Topik Pilihan">Topik Pilihan</option>
+                    </select>
+                </div>
+                
+                <!-- Gate Mobile Options -->
+                <div>
+                    <label for="gateMobileSelect" class="block text-sm font-medium text-gray-700">Pilih Gate untuk Mobile</label>
+                    <select id="gateMobileSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
+                        <option value="">Tidak Menggunakan Gate</option>
+                        <option value="Sponsored Headline">Sponsored Headline</option>
+                        <option value="Bizzinsight">Bizzinsight</option>
+                        <option value="Latest News">Latest News</option>
+                        <option value="Popular News">Popular News</option>
+                    </select>
+                </div>
+                
+                <!-- Input URL Template Gate -->
+                <div>
+                    <label for="gateUrlInput" class="block text-sm font-medium text-gray-700">URL Template Gate (Pastikan template Anda punya: {{judul}}, {{foto}}, {{link_artikel}})</label>
+                    <input type="url" id="gateUrlInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2" placeholder="Contoh: /path/to/gate-template.html">
+                    <p class="text-xs text-gray-500 mt-1">Template gate harus dapat diakses (misalnya: dari folder lokal yang sama atau URL web).</p>
+                </div>
+            </div>
+            <!-- --- FITUR GATE BARU END --- -->
+
+
+            <div class="flex flex-col gap-4">
+                <div class="flex gap-4">
+                    <button id="previewDesktopButton" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors duration-200">
+                        Pratinjau Desktop
+                    </button>
+                    <button id="previewMobileButton" class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors duration-200">
+                        Pratinjau Mobile
+                    </button>
+                </div>
+                <div class="flex gap-4">
+                    <button id="downloadDesktopButton" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200">
+                        Download HTML Desktop
+                    </button>
+                    <button id="downloadMobileButton" class="w-full bg-teal-600 text-white py-2 px-4 rounded-md hover:bg-teal-700 transition-colors duration-200">
+                        Download HTML Mobile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const titleInput = document.getElementById('titleInput');
+            const dateInput = document.getElementById('dateInput');
+            const authorInput = document.getElementById('authorInput');
+            const editorInput = document.getElementById('editorInput');
+            const photoInput = document.getElementById('photoInput');
+            const captionInput = document.getElementById('captionInput');
+            
+            // New tag elements
+            const tagsContainer = document.getElementById('tags-container');
+            const tagInput = document.getElementById('tagInput');
+            const addTagButton = document.getElementById('addTagButton');
+
+            // --- Gate Variables START ---
+            const gateDesktopSelect = document.getElementById('gateDesktopSelect');
+            const gateMobileSelect = document.getElementById('gateMobileSelect');
+            const gateUrlInput = document.getElementById('gateUrlInput');
+            // --- Gate Variables END ---
+
+            // Tombol-tombol baru
+            const previewDesktopButton = document.getElementById('previewDesktopButton');
+            const previewMobileButton = document.getElementById('previewMobileButton');
+            const downloadDesktopButton = document.getElementById('downloadDesktopButton');
+            const downloadMobileButton = document.getElementById('downloadMobileButton');
+
+            let photoDataUrl = 'https://placehold.co/800x450/e5e7eb/767676?text=Foto+Artikel';
+            let desktopTemplate = '';
+            let mobileTemplate = '';
+            let tags = [];
+
+            // Inisialisasi Quill.js pada elemen div
+            const quill = new Quill('#editor-container', {
+                theme: 'snow',
+                placeholder: 'Tulis isi artikel Anda di sini...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['blockquote', 'code-block'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'script': 'sub'}, { 'script': 'super' }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
+                        [{ 'direction': 'rtl' }],
+                        [{ 'align': [] }],
+                        ['link', 'image', 'video'],
+                        ['clean']
+                    ]
+                }
+            });
+
+            // Fungsi untuk memformat tanggal hari ini
+            const getFormattedDate = () => {
+                const date = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                return new Intl.DateTimeFormat('id-ID', options).format(date);
+            };
+
+            // Fungsi untuk mengganti placeholder di template GATE
+            const generateGateHtml = (gateTemplate, articleFilename) => {
+                let title = titleInput.value || 'Judul Artikel';
+                
+                let finalGateHtml = gateTemplate
+                    .replace(/{{judul}}/g, title)
+                    .replace(/{{foto}}/g, photoDataUrl)
+                    .replace(/{{link_artikel}}/g, articleFilename); // Link ke file artikel yang didownload
+
+                return `<!DOCTYPE html><html lang="id"><head><title>${title} - Gate</title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>${finalGateHtml}</body></html>`;
+            };
+
+            // Fungsi untuk memuat kedua template dari file
+            const loadTemplates = async () => {
+                try {
+                    const [desktopResponse, mobileResponse] = await Promise.all([
+                        fetch('read-desktop.html'),
+                        fetch('read-mobile.html')
+                    ]);
+                    
+                    if (!desktopResponse.ok) {
+                        throw new Error('Template file read-desktop.html not found or failed to load.');
+                    }
+                    if (!mobileResponse.ok) {
+                        throw new Error('Template file read-mobile.html not found or failed to load.');
+                    }
+
+                    desktopTemplate = await desktopResponse.text();
+                    mobileTemplate = await mobileResponse.text();
+                } catch (error) {
+                    console.error('Error loading templates:', error);
+                    document.body.innerHTML = `<div class="bg-white p-6 rounded-xl shadow-md text-red-600">Gagal memuat template. Mohon pastikan file 'read-desktop.html' dan 'read-mobile.html' berada di folder yang sama.</div>`;
+                }
+            };
+            
+            // Fungsi untuk mengganti placeholder di template ARTIKEL
+            const generateFinalHtml = (template) => {
+                let title = titleInput.value || 'Judul Artikel';
+                let content = quill.root.innerHTML || 'Tulis isi artikel Anda di sini.';
+                let date = dateInput.value;
+                let author = authorInput.value || 'Content Writer';
+                let editor = editorInput.value || 'Content Writer';
+                let caption = captionInput.value || 'Istimewa';
+                
+                const tagSpan = (tagText) => {
+                    // Gunakan elemen h5 yang sudah ada di template tribunnews
+                    return tagText ? `<h5 class='tagcloud3'>${tagText.trim()}</h5>` : '';
+                };
+                
+                let tagsHtml = tags.map(tag => tagSpan(tag)).join('');
+                
+                // Pisahkan tags untuk placeholder yang berbeda jika ada
+                let tag1 = tags[0] ? tagSpan(tags[0]) : '';
+                let tag2 = tags[1] ? tagSpan(tags[1]) : '';
+                let tag3 = tags[2] ? tagSpan(tags[2]) : '';
+
+                // Karena template Tribunnews Mobile/Desktop hanya punya 3 tags, kita akan memasukkan 3 tags pertama.
+                // Jika lebih dari 3 tags dimasukkan, maka tags ke-4 dan seterusnya akan terabaikan,
+                // karena template asli hanya menampilkan 3 tag terpisah.
+                
+                let finalHtml = template
+                    .replace(/{{judul}}/g, title)
+                    .replace(/{{isi_artikel}}/g, content)
+                    .replace(/{{tanggal}}/g, date)
+                    .replace(/{{penulis}}/g, author)
+                    .replace(/{{editor}}/g, editor)
+                    .replace(/{{foto}}/g, photoDataUrl)
+                    .replace(/{{caption}}/g, caption)
+                    .replace(/{{tag1}}/g, tagsHtml || tag1) // Untuk mobile yang menggunakan {{tag1}} sebagai keseluruhan tag
+                    .replace(/{{tag2}}/g, tag2) 
+                    .replace(/{{tag3}}/g, tag3)
+                    .replace(/{{sumber}}/g, ''); // Menghapus referensi {{sumber}} dari template
+                
+                return `<!DOCTYPE html><html lang="id"><head><title>${title}</title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>${finalHtml}</body></html>`;
+            };
+
+            // Fungsi untuk menambahkan tag
+            const addTag = () => {
+                const tagValue = tagInput.value.trim();
+                if (tagValue && !tags.includes(tagValue)) {
+                    tags.push(tagValue);
+                    renderTags();
+                    tagInput.value = '';
+                }
+            };
+
+            // Fungsi untuk menghapus tag
+            const removeTag = (tagToRemove) => {
+                tags = tags.filter(tag => tag !== tagToRemove);
+                renderTags();
+            };
+
+            // Fungsi untuk menampilkan tag di UI
+            const renderTags = () => {
+                tagsContainer.innerHTML = '';
+                tags.forEach(tag => {
+                    const tagElement = document.createElement('span');
+                    tagElement.classList.add('tag');
+                    tagElement.innerHTML = `${tag}<span class="tag-remove">&times;</span>`;
+                    tagElement.querySelector('.tag-remove').addEventListener('click', () => removeTag(tag));
+                    tagsContainer.appendChild(tagElement);
+                });
+            };
+
+            // Event listeners for tags
+            addTagButton.addEventListener('click', addTag);
+            tagInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    addTag();
+                }
+            });
+
+            // Set nilai default untuk input tanggal, penulis, dan editor
+            dateInput.value = getFormattedDate();
+            authorInput.value = "Content Writer";
+            editorInput.value = "Content Writer";
+            captionInput.value = "Istimewa";
+
+            // Event listener untuk unggahan foto
+            photoInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        photoDataUrl = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    photoDataUrl = 'https://placehold.co/800x450/e5e7eb/767676?text=Foto+Artikel';
+                }
+            });
+
+            // --- LOGIKA GATE/PREVIEW/DOWNLOAD YANG DIPERBARUI START ---
+
+            // Event listener untuk tombol "Pratinjau Desktop"
+            previewDesktopButton.addEventListener('click', async () => {
+                if (!desktopTemplate) {
+                    console.error('Template desktop belum dimuat. Mohon coba lagi.');
+                    return;
+                }
+                const gateType = gateDesktopSelect.value;
+                const gateUrl = gateUrlInput.value.trim();
+                const articleFilename = 'artikel_hasil_desktop.html'; // Nama file artikel untuk link di gate
+
+                let fullHtml = generateFinalHtml(desktopTemplate);
+                let htmlToPreview = fullHtml;
+
+                if (gateType && gateUrl) {
+                    try {
+                        // 1. Fetch Template Gate
+                        const gateResponse = await fetch(gateUrl);
+                        if (!gateResponse.ok) throw new Error(`Gagal memuat template gate dari URL: ${gateUrl}`);
+                        const gateTemplate = await gateResponse.text();
+                        
+                        // 2. Download/Simpan Artikel Asli ke Blob URL untuk Preview
+                        const articleBlob = new Blob([fullHtml], { type: 'text/html' });
+                        const articleUrl = URL.createObjectURL(articleBlob);
+                        
+                        // 3. Buat HTML Gate, link ke Blob URL artikel
+                        const finalGateHtml = generateGateHtml(gateTemplate, articleUrl); 
+                        htmlToPreview = finalGateHtml;
+
+                        // Perhatian: Karena menggunakan Blob URL, link hanya akan berfungsi di window preview ini.
+                        // window.alert('Anda sedang melihat Pratinjau Gate. Link artikel di dalamnya mengarah ke versi sementara (Blob URL) dan hanya berfungsi di jendela Pratinjau ini.');
+
+                    } catch (error) {
+                        console.error('Error loading gate template:', error);
+                        // window.alert(`Gagal memuat/menggunakan template Gate: ${error.message}. Akan menampilkan Pratinjau Artikel Utama.`);
+                    }
+                }
+                
+                const newWindow = window.open();
+                newWindow.document.write(htmlToPreview);
+                newWindow.document.close();
+            });
+
+            // Event listener untuk tombol "Pratinjau Mobile"
+            previewMobileButton.addEventListener('click', async () => {
+                if (!mobileTemplate) {
+                    console.error('Template mobile belum dimuat. Mohon coba lagi.');
+                    return;
+                }
+                const gateType = gateMobileSelect.value;
+                const gateUrl = gateUrlInput.value.trim();
+                const articleFilename = 'artikel_hasil_mobile.html';
+
+                let fullHtml = generateFinalHtml(mobileTemplate);
+                let htmlToPreview = fullHtml;
+
+                if (gateType && gateUrl) {
+                    try {
+                        const gateResponse = await fetch(gateUrl);
+                        if (!gateResponse.ok) throw new Error(`Gagal memuat template gate dari URL: ${gateUrl}`);
+                        const gateTemplate = await gateResponse.text();
+
+                        const articleBlob = new Blob([fullHtml], { type: 'text/html' });
+                        const articleUrl = URL.createObjectURL(articleBlob);
+                        
+                        const finalGateHtml = generateGateHtml(gateTemplate, articleUrl);
+                        htmlToPreview = finalGateHtml;
+
+                        // window.alert('Anda sedang melihat Pratinjau Gate. Link artikel di dalamnya mengarah ke versi sementara (Blob URL) dan hanya berfungsi di jendela Pratinjau ini.');
+
+                    } catch (error) {
+                        console.error('Error loading gate template:', error);
+                        // window.alert(`Gagal memuat/menggunakan template Gate: ${error.message}. Akan menampilkan Pratinjau Artikel Utama.`);
+                    }
+                }
+
+                const newWindow = window.open();
+                newWindow.document.write(htmlToPreview);
+                newWindow.document.close();
+            });
+
+            // Event listener untuk tombol "Download Desktop"
+            downloadDesktopButton.addEventListener('click', async () => {
+                if (!desktopTemplate) {
+                    console.error('Template desktop belum dimuat. Mohon coba lagi.');
+                    return;
+                }
+                const gateType = gateDesktopSelect.value;
+                const gateUrl = gateUrlInput.value.trim();
+                const articleFilename = 'artikel_hasil_desktop.html';
+
+                // 1. Generate Artikel Utama
+                const articleHtml = generateFinalHtml(desktopTemplate);
+                const articleBlob = new Blob([articleHtml], { type: 'text/html' });
+                
+                let htmlToDownload = articleHtml;
+                let downloadFilename = articleFilename;
+
+                // 2. Jika Gate Dipilih, Fetch Template Gate
+                if (gateType && gateUrl) {
+                    try {
+                        const gateResponse = await fetch(gateUrl);
+                        if (!gateResponse.ok) throw new Error(`Gagal memuat template gate dari URL: ${gateUrl}`);
+                        const gateTemplate = await gateResponse.text();
+                        
+                        // 3. Generate HTML Gate. Link di Gate MENGARAH KE artikel_hasil_desktop.html (nama file)
+                        const finalGateHtml = generateGateHtml(gateTemplate, articleFilename);
+                        
+                        htmlToDownload = finalGateHtml;
+                        downloadFilename = `${gateType.toLowerCase().replace(/\s/g, '_')}_desktop_gate.html`;
+
+                        // Peringatan untuk download dua file
+                        // window.alert(`Anda akan mendownload dua file: \n1. Artikel Utama (${articleFilename})\n2. Halaman Gate (${downloadFilename}).\n\nPastikan kedua file berada di folder yang sama agar link dari Gate berfungsi!`);
+
+                        // Download Artikel Utama dulu
+                        const aArticle = document.createElement('a');
+                        aArticle.href = URL.createObjectURL(articleBlob);
+                        aArticle.download = articleFilename;
+                        document.body.appendChild(aArticle);
+                        aArticle.click();
+                        document.body.removeChild(aArticle);
+                        URL.revokeObjectURL(aArticle.href); // Bersihkan Blob URL
+                    
+                    } catch (error) {
+                        console.error('Error loading gate template:', error);
+                        // window.alert(`Gagal memuat/menggunakan template Gate. Hanya artikel utama yang akan didownload. Error: ${error.message}`);
+                        // Lanjutkan download artikel utama jika gate gagal
+                    }
+                }
+                
+                // Download file yang ditentukan (Gate atau Artikel Utama)
+                const blob = new Blob([htmlToDownload], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = downloadFilename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            // Event listener untuk tombol "Download Mobile"
+            downloadMobileButton.addEventListener('click', async () => {
+                if (!mobileTemplate) {
+                    console.error('Template mobile belum dimuat. Mohon coba lagi.');
+                    return;
+                }
+                const gateType = gateMobileSelect.value;
+                const gateUrl = gateUrlInput.value.trim();
+                const articleFilename = 'artikel_hasil_mobile.html';
+
+                // 1. Generate Artikel Utama
+                const articleHtml = generateFinalHtml(mobileTemplate);
+                const articleBlob = new Blob([articleHtml], { type: 'text/html' });
+                
+                let htmlToDownload = articleHtml;
+                let downloadFilename = articleFilename;
+
+                // 2. Jika Gate Dipilih, Fetch Template Gate
+                if (gateType && gateUrl) {
+                    try {
+                        const gateResponse = await fetch(gateUrl);
+                        if (!gateResponse.ok) throw new Error(`Gagal memuat template gate dari URL: ${gateUrl}`);
+                        const gateTemplate = await gateResponse.text();
+                        
+                        // 3. Generate HTML Gate. Link di Gate MENGARAH KE artikel_hasil_mobile.html (nama file)
+                        const finalGateHtml = generateGateHtml(gateTemplate, articleFilename);
+                        
+                        htmlToDownload = finalGateHtml;
+                        downloadFilename = `${gateType.toLowerCase().replace(/\s/g, '_')}_mobile_gate.html`;
+
+                        // Peringatan untuk download dua file
+                        // window.alert(`Anda akan mendownload dua file: \n1. Artikel Utama (${articleFilename})\n2. Halaman Gate (${downloadFilename}).\n\nPastikan kedua file berada di folder yang sama agar link dari Gate berfungsi!`);
+
+                        // Download Artikel Utama dulu
+                        const aArticle = document.createElement('a');
+                        aArticle.href = URL.createObjectURL(articleBlob);
+                        aArticle.download = articleFilename;
+                        document.body.appendChild(aArticle);
+                        aArticle.click();
+                        document.body.removeChild(aArticle);
+                        URL.revokeObjectURL(aArticle.href); // Bersihkan Blob URL
+
+                    } catch (error) {
+                        console.error('Error loading gate template:', error);
+                        // window.alert(`Gagal memuat/menggunakan template Gate. Hanya artikel utama yang akan didownload. Error: ${error.message}`);
+                        // Lanjutkan download artikel utama jika gate gagal
+                    }
+                }
+                
+                // Download file yang ditentukan (Gate atau Artikel Utama)
+                const blob = new Blob([htmlToDownload], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = downloadFilename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+            
+            // --- LOGIKA GATE/PREVIEW/DOWNLOAD YANG DIPERBARUI END ---
+
+            // Panggil fungsi untuk memuat template saat halaman dimuat
+            loadTemplates();
+        });
+    </script>
+</body>
+</html>
