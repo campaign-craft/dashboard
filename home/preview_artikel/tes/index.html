@@ -114,38 +114,32 @@
             
             <!-- --- FITUR GATE BARU START --- -->
             <div class="space-y-4 pt-4 border-t border-gray-200">
-                <h2 class="text-xl font-bold text-gray-800">Fitur Gate (Opsional)</h2>
+                <h2 class="text-xl font-bold text-gray-800">Pilih Template Gate (Opsional)</h2>
 
                 <!-- Gate Desktop Options -->
                 <div>
-                    <label for="gateDesktopSelect" class="block text-sm font-medium text-gray-700">Pilih Gate untuk Desktop</label>
+                    <label for="gateDesktopSelect" class="block text-sm font-medium text-gray-700">Gate untuk Desktop</label>
                     <select id="gateDesktopSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
                         <option value="">Tidak Menggunakan Gate</option>
-                        <option value="Sponsored Headline">Sponsored Headline</option>
-                        <option value="Bizzinsight">Bizzinsight</option>
-                        <option value="Latest News">Latest News</option>
-                        <option value="Popular News">Popular News</option>
-                        <option value="Topik Pilihan">Topik Pilihan</option>
+                        <option value="Sponsored Headline">Sponsored Headline (gate-sponsored-headline-desktop.html)</option>
+                        <option value="Bizzinsight">Bizzinsight (gate-bizzinsight-desktop.html)</option>
+                        <option value="Latest News">Latest News (gate-latest-news-desktop.html)</option>
+                        <option value="Popular News">Popular News (gate-popular-news-desktop.html)</option>
+                        <option value="Topik Pilihan">Topik Pilihan (gate-topik-pilihan-desktop.html)</option>
                     </select>
                 </div>
                 
                 <!-- Gate Mobile Options -->
                 <div>
-                    <label for="gateMobileSelect" class="block text-sm font-medium text-gray-700">Pilih Gate untuk Mobile</label>
+                    <label for="gateMobileSelect" class="block text-sm font-medium text-gray-700">Gate untuk Mobile</label>
                     <select id="gateMobileSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
                         <option value="">Tidak Menggunakan Gate</option>
-                        <option value="Sponsored Headline">Sponsored Headline</option>
-                        <option value="Bizzinsight">Bizzinsight</option>
-                        <option value="Latest News">Latest News</option>
-                        <option value="Popular News">Popular News</option>
+                        <option value="Sponsored Headline">Sponsored Headline (gate-sponsored-headline-mobile.html)</option>
+                        <option value="Bizzinsight">Bizzinsight (gate-bizzinsight-mobile.html)</option>
+                        <option value="Latest News">Latest News (gate-latest-news-mobile.html)</option>
+                        <option value="Popular News">Popular News (gate-popular-news-mobile.html)</option>
                     </select>
-                </div>
-                
-                <!-- Input URL Template Gate -->
-                <div>
-                    <label for="gateUrlInput" class="block text-sm font-medium text-gray-700">URL Template Gate (Pastikan template Anda punya: {{judul}}, {{foto}}, {{link_artikel}})</label>
-                    <input type="url" id="gateUrlInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2" placeholder="Contoh: /path/to/gate-template.html">
-                    <p class="text-xs text-gray-500 mt-1">Template gate harus dapat diakses (misalnya: dari folder lokal yang sama atau URL web).</p>
+                    <p class="text-xs text-red-500 mt-1">Pastikan file template gate sudah tersedia di folder lokal Anda!</p>
                 </div>
             </div>
             <!-- --- FITUR GATE BARU END --- -->
@@ -191,7 +185,7 @@
             // --- Gate Variables START ---
             const gateDesktopSelect = document.getElementById('gateDesktopSelect');
             const gateMobileSelect = document.getElementById('gateMobileSelect');
-            const gateUrlInput = document.getElementById('gateUrlInput');
+            // Menghapus gateUrlInput karena sekarang sudah otomatis
             // --- Gate Variables END ---
 
             // Tombol-tombol baru
@@ -231,6 +225,19 @@
                 const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                 return new Intl.DateTimeFormat('id-ID', options).format(date);
             };
+
+            /**
+             * Menentukan nama file template gate berdasarkan pilihan.
+             * @param {string} gateType Nilai dari dropdown (misalnya "Sponsored Headline").
+             * @param {string} platform "desktop" atau "mobile".
+             * @returns {string} Nama file template (misalnya "gate-sponsored-headline-desktop.html").
+             */
+            const getGateFilePath = (gateType, platform) => {
+                if (!gateType) return '';
+                const baseName = gateType.toLowerCase().replace(/\s/g, '-');
+                return `gate-${baseName}-${platform}.html`;
+            };
+
 
             // Fungsi untuk mengganti placeholder di template GATE
             const generateGateHtml = (gateTemplate, articleFilename) => {
@@ -281,16 +288,13 @@
                     return tagText ? `<h5 class='tagcloud3'>${tagText.trim()}</h5>` : '';
                 };
                 
-                let tagsHtml = tags.map(tag => tagSpan(tag)).join('');
-                
                 // Pisahkan tags untuk placeholder yang berbeda jika ada
-                let tag1 = tags[0] ? tagSpan(tags[0]) : '';
-                let tag2 = tags[1] ? tagSpan(tags[1]) : '';
-                let tag3 = tags[2] ? tagSpan(tags[2]) : '';
+                let tag1 = tags[0] ? tags[0] : '';
+                let tag2 = tags[1] ? tags[1] : '';
+                let tag3 = tags[2] ? tags[2] : '';
 
-                // Karena template Tribunnews Mobile/Desktop hanya punya 3 tags, kita akan memasukkan 3 tags pertama.
-                // Jika lebih dari 3 tags dimasukkan, maka tags ke-4 dan seterusnya akan terabaikan,
-                // karena template asli hanya menampilkan 3 tag terpisah.
+                // Gabungkan tags yang ada untuk keperluan penggantian di template mobile (jika hanya menggunakan satu placeholder)
+                let tagsHtml = tags.map(tag => tagSpan(tag)).join(''); 
                 
                 let finalHtml = template
                     .replace(/{{judul}}/g, title)
@@ -300,7 +304,8 @@
                     .replace(/{{editor}}/g, editor)
                     .replace(/{{foto}}/g, photoDataUrl)
                     .replace(/{{caption}}/g, caption)
-                    .replace(/{{tag1}}/g, tagsHtml || tag1) // Untuk mobile yang menggunakan {{tag1}} sebagai keseluruhan tag
+                    // Mobile menggunakan {{tag1}} untuk semua tags (semua tag akan dipisahkan spasi di sini)
+                    .replace(/{{tag1}}/g, tags.join(' ') || tag1) 
                     .replace(/{{tag2}}/g, tag2) 
                     .replace(/{{tag3}}/g, tag3)
                     .replace(/{{sumber}}/g, ''); // Menghapus referensi {{sumber}} dari template
@@ -383,15 +388,15 @@
                     return;
                 }
                 const gateType = gateDesktopSelect.value;
-                const gateUrl = gateUrlInput.value.trim();
+                const gateFilePath = getGateFilePath(gateType, 'desktop'); // Dapatkan nama file otomatis
                 
                 let htmlToPreview = generateFinalHtml(desktopTemplate);
 
-                if (gateType && gateUrl) {
+                if (gateType && gateFilePath) {
                     try {
                         // 1. Fetch Template Gate
-                        const gateResponse = await fetch(gateUrl);
-                        if (!gateResponse.ok) throw new Error(`Gagal memuat template gate dari URL: ${gateUrl}`);
+                        const gateResponse = await fetch(gateFilePath);
+                        if (!gateResponse.ok) throw new Error(`Gagal memuat template gate dari file: ${gateFilePath}. Pastikan file ada di folder lokal.`);
                         const gateTemplate = await gateResponse.text();
                         
                         // 2. Download/Simpan Artikel Asli ke Blob URL untuk Preview
@@ -407,8 +412,9 @@
                         
                     } catch (error) {
                         console.error('Error loading gate template:', error);
+                        console.error(`Gagal memuat/menggunakan template Gate: ${error.message}. Akan menampilkan Pratinjau Artikel Utama.`);
                         // Jika fetch template gate gagal, fallback ke tampilan artikel biasa
-                        openPreviewWindow(htmlToPreview);
+                        openPreviewWindow(generateFinalHtml(desktopTemplate)); // Panggil lagi untuk tampilan artikel
                     }
                 } else {
                     // Jika Gate tidak dipilih, tampilkan artikel biasa
@@ -423,14 +429,14 @@
                     return;
                 }
                 const gateType = gateMobileSelect.value;
-                const gateUrl = gateUrlInput.value.trim();
+                const gateFilePath = getGateFilePath(gateType, 'mobile'); // Dapatkan nama file otomatis
 
                 let htmlToPreview = generateFinalHtml(mobileTemplate);
 
-                if (gateType && gateUrl) {
+                if (gateType && gateFilePath) {
                     try {
-                        const gateResponse = await fetch(gateUrl);
-                        if (!gateResponse.ok) throw new Error(`Gagal memuat template gate dari URL: ${gateUrl}`);
+                        const gateResponse = await fetch(gateFilePath);
+                        if (!gateResponse.ok) throw new Error(`Gagal memuat template gate dari file: ${gateFilePath}. Pastikan file ada di folder lokal.`);
                         const gateTemplate = await gateResponse.text();
 
                         const articleBlob = new Blob([htmlToPreview], { type: 'text/html' });
@@ -444,8 +450,9 @@
 
                     } catch (error) {
                         console.error('Error loading gate template:', error);
+                        console.error(`Gagal memuat/menggunakan template Gate: ${error.message}. Akan menampilkan Pratinjau Artikel Utama.`);
                          // Jika fetch template gate gagal, fallback ke tampilan artikel biasa
-                        openPreviewWindow(htmlToPreview);
+                        openPreviewWindow(generateFinalHtml(mobileTemplate)); // Panggil lagi untuk tampilan artikel
                     }
                 } else {
                      // Jika Gate tidak dipilih, tampilkan artikel biasa
@@ -460,7 +467,7 @@
                     return;
                 }
                 const gateType = gateDesktopSelect.value;
-                const gateUrl = gateUrlInput.value.trim();
+                const gateFilePath = getGateFilePath(gateType, 'desktop'); // Dapatkan nama file otomatis
                 const articleFilename = 'artikel_hasil_desktop.html';
 
                 // 1. Generate Artikel Utama
@@ -471,10 +478,10 @@
                 let downloadFilename = articleFilename;
 
                 // 2. Jika Gate Dipilih, Fetch Template Gate
-                if (gateType && gateUrl) {
+                if (gateType && gateFilePath) {
                     try {
-                        const gateResponse = await fetch(gateUrl);
-                        if (!gateResponse.ok) throw new Error(`Gagal memuat template gate dari URL: ${gateUrl}`);
+                        const gateResponse = await fetch(gateFilePath);
+                        if (!gateResponse.ok) throw new Error(`Gagal memuat template gate dari file: ${gateFilePath}. Pastikan file ada di folder lokal.`);
                         const gateTemplate = await gateResponse.text();
                         
                         // 3. Generate HTML Gate. Link di Gate MENGARAH KE artikel_hasil_desktop.html (nama file)
@@ -483,7 +490,7 @@
                         htmlToDownload = finalGateHtml;
                         downloadFilename = `${gateType.toLowerCase().replace(/\s/g, '_')}_desktop_gate.html`;
 
-                        // Peringatan: Karena tidak menggunakan window.alert(), kita hanya log pesan ini.
+                        // Peringatan: Mendownload 2 file
                         console.log(`PENTING: Mendownload 2 file: 1. Artikel Utama (${articleFilename}) dan 2. Halaman Gate (${downloadFilename}). Pastikan keduanya berada di folder yang sama!`);
 
                         // Download Artikel Utama dulu
@@ -521,7 +528,7 @@
                     return;
                 }
                 const gateType = gateMobileSelect.value;
-                const gateUrl = gateUrlInput.value.trim();
+                const gateFilePath = getGateFilePath(gateType, 'mobile'); // Dapatkan nama file otomatis
                 const articleFilename = 'artikel_hasil_mobile.html';
 
                 // 1. Generate Artikel Utama
@@ -532,10 +539,10 @@
                 let downloadFilename = articleFilename;
 
                 // 2. Jika Gate Dipilih, Fetch Template Gate
-                if (gateType && gateUrl) {
+                if (gateType && gateFilePath) {
                     try {
-                        const gateResponse = await fetch(gateUrl);
-                        if (!gateResponse.ok) throw new Error(`Gagal memuat template gate dari URL: ${gateUrl}`);
+                        const gateResponse = await fetch(gateFilePath);
+                        if (!gateResponse.ok) throw new Error(`Gagal memuat template gate dari file: ${gateFilePath}. Pastikan file ada di folder lokal.`);
                         const gateTemplate = await gateResponse.text();
                         
                         // 3. Generate HTML Gate. Link di Gate MENGARAH KE artikel_hasil_mobile.html (nama file)
@@ -544,7 +551,7 @@
                         htmlToDownload = finalGateHtml;
                         downloadFilename = `${gateType.toLowerCase().replace(/\s/g, '_')}_mobile_gate.html`;
 
-                        // Peringatan: Karena tidak menggunakan window.alert(), kita hanya log pesan ini.
+                        // Peringatan: Mendownload 2 file
                         console.log(`PENTING: Mendownload 2 file: 1. Artikel Utama (${articleFilename}) dan 2. Halaman Gate (${downloadFilename}). Pastikan keduanya berada di folder yang sama!`);
 
                         // Download Artikel Utama dulu
