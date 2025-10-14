@@ -305,9 +305,10 @@
                     .replace(/{{tag3}}/g, tag3)
                     .replace(/{{sumber}}/g, ''); // Menghapus referensi {{sumber}} dari template
                 
-                return `<!DOCTYPE html><html lang="id"><head><title>${title}</title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>${finalHtml}</body></html>`;
+                // Pastikan HTML selalu diawali dengan tag yang benar untuk menghindari masalah rendering di preview window
+                return finalHtml;
             };
-
+            
             // Fungsi untuk menambahkan tag
             const addTag = () => {
                 const tagValue = tagInput.value.trim();
@@ -367,6 +368,14 @@
 
             // --- LOGIKA GATE/PREVIEW/DOWNLOAD YANG DIPERBARUI START ---
 
+            // Fungsi bantuan untuk membuka jendela pratinjau
+            const openPreviewWindow = (htmlContent) => {
+                const newWindow = window.open();
+                // Menambahkan doctype dan tag HTML/BODY untuk rendering yang benar
+                newWindow.document.write(`<!DOCTYPE html>${htmlContent}`);
+                newWindow.document.close();
+            };
+
             // Event listener untuk tombol "Pratinjau Desktop"
             previewDesktopButton.addEventListener('click', async () => {
                 if (!desktopTemplate) {
@@ -375,10 +384,8 @@
                 }
                 const gateType = gateDesktopSelect.value;
                 const gateUrl = gateUrlInput.value.trim();
-                const articleFilename = 'artikel_hasil_desktop.html'; // Nama file artikel untuk link di gate
-
-                let fullHtml = generateFinalHtml(desktopTemplate);
-                let htmlToPreview = fullHtml;
+                
+                let htmlToPreview = generateFinalHtml(desktopTemplate);
 
                 if (gateType && gateUrl) {
                     try {
@@ -388,25 +395,25 @@
                         const gateTemplate = await gateResponse.text();
                         
                         // 2. Download/Simpan Artikel Asli ke Blob URL untuk Preview
-                        const articleBlob = new Blob([fullHtml], { type: 'text/html' });
+                        const articleBlob = new Blob([htmlToPreview], { type: 'text/html' });
                         const articleUrl = URL.createObjectURL(articleBlob);
                         
                         // 3. Buat HTML Gate, link ke Blob URL artikel
                         const finalGateHtml = generateGateHtml(gateTemplate, articleUrl); 
                         htmlToPreview = finalGateHtml;
 
-                        // Perhatian: Karena menggunakan Blob URL, link hanya akan berfungsi di window preview ini.
-                        // window.alert('Anda sedang melihat Pratinjau Gate. Link artikel di dalamnya mengarah ke versi sementara (Blob URL) dan hanya berfungsi di jendela Pratinjau ini.');
-
+                        // Tampilkan Gate HTML
+                        openPreviewWindow(htmlToPreview);
+                        
                     } catch (error) {
                         console.error('Error loading gate template:', error);
-                        // window.alert(`Gagal memuat/menggunakan template Gate: ${error.message}. Akan menampilkan Pratinjau Artikel Utama.`);
+                        // Jika fetch template gate gagal, fallback ke tampilan artikel biasa
+                        openPreviewWindow(htmlToPreview);
                     }
+                } else {
+                    // Jika Gate tidak dipilih, tampilkan artikel biasa
+                    openPreviewWindow(htmlToPreview);
                 }
-                
-                const newWindow = window.open();
-                newWindow.document.write(htmlToPreview);
-                newWindow.document.close();
             });
 
             // Event listener untuk tombol "Pratinjau Mobile"
@@ -417,10 +424,8 @@
                 }
                 const gateType = gateMobileSelect.value;
                 const gateUrl = gateUrlInput.value.trim();
-                const articleFilename = 'artikel_hasil_mobile.html';
 
-                let fullHtml = generateFinalHtml(mobileTemplate);
-                let htmlToPreview = fullHtml;
+                let htmlToPreview = generateFinalHtml(mobileTemplate);
 
                 if (gateType && gateUrl) {
                     try {
@@ -428,23 +433,24 @@
                         if (!gateResponse.ok) throw new Error(`Gagal memuat template gate dari URL: ${gateUrl}`);
                         const gateTemplate = await gateResponse.text();
 
-                        const articleBlob = new Blob([fullHtml], { type: 'text/html' });
+                        const articleBlob = new Blob([htmlToPreview], { type: 'text/html' });
                         const articleUrl = URL.createObjectURL(articleBlob);
                         
                         const finalGateHtml = generateGateHtml(gateTemplate, articleUrl);
                         htmlToPreview = finalGateHtml;
 
-                        // window.alert('Anda sedang melihat Pratinjau Gate. Link artikel di dalamnya mengarah ke versi sementara (Blob URL) dan hanya berfungsi di jendela Pratinjau ini.');
+                        // Tampilkan Gate HTML
+                        openPreviewWindow(htmlToPreview);
 
                     } catch (error) {
                         console.error('Error loading gate template:', error);
-                        // window.alert(`Gagal memuat/menggunakan template Gate: ${error.message}. Akan menampilkan Pratinjau Artikel Utama.`);
+                         // Jika fetch template gate gagal, fallback ke tampilan artikel biasa
+                        openPreviewWindow(htmlToPreview);
                     }
+                } else {
+                     // Jika Gate tidak dipilih, tampilkan artikel biasa
+                    openPreviewWindow(htmlToPreview);
                 }
-
-                const newWindow = window.open();
-                newWindow.document.write(htmlToPreview);
-                newWindow.document.close();
             });
 
             // Event listener untuk tombol "Download Desktop"
@@ -477,8 +483,8 @@
                         htmlToDownload = finalGateHtml;
                         downloadFilename = `${gateType.toLowerCase().replace(/\s/g, '_')}_desktop_gate.html`;
 
-                        // Peringatan untuk download dua file
-                        // window.alert(`Anda akan mendownload dua file: \n1. Artikel Utama (${articleFilename})\n2. Halaman Gate (${downloadFilename}).\n\nPastikan kedua file berada di folder yang sama agar link dari Gate berfungsi!`);
+                        // Peringatan: Karena tidak menggunakan window.alert(), kita hanya log pesan ini.
+                        console.log(`PENTING: Mendownload 2 file: 1. Artikel Utama (${articleFilename}) dan 2. Halaman Gate (${downloadFilename}). Pastikan keduanya berada di folder yang sama!`);
 
                         // Download Artikel Utama dulu
                         const aArticle = document.createElement('a');
@@ -491,8 +497,8 @@
                     
                     } catch (error) {
                         console.error('Error loading gate template:', error);
-                        // window.alert(`Gagal memuat/menggunakan template Gate. Hanya artikel utama yang akan didownload. Error: ${error.message}`);
-                        // Lanjutkan download artikel utama jika gate gagal
+                        console.error(`Gagal memuat/menggunakan template Gate. Hanya artikel utama yang akan didownload. Error: ${error.message}`);
+                        // Lanjutkan download artikel utama jika gate gagal (htmlToDownload tetap artikelHtml)
                     }
                 }
                 
@@ -538,8 +544,8 @@
                         htmlToDownload = finalGateHtml;
                         downloadFilename = `${gateType.toLowerCase().replace(/\s/g, '_')}_mobile_gate.html`;
 
-                        // Peringatan untuk download dua file
-                        // window.alert(`Anda akan mendownload dua file: \n1. Artikel Utama (${articleFilename})\n2. Halaman Gate (${downloadFilename}).\n\nPastikan kedua file berada di folder yang sama agar link dari Gate berfungsi!`);
+                        // Peringatan: Karena tidak menggunakan window.alert(), kita hanya log pesan ini.
+                        console.log(`PENTING: Mendownload 2 file: 1. Artikel Utama (${articleFilename}) dan 2. Halaman Gate (${downloadFilename}). Pastikan keduanya berada di folder yang sama!`);
 
                         // Download Artikel Utama dulu
                         const aArticle = document.createElement('a');
@@ -552,8 +558,8 @@
 
                     } catch (error) {
                         console.error('Error loading gate template:', error);
-                        // window.alert(`Gagal memuat/menggunakan template Gate. Hanya artikel utama yang akan didownload. Error: ${error.message}`);
-                        // Lanjutkan download artikel utama jika gate gagal
+                        console.error(`Gagal memuat/menggunakan template Gate. Hanya artikel utama yang akan didownload. Error: ${error.message}`);
+                        // Lanjutkan download artikel utama jika gate gagal (htmlToDownload tetap artikelHtml)
                     }
                 }
                 
