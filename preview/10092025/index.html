@@ -27,7 +27,8 @@
     }
 
     #warning-message {
-        display: none;
+        /* Set to display: none permanently because the mobile restriction is removed */
+        display: none; 
         text-align: center;
         padding: 20px;
         font-family: sans-serif;
@@ -35,16 +36,8 @@
         font-size: 1.2em;
     }
 
-    /* Media Query untuk perangkat tablet dan mobile */
-    @media screen and (max-width: 1023px) {
-        #hero {
-            display: none;
-        }
-
-        #warning-message {
-            display: block;
-        }
-    }
+    /* Media Query yang membatasi akses ke desktop sudah DIHAPUS */
+    
 </style>
 <body>
     <div id="hero">
