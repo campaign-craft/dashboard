@@ -30,6 +30,7 @@
             background-position: center;
             background-repeat: no-repeat;
             position: relative;
+            background-color: #e5e7eb; /* Tambahkan warna default agar tidak kosong */
         }
 
         /* Gradient overlay agar gambar menyatu dengan bagian bawah */
@@ -48,6 +49,11 @@
         #text-area {
             height: 50%; /* 240px dari 480px total */
             background-color: rgb(0, 51, 102); /* Biru gelap */
+        }
+
+        /* Shadow untuk teks agar terlihat jelas di atas gambar gelap */
+        .text-shadow-md {
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
         }
     </style>
     <script>
@@ -68,13 +74,26 @@
          */
         function handleImageUpload(event) {
             const file = event.target.files[0];
+            const imageArea = document.getElementById('image-area');
+            const placeholder = document.getElementById('image-placeholder'); // Ambil placeholder
+            
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     // Set gambar sebagai background-image pada area-gambar
-                    document.getElementById('image-area').style.backgroundImage = `url('${e.target.result}')`;
+                    imageArea.style.backgroundImage = `url('${e.target.result}')`;
+                    // Sembunyikan placeholder setelah gambar dimuat
+                    if (placeholder) {
+                        placeholder.style.display = 'none';
+                    }
                 };
                 reader.readAsDataURL(file);
+            } else {
+                 // Tampilkan kembali placeholder jika user membatalkan upload
+                if (placeholder) {
+                    placeholder.style.display = 'flex';
+                }
+                imageArea.style.backgroundImage = 'none';
             }
         }
 
@@ -122,7 +141,8 @@
 
             } catch (error) {
                 console.error("Gagal mengkonversi banner:", error);
-                alert("Gagal mengunduh banner. Cek konsol untuk detail error.");
+                // Ganti alert dengan logging ke konsol
+                console.error("Kesalahan: Gagal mengunduh banner. Cek konsol untuk detail error.");
             } finally {
                 // Kembalikan tombol ke keadaan semula
                 downloadButton.innerText = originalText;
@@ -197,16 +217,15 @@
         <h2 class="text-xl font-bold text-gray-800 mb-3 text-center lg:text-left">Preview (320x480)</h2>
         <div id="banner-preview-container" class="rounded-xl overflow-hidden relative">
             <div id="image-area" class="relative">
-                <!-- Area ini akan diisi background-image dari user -->
-                <!-- Placeholder untuk tampilan awal -->
-                <div class="absolute inset-0 flex items-center justify-center bg-gray-200 text-gray-500">
+                <!-- Placeholder untuk tampilan awal (sekarang berada di dalam image-area, bukan menutupi) -->
+                <div id="image-placeholder" class="absolute inset-0 flex items-center justify-center text-gray-500" style="z-index: 10;">
                     <span class="text-sm">Unggah Foto di Kolom Kiri</span>
                 </div>
             </div>
             
             <div id="text-area" class="flex flex-col justify-end p-5 text-white">
-                <!-- Teks Copy -->
-                <p id="banner-copy" class="text-lg font-serif italic mb-4 leading-relaxed text-shadow-md">
+                <!-- Teks Copy - Dihapus italic dan diganti dengan font-semibold -->
+                <p id="banner-copy" class="text-lg font-semibold mb-4 leading-relaxed text-shadow-md">
                     Teks Utama yang Menggugah untuk Transformasi Industri.
                 </p>
                 
