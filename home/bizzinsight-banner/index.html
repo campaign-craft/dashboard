@@ -48,8 +48,8 @@
         #text-area {
             height: 50%; /* 240px dari 480px total */
             background-color: rgb(0, 51, 102); /* Biru gelap */
-            /* [PERBAIKAN] Tambahkan padding-bottom eksplisit untuk jarak dari bawah */
-            padding-bottom: 20px; 
+            /* [PERBAIKAN] Mengubah padding-bottom menjadi 50px */
+            padding-bottom: 50px; 
         }
 
         /* Shadow untuk teks agar terlihat jelas di atas gambar gelap */
@@ -57,12 +57,12 @@
             text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
         }
         
-        /* [PERBAIKAN] CSS untuk Tombol CTA agar lebih stabil di html2canvas */
+        /* [PERBAIKAN] Menghapus CSS kustom pada CTA yang menyebabkan rendering bermasalah */
         #banner-cta {
-            /* Menambahkan border 2px putih agar ada frame yang jelas */
-            border: 2px solid white; 
-            /* Box shadow sederhana yang didukung html2canvas */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            /* Pastikan tombol adalah block agar mudah diatur di tengah */
+            display: inline-block; 
+            /* Box-shadow sederhana, lebih stabil di html2canvas */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
     </style>
     <script>
@@ -239,7 +239,7 @@
                 </div>
             </div>
             
-            <!-- [PERBAIKAN PADDING] Mengatur jarak dari bawah (padding-bottom: 20px) di CSS block #text-area -->
+            <!-- [PERBAIKAN PADDING] Mengatur jarak dari bawah (padding-bottom: 50px) di CSS block #text-area -->
             <div id="text-area" class="flex flex-col justify-end p-5 text-white">
                 <!-- Teks Copy -->
                 <p id="banner-copy" class="text-lg font-semibold mb-4 leading-relaxed text-shadow-md">
@@ -248,7 +248,7 @@
                 
                 <!-- Tombol CTA -->
                 <div class="text-center">
-                    <!-- [PERBAIKAN STYLING CTA] Mengganti shadow tailwind dengan border dan box-shadow sederhana untuk konsistensi html2canvas -->
+                    <!-- [PERBAIKAN STYLING CTA] Styling lebih sederhana untuk konsistensi html2canvas -->
                     <button id="banner-cta" class="bg-white text-primary-blue font-bold py-3 px-6 rounded-full hover:bg-gray-100 transition duration-200 uppercase text-sm">
                         Baca Selengkapnya
                     </button>
