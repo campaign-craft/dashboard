@@ -20,7 +20,6 @@
             padding: 0;
             margin: 0;
             overflow: hidden;
-            /* Sudut membulat dihapus dari sini */
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
@@ -31,21 +30,20 @@
             background-position: center;
             background-repeat: no-repeat;
             position: relative;
-            background-color: #e5e7eb; /* Tambahkan warna default agar tidak kosong */
+            background-color: #e5e7eb; 
         }
 
-        /* Gradient overlay agar gambar menyatu dengan bagian bawah */
-        #image-area::after {
-            content: '';
+        /* [PERBAIKAN] Area Gradien Overlay kini menjadi div eksplisit */
+        #gradient-overlay {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 50%; /* Gradient hanya di bagian bawah area gambar */
-            /* Menggunakan warna biru gelap (mirip contoh) */
+            height: 50%; 
+            /* Gradien didefinisikan di sini untuk kompatibilitas html2canvas */
             background: linear-gradient(to bottom, transparent, rgba(0, 51, 102, 0.7) 70%, rgb(0, 51, 102) 100%);
         }
-        
+
         /* Area teks */
         #text-area {
             height: 50%; /* 240px dari 480px total */
@@ -127,15 +125,17 @@
                     // PASTIKAN DIMENSI EKSPLISIT 320x480
                     width: 320,
                     height: 480,
-                    scale: 2, // Gunakan skala 2x untuk kualitas yang lebih baik, hasilnya akan tetap 320x480px karena canvas dimensions dikontrol oleh width/height di sini.
+                    scale: 1, // Mengganti scale ke 1. html2canvas dengan width/height eksplisit akan menghasilkan dimensi 320x480px. Scale > 1 bisa menyebabkan masalah rendering jika tidak ditangani dengan hati-hati.
                     useCORS: true,
                     allowTaint: true, 
                     backgroundColor: null,
                 });
-
+                
+                // Cek apakah dimensi canvas sudah benar sebelum download
+                console.log(`Canvas dimension: ${canvas.width}x${canvas.height}`);
+                
                 // Buat link download
                 const link = document.createElement('a');
-                // canvas.toDataURL akan menghasilkan gambar dengan resolusi yang benar berdasarkan ukuran canvas 320x480
                 link.href = canvas.toDataURL('image/png'); 
                 link.download = 'banner_320x480.png';
                 document.body.appendChild(link);
@@ -218,17 +218,19 @@
     <!-- Area Preview Banner (Kanan/Bawah) -->
     <div class="flex-shrink-0">
         <h2 class="text-xl font-bold text-gray-800 mb-3 text-center lg:text-left">Preview (320x480)</h2>
-        <!-- Class rounded-xl di sini sudah dihapus -->
         <div id="banner-preview-container" class="overflow-hidden relative"> 
             <div id="image-area" class="relative">
-                <!-- Placeholder untuk tampilan awal (sekarang berada di dalam image-area, bukan menutupi) -->
+                <!-- [PERBAIKAN] Div Gradien Overlay kini menjadi elemen eksplisit -->
+                <div id="gradient-overlay"></div> 
+                
+                <!-- Placeholder untuk tampilan awal -->
                 <div id="image-placeholder" class="absolute inset-0 flex items-center justify-center text-gray-500" style="z-index: 10;">
                     <span class="text-sm">Unggah Foto di Kolom Kiri</span>
                 </div>
             </div>
             
             <div id="text-area" class="flex flex-col justify-end p-5 text-white">
-                <!-- Teks Copy - Dihapus italic dan diganti dengan font-semibold -->
+                <!-- Teks Copy -->
                 <p id="banner-copy" class="text-lg font-semibold mb-4 leading-relaxed text-shadow-md">
                     Teks Utama yang Menggugah untuk Transformasi Industri.
                 </p>
