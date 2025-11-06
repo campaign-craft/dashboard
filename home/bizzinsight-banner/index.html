@@ -48,7 +48,7 @@
         #text-area {
             height: 50%; /* 240px dari 480px total */
             background-color: rgb(0, 51, 102); /* Biru gelap */
-            /* [PERBAIKAN] padding-bottom tetap 50px */
+            /* padding-bottom tetap 50px */
             padding-bottom: 50px; 
         }
 
@@ -245,8 +245,8 @@
                 
                 <!-- Tombol CTA -->
                 <div class="text-center">
-                    <!-- [FINAL PERBAIKAN STYLING CTA] Menggunakan tombol kotak dengan sudut sedikit membulat (rounded-lg) yang lebih stabil -->
-                    <button id="banner-cta" class="bg-white text-primary-blue font-bold py-2 px-5 rounded-lg shadow-md hover:bg-gray-100 transition duration-200 uppercase text-sm">
+                    <!-- [FINAL PERBAIKAN STYLING CTA] Menggunakan Flexbox untuk senter vertikal kuat dan menghilangkan shadow yang bermasalah. -->
+                    <button id="banner-cta" class="bg-white text-primary-blue font-bold py-2 px-5 rounded-sm hover:bg-gray-100 transition duration-200 uppercase text-sm inline-flex items-center justify-center">
                         Baca Selengkapnya
                     </button>
                 </div>
