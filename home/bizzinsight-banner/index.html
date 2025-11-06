@@ -48,7 +48,7 @@
         #text-area {
             height: 50%; /* 240px dari 480px total */
             background-color: rgb(0, 51, 102); /* Biru gelap */
-            /* [PERBAIKAN] Mengubah padding-bottom menjadi 50px */
+            /* [PERBAIKAN] padding-bottom tetap 50px */
             padding-bottom: 50px; 
         }
 
@@ -57,10 +57,9 @@
             text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
         }
         
-        /* [FINAL PERBAIKAN CTA] Hapus semua kustom CSS agar hanya menggunakan Tailwind yang lebih stabil */
+        /* Hapus CSS kustom tambahan pada CTA */
         #banner-cta {
-             /* Menghapus semua box-shadow kustom CSS */
-             /* Biarkan Tailwind menangani styling di HTML */
+             /* Tidak ada CSS kustom untuk menghindari masalah rendering */
         }
     </style>
     <script>
@@ -246,8 +245,8 @@
                 
                 <!-- Tombol CTA -->
                 <div class="text-center">
-                    <!-- [FINAL PERBAIKAN STYLING CTA] Menggunakan border-2 border-white untuk 'frame' putih yang lebih stabil -->
-                    <button id="banner-cta" class="bg-white text-primary-blue font-bold py-3 px-6 rounded-full border-2 border-white shadow-lg hover:bg-gray-100 transition duration-200 uppercase text-sm">
+                    <!-- [FINAL PERBAIKAN STYLING CTA] Menggunakan tombol kotak dengan sudut sedikit membulat (rounded-lg) yang lebih stabil -->
+                    <button id="banner-cta" class="bg-white text-primary-blue font-bold py-2 px-5 rounded-lg shadow-md hover:bg-gray-100 transition duration-200 uppercase text-sm">
                         Baca Selengkapnya
                     </button>
                 </div>
