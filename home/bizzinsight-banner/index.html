@@ -3,63 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pembuat Banner 320x480</title>
+    <title>Pembuat Banner 320x480 (Canvas)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- HTML2Canvas CDN untuk mengkonversi HTML ke Gambar (PNG) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         /* Menggunakan font Inter secara default */
         body { font-family: 'Inter', sans-serif; }
         
-        /* Ukuran tetap untuk area preview banner */
-        #banner-preview-container {
+        /* Container untuk canvas */
+        #canvas-container {
             width: 320px;
             height: 480px;
-            /* Pastikan preview banner tidak terganggu oleh margin/padding */
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Area gambar menggunakan background-image */
-        #image-area {
-            height: 50%; /* 240px dari 480px total */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative;
-            background-color: #e5e7eb; 
-        }
-
-        /* Area Gradien Overlay kini menjadi div eksplisit */
-        #gradient-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 50%; 
-            /* Gradien didefinisikan di sini untuk kompatibilitas html2canvas */
-            background: linear-gradient(to bottom, transparent, rgba(0, 51, 102, 0.7) 70%, rgb(0, 51, 102) 100%);
-        }
-
-        /* Area teks */
-        #text-area {
-            height: 50%; /* 240px dari 480px total */
-            background-color: rgb(0, 51, 102); /* Biru gelap */
-            /* padding-bottom tetap 50px */
-            padding-bottom: 50px; 
-        }
-
-        /* Shadow untuk teks agar terlihat jelas di atas gambar gelap */
-        .text-shadow-md {
-            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+            /* Pastikan tidak ada margin/padding yang mengganggu ukuran 320x480 */
         }
         
-        /* Hapus CSS kustom tambahan pada CTA */
-        #banner-cta {
-             /* Tidak ada CSS kustom untuk menghindari masalah rendering */
+        /* Sembunyikan div preview lama dan tampilkan canvas */
+        #banner-preview-container {
+            display: none; 
+        }
+
+        /* Styling untuk Canvas agar terlihat jelas */
+        #banner-canvas {
+            display: block;
+            background-color: #f3f4f6;
         }
     </style>
     <script>
@@ -67,102 +34,255 @@
             theme: {
                 extend: {
                     colors: {
-                        'primary-blue': '#003366', // Warna biru gelap seperti contoh
+                        'primary-blue': '#016fba', // Warna biru baru
                     },
                 }
             }
         }
 
-        const API_KEY = ""; // Kunci API dikosongkan untuk lingkungan ini
+        const CANVAS_WIDTH = 320;
+        const CANVAS_HEIGHT = 480;
+        const TEXT_COLOR = '#FFFFFF';
+        // Menggunakan warna baru: #016fba
+        const CTA_COLOR = '#016fba'; 
+        const BLUE_BG = '#016fba';
+        const PADDING_X = 20;
+        const LINE_HEIGHT = 26; // Line height yang diatur manual untuk teks copy
+        const CTA_BORDER_RADIUS = 15; // Radius untuk tombol CTA (agak rounded)
+
+        let canvas;
+        let ctx;
+        let image = new Image();
+        let currentImageURL = null; // Menyimpan URL gambar yang dimuat
         
+        // --- Setup Canvas ---
+        window.onload = () => {
+            canvas = document.getElementById('banner-canvas');
+            ctx = canvas.getContext('2d');
+            canvas.width = CANVAS_WIDTH;
+            canvas.height = CANVAS_HEIGHT;
+            
+            // Set listener untuk input teks
+            document.getElementById('copy-input').addEventListener('input', drawBanner);
+            
+            // Panggil drawBanner untuk menampilkan state awal
+            drawBanner(); 
+        }
+        
+        /**
+         * Menggambar rounded rectangle di canvas.
+         */
+        function roundRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.arcTo(x + width, y, x + width, y + radius, radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+            ctx.lineTo(x + radius, y + height);
+            ctx.arcTo(x, y + height, x, y + height - radius, radius);
+            ctx.lineTo(x, y + radius);
+            ctx.arcTo(x, y, x + radius, y, radius);
+            ctx.closePath();
+        }
+
+        // --- Logika Gambar Banner dengan Canvas ---
+        function drawBanner() {
+            if (!ctx) return;
+            
+            // 1. Bersihkan Canvas
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+            // 2. Gambar Background Biru (Area Bawah)
+            ctx.fillStyle = BLUE_BG;
+            ctx.fillRect(0, CANVAS_HEIGHT / 2, CANVAS_WIDTH, CANVAS_HEIGHT / 2); // Mengisi setengah bawah
+
+            // 3. Gambar Foto (Area Atas)
+            if (currentImageURL) {
+                // Skala gambar agar mengisi area atas 320x240 (50% tinggi)
+                const imageRatio = image.width / image.height;
+                let drawWidth, drawHeight, offsetX, offsetY;
+                
+                // Cover: Menghitung agar gambar mengisi seluruh area (crop jika perlu)
+                if (imageRatio > (CANVAS_WIDTH / (CANVAS_HEIGHT / 2))) {
+                    drawHeight = CANVAS_HEIGHT / 2;
+                    drawWidth = drawHeight * imageRatio;
+                    offsetX = (CANVAS_WIDTH - drawWidth) / 2;
+                    offsetY = 0;
+                } else {
+                    drawWidth = CANVAS_WIDTH;
+                    drawHeight = drawWidth / imageRatio;
+                    offsetX = 0;
+                    offsetY = (CANVAS_HEIGHT / 2 - drawHeight) / 2;
+                }
+                
+                ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
+            }
+            
+            // 4. Gambar Gradien Overlay (Menggunakan warna biru baru)
+            const gradientHeight = CANVAS_HEIGHT / 2;
+            const gradientY = CANVAS_HEIGHT / 2 - gradientHeight * 0.5;
+            
+            const gradient = ctx.createLinearGradient(0, gradientY, 0, CANVAS_HEIGHT);
+            gradient.addColorStop(0, 'rgba(1, 111, 186, 0)'); // Transparan dengan warna baru
+            gradient.addColorStop(0.7, 'rgba(1, 111, 186, 0.7)');
+            gradient.addColorStop(1, BLUE_BG);
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+
+            // 5. Gambar Teks (Copy)
+            const copyText = document.getElementById('copy-input').value;
+            const MAX_WIDTH = CANVAS_WIDTH - (PADDING_X * 2);
+            const CTA_AREA_HEIGHT = 80; // Area dari bawah untuk CTA dan padding (50px + 30px tinggi tombol)
+
+            ctx.fillStyle = TEXT_COLOR;
+            // !!! PERUBAHAN DI SINI: Mengganti 700 (Bold) menjadi 400 (Regular)
+            ctx.font = '400 18px Inter'; 
+            
+            // Atur perataan teks menjadi CENTER
+            ctx.textAlign = 'center';
+
+            const lines = wrapText(ctx, copyText, MAX_WIDTH);
+            const totalTextHeight = lines.length * LINE_HEIGHT;
+            
+            // Hitung Area Bebas untuk Teks
+            const FREE_AREA_START = CANVAS_HEIGHT / 2;
+            const FREE_AREA_HEIGHT = (CANVAS_HEIGHT / 2) - CTA_AREA_HEIGHT; 
+
+            // Hitung posisi Y awal untuk sentering vertikal
+            let currentY = FREE_AREA_START + (FREE_AREA_HEIGHT - totalTextHeight) / 2 + 20; 
+
+            const centerX = CANVAS_WIDTH / 2; // Posisi X center
+
+            for (let i = 0; i < lines.length; i++) {
+                ctx.fillText(lines[i], centerX, currentY); // Gunakan centerX untuk center
+                currentY += LINE_HEIGHT;
+            }
+            
+            // 6. Gambar Tombol CTA (Teks dan Kotak)
+            const CTA_TEXT = "BACA DISINI";
+            const FONT_CTA = '700 14px Inter';
+            
+            // Meningkatkan padding X agar tombol lebih memanjang
+            const PADDING_CTA_X_WIDE = 40; 
+            const BUTTON_HEIGHT = 35; // Tinggi tombol yang sedikit diperbesar
+
+            ctx.font = FONT_CTA;
+            const textMetrics = ctx.measureText(CTA_TEXT);
+            const textWidth = textMetrics.width;
+            const buttonWidth = textWidth + (PADDING_CTA_X_WIDE * 2);
+            
+            // Posisi tombol (X center)
+            const buttonX = (CANVAS_WIDTH - buttonWidth) / 2;
+            
+            // Posisi tombol (Y), dikunci 50px dari bawah
+            const buttonY = CANVAS_HEIGHT - 50 - BUTTON_HEIGHT; 
+            
+            // Gambar background tombol (Kotak Putih Rounded)
+            ctx.fillStyle = 'white';
+            roundRect(ctx, buttonX, buttonY, buttonWidth, BUTTON_HEIGHT, CTA_BORDER_RADIUS);
+            ctx.fill();
+            
+            // Gambar Teks CTA
+            ctx.fillStyle = CTA_COLOR;
+            ctx.textAlign = 'center'; 
+            
+            // Sentering Teks: Posisi X center tombol
+            const ctaCenterX = buttonX + buttonWidth / 2;
+            
+            // Sentering Teks Y: Menggunakan posisi Y tombol + (tinggi tombol / 2) + (tinggi teks / 2). 
+            const textY = buttonY + (BUTTON_HEIGHT / 2) + 5; // 5 adalah offset yang pas
+            ctx.fillText(CTA_TEXT, ctaCenterX, textY);
+            
+            // Reset perataan teks ke default
+            ctx.textAlign = 'left';
+        }
+
+        /**
+         * Fungsi untuk membungkus teks (text wrapping) di canvas
+         */
+        function wrapText(ctx, text, maxWidth) {
+            const words = text.split(' ');
+            let lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                const word = words[i];
+                const width = ctx.measureText(currentLine + " " + word).width;
+                if (width < maxWidth) {
+                    currentLine += " " + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
         /**
          * Mengkonversi file gambar yang diunggah menjadi URL base64 dan menampilkannya di banner.
          */
         function handleImageUpload(event) {
             const file = event.target.files[0];
-            const imageArea = document.getElementById('image-area');
-            const placeholder = document.getElementById('image-placeholder'); // Ambil placeholder
-            
+            const placeholder = document.getElementById('image-placeholder'); 
+
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    // Set gambar sebagai background-image pada area-gambar
-                    imageArea.style.backgroundImage = `url('${e.target.result}')`;
-                    // Sembunyikan placeholder setelah gambar dimuat
-                    if (placeholder) {
-                        placeholder.style.display = 'none';
-                    }
+                    currentImageURL = e.target.result;
+                    image.onload = () => {
+                        // Sembunyikan placeholder setelah gambar dimuat
+                        if (placeholder) {
+                            placeholder.style.display = 'none';
+                        }
+                        drawBanner(); // Gambar ulang banner dengan foto baru
+                    };
+                    image.src = currentImageURL;
                 };
                 reader.readAsDataURL(file);
             } else {
-                 // Tampilkan kembali placeholder jika user membatalkan upload
+                currentImageURL = null;
+                image.src = '';
                 if (placeholder) {
                     placeholder.style.display = 'flex';
                 }
-                imageArea.style.backgroundImage = 'none';
+                drawBanner(); // Gambar ulang tanpa foto
             }
         }
 
         /**
-         * Mengupdate teks copy dan CTA secara real-time pada preview banner.
+         * Mengunduh konten canvas sebagai gambar PNG.
          */
-        function updateBannerText() {
-            const copyText = document.getElementById('copy-input').value;
-            const ctaText = document.getElementById('cta-input').value;
-            
-            document.getElementById('banner-copy').innerText = copyText;
-            document.getElementById('banner-cta').innerText = ctaText;
-        }
-
-        /**
-         * Mengunduh konten banner sebagai gambar PNG menggunakan html2canvas.
-         */
-        async function downloadBanner() {
-            const bannerElement = document.getElementById('banner-preview-container');
+        function downloadBanner() {
             const downloadButton = document.getElementById('download-button');
             const originalText = downloadButton.innerText;
 
             // Tampilkan loading state
-            downloadButton.innerText = 'Memproses...';
+            downloadButton.innerText = 'Mengunduh...';
             downloadButton.disabled = true;
 
+            // Pastikan canvas sudah digambar sebelum diunduh
+            drawBanner();
+
             try {
-                // Gunakan html2canvas untuk mengambil screenshot dari elemen banner
-                const canvas = await html2canvas(bannerElement, {
-                    // PASTIKAN DIMENSI EKSPLISIT 320x480
-                    width: 320,
-                    height: 480,
-                    scale: 1, 
-                    useCORS: true,
-                    allowTaint: true, 
-                    backgroundColor: null,
-                });
-                
-                // Cek apakah dimensi canvas sudah benar sebelum download
-                console.log(`Canvas dimension: ${canvas.width}x${canvas.height}`);
-                
-                // Buat link download
+                // Unduh langsung dari canvas
                 const link = document.createElement('a');
                 link.href = canvas.toDataURL('image/png'); 
-                link.download = 'banner_320x480.png';
+                link.download = 'banner_320x480_canvas.png';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
 
             } catch (error) {
-                console.error("Gagal mengkonversi banner:", error);
-                // Ganti alert dengan logging ke konsol
-                console.error("Kesalahan: Gagal mengunduh banner. Cek konsol untuk detail error.");
+                console.error("Gagal mengunduh banner:", error);
             } finally {
                 // Kembalikan tombol ke keadaan semula
                 downloadButton.innerText = originalText;
                 downloadButton.disabled = false;
             }
-        }
-        
-        // Inisialisasi: set teks default
-        window.onload = () => {
-             updateBannerText();
         }
     </script>
 </head>
@@ -170,8 +290,8 @@
 
     <!-- Area Input Kontrol (Kiri/Atas) -->
     <div class="w-full lg:w-96 p-6 bg-white rounded-xl shadow-lg space-y-6">
-        <h1 class="text-2xl font-bold text-gray-800">🛠️ Pengaturan Banner 320x480</h1>
-        <p class="text-sm text-gray-500">Sesuaikan konten di bawah ini, lalu klik "Unduh Banner" untuk mendapatkan gambar PNG final.</p>
+        <h1 class="text-2xl font-bold text-gray-800">🛠️ Pengaturan Banner 320x480 (Canvas)</h1>
+        <p class="text-sm text-gray-500">Menggunakan metode Canvas API untuk menjamin akurasi 1:1 saat diunduh.</p>
 
         <!-- Input Foto -->
         <div>
@@ -192,26 +312,12 @@
             <textarea 
                 id="copy-input" 
                 rows="4" 
-                oninput="updateBannerText()"
+                oninput="drawBanner()"
                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150"
                 placeholder="Technovation: Philip Morris Tegaskan Komitmen Inklusif..."
             >Technovation: Teks Utama yang Menggugah untuk Transformasi Industri.</textarea>
         </div>
 
-        <!-- Input CTA -->
-        <div>
-            <label for="cta-input" class="block text-sm font-medium text-gray-700 mb-2">3. Teks CTA (Call to Action)</label>
-            <input 
-                type="text" 
-                id="cta-input" 
-                oninput="updateBannerText()"
-                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150"
-                value="Baca Selengkapnya"
-                maxlength="25"
-                placeholder="Baca Disini"
-            >
-        </div>
-        
         <!-- Tombol Download -->
         <button 
             id="download-button"
@@ -220,37 +326,18 @@
         >
             ⬇️ Unduh Banner (PNG)
         </button>
+        <p class="text-xs text-red-500">CATATAN: Pastikan Anda menggunakan font 'Inter' di komputer Anda agar preview 1:1 dengan hasil unduhan.</p>
     </div>
 
     <!-- Area Preview Banner (Kanan/Bawah) -->
     <div class="flex-shrink-0">
         <h2 class="text-xl font-bold text-gray-800 mb-3 text-center lg:text-left">Preview (320x480)</h2>
-        <div id="banner-preview-container" class="overflow-hidden relative"> 
-            <div id="image-area" class="relative">
-                <!-- Div Gradien Overlay kini menjadi elemen eksplisit -->
-                <div id="gradient-overlay"></div> 
-                
-                <!-- Placeholder untuk tampilan awal -->
-                <div id="image-placeholder" class="absolute inset-0 flex items-center justify-center text-gray-500" style="z-index: 10;">
-                    <span class="text-sm">Unggah Foto di Kolom Kiri</span>
-                </div>
+        <div id="canvas-container" class="relative">
+             <!-- Placeholder untuk tampilan awal tanpa gambar yang diunggah -->
+            <div id="image-placeholder" class="absolute inset-0 flex items-center justify-center text-gray-500" style="z-index: 10; width: 320px; height: 240px; background-color: #e5e7eb;">
+                <span class="text-sm">Unggah Foto di Kolom Kiri</span>
             </div>
-            
-            <!-- [PERBAIKAN PADDING] Mengatur jarak dari bawah (padding-bottom: 50px) di CSS block #text-area -->
-            <div id="text-area" class="flex flex-col justify-end p-5 text-white">
-                <!-- Teks Copy -->
-                <p id="banner-copy" class="text-lg font-semibold mb-4 leading-relaxed text-shadow-md">
-                    Teks Utama yang Menggugah untuk Transformasi Industri.
-                </p>
-                
-                <!-- Tombol CTA -->
-                <div class="text-center">
-                    <!-- [FINAL PERBAIKAN STYLING CTA] Menggunakan Flexbox untuk senter vertikal kuat dan menghilangkan shadow yang bermasalah. -->
-                    <button id="banner-cta" class="bg-white text-primary-blue font-bold py-2 px-5 rounded-sm hover:bg-gray-100 transition duration-200 uppercase text-sm inline-flex items-center justify-center">
-                        Baca Selengkapnya
-                    </button>
-                </div>
-            </div>
+            <canvas id="banner-canvas" width="320" height="480"></canvas>
         </div>
     </div>
 </body>
