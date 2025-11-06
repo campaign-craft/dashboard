@@ -119,17 +119,19 @@
                 ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
             }
             
-            // 4. Gambar Gradien Overlay (Menggunakan warna biru baru)
-            const gradientHeight = CANVAS_HEIGHT / 2;
-            const gradientY = CANVAS_HEIGHT / 2 - gradientHeight * 0.5;
+            // 4. Gambar Gradien Overlay (Menggunakan spesifikasi CSS baru)
+            const gradientHeight = CANVAS_HEIGHT; // Gradien mencakup seluruh tinggi canvas
             
-            const gradient = ctx.createLinearGradient(0, gradientY, 0, CANVAS_HEIGHT);
-            gradient.addColorStop(0, 'rgba(1, 111, 186, 0)'); // Transparan dengan warna baru
-            gradient.addColorStop(0.7, 'rgba(1, 111, 186, 0.7)');
-            gradient.addColorStop(1, BLUE_BG);
+            const gradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
+            
+            // Posisi 27.38% (Transparan)
+            gradient.addColorStop(0.2738, 'rgba(1, 111, 186, 0.00)'); 
+            
+            // Posisi 47.36% (Penuh Biru)
+            gradient.addColorStop(0.4736, BLUE_BG); 
             
             ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT); // Menggambar gradien di seluruh area canvas
 
 
             // 5. Gambar Teks (Copy)
@@ -138,7 +140,7 @@
             const CTA_AREA_HEIGHT = 80; // Area dari bawah untuk CTA dan padding (50px + 30px tinggi tombol)
 
             ctx.fillStyle = TEXT_COLOR;
-            // !!! PERUBAHAN DI SINI: Mengganti 700 (Bold) menjadi 400 (Regular)
+            // Mengganti 700 (Bold) menjadi 400 (Regular)
             ctx.font = '400 18px Inter'; 
             
             // Atur perataan teks menjadi CENTER
@@ -268,10 +270,26 @@
             drawBanner();
 
             try {
+                // 1. Ambil Nama Brand
+                const brandNameInput = document.getElementById('brand-name-input').value;
+                const safeBrandName = brandNameInput 
+                                        ? brandNameInput.replace(/\s+/g, '_').toLowerCase() 
+                                        : 'tanpa_nama_brand'; // Default jika kosong
+
+                // 2. Format Tanggal Hari Ini (DDMMYYYY)
+                const today = new Date();
+                const day = String(today.getDate()).padStart(2, '0');
+                const month = String(today.getMonth() + 1).padStart(2, '0'); // Bulan dimulai dari 0
+                const year = today.getFullYear();
+                const dateString = day + month + year;
+                
+                // 3. Gabungkan untuk Nama File: [320x480]_[nama_brand]_[tanggal_hari_ini].png
+                const fileName = `320x480_${safeBrandName}_${dateString}.png`;
+
                 // Unduh langsung dari canvas
                 const link = document.createElement('a');
                 link.href = canvas.toDataURL('image/png'); 
-                link.download = 'banner_320x480_canvas.png';
+                link.download = fileName; // Gunakan nama file yang sudah diformat
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -290,12 +308,20 @@
 
     <!-- Area Input Kontrol (Kiri/Atas) -->
     <div class="w-full lg:w-96 p-6 bg-white rounded-xl shadow-lg space-y-6">
-        <h1 class="text-2xl font-bold text-gray-800">🛠️ Pengaturan Banner 320x480 (Canvas)</h1>
-        <p class="text-sm text-gray-500">Menggunakan metode Canvas API untuk menjamin akurasi 1:1 saat diunduh.</p>
-
-        <!-- Input Foto -->
+        <!-- 1. Input Nama Brand -->
         <div>
-            <label for="photo-upload" class="block text-sm font-medium text-gray-700 mb-2">1. Unggah Foto Latar Belakang</label>
+            <label for="brand-name-input" class="block text-sm font-medium text-gray-700 mb-2">1. Nama Brand (untuk Nama File)</label>
+            <input 
+                type="text" 
+                id="brand-name-input" 
+                placeholder="Contoh: technovation"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150"
+            >
+        </div>
+        
+        <!-- 2. Input Foto -->
+        <div>
+            <label for="photo-upload" class="block text-sm font-medium text-gray-700 mb-2">2. Unggah Foto Latar Belakang</label>
             <input 
                 type="file" 
                 id="photo-upload" 
@@ -303,12 +329,11 @@
                 onchange="handleImageUpload(event)"
                 class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-blue file:text-white hover:file:bg-blue-700 rounded-lg border border-gray-300 p-2 cursor-pointer"
             >
-            <p class="text-xs text-gray-400 mt-1">Gunakan foto vertikal agar pas.</p>
         </div>
 
-        <!-- Input Copy/Teks Utama -->
+        <!-- 3. Input Copy/Teks Utama -->
         <div>
-            <label for="copy-input" class="block text-sm font-medium text-gray-700 mb-2">2. Teks Utama (Copy)</label>
+            <label for="copy-input" class="block text-sm font-medium text-gray-700 mb-2">3. Teks Utama (Copy)</label>
             <textarea 
                 id="copy-input" 
                 rows="4" 
@@ -326,12 +351,11 @@
         >
             ⬇️ Unduh Banner (PNG)
         </button>
-        <p class="text-xs text-red-500">CATATAN: Pastikan Anda menggunakan font 'Inter' di komputer Anda agar preview 1:1 dengan hasil unduhan.</p>
     </div>
 
     <!-- Area Preview Banner (Kanan/Bawah) -->
     <div class="flex-shrink-0">
-        <h2 class="text-xl font-bold text-gray-800 mb-3 text-center lg:text-left">Preview (320x480)</h2>
+        <!-- Hapus h2 Preview (320x480) di sini -->
         <div id="canvas-container" class="relative">
              <!-- Placeholder untuk tampilan awal tanpa gambar yang diunggah -->
             <div id="image-placeholder" class="absolute inset-0 flex items-center justify-center text-gray-500" style="z-index: 10; width: 320px; height: 240px; background-color: #e5e7eb;">
