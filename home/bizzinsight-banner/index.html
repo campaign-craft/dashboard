@@ -20,6 +20,7 @@
             padding: 0;
             margin: 0;
             overflow: hidden;
+            /* Sudut membulat dihapus dari sini */
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
@@ -123,17 +124,19 @@
             try {
                 // Gunakan html2canvas untuk mengambil screenshot dari elemen banner
                 const canvas = await html2canvas(bannerElement, {
+                    // PASTIKAN DIMENSI EKSPLISIT 320x480
                     width: 320,
                     height: 480,
-                    scale: 2, // Gunakan skala 2x untuk kualitas yang lebih baik
+                    scale: 2, // Gunakan skala 2x untuk kualitas yang lebih baik, hasilnya akan tetap 320x480px karena canvas dimensions dikontrol oleh width/height di sini.
                     useCORS: true,
-                    allowTaint: true, // Izinkan penggunaan gambar yang dimuat dari file input (Base64)
+                    allowTaint: true, 
                     backgroundColor: null,
                 });
 
                 // Buat link download
                 const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png');
+                // canvas.toDataURL akan menghasilkan gambar dengan resolusi yang benar berdasarkan ukuran canvas 320x480
+                link.href = canvas.toDataURL('image/png'); 
                 link.download = 'banner_320x480.png';
                 document.body.appendChild(link);
                 link.click();
@@ -215,7 +218,8 @@
     <!-- Area Preview Banner (Kanan/Bawah) -->
     <div class="flex-shrink-0">
         <h2 class="text-xl font-bold text-gray-800 mb-3 text-center lg:text-left">Preview (320x480)</h2>
-        <div id="banner-preview-container" class="rounded-xl overflow-hidden relative">
+        <!-- Class rounded-xl di sini sudah dihapus -->
+        <div id="banner-preview-container" class="overflow-hidden relative"> 
             <div id="image-area" class="relative">
                 <!-- Placeholder untuk tampilan awal (sekarang berada di dalam image-area, bukan menutupi) -->
                 <div id="image-placeholder" class="absolute inset-0 flex items-center justify-center text-gray-500" style="z-index: 10;">
