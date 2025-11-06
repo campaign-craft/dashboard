@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembuat Banner 320x480</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- HTML2Canvas CDN untuk mengkonversi HTML ke Gambar (PNG) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        /* Menggunakan font Inter secara default */
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Ukuran tetap untuk area preview banner */
+        #banner-preview-container {
+            width: 320px;
+            height: 480px;
+            /* Pastikan preview banner tidak terganggu oleh margin/padding */
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Area gambar menggunakan background-image */
+        #image-area {
+            height: 50%; /* 240px dari 480px total */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        /* Gradient overlay agar gambar menyatu dengan bagian bawah */
+        #image-area::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%; /* Gradient hanya di bagian bawah area gambar */
+            /* Menggunakan warna biru gelap (mirip contoh) */
+            background: linear-gradient(to bottom, transparent, rgba(0, 51, 102, 0.7) 70%, rgb(0, 51, 102) 100%);
+        }
+        
+        /* Area teks */
+        #text-area {
+            height: 50%; /* 240px dari 480px total */
+            background-color: rgb(0, 51, 102); /* Biru gelap */
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#003366', // Warna biru gelap seperti contoh
+                    },
+                }
+            }
+        }
+
+        const API_KEY = ""; // Kunci API dikosongkan untuk lingkungan ini
+        
+        /**
+         * Mengkonversi file gambar yang diunggah menjadi URL base64 dan menampilkannya di banner.
+         */
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Set gambar sebagai background-image pada area-gambar
+                    document.getElementById('image-area').style.backgroundImage = `url('${e.target.result}')`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        /**
+         * Mengupdate teks copy dan CTA secara real-time pada preview banner.
+         */
+        function updateBannerText() {
+            const copyText = document.getElementById('copy-input').value;
+            const ctaText = document.getElementById('cta-input').value;
+            
+            document.getElementById('banner-copy').innerText = copyText;
+            document.getElementById('banner-cta').innerText = ctaText;
+        }
+
+        /**
+         * Mengunduh konten banner sebagai gambar PNG menggunakan html2canvas.
+         */
+        async function downloadBanner() {
+            const bannerElement = document.getElementById('banner-preview-container');
+            const downloadButton = document.getElementById('download-button');
+            const originalText = downloadButton.innerText;
+
+            // Tampilkan loading state
+            downloadButton.innerText = 'Memproses...';
+            downloadButton.disabled = true;
+
+            try {
+                // Gunakan html2canvas untuk mengambil screenshot dari elemen banner
+                const canvas = await html2canvas(bannerElement, {
+                    width: 320,
+                    height: 480,
+                    scale: 2, // Gunakan skala 2x untuk kualitas yang lebih baik
+                    useCORS: true,
+                    allowTaint: true, // Izinkan penggunaan gambar yang dimuat dari file input (Base64)
+                    backgroundColor: null,
+                });
+
+                // Buat link download
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'banner_320x480.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (error) {
+                console.error("Gagal mengkonversi banner:", error);
+                alert("Gagal mengunduh banner. Cek konsol untuk detail error.");
+            } finally {
+                // Kembalikan tombol ke keadaan semula
+                downloadButton.innerText = originalText;
+                downloadButton.disabled = false;
+            }
+        }
+        
+        // Inisialisasi: set teks default
+        window.onload = () => {
+             updateBannerText();
+        }
+    </script>
+</head>
+<body class="bg-gray-50 p-6 md:p-10 flex flex-col lg:flex-row gap-10 justify-center items-start lg:items-center">
+
+    <!-- Area Input Kontrol (Kiri/Atas) -->
+    <div class="w-full lg:w-96 p-6 bg-white rounded-xl shadow-lg space-y-6">
+        <h1 class="text-2xl font-bold text-gray-800">🛠️ Pengaturan Banner 320x480</h1>
+        <p class="text-sm text-gray-500">Sesuaikan konten di bawah ini, lalu klik "Unduh Banner" untuk mendapatkan gambar PNG final.</p>
+
+        <!-- Input Foto -->
+        <div>
+            <label for="photo-upload" class="block text-sm font-medium text-gray-700 mb-2">1. Unggah Foto Latar Belakang</label>
+            <input 
+                type="file" 
+                id="photo-upload" 
+                accept="image/*" 
+                onchange="handleImageUpload(event)"
+                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-blue file:text-white hover:file:bg-blue-700 rounded-lg border border-gray-300 p-2 cursor-pointer"
+            >
+            <p class="text-xs text-gray-400 mt-1">Gunakan foto vertikal agar pas.</p>
+        </div>
+
+        <!-- Input Copy/Teks Utama -->
+        <div>
+            <label for="copy-input" class="block text-sm font-medium text-gray-700 mb-2">2. Teks Utama (Copy)</label>
+            <textarea 
+                id="copy-input" 
+                rows="4" 
+                oninput="updateBannerText()"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150"
+                placeholder="Technovation: Philip Morris Tegaskan Komitmen Inklusif..."
+            >Technovation: Teks Utama yang Menggugah untuk Transformasi Industri.</textarea>
+        </div>
+
+        <!-- Input CTA -->
+        <div>
+            <label for="cta-input" class="block text-sm font-medium text-gray-700 mb-2">3. Teks CTA (Call to Action)</label>
+            <input 
+                type="text" 
+                id="cta-input" 
+                oninput="updateBannerText()"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150"
+                value="Baca Selengkapnya"
+                maxlength="25"
+                placeholder="Baca Disini"
+            >
+        </div>
+        
+        <!-- Tombol Download -->
+        <button 
+            id="download-button"
+            onclick="downloadBanner()"
+            class="w-full py-3 mt-4 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition duration-300 focus:outline-none focus:ring-4 focus:ring-green-500/50"
+        >
+            ⬇️ Unduh Banner (PNG)
+        </button>
+    </div>
+
+    <!-- Area Preview Banner (Kanan/Bawah) -->
+    <div class="flex-shrink-0">
+        <h2 class="text-xl font-bold text-gray-800 mb-3 text-center lg:text-left">Preview (320x480)</h2>
+        <div id="banner-preview-container" class="rounded-xl overflow-hidden relative">
+            <div id="image-area" class="relative">
+                <!-- Area ini akan diisi background-image dari user -->
+                <!-- Placeholder untuk tampilan awal -->
+                <div class="absolute inset-0 flex items-center justify-center bg-gray-200 text-gray-500">
+                    <span class="text-sm">Unggah Foto di Kolom Kiri</span>
+                </div>
+            </div>
+            
+            <div id="text-area" class="flex flex-col justify-end p-5 text-white">
+                <!-- Teks Copy -->
+                <p id="banner-copy" class="text-lg font-serif italic mb-4 leading-relaxed text-shadow-md">
+                    Teks Utama yang Menggugah untuk Transformasi Industri.
+                </p>
+                
+                <!-- Tombol CTA -->
+                <div class="text-center">
+                    <button id="banner-cta" class="bg-white text-primary-blue font-bold py-3 px-6 rounded-full shadow-lg hover:bg-gray-100 transition duration-200 uppercase text-sm">
+                        Baca Selengkapnya
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
