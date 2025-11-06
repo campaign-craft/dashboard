@@ -33,7 +33,7 @@
             background-color: #e5e7eb; 
         }
 
-        /* [PERBAIKAN] Area Gradien Overlay kini menjadi div eksplisit */
+        /* Area Gradien Overlay kini menjadi div eksplisit */
         #gradient-overlay {
             position: absolute;
             bottom: 0;
@@ -48,11 +48,21 @@
         #text-area {
             height: 50%; /* 240px dari 480px total */
             background-color: rgb(0, 51, 102); /* Biru gelap */
+            /* [PERBAIKAN] Tambahkan padding-bottom eksplisit untuk jarak dari bawah */
+            padding-bottom: 20px; 
         }
 
         /* Shadow untuk teks agar terlihat jelas di atas gambar gelap */
         .text-shadow-md {
             text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+        }
+        
+        /* [PERBAIKAN] CSS untuk Tombol CTA agar lebih stabil di html2canvas */
+        #banner-cta {
+            /* Menambahkan border 2px putih agar ada frame yang jelas */
+            border: 2px solid white; 
+            /* Box shadow sederhana yang didukung html2canvas */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
     </style>
     <script>
@@ -125,7 +135,7 @@
                     // PASTIKAN DIMENSI EKSPLISIT 320x480
                     width: 320,
                     height: 480,
-                    scale: 1, // Mengganti scale ke 1. html2canvas dengan width/height eksplisit akan menghasilkan dimensi 320x480px. Scale > 1 bisa menyebabkan masalah rendering jika tidak ditangani dengan hati-hati.
+                    scale: 1, 
                     useCORS: true,
                     allowTaint: true, 
                     backgroundColor: null,
@@ -220,7 +230,7 @@
         <h2 class="text-xl font-bold text-gray-800 mb-3 text-center lg:text-left">Preview (320x480)</h2>
         <div id="banner-preview-container" class="overflow-hidden relative"> 
             <div id="image-area" class="relative">
-                <!-- [PERBAIKAN] Div Gradien Overlay kini menjadi elemen eksplisit -->
+                <!-- Div Gradien Overlay kini menjadi elemen eksplisit -->
                 <div id="gradient-overlay"></div> 
                 
                 <!-- Placeholder untuk tampilan awal -->
@@ -229,6 +239,7 @@
                 </div>
             </div>
             
+            <!-- [PERBAIKAN PADDING] Mengatur jarak dari bawah (padding-bottom: 20px) di CSS block #text-area -->
             <div id="text-area" class="flex flex-col justify-end p-5 text-white">
                 <!-- Teks Copy -->
                 <p id="banner-copy" class="text-lg font-semibold mb-4 leading-relaxed text-shadow-md">
@@ -237,7 +248,8 @@
                 
                 <!-- Tombol CTA -->
                 <div class="text-center">
-                    <button id="banner-cta" class="bg-white text-primary-blue font-bold py-3 px-6 rounded-full shadow-lg hover:bg-gray-100 transition duration-200 uppercase text-sm">
+                    <!-- [PERBAIKAN STYLING CTA] Mengganti shadow tailwind dengan border dan box-shadow sederhana untuk konsistensi html2canvas -->
+                    <button id="banner-cta" class="bg-white text-primary-blue font-bold py-3 px-6 rounded-full hover:bg-gray-100 transition duration-200 uppercase text-sm">
                         Baca Selengkapnya
                     </button>
                 </div>
