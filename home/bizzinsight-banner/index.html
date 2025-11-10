@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pembuat Banner 320x480 (Canvas)</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Menggunakan font Inter secara default */
@@ -270,11 +269,8 @@
             drawBanner();
 
             try {
-                // 1. Ambil Nama Brand
-                const brandNameInput = document.getElementById('brand-name-input').value;
-                const safeBrandName = brandNameInput 
-                                        ? brandNameInput.replace(/\s+/g, '_').toLowerCase() 
-                                        : 'tanpa_nama_brand'; // Default jika kosong
+                // Nama default baru setelah input Nama Brand dihapus
+                const safeNamePart = 'banner_canvas'; 
 
                 // 2. Format Tanggal Hari Ini (DDMMYYYY)
                 const today = new Date();
@@ -283,8 +279,8 @@
                 const year = today.getFullYear();
                 const dateString = day + month + year;
                 
-                // 3. Gabungkan untuk Nama File: [320x480]_[nama_brand]_[tanggal_hari_ini].png
-                const fileName = `320x480_${safeBrandName}_${dateString}.png`;
+                // 3. Gabungkan untuk Nama File: 320x480_banner_canvas_DDMMYYYY.png
+                const fileName = `320x480_${safeNamePart}_${dateString}.png`;
 
                 // Unduh langsung dari canvas
                 const link = document.createElement('a');
@@ -306,22 +302,9 @@
 </head>
 <body class="bg-gray-50 p-6 md:p-10 flex flex-col lg:flex-row gap-10 justify-center items-start lg:items-center">
 
-    <!-- Area Input Kontrol (Kiri/Atas) -->
     <div class="w-full lg:w-96 p-6 bg-white rounded-xl shadow-lg space-y-6">
-        <!-- 1. Input Nama Brand -->
         <div>
-            <label for="brand-name-input" class="block text-sm font-medium text-gray-700 mb-2">1. Nama Brand (untuk Nama File)</label>
-            <input 
-                type="text" 
-                id="brand-name-input" 
-                placeholder="Contoh: technovation"
-                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150"
-            >
-        </div>
-        
-        <!-- 2. Input Foto -->
-        <div>
-            <label for="photo-upload" class="block text-sm font-medium text-gray-700 mb-2">2. Unggah Foto Latar Belakang</label>
+            <label for="photo-upload" class="block text-sm font-medium text-gray-700 mb-2">1. Unggah Foto Latar Belakang</label>
             <input 
                 type="file" 
                 id="photo-upload" 
@@ -331,9 +314,8 @@
             >
         </div>
 
-        <!-- 3. Input Copy/Teks Utama -->
         <div>
-            <label for="copy-input" class="block text-sm font-medium text-gray-700 mb-2">3. Teks Utama (Copy)</label>
+            <label for="copy-input" class="block text-sm font-medium text-gray-700 mb-2">2. Teks Utama (Copy)</label>
             <textarea 
                 id="copy-input" 
                 rows="4" 
@@ -343,7 +325,6 @@
             >Technovation: Teks Utama yang Menggugah untuk Transformasi Industri.</textarea>
         </div>
 
-        <!-- Tombol Download -->
         <button 
             id="download-button"
             onclick="downloadBanner()"
@@ -353,12 +334,9 @@
         </button>
     </div>
 
-    <!-- Area Preview Banner (Kanan/Bawah) -->
     <div class="flex-shrink-0">
-        <!-- Hapus h2 Preview (320x480) di sini -->
         <div id="canvas-container" class="relative">
-             <!-- Placeholder untuk tampilan awal tanpa gambar yang diunggah -->
-            <div id="image-placeholder" class="absolute inset-0 flex items-center justify-center text-gray-500" style="z-index: 10; width: 320px; height: 240px; background-color: #e5e7eb;">
+             <div id="image-placeholder" class="absolute inset-0 flex items-center justify-center text-gray-500" style="z-index: 10; width: 320px; height: 240px; background-color: #e5e7eb;">
                 <span class="text-sm">Unggah Foto di Kolom Kiri</span>
             </div>
             <canvas id="banner-canvas" width="320" height="480"></canvas>
