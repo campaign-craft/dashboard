@@ -161,6 +161,7 @@
             transform: translateY(-1px);
         }
 
+        /* PERBAIKAN PENTING CSS: Memaksa container untuk menskalakan kanvas (A4 aspect ratio) */
         #canvas-container {
             border: 1px solid #cbd5e1;
             border-radius: 8px;
@@ -169,15 +170,25 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: grab; /* Kursor pan/geser */
+            
+            /* Gunakan lebar maksimum dan pertahankan rasio aspek A4 */
             width: 100%;
             max-width: 600px;
-            aspect-ratio: 210 / 297;
+            aspect-ratio: 210 / 297; 
+            
+            /* Sembunyikan kanvas Fabric.js asli, kita hanya ingin objek interaktifnya */
+            overflow: hidden; 
         }
         
         #fabricCanvas {
             border: 2px solid #e2e8f0;
             background-color: #ffffff;
+            /* Pastikan kanvas di dalam container mengambil seluruh ruang yang tersedia */
+            width: 100% !important; 
+            height: 100% !important;
+            
+            /* Menonaktifkan kursor pan kustom di CSS */
+            cursor: default !important; 
         }
 
         .canvas-placeholder {
@@ -212,15 +223,7 @@
             align-items: center;
         }
         
-        /* Gaya untuk Zoom Slider */
-        .zoom-slider-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-            width: 100%;
-            max-width: 600px;
-        }
+        /* Hapus gaya Zoom Slider, karena elemennya akan dihapus */
 
         /* Responsive Design */
         @media (max-width: 1024px) {
@@ -308,18 +311,7 @@
                     <canvas id="fabricCanvas" style="display:none;"></canvas>
                 </div>
                 
-                <!-- Zoom Controls for Better Viewing -->
-                <div class="zoom-controls" style="margin-top: 20px; width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center;">
-                    <button id="zoomOutBtn" class="btn-secondary" style="padding: 8px 15px;">🔍-</button>
-                    <span id="zoomLevel" style="font-weight: bold; color: #1e3a8a;">100%</span>
-                    <button id="zoomInBtn" class="btn-secondary" style="padding: 8px 15px;">🔍+</button>
-                    <button id="zoomFitBtn" class="btn-secondary" style="padding: 8px 15px;">⏹️ Fit</button>
-                </div>
-                
-                <div class="zoom-slider-group">
-                    <label for="zoomSlider" style="font-weight: 500;">Zoom:</label>
-                    <input type="range" id="zoomSlider" min="25" max="500" value="100" step="25" style="flex-grow: 1;">
-                </div>
+                <!-- KONTROL ZOOM DIHAPUS SEPERTI PERMINTAAN -->
             </div>
         </div>
 
@@ -347,13 +339,12 @@
                     height: Math.round(this.A4_HEIGHT_MM * this.mmToPixel)
                 };
                 
-                this.zoomLevel = 1.0; // Zoom level tampilan di layar
+                this.zoomLevel = 1.0; // Zoom level tampilan di layar (DEFAULT 100%)
                 this.downloadZoomFactor = 1; // 1 (100%) atau 2 (200%)
 
                 // Perbaikan: Binding method yang rentan kehilangan konteks 'this'
                 this.updateStatus = this.updateStatus.bind(this);
                 this.updateCardDimensions = this.updateCardDimensions.bind(this);
-                this.setZoomLevel = this.setZoomLevel.bind(this); 
 
                 this.initializeCanvas();
                 this.initializeEventListeners();
@@ -377,11 +368,10 @@
                     width: width,
                     height: height,
                     backgroundColor: '#ffffff',
-                    selection: true
+                    selection: true, // Pastikan seleksi aktif
+                    isDrawingMode: false,
+                    enableRetinaScaling: true // Penting untuk tampilan yang lebih jernih di layar resolusi tinggi
                 });
-                
-                // Set properti mouse/touch untuk memastikan interaktivitas objek.
-                this.canvas.isDrawingMode = false; // Pastikan mode menggambar nonaktif
                 
                 // Tampilkan kanvas setelah inisialisasi
                 document.getElementById('fabricCanvas').style.display = 'block';
@@ -396,74 +386,18 @@
                 this.canvas.on('selection:updated', this.updateCardDimensions);
                 this.canvas.on('selection:cleared', () => this.updateCardDimensions(true));
 
-                // Tambahkan fungsionalitas Pan/Geser Kanvas saat mouse ke bawah
-                const canvasArea = document.getElementById('canvas-area');
-                let isDragging = false;
-                let lastPosX, lastPosY;
+                // Pastikan kursor default untuk interaksi objek
+                document.getElementById('canvas-container').style.cursor = 'default';
 
-                // Memastikan kursor pan
-                const canvasContainer = document.getElementById('canvas-container');
-                canvasContainer.style.cursor = 'grab';
-
-                // PERBAIKAN PENTING: Gunakan event listener pada canvas Fabric.js, BUKAN pada canvasArea, 
-                // untuk membedakan antara klik objek dan klik area kosong.
-                this.canvas.on('mouse:down', (opt) => {
-                    const evt = opt.e;
-                    const target = this.canvas.findTarget(evt); // Cari apakah ada objek di bawah kursor
-                    
-                    // Aktifkan pan HANYA jika TIDAK ada objek yang diklik ATAU jika objek tersebut bukan objek yang dapat digerakkan.
-                    if (!target) {
-                        isDragging = true;
-                        this.canvas.selection = false; // Matikan seleksi sementara
-                        canvasContainer.style.cursor = 'grabbing';
-                        lastPosX = evt.clientX;
-                        lastPosY = evt.clientY;
-                    }
-                });
-
-                this.canvas.on('mouse:move', (opt) => {
-                    if (isDragging) {
-                        const evt = opt.e;
-                        const vpt = this.canvas.viewportTransform;
-                        
-                        // Hitung pergeseran
-                        vpt[4] += evt.clientX - lastPosX; // Geser X
-                        vpt[5] += evt.clientY - lastPosY; // Geser Y
-                        
-                        this.canvas.requestRenderAll(); // Render ulang
-                        
-                        lastPosX = evt.clientX;
-                        lastPosY = evt.clientY;
-                    }
-                });
-
-                this.canvas.on('mouse:up', () => {
-                    if (isDragging) {
-                        this.canvas.setViewportTransform(this.canvas.viewportTransform);
-                        isDragging = false;
-                        this.canvas.selection = true; // Aktifkan kembali seleksi
-                        canvasContainer.style.cursor = 'grab';
-                    }
-                });
-
-                // Tambahkan Wheel listener untuk zoom (jika mouse wheel digunakan)
-                this.canvas.on('mouse:wheel', (opt) => {
-                    const delta = opt.e.deltaY;
-                    let zoom = this.canvas.getZoom();
-                    zoom *= 0.999 ** delta; // Perubahan zoom yang halus
-                    
-                    // Batasi zoom
-                    zoom = Math.min(Math.max(0.25, zoom), 5.0); 
-                    
-                    // Gunakan setZoomLevel untuk sinkronisasi tampilan
-                    this.setZoomLevel(zoom);
-                    
-                    opt.e.preventDefault();
-                    opt.e.stopPropagation();
-                });
+                // Hapus semua event mouse kustom untuk pan/zoom/scroll
+                this.canvas.off('mouse:down');
+                this.canvas.off('mouse:move');
+                this.canvas.off('mouse:up');
+                this.canvas.off('mouse:wheel');
                 
-                // Atur zoom agar kanvas pas di dalam container saat pertama kali dimuat
-                this.zoomToFit();
+                // Atur zoom ke 1.0 (default)
+                this.canvas.setZoom(this.zoomLevel); 
+                this.canvas.renderAll();
             }
 
             initializeEventListeners() {
@@ -472,14 +406,6 @@
                 document.getElementById('resetScaleBtn').addEventListener('click', () => this.resetCardScale());
                 document.getElementById('deleteCardBtn').addEventListener('click', () => this.deleteSelectedCard());
                 
-                // Event listener untuk Zoom Control (Tombol)
-                document.getElementById('zoomInBtn').addEventListener('click', () => this.setZoomLevel(this.zoomLevel * 1.2));
-                document.getElementById('zoomOutBtn').addEventListener('click', () => this.setZoomLevel(this.zoomLevel / 1.2));
-                document.getElementById('zoomFitBtn').addEventListener('click', () => this.zoomToFit());
-                
-                // Event listener untuk Zoom Slider
-                document.getElementById('zoomSlider').addEventListener('input', (e) => this.setZoomLevel(parseFloat(e.target.value) / 100));
-
                 // Event listener untuk Kualitas Unduh
                 document.querySelectorAll('input[name="downloadQuality"]').forEach(radio => {
                     radio.addEventListener('change', (e) => {
@@ -670,65 +596,6 @@
 
             updateStatus(message) {
                 document.getElementById('statusText').textContent = message;
-            }
-
-            // --- FUNGSI ZOOM UNTUK TAMPILAN LAYAR ---
-            setZoomLevel(newZoom) {
-                if (!this.canvas) return;
-                
-                // Batasi zoom
-                newZoom = Math.min(Math.max(0.25, newZoom), 5.0); // Min 25%, Max 500%
-                this.zoomLevel = newZoom;
-
-                const newWidth = this.originalCanvasSize.width * newZoom;
-                const newHeight = this.originalCanvasSize.height * newZoom;
-                
-                // Kanvas Fabric.js diatur oleh setDimensions dan setZoom.
-                const container = document.getElementById('canvas-container');
-                container.style.width = `${newWidth}px`;
-                container.style.height = `${newHeight}px`;
-
-                this.canvas.setDimensions({
-                    width: newWidth,
-                    height: newHeight
-                });
-                
-                // Jaga posisi kanvas relatif terhadap zoom baru
-                const center = this.canvas.getCenterPoint();
-                this.canvas.setViewportTransform(this.canvas.viewportTransform); // Pertahankan viewport transform
-                
-                // Set zoom, ini akan secara otomatis memperbarui viewport transform
-                this.canvas.setZoom(newZoom);
-                this.canvas.renderAll();
-
-                this.updateZoomDisplay();
-                this.updateStatus(`Zoom Tampilan: ${Math.round(this.zoomLevel * 100)}%`);
-            }
-
-            zoomToFit() {
-                if (!this.canvas) return;
-                
-                const area = document.getElementById('canvas-area');
-                // Ambil dimensi area tampilan (dengan padding)
-                const containerWidth = area.getBoundingClientRect().width - 60; 
-                const containerHeight = area.getBoundingClientRect().height - 60; 
-                
-                const originalWidth = this.originalCanvasSize.width;
-                const originalHeight = this.originalCanvasSize.height;
-
-                const scaleX = containerWidth / originalWidth;
-                const scaleY = containerHeight / originalHeight;
-                
-                const scale = Math.min(Math.max(0.25, scaleX, scaleY), 1.0); // Maksimal zoom 100% jika layar lebih besar
-
-                this.setZoomLevel(scale);
-            }
-
-            updateZoomDisplay() {
-                const percentage = Math.round(this.zoomLevel * 100);
-                document.getElementById('zoomLevel').textContent = `${percentage}%`;
-                // Sinkronkan slider dengan zoom level
-                document.getElementById('zoomSlider').value = percentage;
             }
         }
 
