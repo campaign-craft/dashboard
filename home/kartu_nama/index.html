@@ -43,9 +43,9 @@
             <!-- Kolom Kiri: Form Input dan Daftar Nama -->
             <div class="lg:w-1/3 space-y-8">
                 
-                <!-- Input Data Kartu -->
+                <!-- Input Data Kartu Perorangan -->
                 <div class="p-6 bg-white rounded-xl shadow-lg h-fit">
-                    <h2 class="text-xl font-semibold mb-6 text-gray-700">Detail Kartu Yang Dipilih</h2>
+                    <h2 class="text-xl font-semibold mb-6 text-gray-700">Detail Kartu User (Perorangan)</h2>
 
                     <div id="inputForm" class="space-y-4">
                         <div>
@@ -59,23 +59,26 @@
                             <input type="text" id="titleInput" value="UI/UX Designer Senior" placeholder="Contoh: Manajer Pemasaran"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
-
-                        <h3 class="text-md font-medium text-gray-700 pt-4 border-t mt-4">Detail Perusahaan (Berlaku untuk Semua Kartu)</h3>
                         
+                        <!-- NOMOR TELEPON DIPINDAH KE SINI (PERORANGAN) -->
                         <div>
-                            <label for="phoneInput" class="block text-sm font-medium text-gray-700">Nomor Telepon (Utama/HP)</label>
+                            <label for="phoneInput" class="block text-sm font-medium text-gray-700">Nomor Telepon (HP User)</label>
                             <input type="text" id="phoneInput" value="+62 812 3456 7890" placeholder="Contoh: +62 81xxxx"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
 
+                        <!-- EMAIL DIPINDAH KE SINI (PERORANGAN) -->
                         <div>
-                            <label for="emailInput" class="block text-sm font-medium text-gray-700">Email Utama Perusahaan</label>
-                            <input type="email" id="emailInput" value="info@perusahaan.com" placeholder="Contoh: info@domain.com"
+                            <label for="emailInput" class="block text-sm font-medium text-gray-700">Email (User)</label>
+                            <input type="email" id="emailInput" value="vera.ariani@perusahaan.com" placeholder="Contoh: nama@domain.com"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
+                        
+                        <!-- Hanya menyisakan Address sebagai GLOBAL -->
+                        <h3 class="text-md font-medium text-gray-700 pt-4 border-t mt-4">Detail Kantor (Global)</h3>
 
                         <div>
-                            <label for="addressInput" class="block text-sm font-medium text-gray-700">Detail Kantor (Alamat, Tlp, Fax)</label>
+                            <label for="addressInput" class="block text-sm font-medium text-gray-700">Alamat, Telepon, & Fax Kantor</label>
                             <textarea id="addressInput" rows="3"
                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">Editorial Office of Tribun Network
 Jl. Palmerah Selatan No. 14, Jakarta 10270
@@ -176,9 +179,12 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
         // --- ELEMEN UI ---
         const nameInput = document.getElementById('nameInput');
         const titleInput = document.getElementById('titleInput');
-        const phoneInput = document.getElementById('phoneInput');
+        // PHONE dan EMAIL sekarang di-capture sebagai data INDIVIDUAL
+        const phoneInput = document.getElementById('phoneInput'); 
         const emailInput = document.getElementById('emailInput');
-        const addressInput = document.getElementById('addressInput');
+        // ADDRESS tetap GLOBAL
+        const addressInput = document.getElementById('addressInput'); 
+        
         const cardList = document.getElementById('cardList');
         const cardCount = document.getElementById('cardCount');
         const emptyListMessage = document.getElementById('emptyListMessage');
@@ -215,7 +221,7 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
          */
         function drawFrontCard(targetCtx) {
             
-            // Dapatkan data kartu aktif
+            // Dapatkan data kartu aktif atau fallback ke nilai input saat ini (jika list kosong)
             const data = businessCards[activeCardIndex] || { 
                 name: nameInput.value, 
                 title: titleInput.value, 
@@ -234,9 +240,9 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
 
             const name = data.name;
             const title = data.title;
-            const phone = phoneInput.value; // Ambil Phone & Email dari input global/perusahaan
-            const email = emailInput.value;
-            const address = addressInput.value;
+            const phone = data.phone; // Ambil dari data individu
+            const email = data.email; // Ambil dari data individu
+            const address = addressInput.value; // Address tetap dari input global
 
             // Konten gambar selalu berdasarkan resolusi tinggi (1050x642)
             const contentX = 60;
@@ -264,7 +270,7 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
             targetCtx.font = 'bold 26px Inter, sans-serif';
             targetCtx.fillText(title, contentX, currentY);
 
-            // Gambar Detail Kontak (menggunakan data perusahaan global)
+            // Gambar Detail Kontak (menggunakan data INDIVIDUAL)
             currentY += 120; 
             targetCtx.fillStyle = '#FFFFFF';
             targetCtx.font = '22px Inter, sans-serif';
@@ -275,7 +281,7 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
 
             targetCtx.fillText('Email: ' + email, contactX, currentY);
             
-            // Gambar Alamat
+            // Gambar Alamat (GLOBAL)
             currentY += 50;
             targetCtx.fillStyle = '#FFFFFF';
             targetCtx.font = '22px Inter, sans-serif';
@@ -324,6 +330,9 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
                 id: Date.now(), // ID unik sederhana
                 name: nameInput.value.trim().toUpperCase(),
                 title: titleInput.value.trim(),
+                // DISIMPAN SEBAGAI DATA INDIVIDUAL
+                phone: phoneInput.value.trim(), 
+                email: emailInput.value.trim()
             };
         }
         
@@ -334,7 +343,10 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
         function loadCardDataToInputs(cardData) {
             nameInput.value = cardData.name;
             titleInput.value = cardData.title;
-            // Catatan: phone, email, address tidak dimuat karena dianggap data global perusahaan
+            // DImuat dari data individual
+            phoneInput.value = cardData.phone || ''; 
+            emailInput.value = cardData.email || '';
+            // Catatan: address tidak dimuat karena dianggap data global perusahaan
         }
         
         /**
@@ -364,7 +376,8 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
                 }
                 updateDownloadButtons(selectedCard.name);
             } else {
-                clearFormForNewCard();
+                // Clear form jika tidak ada kartu aktif, tapi biarkan Address global tetap
+                clearFormForNewCard(); 
                 updateDownloadButtons(null);
             }
 
@@ -438,11 +451,14 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
         }
         
         /**
-         * Mengosongkan input Nama dan Jabatan untuk entri baru.
+         * Mengosongkan input Nama, Jabatan, HP, dan Email untuk entri baru.
          */
         function clearFormForNewCard() {
              nameInput.value = '';
              titleInput.value = '';
+             // CLEAR INPUTS INDIVIDUAL BARU
+             phoneInput.value = '';
+             emailInput.value = '';
              nameInput.focus();
         }
 
@@ -477,6 +493,9 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
             const updatedData = getCardDataFromInputs();
             businessCards[activeCardIndex].name = updatedData.name;
             businessCards[activeCardIndex].title = updatedData.title;
+            // SIMPAN DATA INDIVIDUAL BARU
+            businessCards[activeCardIndex].phone = updatedData.phone;
+            businessCards[activeCardIndex].email = updatedData.email;
             
             // Perbarui UI dan Preview
             renderCardList();
@@ -547,21 +566,6 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
                  updatePreview();
              });
              
-             // --- KODE DUMMY YANG DIHAPUS ---
-             /*
-             businessCards.push({
-                 id: Date.now() + 1,
-                 name: "VERA ARIANI",
-                 title: "UI/UX Designer Senior"
-             });
-             businessCards.push({
-                 id: Date.now() + 2,
-                 name: "RIZKY HIDAYAT",
-                 title: "Manajer Pemasaran"
-             });
-             */
-             // --- END KODE DUMMY YANG DIHAPUS ---
-
              // Panggil renderCardList dan selectCard untuk inisialisasi UI
              renderCardList();
              // Kita tetap memanggil selectCard(-1) untuk memastikan preview dan tombol download disetel ulang ke status "kosong"
