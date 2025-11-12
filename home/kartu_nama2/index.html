@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Card Overlay Tool (A4)</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+    <title>Business Card Preview Tool</title>
     <style>
         * {
             margin: 0;
@@ -13,219 +12,216 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f0f4f8 0%, #e0e7f1 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 1);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
         }
 
         .header {
-            background: linear-gradient(90deg, #1e3a8a, #1d4ed8);
-            color: white;
-            padding: 25px;
             text-align: center;
+            color: #333;
+            margin-bottom: 30px;
         }
 
         .header h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 2.5em;
+            margin-bottom: 10px;
         }
 
-        .header p {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-top: 5px;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 0;
-            min-height: 70vh;
-        }
-
-        .sidebar {
-            background: #ffffff;
+        .upload-section {
+            background: white;
+            border-radius: 10px;
             padding: 30px;
-            border-right: 1px solid #e2e8f0;
-            overflow-y: auto;
-        }
-
-        .canvas-area {
-            padding: 30px;
-            background: #f8fafc;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            overflow: auto;
-        }
-
-        .control-group {
             margin-bottom: 30px;
-            padding: 20px;
-            background: #f1f5f9;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            border: 1px solid #cbd5e1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .control-group h3 {
-            color: #1e293b;
-            margin-bottom: 15px;
-            font-size: 1.15rem;
-            font-weight: 600;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 8px;
+        .upload-area {
+            border: 3px dashed #ddd;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fafafa;
         }
 
-        .file-input-wrapper {
-            position: relative;
-            display: block;
-            width: 100%;
+        .upload-area:hover {
+            border-color: #999;
+            background: #f5f5f5;
+        }
+
+        .upload-area.drag-over {
+            border-color: #333;
+            background: #f0f0f0;
+        }
+
+        .upload-icon {
+            font-size: 50px;
             margin-bottom: 15px;
+            color: #666;
+        }
+
+        .upload-text {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            color: #666;
+            font-size: 0.9em;
         }
 
         .file-input {
             display: none;
         }
 
-        .file-input-label {
-            display: block;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #1d4ed8, #2563eb);
+        .btn-upload {
+            background: #333;
             color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
-        }
-
-        .file-input-label:hover {
-            background: linear-gradient(135deg, #1e40af, #1d4ed8);
-            transform: translateY(-1px);
-        }
-
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .btn-primary, .btn-secondary {
             border: none;
-            padding: 14px 25px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 1em;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(90deg, #ef4444, #dc2626);
-            color: white;
-            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+            margin-top: 15px;
+            transition: background 0.2s;
         }
 
-        .btn-primary:hover {
-            background: linear-gradient(90deg, #dc2626, #b91c1c);
-            transform: translateY(-1px);
+        .btn-upload:hover {
+            background: #555;
         }
 
-        .btn-secondary {
-            background: #4b5563;
-            color: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        .info-box {
+            background: #f9f9f9;
+            border-left: 4px solid #333;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
         }
 
-        .btn-secondary:hover {
-            background: #374151;
-            transform: translateY(-1px);
+        .info-box ul {
+            margin-left: 20px;
+            margin-top: 10px;
         }
 
-        #canvas-container {
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            background: #ffffff;
-            display: inline-block;
-            position: relative;
-        }
-        
-        #fabricCanvas {
-            border: 2px solid #e2e8f0;
-            background-color: #ffffff;
-            display: block;
+        .info-box li {
+            margin: 5px 0;
+            color: #555;
         }
 
-        .canvas-placeholder {
-            width: 100%;
-            max-width: 600px;
-            aspect-ratio: 210 / 297;
+        .preview-section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .canvas-container {
             display: flex;
-            align-items: center;
             justify-content: center;
-            flex-direction: column;
-            color: #94a3b8;
-            font-size: 18px;
-            text-align: center;
-            background-color: #f8fafc;
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
-        }
-        
-        .canvas-placeholder .icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
+            margin: 20px 0;
+            overflow: auto;
         }
 
-        .status-bar {
-            background: #334155;
-            color: white;
-            padding: 15px 30px;
-            font-size: 0.9rem;
+        #previewCanvas {
+            border: 1px solid #ddd;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .controls {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
 
-        .text-gray-500 {
-            color: #6b7280;
-            font-size: 0.875rem;
-            margin-top: 8px;
-            display: block;
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
         }
 
-        .text-red-500 {
-            color: #dc2626;
-            font-weight: 500;
+        .btn-download {
+            background: #333;
+            color: white;
         }
-        
-        @media (max-width: 1024px) {
-            .main-content {
-                grid-template-columns: 1fr;
+
+        .btn-download:hover {
+            background: #555;
+        }
+
+        .btn-reset {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-reset:hover {
+            background: #e0e0e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .status {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .card-counter {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .card-counter span {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
             }
-            .sidebar {
-                border-right: none;
-                border-bottom: 1px solid #e2e8f0;
-            }
-            .canvas-area {
+
+            .upload-section, .preview-section {
                 padding: 20px;
             }
         }
@@ -234,341 +230,245 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Business Card Overlay Tool (A4)</h1>
-            <p>Atur kartu nama 90x55mm di lembar A4 (210x297mm) dengan DPI 300</p>
+            <h1>🎴 Business Card Preview Tool</h1>
+            <p>Upload dan preview kartu nama Anda dalam layout A4</p>
         </div>
-        
-        <div class="main-content">
-            <div class="sidebar">
-                
-                <div class="control-group">
-                    <h3>Template & Resolusi</h3>
-                    <div id="templateInfo">
-                        <p><strong>Ukuran Kanvas (A4):</strong> 210 x 297 mm</p>
-                        <p><strong>DPI Kanvas:</strong> <span id="currentDPI">300</span></p>
-                        <p><strong>Dimensi Piksel (300 DPI):</strong> <span id="pixelSize"></span></p>
-                        <small class="text-gray-500">Kanvas disiapkan otomatis dengan dimensi A4 @ 300 DPI.</small>
-                    </div>
-                </div>
 
-                <div class="control-group">
-                    <h3>1. Unggah Kartu Nama</h3>
-                    <div class="file-input-wrapper">
-                        <input type="file" id="cardInput" class="file-input" accept="image/*" multiple>
-                        <label for="cardInput" class="file-input-label">🖼️ Tambahkan Kartu Nama (90x55 mm)</label>
-                        <small class="text-gray-500">Unggah satu atau lebih file gambar kartu nama.</small>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <h3>2. Properti Kartu Terpilih</h3>
-                    <p style="margin-bottom: 10px;">Gunakan mouse untuk memindahkan, memutar, dan mengubah ukuran kartu nama.</p>
-                    <div id="cardDimensions" style="background:#fff; padding:10px; border-radius:6px; border:1px solid #ddd;">
-                        <p><strong>Dimensi Asli (mm):</strong> 90.0 x 55.0 mm</p>
-                        <p><strong>Dimensi Saat Ini (mm):</strong> <span id="overlayWidthMm">0.0</span> x <span id="overlayHeightMm">0.0</span> mm</p>
-                        <small class="text-red-500" id="scaleWarning" style="display: none;">⚠️ PERINGATAN: Skala Kartu Nama Berubah!</small>
-                    </div>
-                    <div class="action-buttons" style="margin-top: 15px;">
-                        <button id="resetScaleBtn" class="btn-secondary">⚖️ Reset Skala ke 90x55 mm</button>
-                        <button id="deleteCardBtn" class="btn-primary" style="background: linear-gradient(90deg, #6b7280, #4b5563); color:white;">🗑️ Hapus Kartu Terpilih</button>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <h3>3. Unduh Hasil Akhir</h3>
-                    <div class="radio-group">
-                        <label style="display:block; margin-bottom: 10px; font-weight: 500;">Pilih Kualitas Unduh:</label>
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <label><input type="radio" name="downloadQuality" value="1" checked> 100% Kualitas (300 DPI)</label>
-                            <label><input type="radio" name="downloadQuality" value="2"> 200% Kualitas (600 DPI Efektif)</label>
-                        </div>
-                    </div>
-                    <div class="action-buttons">
-                        <button id="downloadBtn" class="btn-primary">💾 Unduh Lembar A4 (PNG)</button>
-                    </div>
-                </div>
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📤</div>
+                <div class="upload-text">Drag & Drop kartu nama di sini</div>
+                <div class="upload-subtext">atau</div>
+                <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
+                    Pilih File
+                </button>
+                <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
             </div>
 
-            <div class="canvas-area" id="canvas-area">
-                <div id="canvas-container">
-                    <div class="canvas-placeholder" id="placeholder">
-                        <div class="icon">📄</div>
-                        <div>Kanvas A4 Siap.</div>
-                        <div style="font-size: 14px; margin-top: 10px; opacity: 0.7;">
-                            Silakan unggah kartu nama Anda (90x55 mm) untuk memulai overlay.
-                        </div>
-                    </div>
-                    <canvas id="fabricCanvas" style="display:none;"></canvas>
-                </div>
+            <div class="card-counter" id="cardCounter">
+                Kartu yang diupload: <span id="cardCount">0</span> / 8
+            </div>
+
+            <div class="info-box">
+                <strong>ℹ️ Informasi:</strong>
+                <ul>
+                    <li>Ukuran Business Card: 90 x 55 mm</li>
+                    <li>Ukuran Canvas A4: 210 x 297 mm (2480 x 3508 px @ 300 DPI)</li>
+                    <li>Layout: 2 kolom, maksimal 8 kartu nama</li>
+                    <li>Format output: JPG dengan dimensi 100%</li>
+                </ul>
             </div>
         </div>
 
-        <div class="status-bar">
-            <div id="statusText">Ready - Kanvas A4 (300 DPI) telah dimuat.</div>
-            <div id="cardCount">Jumlah Kartu: 0</div>
+        <div class="preview-section">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #333;">Preview Canvas A4</h2>
+            
+            <div id="statusMessage"></div>
+
+            <div class="canvas-container">
+                <canvas id="previewCanvas" width="2480" height="3508"></canvas>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-download" id="downloadBtn" onclick="downloadImage()" disabled>
+                    💾 Download JPG
+                </button>
+                <button class="btn btn-reset" onclick="resetCanvas()">
+                    🔄 Reset
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
-        class BusinessCardOverlayTool {
-            constructor() {
-                this.canvas = null;
-                this.DPI = 300;
-                this.A4_WIDTH_MM = 210;
-                this.A4_HEIGHT_MM = 297;
-                this.CARD_WIDTH_MM = 90;
-                this.CARD_HEIGHT_MM = 55;
-                
-                this.mmToPixel = this.DPI / 25.4;
-                
-                this.canvasWidth = Math.round(this.A4_WIDTH_MM * this.mmToPixel);
-                this.canvasHeight = Math.round(this.A4_HEIGHT_MM * this.mmToPixel);
-                
-                this.downloadZoomFactor = 1;
+        const canvas = document.getElementById('previewCanvas');
+        const ctx = canvas.getContext('2d');
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const cardCount = document.getElementById('cardCount');
 
-                this.updateStatus = this.updateStatus.bind(this);
-                this.updateCardDimensions = this.updateCardDimensions.bind(this);
+        let uploadedImages = [];
+        const MAX_CARDS = 8;
 
-                this.initializeCanvas();
-                this.initializeEventListeners();
-                this.updateCanvasInfo();
-                this.adjustCanvasSize();
-                
-                window.addEventListener('resize', () => this.adjustCanvasSize());
-            }
+        // Ukuran dalam piksel (300 DPI)
+        const A4_WIDTH = 2480;
+        const A4_HEIGHT = 3508;
+        const CARD_WIDTH_MM = 90;
+        const CARD_HEIGHT_MM = 55;
+        const DPI = 300;
 
-            mmToPx(mm) {
-                return mm * this.mmToPixel;
-            }
+        // Konversi mm ke piksel
+        const mmToPx = (mm) => Math.round((mm / 25.4) * DPI);
+        const CARD_WIDTH = mmToPx(CARD_WIDTH_MM);
+        const CARD_HEIGHT = mmToPx(CARD_HEIGHT_MM);
 
-            pxToMm(px) {
-                return px / this.mmToPixel;
-            }
+        // Margin dan spacing
+        const MARGIN = 100;
+        const COLUMN_GAP = 80;
+        const ROW_GAP = 80;
 
-            adjustCanvasSize() {
-                if (!this.canvas) return;
-                
-                const container = document.getElementById('canvas-area');
-                const maxWidth = Math.min(container.clientWidth - 60, 600);
-                const scale = maxWidth / this.canvasWidth;
-                
-                const displayWidth = this.canvasWidth * scale;
-                const displayHeight = this.canvasHeight * scale;
-                
-                const canvasElement = document.getElementById('fabricCanvas');
-                canvasElement.style.width = displayWidth + 'px';
-                canvasElement.style.height = displayHeight + 'px';
-                
-                this.canvas.setZoom(scale);
-                this.canvas.renderAll();
-            }
-
-            initializeCanvas() {
-                this.canvas = new fabric.Canvas('fabricCanvas', {
-                    width: this.canvasWidth,
-                    height: this.canvasHeight,
-                    backgroundColor: '#ffffff',
-                    selection: true,
-                    preserveObjectStacking: true
-                });
-                
-                document.getElementById('fabricCanvas').style.display = 'block';
-                document.getElementById('placeholder').style.display = 'none';
-
-                this.canvas.on('object:moving', this.updateCardDimensions);
-                this.canvas.on('object:scaling', this.updateCardDimensions);
-                this.canvas.on('object:rotating', this.updateCardDimensions);
-                this.canvas.on('selection:created', this.updateCardDimensions);
-                this.canvas.on('selection:updated', this.updateCardDimensions);
-                this.canvas.on('selection:cleared', () => this.updateCardDimensions(true));
-            }
-
-            initializeEventListeners() {
-                document.getElementById('cardInput').addEventListener('change', (e) => this.loadBusinessCards(e));
-                document.getElementById('downloadBtn').addEventListener('click', () => this.downloadMergedImage());
-                document.getElementById('resetScaleBtn').addEventListener('click', () => this.resetCardScale());
-                document.getElementById('deleteCardBtn').addEventListener('click', () => this.deleteSelectedCard());
-                
-                document.querySelectorAll('input[name="downloadQuality"]').forEach(radio => {
-                    radio.addEventListener('change', (e) => {
-                        this.downloadZoomFactor = parseFloat(e.target.value);
-                        this.updateStatus(`Kualitas unduh disetel ke ${e.target.labels[0].textContent.trim().split(' ')[0]}.`);
-                    });
-                });
-            }
-
-            updateCanvasInfo() {
-                document.getElementById('currentDPI').textContent = `${this.DPI} DPI`;
-                document.getElementById('pixelSize').textContent = `${this.canvasWidth} x ${this.canvasHeight} px`;
-            }
-
-            loadBusinessCards(event) {
-                const files = event.target.files;
-                if (!files || files.length === 0) return;
-                
-                this.updateStatus(`Mulai mengunggah ${files.length} kartu nama...`);
-
-                Array.from(files).forEach((file, index) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => this.addBusinessCard(e.target.result, index);
-                    reader.readAsDataURL(file);
-                });
-                
-                event.target.value = '';
-            }
-
-            addBusinessCard(dataUrl, index) {
-                fabric.Image.fromURL(dataUrl, (img) => {
-                    const targetWidthPx = this.mmToPx(this.CARD_WIDTH_MM);
-                    const targetHeightPx = this.mmToPx(this.CARD_HEIGHT_MM);
-
-                    const scaleX = targetWidthPx / img.width;
-                    const scaleY = targetHeightPx / img.height;
-                    
-                    const centerX = this.canvasWidth / 2;
-                    const centerY = this.canvasHeight / 2;
-                    const offset = index * 30;
-
-                    img.set({
-                        left: centerX - (targetWidthPx / 2) + offset,
-                        top: centerY - (targetHeightPx / 2) + offset,
-                        scaleX: scaleX,
-                        scaleY: scaleY,
-                        selectable: true,
-                        evented: true,
-                        hasControls: true,
-                        hasBorders: true,
-                        hasRotatingPoint: true,
-                        borderColor: '#1d4ed8',
-                        cornerColor: '#1d4ed8',
-                        cornerSize: 12,
-                        transparentCorners: false,
-                        cornerStyle: 'circle',
-                        originalWidth: img.width,
-                        originalHeight: img.height,
-                        originalScaleX: scaleX,
-                        originalScaleY: scaleY
-                    });
-                    
-                    this.canvas.add(img);
-                    this.canvas.setActiveObject(img);
-                    this.canvas.renderAll();
-                    
-                    this.updateCardDimensions();
-                    this.updateCardCount();
-                    this.updateStatus(`Kartu nama ke-${this.canvas.getObjects().length} berhasil ditambahkan.`);
-                }, { crossOrigin: 'anonymous' });
-            }
-
-            updateCardDimensions(clear = false) {
-                const activeObject = this.canvas ? this.canvas.getActiveObject() : null;
-                const widthDisplay = document.getElementById('overlayWidthMm');
-                const heightDisplay = document.getElementById('overlayHeightMm');
-                const scaleWarning = document.getElementById('scaleWarning');
-
-                if (clear || !activeObject) {
-                    widthDisplay.textContent = '0.0';
-                    heightDisplay.textContent = '0.0';
-                    scaleWarning.style.display = 'none';
-                    return;
-                }
-                
-                const objectWidthPixels = activeObject.getScaledWidth();
-                const objectHeightPixels = activeObject.getScaledHeight();
-
-                const widthMm = this.pxToMm(objectWidthPixels);
-                const heightMm = this.pxToMm(objectHeightPixels);
-                
-                widthDisplay.textContent = widthMm.toFixed(1);
-                heightDisplay.textContent = heightMm.toFixed(1);
-
-                const isScaled = Math.abs(widthMm - this.CARD_WIDTH_MM) > 0.5 || Math.abs(heightMm - this.CARD_HEIGHT_MM) > 0.5;
-                scaleWarning.style.display = isScaled ? 'block' : 'none';
-            }
-
-            resetCardScale() {
-                const activeObject = this.canvas ? this.canvas.getActiveObject() : null;
-                
-                if (!activeObject || !activeObject.originalScaleX) {
-                    this.updateStatus('Pilih kartu nama untuk mereset skala.');
-                    return;
-                }
-                
-                activeObject.set({
-                    scaleX: activeObject.originalScaleX,
-                    scaleY: activeObject.originalScaleY,
-                });
-                
-                this.canvas.renderAll();
-                this.updateCardDimensions();
-                this.updateStatus('Skala kartu nama direset ke 90x55 mm.');
-            }
-
-            deleteSelectedCard() {
-                const activeObject = this.canvas ? this.canvas.getActiveObject() : null;
-                
-                if (!activeObject) {
-                    this.updateStatus('Pilih kartu nama untuk dihapus.');
-                    return;
-                }
-
-                this.canvas.remove(activeObject);
-                this.canvas.discardActiveObject();
-                this.canvas.renderAll();
-                this.updateCardDimensions(true);
-                this.updateCardCount();
-                this.updateStatus('Kartu nama berhasil dihapus.');
-            }
-
-            downloadMergedImage() {
-                if (this.canvas.getObjects().length === 0) {
-                    this.updateStatus('Kanvas kosong. Unggah kartu nama terlebih dahulu.');
-                    return;
-                }
-
-                this.canvas.discardActiveObject();
-                this.canvas.renderAll();
-                
-                const factor = this.downloadZoomFactor;
-                const qualityText = factor === 1 ? "100%" : "200%";
-                const effectiveDPI = factor * this.DPI;
-                
-                this.updateStatus(`Memproses unduhan ${qualityText} (${effectiveDPI} DPI)...`);
-                
-                const dataURL = this.canvas.toDataURL({
-                    format: 'png',
-                    multiplier: factor,
-                    quality: 1.0
-                });
-                
-                const link = document.createElement('a');
-                link.download = `KartuNama_A4_DPI${effectiveDPI}_${new Date().getTime()}.png`;
-                link.href = dataURL;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                this.updateStatus(`Unduhan A4 ${qualityText} (${effectiveDPI} DPI) selesai.`);
-            }
-
-            updateCardCount() {
-                const count = this.canvas.getObjects().length;
-                document.getElementById('cardCount').textContent = `Jumlah Kartu: ${count}`;
-            }
-
-            updateStatus(message) {
-                document.getElementById('statusText').textContent = message;
-            }
+        // Initialize canvas
+        function initCanvas() {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, A4_WIDTH, A4_HEIGHT);
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.fabric) {
-                new BusinessCardOverlayTool();
-            } else {
-                console.error("Fabric.js is not loaded.");
-                document.getElementById('statusText').textContent = "ERROR: Fabric.js gagal dimuat.";
-            }
+        initCanvas();
+
+        // File input handler
+        fileInput.addEventListener('change', handleFiles);
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
         });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            handleFiles({ target: { files } });
+        });
+
+        function handleFiles(e) {
+            const files = Array.from(e.target.files);
+            
+            if (uploadedImages.length >= MAX_CARDS) {
+                showStatus('warning', `Maksimal ${MAX_CARDS} kartu nama sudah tercapai!`);
+                return;
+            }
+
+            const remainingSlots = MAX_CARDS - uploadedImages.length;
+            const filesToProcess = files.slice(0, remainingSlots);
+
+            if (files.length > remainingSlots) {
+                showStatus('warning', `Hanya ${remainingSlots} kartu yang dapat ditambahkan. Sisanya diabaikan.`);
+            }
+
+            let loadedCount = 0;
+            filesToProcess.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            uploadedImages.push(img);
+                            loadedCount++;
+                            
+                            if (loadedCount === filesToProcess.length) {
+                                renderCards();
+                                updateCardCounter();
+                                showStatus('success', `${loadedCount} kartu berhasil diupload!`);
+                            }
+                        };
+                        img.src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            fileInput.value = '';
+        }
+
+        function renderCards() {
+            // Clear canvas
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, A4_WIDTH, A4_HEIGHT);
+
+            // Calculate positions
+            const col1X = MARGIN;
+            const col2X = MARGIN + CARD_WIDTH + COLUMN_GAP;
+            let startY = MARGIN;
+
+            uploadedImages.forEach((img, index) => {
+                const row = Math.floor(index / 2);
+                const col = index % 2;
+                
+                const x = col === 0 ? col1X : col2X;
+                const y = startY + (row * (CARD_HEIGHT + ROW_GAP));
+
+                // Draw image with proper scaling
+                const imgAspect = img.width / img.height;
+                const cardAspect = CARD_WIDTH / CARD_HEIGHT;
+
+                let drawWidth, drawHeight, offsetX, offsetY;
+
+                if (imgAspect > cardAspect) {
+                    // Image is wider
+                    drawHeight = CARD_HEIGHT;
+                    drawWidth = drawHeight * imgAspect;
+                    offsetX = -(drawWidth - CARD_WIDTH) / 2;
+                    offsetY = 0;
+                } else {
+                    // Image is taller
+                    drawWidth = CARD_WIDTH;
+                    drawHeight = drawWidth / imgAspect;
+                    offsetX = 0;
+                    offsetY = -(drawHeight - CARD_HEIGHT) / 2;
+                }
+
+                // Clip to card area
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(x, y, CARD_WIDTH, CARD_HEIGHT);
+                ctx.clip();
+                ctx.drawImage(img, x + offsetX, y + offsetY, drawWidth, drawHeight);
+                ctx.restore();
+
+                // Draw border
+                ctx.strokeStyle = '#ddd';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, CARD_WIDTH, CARD_HEIGHT);
+            });
+
+            downloadBtn.disabled = false;
+        }
+
+        function updateCardCounter() {
+            cardCount.textContent = uploadedImages.length;
+        }
+
+        function showStatus(type, message) {
+            statusMessage.className = `status ${type}`;
+            statusMessage.textContent = message;
+            setTimeout(() => {
+                statusMessage.className = '';
+                statusMessage.textContent = '';
+            }, 3000);
+        }
+
+        function downloadImage() {
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Business_Cards_A4_${Date.now()}.jpg`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showStatus('success', 'File berhasil didownload!');
+            }, 'image/jpeg', 1.0);
+        }
+
+        function resetCanvas() {
+            if (uploadedImages.length > 0) {
+                if (confirm('Apakah Anda yakin ingin mereset semua kartu?')) {
+                    uploadedImages = [];
+                    initCanvas();
+                    downloadBtn.disabled = true;
+                    updateCardCounter();
+                    showStatus('success', 'Canvas berhasil direset!');
+                }
+            }
+        }
     </script>
 </body>
 </html>
