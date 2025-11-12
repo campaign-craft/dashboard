@@ -190,18 +190,18 @@
         }
 
         .status.success {
-            background: #d4edda;
-            color: #155724;
+            background: #e8f5e9;
+            color: #2e7d32;
         }
 
         .status.error {
-            background: #f8d7da;
-            color: #721c24;
+            background: #ffebee;
+            color: #c62828;
         }
 
         .status.warning {
-            background: #fff3cd;
-            color: #856404;
+            background: #fff9c4;
+            color: #f57f17;
         }
 
         .card-counter {
@@ -213,7 +213,7 @@
 
         .card-counter span {
             font-weight: bold;
-            color: #667eea;
+            color: #333;
         }
 
         @media (max-width: 768px) {
@@ -393,6 +393,13 @@
                 
                 const x = col === 0 ? col1X : col2X;
                 const y = startY + (row * (CARD_HEIGHT + ROW_GAP));
+
+                // Draw label above card
+                const label = col === 0 ? 'DEPAN' : 'BELAKANG';
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 40px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(label, x + CARD_WIDTH / 2, y - 30);
 
                 // Draw image with proper scaling
                 const imgAspect = img.width / img.height;
