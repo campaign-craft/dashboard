@@ -246,7 +246,7 @@
             </div>
 
             <div class="card-counter" id="cardCounter">
-                Kartu yang diupload: <span id="cardCount">0</span> / 8
+                Kartu yang diupload: <span id="cardCount">0</span> / 4 (Total preview: <span id="totalCards">0</span>/8)
             </div>
 
             <div class="info-box">
@@ -254,7 +254,8 @@
                 <ul>
                     <li>Ukuran Business Card: 90 x 55 mm</li>
                     <li>Ukuran Canvas A4: 210 x 297 mm (2480 x 3508 px @ 300 DPI)</li>
-                    <li>Layout: 2 kolom, maksimal 8 kartu nama</li>
+                    <li>Layout: 2 kolom (Depan & Belakang), maksimal 4 upload</li>
+                    <li>Sisi belakang otomatis menggunakan template back.png</li>
                     <li>Format output: JPG dengan dimensi 100%</li>
                 </ul>
             </div>
@@ -290,7 +291,24 @@
         const cardCount = document.getElementById('cardCount');
 
         let uploadedImages = [];
-        const MAX_CARDS = 8;
+        const MAX_CARDS = 4; // Maksimal 4 upload, karena otomatis jadi 8 dengan back.png
+        const BACK_IMAGE_URL = 'back.png'; // URL image untuk belakang kartu
+        let backImage = null;
+        
+        // Load back image
+        const loadBackImage = () => {
+            backImage = new Image();
+            backImage.crossOrigin = 'anonymous';
+            backImage.onload = () => {
+                console.log('Back image loaded successfully');
+            };
+            backImage.onerror = () => {
+                console.error('Failed to load back.png');
+            };
+            backImage.src = BACK_IMAGE_URL;
+        };
+        
+        loadBackImage();
 
         // Ukuran dalam piksel (300 DPI)
         const A4_WIDTH = 2480;
@@ -388,58 +406,86 @@
             let startY = MARGIN;
 
             uploadedImages.forEach((img, index) => {
-                const row = Math.floor(index / 2);
-                const col = index % 2;
+                const row = index; // Setiap upload = 1 baris (depan + belakang)
                 
-                const x = col === 0 ? col1X : col2X;
-                const y = startY + (row * (CARD_HEIGHT + ROW_GAP));
+                // DEPAN (kolom kiri)
+                const xFront = col1X;
+                const yFront = startY + (row * (CARD_HEIGHT + ROW_GAP));
 
-                // Draw label above card
-                const label = col === 0 ? 'DEPAN' : 'BELAKANG';
+                // Draw label DEPAN
                 ctx.fillStyle = '#333';
                 ctx.font = 'bold 40px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText(label, x + CARD_WIDTH / 2, y - 30);
+                ctx.fillText('DEPAN', xFront + CARD_WIDTH / 2, yFront - 30);
 
-                // Draw image with proper scaling
-                const imgAspect = img.width / img.height;
-                const cardAspect = CARD_WIDTH / CARD_HEIGHT;
+                // Draw front image
+                drawCardImage(img, xFront, yFront);
 
-                let drawWidth, drawHeight, offsetX, offsetY;
+                // BELAKANG (kolom kanan) - gunakan back.png
+                const xBack = col2X;
+                const yBack = yFront;
 
-                if (imgAspect > cardAspect) {
-                    // Image is wider
-                    drawHeight = CARD_HEIGHT;
-                    drawWidth = drawHeight * imgAspect;
-                    offsetX = -(drawWidth - CARD_WIDTH) / 2;
-                    offsetY = 0;
+                // Draw label BELAKANG
+                ctx.fillText('BELAKANG', xBack + CARD_WIDTH / 2, yBack - 30);
+
+                // Draw back image jika sudah loaded
+                if (backImage && backImage.complete) {
+                    drawCardImage(backImage, xBack, yBack);
                 } else {
-                    // Image is taller
-                    drawWidth = CARD_WIDTH;
-                    drawHeight = drawWidth / imgAspect;
-                    offsetX = 0;
-                    offsetY = -(drawHeight - CARD_HEIGHT) / 2;
+                    // Draw placeholder jika back.png belum loaded
+                    ctx.fillStyle = '#f0f0f0';
+                    ctx.fillRect(xBack, yBack, CARD_WIDTH, CARD_HEIGHT);
+                    ctx.strokeStyle = '#ddd';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(xBack, yBack, CARD_WIDTH, CARD_HEIGHT);
+                    
+                    // Text placeholder
+                    ctx.fillStyle = '#999';
+                    ctx.font = '30px Arial';
+                    ctx.fillText('Loading...', xBack + CARD_WIDTH / 2, yBack + CARD_HEIGHT / 2);
                 }
-
-                // Clip to card area
-                ctx.save();
-                ctx.beginPath();
-                ctx.rect(x, y, CARD_WIDTH, CARD_HEIGHT);
-                ctx.clip();
-                ctx.drawImage(img, x + offsetX, y + offsetY, drawWidth, drawHeight);
-                ctx.restore();
-
-                // Draw border
-                ctx.strokeStyle = '#ddd';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(x, y, CARD_WIDTH, CARD_HEIGHT);
             });
 
             downloadBtn.disabled = false;
         }
 
+        function drawCardImage(img, x, y) {
+            const imgAspect = img.width / img.height;
+            const cardAspect = CARD_WIDTH / CARD_HEIGHT;
+
+            let drawWidth, drawHeight, offsetX, offsetY;
+
+            if (imgAspect > cardAspect) {
+                // Image is wider
+                drawHeight = CARD_HEIGHT;
+                drawWidth = drawHeight * imgAspect;
+                offsetX = -(drawWidth - CARD_WIDTH) / 2;
+                offsetY = 0;
+            } else {
+                // Image is taller
+                drawWidth = CARD_WIDTH;
+                drawHeight = drawWidth / imgAspect;
+                offsetX = 0;
+                offsetY = -(drawHeight - CARD_HEIGHT) / 2;
+            }
+
+            // Clip to card area
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(x, y, CARD_WIDTH, CARD_HEIGHT);
+            ctx.clip();
+            ctx.drawImage(img, x + offsetX, y + offsetY, drawWidth, drawHeight);
+            ctx.restore();
+
+            // Draw border
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, CARD_WIDTH, CARD_HEIGHT);
+        }
+
         function updateCardCounter() {
             cardCount.textContent = uploadedImages.length;
+            document.getElementById('totalCards').textContent = uploadedImages.length * 2;
         }
 
         function showStatus(type, message) {
