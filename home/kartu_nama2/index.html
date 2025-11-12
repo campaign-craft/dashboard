@@ -331,6 +331,10 @@
                 this.zoomLevel = 1.0; // Zoom level tampilan di layar
                 this.downloadZoomFactor = 1; // 1 (100%) atau 2 (200%)
 
+                // Perbaikan: Binding method yang rentan kehilangan konteks 'this'
+                this.updateStatus = this.updateStatus.bind(this);
+                this.updateCardDimensions = this.updateCardDimensions.bind(this); // Opsional, tetapi bagus untuk konsistensi
+
                 this.initializeCanvas();
                 this.initializeEventListeners();
                 this.updateCanvasInfo();
@@ -361,13 +365,13 @@
                 document.getElementById('placeholder').style.display = 'none';
 
                 // Pasang event listener untuk objek di kanvas
-                this.canvas.on('object:moving', () => this.updateCardDimensions());
-                this.canvas.on('object:moved', () => this.updateCardDimensions());
-                this.canvas.on('object:scaling', () => this.updateCardDimensions());
-                this.canvas.on('object:rotated', () => this.updateCardDimensions());
-                this.canvas.on('selection:created', () => this.updateCardDimensions());
-                this.canvas.on('selection:updated', () => this.updateCardDimensions());
-                this.canvas.on('selection:cleared', () => this.updateCardDimensions(true));
+                this.canvas.on('object:moving', this.updateCardDimensions);
+                this.canvas.on('object:moved', this.updateCardDimensions);
+                this.canvas.on('object:scaling', this.updateCardDimensions);
+                this.canvas.on('object:rotated', this.updateCardDimensions);
+                this.canvas.on('selection:created', this.updateCardDimensions);
+                this.canvas.on('selection:updated', this.updateCardDimensions);
+                this.canvas.on('selection:cleared', () => this.updateCardDimensions(true)); // Gunakan arrow function untuk meneruskan argumen
 
                 // Atur zoom agar kanvas pas di dalam container saat pertama kali dimuat
                 this.zoomToFit();
@@ -403,7 +407,8 @@
                 const files = event.target.files;
                 if (!files || files.length === 0) return;
                 
-                this.updateStatus(`Mulai mengunggah ${files.length} kartu nama...`);
+                this.updateStatus(`Mulai mengunggah ${files.length} kartu nama...`); // Baris ini sekarang seharusnya berfungsi
+                console.log(`[DEBUG] Memuat ${files.length} kartu nama.`); // Logging untuk debugging
 
                 Array.from(files).forEach((file, index) => {
                     const reader = new FileReader();
@@ -502,7 +507,8 @@
                 const activeObject = this.canvas ? this.canvas.getActiveObject() : null;
                 
                 if (!activeObject || !activeObject.originalScaleX) {
-                    alert('Pilih kartu nama untuk mereset skala.');
+                    // Ganti alert dengan logging/feedback UI yang lebih baik
+                    this.updateStatus('Pilih kartu nama untuk mereset skala.');
                     return;
                 }
                 
@@ -521,7 +527,8 @@
                 const activeObject = this.canvas ? this.canvas.getActiveObject() : null;
                 
                 if (!activeObject) {
-                    alert('Pilih kartu nama untuk dihapus.');
+                    // Ganti alert dengan logging/feedback UI yang lebih baik
+                    this.updateStatus('Pilih kartu nama untuk dihapus.');
                     return;
                 }
 
@@ -535,7 +542,8 @@
 
             downloadMergedImage() {
                 if (this.canvas.getObjects().length === 0) {
-                    alert('Kanvas kosong. Unggah kartu nama terlebih dahulu.');
+                    // Ganti alert dengan logging/feedback UI yang lebih baik
+                    this.updateStatus('Kanvas kosong. Unggah kartu nama terlebih dahulu.');
                     return;
                 }
 
@@ -566,8 +574,15 @@
             }
 
             updateCardCount() {
-                const count = this.canvas.getObjects().length;
+                // HANYA hitung objek yang BUKAN background/placeholder, yang di Fabric.js adalah semua objek yang telah ditambahkan.
+                // Jika Anda menambahkan background, Anda mungkin perlu mengecualikannya, tetapi di sini hanya kartu yang ditambahkan.
+                const count = this.canvas.getObjects().length; 
                 document.getElementById('cardCount').textContent = `Jumlah Kartu: ${count}`;
+            }
+
+            // [PERBAIKAN] Fungsi status yang terikat ke 'this' di constructor
+            updateStatus(message) {
+                document.getElementById('statusText').textContent = message;
             }
 
             // --- FUNGSI ZOOM UNTUK TAMPILAN LAYAR ---
