@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Card Overlay Tool (A4)</title>
+    <!-- Load Fabric.js library for canvas manipulation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+    <style>
+        /* General Styling with Tailwind-like aesthetics */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e0e7f1 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 1);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #1e3a8a, #1d4ed8);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 0;
+            min-height: 70vh;
+        }
+
+        .sidebar {
+            background: #ffffff;
+            padding: 30px;
+            border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
+        }
+
+        .canvas-area {
+            padding: 30px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow: auto;
+        }
+
+        .control-group {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #cbd5e1;
+        }
+
+        .control-group h3 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #1d4ed8, #2563eb);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+        }
+
+        .file-input-label:hover {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            transform: translateY(-1px);
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-primary, .btn-secondary {
+            border: none;
+            padding: 14px 25px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #dc2626, #b91c1c);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #4b5563;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: #374151;
+            transform: translateY(-1px);
+        }
+
+        #canvas-container {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            overflow: hidden;
+            /* A4 Ratio Preview */
+            width: 100%;
+            max-width: 600px; /* Max display width */
+            aspect-ratio: 210 / 297; /* A4 ratio */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #fabricCanvas {
+            border: 2px solid #e2e8f0;
+            background-color: #ffffff;
+        }
+
+        .canvas-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #94a3b8;
+            font-size: 18px;
+            text-align: center;
+            background-color: #f8fafc;
+            border-radius: 8px;
+        }
+        
+        .canvas-placeholder .icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .status-bar {
+            background: #334155;
+            color: white;
+            padding: 15px 30px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+            }
+            .canvas-area {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Business Card Overlay Tool (A4)</h1>
+            <p>Atur kartu nama 90x55mm di lembar A4 (210x297mm) dengan DPI 300</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                
+                <div class="control-group">
+                    <h3>Template & Resolusi</h3>
+                    <div id="templateInfo">
+                        <p><strong>Ukuran Kanvas (A4):</strong> 210 x 297 mm</p>
+                        <p><strong>DPI Kanvas:</strong> <span id="currentDPI">300</span></p>
+                        <p><strong>Dimensi Piksel (300 DPI):</strong> <span id="pixelSize"></span></p>
+                        <small class="text-gray-500">Kanvas disiapkan otomatis dengan dimensi A4 @ 300 DPI.</small>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>1. Unggah Kartu Nama</h3>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="cardInput" class="file-input" accept="image/*" multiple>
+                        <label for="cardInput" class="file-input-label">🖼️ Tambahkan Kartu Nama (90x55 mm)</label>
+                        <small class="text-gray-500">Unggah satu atau lebih file gambar kartu nama.</small>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>2. Properti Kartu Terpilih</h3>
+                    <p class="mb-2">Gunakan mouse untuk memindahkan, memutar, dan mengubah ukuran kartu nama.</p>
+                    <div id="cardDimensions" style="background:#fff; padding:10px; border-radius:6px; border:1px solid #ddd;">
+                        <p><strong>Dimensi Asli (mm):</strong> 90.0 x 55.0 mm</p>
+                        <p><strong>Dimensi Saat Ini (mm):</strong> <span id="overlayWidthMm">0.0</span> x <span id="overlayHeightMm">0.0</span> mm</p>
+                        <small class="text-red-500" id="scaleWarning" style="color: #dc2626; font-weight: 500; display: none;">PERINGATAN: Skala Kartu Nama Berubah!</small>
+                    </div>
+                    <div class="action-buttons" style="margin-top: 15px;">
+                        <button id="resetScaleBtn" class="btn-secondary">⚖️ Reset Skala ke 90x55 mm</button>
+                        <button id="deleteCardBtn" class="btn-primary" style="background: linear-gradient(90deg, #6b7280, #4b5563); color:white;">🗑️ Hapus Kartu Terpilih</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>3. Unduh Hasil Akhir</h3>
+                    <div class="radio-group">
+                        <label style="display:block; margin-bottom: 10px; font-weight: 500;">Pilih Kualitas Unduh:</label>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label><input type="radio" name="downloadQuality" value="1" checked> 100% Kualitas (300 DPI)</label>
+                            <label><input type="radio" name="downloadQuality" value="2"> 200% Kualitas (600 DPI Efektif)</label>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button id="downloadBtn" class="btn-primary">💾 Unduh Lembar A4 (PNG)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canvas-area">
+                <div id="canvas-container">
+                    <div class="canvas-placeholder" id="placeholder">
+                        <div class="icon">📄</div>
+                        <div>Kanvas A4 Siap.</div>
+                        <div style="font-size: 14px; margin-top: 10px; opacity: 0.7;">
+                            Silakan unggah kartu nama Anda (90x55 mm) untuk memulai overlay.
+                        </div>
+                    </div>
+                    <canvas id="fabricCanvas" style="display:none;"></canvas>
+                </div>
+                <!-- Zoom Controls for Better Viewing -->
+                <div class="zoom-controls" style="margin-top: 20px; width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center;">
+                    <button id="zoomOutBtn" class="btn-secondary" style="padding: 8px 15px;">🔍-</button>
+                    <span id="zoomLevel" style="font-weight: bold; color: #1e3a8a;">100%</span>
+                    <button id="zoomInBtn" class="btn-secondary" style="padding: 8px 15px;">🔍+</button>
+                    <button id="zoomFitBtn" class="btn-secondary" style="padding: 8px 15px;">⏹️ Fit</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div id="statusText">Ready - Kanvas A4 (300 DPI) telah dimuat.</div>
+            <div id="cardCount">Jumlah Kartu: 0</div>
+        </div>
+    </div>
+
+    <script>
+        class BusinessCardOverlayTool {
+            constructor() {
+                this.canvas = null;
+                this.DPI = 300; // DPI tetap 300
+                this.A4_WIDTH_MM = 210;
+                this.A4_HEIGHT_MM = 297;
+                this.CARD_WIDTH_MM = 90;
+                this.CARD_HEIGHT_MM = 55;
+                
+                this.mmToPixel = this.DPI / 25.4; // Konversi mm ke pixel (25.4mm per inch)
+                
+                // Dimensi Kanvas Asli dalam Piksel (A4 @ 300 DPI)
+                this.originalCanvasSize = {
+                    width: Math.round(this.A4_WIDTH_MM * this.mmToPixel),
+                    height: Math.round(this.A4_HEIGHT_MM * this.mmToPixel)
+                };
+                
+                this.zoomLevel = 1.0; // Zoom level tampilan di layar
+                this.downloadZoomFactor = 1; // 1 (100%) atau 2 (200%)
+
+                this.initializeCanvas();
+                this.initializeEventListeners();
+                this.updateCanvasInfo();
+            }
+
+            // Fungsi utilitas untuk konversi
+            mmToPx(mm) {
+                return mm * this.mmToPixel;
+            }
+
+            pxToMm(px) {
+                return px / this.mmToPixel;
+            }
+
+            initializeCanvas() {
+                const { width, height } = this.originalCanvasSize;
+                
+                // Inisialisasi Fabric.js Canvas
+                this.canvas = new fabric.Canvas('fabricCanvas', {
+                    width: width,
+                    height: height,
+                    backgroundColor: '#ffffff',
+                    selection: true
+                });
+
+                // Tampilkan kanvas setelah inisialisasi
+                document.getElementById('fabricCanvas').style.display = 'block';
+                document.getElementById('placeholder').style.display = 'none';
+
+                // Pasang event listener untuk objek di kanvas
+                this.canvas.on('object:moving', () => this.updateCardDimensions());
+                this.canvas.on('object:moved', () => this.updateCardDimensions());
+                this.canvas.on('object:scaling', () => this.updateCardDimensions());
+                this.canvas.on('object:rotated', () => this.updateCardDimensions());
+                this.canvas.on('selection:created', () => this.updateCardDimensions());
+                this.canvas.on('selection:updated', () => this.updateCardDimensions());
+                this.canvas.on('selection:cleared', () => this.updateCardDimensions(true));
+
+                // Atur zoom agar kanvas pas di dalam container saat pertama kali dimuat
+                this.zoomToFit();
+            }
+
+            initializeEventListeners() {
+                document.getElementById('cardInput').addEventListener('change', (e) => this.loadBusinessCards(e));
+                document.getElementById('downloadBtn').addEventListener('click', () => this.downloadMergedImage());
+                document.getElementById('resetScaleBtn').addEventListener('click', () => this.resetCardScale());
+                document.getElementById('deleteCardBtn').addEventListener('click', () => this.deleteSelectedCard());
+                
+                // Event listener untuk Zoom Control
+                document.getElementById('zoomInBtn').addEventListener('click', () => this.setZoomLevel(this.zoomLevel * 1.2));
+                document.getElementById('zoomOutBtn').addEventListener('click', () => this.setZoomLevel(this.zoomLevel / 1.2));
+                document.getElementById('zoomFitBtn').addEventListener('click', () => this.zoomToFit());
+                
+                // Event listener untuk Kualitas Unduh
+                document.querySelectorAll('input[name="downloadQuality"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        this.downloadZoomFactor = parseFloat(e.target.value);
+                        this.updateStatus(`Kualitas unduh disetel ke ${e.target.labels[0].textContent.trim().split(' ')[0]}.`);
+                    });
+                });
+            }
+
+            updateCanvasInfo() {
+                const { width, height } = this.originalCanvasSize;
+                document.getElementById('currentDPI').textContent = `${this.DPI} DPI`;
+                document.getElementById('pixelSize').textContent = `${width} x ${height} px`;
+            }
+
+            loadBusinessCards(event) {
+                const files = event.target.files;
+                if (!files || files.length === 0) return;
+                
+                this.updateStatus(`Mulai mengunggah ${files.length} kartu nama...`);
+
+                Array.from(files).forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => this.addBusinessCard(e.target.result, index);
+                    reader.readAsDataURL(file);
+                });
+                
+                // Clear input after processing for re-uploading the same files
+                event.target.value = ''; 
+            }
+
+            addBusinessCard(dataUrl, index) {
+                fabric.Image.fromURL(dataUrl, (img) => {
+                    // Tentukan dimensi target dalam piksel
+                    const targetWidthPx = this.mmToPx(this.CARD_WIDTH_MM);
+                    const targetHeightPx = this.mmToPx(this.CARD_HEIGHT_MM);
+
+                    // Hitung skala yang diperlukan agar gambar overlay tepat 90x55 mm
+                    const scaleX = targetWidthPx / img.width;
+                    const scaleY = targetHeightPx / img.height;
+                    
+                    // Posisi awal: Tengah kanvas
+                    const centerX = this.canvas.width / 2;
+                    const centerY = this.canvas.height / 2;
+
+                    // Hitung offset agar kartu tidak bertumpuk di tengah
+                    const offset = index * 20; // 20px offset per kartu
+
+                    img.set({
+                        // Set posisi awal
+                        left: centerX - (targetWidthPx / 2) + offset,
+                        top: centerY - (targetHeightPx / 2) + offset,
+                        
+                        // Terapkan skala agar ukurannya 90x55 mm
+                        scaleX: scaleX,
+                        scaleY: scaleY,
+                        
+                        // Pengaturan interaksi
+                        selectable: true,
+                        evented: true,
+                        hasRotatingPoint: true,
+                        padding: 5,
+                        borderColor: '#1d4ed8',
+                        cornerColor: '#1d4ed8',
+                        cornerSize: 10,
+                        transparentCorners: false,
+                        cornerStyle: 'circle',
+                        
+                        // Properti khusus untuk melacak dimensi asli
+                        originalWidth: img.width,
+                        originalHeight: img.height,
+                        originalScaleX: scaleX,
+                        originalScaleY: scaleY
+                    });
+                    
+                    this.canvas.add(img);
+                    this.canvas.setActiveObject(img);
+                    this.canvas.renderAll();
+                    
+                    this.updateCardDimensions();
+                    this.updateCardCount();
+                    this.updateStatus(`Kartu nama ke-${this.canvas.getObjects().length} (90x55mm) berhasil ditambahkan.`);
+                }, { crossOrigin: 'anonymous' });
+            }
+
+            updateCardDimensions(clear = false) {
+                const activeObject = this.canvas ? this.canvas.getActiveObject() : null;
+                const widthDisplay = document.getElementById('overlayWidthMm');
+                const heightDisplay = document.getElementById('overlayHeightMm');
+                const scaleWarning = document.getElementById('scaleWarning');
+
+                if (clear || !activeObject || activeObject.getScaledWidth === undefined) {
+                    widthDisplay.textContent = '0.0';
+                    heightDisplay.textContent = '0.0';
+                    scaleWarning.style.display = 'none';
+                    return;
+                }
+                
+                // Dimensi dalam Piksel saat ini
+                const objectWidthPixels = activeObject.getScaledWidth();
+                const objectHeightPixels = activeObject.getScaledHeight();
+
+                // Konversi ke milimeter
+                const widthMm = this.pxToMm(objectWidthPixels);
+                const heightMm = this.pxToMm(objectHeightPixels);
+                
+                widthDisplay.textContent = widthMm.toFixed(1);
+                heightDisplay.textContent = heightMm.toFixed(1);
+
+                // Cek apakah skala berubah signifikan dari 90x55mm
+                const isScaled = Math.abs(widthMm - this.CARD_WIDTH_MM) > 0.1 || Math.abs(heightMm - this.CARD_HEIGHT_MM) > 0.1;
+                scaleWarning.style.display = isScaled ? 'block' : 'none';
+            }
+
+            resetCardScale() {
+                const activeObject = this.canvas ? this.canvas.getActiveObject() : null;
+                
+                if (!activeObject || !activeObject.originalScaleX) {
+                    alert('Pilih kartu nama untuk mereset skala.');
+                    return;
+                }
+                
+                // Reset skala ke dimensi 90x55mm yang tersimpan
+                activeObject.set({
+                    scaleX: activeObject.originalScaleX,
+                    scaleY: activeObject.originalScaleY,
+                });
+                
+                this.canvas.renderAll();
+                this.updateCardDimensions();
+                this.updateStatus('Skala kartu nama direset ke 90x55 mm.');
+            }
+
+            deleteSelectedCard() {
+                const activeObject = this.canvas ? this.canvas.getActiveObject() : null;
+                
+                if (!activeObject) {
+                    alert('Pilih kartu nama untuk dihapus.');
+                    return;
+                }
+
+                this.canvas.remove(activeObject);
+                this.canvas.discardActiveObject();
+                this.canvas.renderAll();
+                this.updateCardDimensions(true);
+                this.updateCardCount();
+                this.updateStatus('Kartu nama berhasil dihapus.');
+            }
+
+            downloadMergedImage() {
+                if (this.canvas.getObjects().length === 0) {
+                    alert('Kanvas kosong. Unggah kartu nama terlebih dahulu.');
+                    return;
+                }
+
+                this.canvas.discardActiveObject();
+                this.canvas.renderAll();
+                
+                const factor = this.downloadZoomFactor;
+                const qualityText = factor === 1 ? "100%" : "200%";
+                const effectiveDPI = factor * this.DPI;
+                
+                this.updateStatus(`Memproses unduhan ${qualityText} (${effectiveDPI} DPI)...`);
+                
+                // Gunakan toDataURL dengan multiplier untuk resolusi tinggi
+                const dataURL = this.canvas.toDataURL({
+                    format: 'png',
+                    multiplier: factor,
+                    quality: 1.0 // Selalu kualitas maksimum untuk PNG
+                });
+                
+                const link = document.createElement('a');
+                link.download = `KartuNama_A4_DPI${effectiveDPI}_${new Date().getTime()}.png`;
+                link.href = dataURL;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                this.updateStatus(`Unduhan A4 ${qualityText} (${effectiveDPI} DPI) selesai.`);
+            }
+
+            updateCardCount() {
+                const count = this.canvas.getObjects().length;
+                document.getElementById('cardCount').textContent = `Jumlah Kartu: ${count}`;
+            }
+
+            // --- FUNGSI ZOOM UNTUK TAMPILAN LAYAR ---
+            setZoomLevel(newZoom) {
+                if (!this.canvas) return;
+                
+                // Batasi zoom
+                newZoom = Math.min(Math.max(0.25, newZoom), 5.0); // Min 25%, Max 500%
+                this.zoomLevel = newZoom;
+
+                const newWidth = this.originalCanvasSize.width * newZoom;
+                const newHeight = this.originalCanvasSize.height * newZoom;
+
+                // Mengubah dimensi DIV container agar kanvas yang dizoom terlihat pas
+                const container = document.getElementById('canvas-container');
+                container.style.width = `${newWidth}px`;
+                container.style.height = `${newHeight}px`;
+                container.style.aspectRatio = 'initial'; // Nonaktifkan aspect ratio CSS saat zoom
+
+                // Mengatur zoom pada kanvas Fabric.js
+                this.canvas.setDimensions({
+                    width: newWidth,
+                    height: newHeight
+                });
+                
+                this.canvas.setZoom(newZoom);
+                this.canvas.renderAll();
+
+                this.updateZoomDisplay();
+            }
+
+            zoomToFit() {
+                if (!this.canvas) return;
+                
+                const area = document.querySelector('.canvas-area');
+                // Ambil dimensi area tampilan (dengan padding)
+                const containerWidth = area.clientWidth - 60; // Kurangi padding 30px kiri/kanan
+                const containerHeight = area.clientHeight - 60; // Kurangi padding 30px atas/bawah
+                
+                const originalWidth = this.originalCanvasSize.width;
+                const originalHeight = this.originalCanvasSize.height;
+
+                const scaleX = containerWidth / originalWidth;
+                const scaleY = containerHeight / originalHeight;
+                // Ambil skala terkecil untuk memastikan kanvas pas di layar
+                const scale = Math.min(scaleX, scaleY, 1.0); // Maksimal zoom 100% jika layar lebih besar
+
+                this.setZoomLevel(scale);
+            }
+
+            updateZoomDisplay() {
+                const percentage = Math.round(this.zoomLevel * 100);
+                document.getElementById('zoomLevel').textContent = `${percentage}%`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Pastikan Fabric.js sudah dimuat sebelum inisialisasi
+            if (window.fabric) {
+                new BusinessCardOverlayTool();
+            } else {
+                console.error("Fabric.js is not loaded.");
+                document.getElementById('statusText').textContent = "ERROR: Fabric.js gagal dimuat.";
+            }
+        });
+    </script>
+</body>
+</html>
