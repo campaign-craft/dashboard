@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Card Overlay Tool (A4)</title>
-    <!-- Load Fabric.js library for canvas manipulation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
     <style>
-        /* General Styling with Tailwind-like aesthetics */
         * {
             margin: 0;
             padding: 0;
@@ -72,7 +70,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            overflow: auto; /* Kontainer ini yang mengontrol scrolling */
+            overflow: auto;
         }
 
         .control-group {
@@ -161,39 +159,25 @@
             transform: translateY(-1px);
         }
 
-        /* PERBAIKAN PENTING CSS: Memaksa container untuk menskalakan kanvas (A4 aspect ratio) */
         #canvas-container {
             border: 1px solid #cbd5e1;
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             background: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            
-            /* Gunakan lebar maksimum dan pertahankan rasio aspek A4 */
-            width: 100%;
-            max-width: 600px;
-            aspect-ratio: 210 / 297; 
-            
-            /* Sembunyikan kanvas Fabric.js asli, kita hanya ingin objek interaktifnya */
-            overflow: hidden; 
+            display: inline-block;
+            position: relative;
         }
         
         #fabricCanvas {
             border: 2px solid #e2e8f0;
             background-color: #ffffff;
-            /* Pastikan kanvas di dalam container mengambil seluruh ruang yang tersedia */
-            width: 100% !important; 
-            height: 100% !important;
-            
-            /* Menonaktifkan kursor pan kustom di CSS */
-            cursor: default !important; 
+            display: block;
         }
 
         .canvas-placeholder {
             width: 100%;
-            height: 100%;
+            max-width: 600px;
+            aspect-ratio: 210 / 297;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -203,9 +187,7 @@
             text-align: center;
             background-color: #f8fafc;
             border-radius: 8px;
-            width: 100%;
-            max-width: 600px;
-            aspect-ratio: 210 / 297;
+            border: 1px solid #cbd5e1;
         }
         
         .canvas-placeholder .icon {
@@ -222,10 +204,19 @@
             justify-content: space-between;
             align-items: center;
         }
-        
-        /* Hapus gaya Zoom Slider, karena elemennya akan dihapus */
 
-        /* Responsive Design */
+        .text-gray-500 {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-top: 8px;
+            display: block;
+        }
+
+        .text-red-500 {
+            color: #dc2626;
+            font-weight: 500;
+        }
+        
         @media (max-width: 1024px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -271,11 +262,11 @@
 
                 <div class="control-group">
                     <h3>2. Properti Kartu Terpilih</h3>
-                    <p class="mb-2">Gunakan mouse untuk memindahkan, memutar, dan mengubah ukuran kartu nama.</p>
+                    <p style="margin-bottom: 10px;">Gunakan mouse untuk memindahkan, memutar, dan mengubah ukuran kartu nama.</p>
                     <div id="cardDimensions" style="background:#fff; padding:10px; border-radius:6px; border:1px solid #ddd;">
                         <p><strong>Dimensi Asli (mm):</strong> 90.0 x 55.0 mm</p>
                         <p><strong>Dimensi Saat Ini (mm):</strong> <span id="overlayWidthMm">0.0</span> x <span id="overlayHeightMm">0.0</span> mm</p>
-                        <small class="text-red-500" id="scaleWarning" style="color: #dc2626; font-weight: 500; display: none;">PERINGATAN: Skala Kartu Nama Berubah!</small>
+                        <small class="text-red-500" id="scaleWarning" style="display: none;">⚠️ PERINGATAN: Skala Kartu Nama Berubah!</small>
                     </div>
                     <div class="action-buttons" style="margin-top: 15px;">
                         <button id="resetScaleBtn" class="btn-secondary">⚖️ Reset Skala ke 90x55 mm</button>
@@ -307,11 +298,8 @@
                             Silakan unggah kartu nama Anda (90x55 mm) untuk memulai overlay.
                         </div>
                     </div>
-                    <!-- Kanvas Fabric.js akan diinisialisasi di sini -->
                     <canvas id="fabricCanvas" style="display:none;"></canvas>
                 </div>
-                
-                <!-- KONTROL ZOOM DIHAPUS SEPERTI PERMINTAAN -->
             </div>
         </div>
 
@@ -325,33 +313,30 @@
         class BusinessCardOverlayTool {
             constructor() {
                 this.canvas = null;
-                this.DPI = 300; // DPI tetap 300
+                this.DPI = 300;
                 this.A4_WIDTH_MM = 210;
                 this.A4_HEIGHT_MM = 297;
                 this.CARD_WIDTH_MM = 90;
                 this.CARD_HEIGHT_MM = 55;
                 
-                this.mmToPixel = this.DPI / 25.4; // Konversi mm ke pixel (25.4mm per inch)
+                this.mmToPixel = this.DPI / 25.4;
                 
-                // Dimensi Kanvas Asli dalam Piksel (A4 @ 300 DPI)
-                this.originalCanvasSize = {
-                    width: Math.round(this.A4_WIDTH_MM * this.mmToPixel),
-                    height: Math.round(this.A4_HEIGHT_MM * this.mmToPixel)
-                };
+                this.canvasWidth = Math.round(this.A4_WIDTH_MM * this.mmToPixel);
+                this.canvasHeight = Math.round(this.A4_HEIGHT_MM * this.mmToPixel);
                 
-                this.zoomLevel = 1.0; // Zoom level tampilan di layar (DEFAULT 100%)
-                this.downloadZoomFactor = 1; // 1 (100%) atau 2 (200%)
+                this.downloadZoomFactor = 1;
 
-                // Perbaikan: Binding method yang rentan kehilangan konteks 'this'
                 this.updateStatus = this.updateStatus.bind(this);
                 this.updateCardDimensions = this.updateCardDimensions.bind(this);
 
                 this.initializeCanvas();
                 this.initializeEventListeners();
                 this.updateCanvasInfo();
+                this.adjustCanvasSize();
+                
+                window.addEventListener('resize', () => this.adjustCanvasSize());
             }
 
-            // Fungsi utilitas untuk konversi
             mmToPx(mm) {
                 return mm * this.mmToPixel;
             }
@@ -360,44 +345,42 @@
                 return px / this.mmToPixel;
             }
 
-            initializeCanvas() {
-                const { width, height } = this.originalCanvasSize;
+            adjustCanvasSize() {
+                if (!this.canvas) return;
                 
-                // Inisialisasi Fabric.js Canvas
+                const container = document.getElementById('canvas-area');
+                const maxWidth = Math.min(container.clientWidth - 60, 600);
+                const scale = maxWidth / this.canvasWidth;
+                
+                const displayWidth = this.canvasWidth * scale;
+                const displayHeight = this.canvasHeight * scale;
+                
+                const canvasElement = document.getElementById('fabricCanvas');
+                canvasElement.style.width = displayWidth + 'px';
+                canvasElement.style.height = displayHeight + 'px';
+                
+                this.canvas.setZoom(scale);
+                this.canvas.renderAll();
+            }
+
+            initializeCanvas() {
                 this.canvas = new fabric.Canvas('fabricCanvas', {
-                    width: width,
-                    height: height,
+                    width: this.canvasWidth,
+                    height: this.canvasHeight,
                     backgroundColor: '#ffffff',
-                    selection: true, // Pastikan seleksi aktif
-                    isDrawingMode: false,
-                    enableRetinaScaling: true // Penting untuk tampilan yang lebih jernih di layar resolusi tinggi
+                    selection: true,
+                    preserveObjectStacking: true
                 });
                 
-                // Tampilkan kanvas setelah inisialisasi
                 document.getElementById('fabricCanvas').style.display = 'block';
                 document.getElementById('placeholder').style.display = 'none';
 
-                // Pasang event listener untuk objek di kanvas
                 this.canvas.on('object:moving', this.updateCardDimensions);
-                this.canvas.on('object:moved', this.updateCardDimensions);
                 this.canvas.on('object:scaling', this.updateCardDimensions);
-                this.canvas.on('object:rotated', this.updateCardDimensions);
+                this.canvas.on('object:rotating', this.updateCardDimensions);
                 this.canvas.on('selection:created', this.updateCardDimensions);
                 this.canvas.on('selection:updated', this.updateCardDimensions);
                 this.canvas.on('selection:cleared', () => this.updateCardDimensions(true));
-
-                // Pastikan kursor default untuk interaksi objek
-                document.getElementById('canvas-container').style.cursor = 'default';
-
-                // Hapus semua event mouse kustom untuk pan/zoom/scroll
-                this.canvas.off('mouse:down');
-                this.canvas.off('mouse:move');
-                this.canvas.off('mouse:up');
-                this.canvas.off('mouse:wheel');
-                
-                // Atur zoom ke 1.0 (default)
-                this.canvas.setZoom(this.zoomLevel); 
-                this.canvas.renderAll();
             }
 
             initializeEventListeners() {
@@ -406,7 +389,6 @@
                 document.getElementById('resetScaleBtn').addEventListener('click', () => this.resetCardScale());
                 document.getElementById('deleteCardBtn').addEventListener('click', () => this.deleteSelectedCard());
                 
-                // Event listener untuk Kualitas Unduh
                 document.querySelectorAll('input[name="downloadQuality"]').forEach(radio => {
                     radio.addEventListener('change', (e) => {
                         this.downloadZoomFactor = parseFloat(e.target.value);
@@ -416,9 +398,8 @@
             }
 
             updateCanvasInfo() {
-                const { width, height } = this.originalCanvasSize;
                 document.getElementById('currentDPI').textContent = `${this.DPI} DPI`;
-                document.getElementById('pixelSize').textContent = `${width} x ${height} px`;
+                document.getElementById('pixelSize').textContent = `${this.canvasWidth} x ${this.canvasHeight} px`;
             }
 
             loadBusinessCards(event) {
@@ -426,7 +407,6 @@
                 if (!files || files.length === 0) return;
                 
                 this.updateStatus(`Mulai mengunggah ${files.length} kartu nama...`);
-                console.log(`[DEBUG] Memuat ${files.length} kartu nama.`);
 
                 Array.from(files).forEach((file, index) => {
                     const reader = new FileReader();
@@ -434,48 +414,36 @@
                     reader.readAsDataURL(file);
                 });
                 
-                // Clear input after processing for re-uploading the same files
-                event.target.value = ''; 
+                event.target.value = '';
             }
 
             addBusinessCard(dataUrl, index) {
                 fabric.Image.fromURL(dataUrl, (img) => {
-                    // Tentukan dimensi target dalam piksel
                     const targetWidthPx = this.mmToPx(this.CARD_WIDTH_MM);
                     const targetHeightPx = this.mmToPx(this.CARD_HEIGHT_MM);
 
-                    // Hitung skala yang diperlukan agar gambar overlay tepat 90x55 mm
                     const scaleX = targetWidthPx / img.width;
                     const scaleY = targetHeightPx / img.height;
                     
-                    // Posisi awal: Tengah kanvas
-                    const centerX = this.canvas.width / 2;
-                    const centerY = this.canvas.height / 2;
-
-                    // Hitung offset agar kartu tidak bertumpuk di tengah
-                    const offset = index * 20; // 20px offset per kartu
+                    const centerX = this.canvasWidth / 2;
+                    const centerY = this.canvasHeight / 2;
+                    const offset = index * 30;
 
                     img.set({
-                        // Set posisi awal
                         left: centerX - (targetWidthPx / 2) + offset,
                         top: centerY - (targetHeightPx / 2) + offset,
-                        
-                        // Terapkan skala agar ukurannya 90x55 mm
                         scaleX: scaleX,
                         scaleY: scaleY,
-                        
-                        // Pengaturan interaksi (Pastikan semua benar)
                         selectable: true,
                         evented: true,
+                        hasControls: true,
+                        hasBorders: true,
                         hasRotatingPoint: true,
-                        padding: 5,
                         borderColor: '#1d4ed8',
                         cornerColor: '#1d4ed8',
-                        cornerSize: 10,
+                        cornerSize: 12,
                         transparentCorners: false,
                         cornerStyle: 'circle',
-                        
-                        // Properti khusus untuk melacak dimensi asli
                         originalWidth: img.width,
                         originalHeight: img.height,
                         originalScaleX: scaleX,
@@ -483,12 +451,12 @@
                     });
                     
                     this.canvas.add(img);
-                    this.canvas.setActiveObject(img); // Aktifkan objek setelah ditambahkan
+                    this.canvas.setActiveObject(img);
                     this.canvas.renderAll();
                     
                     this.updateCardDimensions();
                     this.updateCardCount();
-                    this.updateStatus(`Kartu nama ke-${this.canvas.getObjects().length} (90x55mm) berhasil ditambahkan.`);
+                    this.updateStatus(`Kartu nama ke-${this.canvas.getObjects().length} berhasil ditambahkan.`);
                 }, { crossOrigin: 'anonymous' });
             }
 
@@ -498,26 +466,23 @@
                 const heightDisplay = document.getElementById('overlayHeightMm');
                 const scaleWarning = document.getElementById('scaleWarning');
 
-                if (clear || !activeObject || activeObject.getScaledWidth === undefined) {
+                if (clear || !activeObject) {
                     widthDisplay.textContent = '0.0';
                     heightDisplay.textContent = '0.0';
                     scaleWarning.style.display = 'none';
                     return;
                 }
                 
-                // Dimensi dalam Piksel saat ini
                 const objectWidthPixels = activeObject.getScaledWidth();
                 const objectHeightPixels = activeObject.getScaledHeight();
 
-                // Konversi ke milimeter
                 const widthMm = this.pxToMm(objectWidthPixels);
                 const heightMm = this.pxToMm(objectHeightPixels);
                 
                 widthDisplay.textContent = widthMm.toFixed(1);
                 heightDisplay.textContent = heightMm.toFixed(1);
 
-                // Cek apakah skala berubah signifikan dari 90x55mm
-                const isScaled = Math.abs(widthMm - this.CARD_WIDTH_MM) > 0.1 || Math.abs(heightMm - this.CARD_HEIGHT_MM) > 0.1;
+                const isScaled = Math.abs(widthMm - this.CARD_WIDTH_MM) > 0.5 || Math.abs(heightMm - this.CARD_HEIGHT_MM) > 0.5;
                 scaleWarning.style.display = isScaled ? 'block' : 'none';
             }
 
@@ -529,7 +494,6 @@
                     return;
                 }
                 
-                // Reset skala ke dimensi 90x55mm yang tersimpan
                 activeObject.set({
                     scaleX: activeObject.originalScaleX,
                     scaleY: activeObject.originalScaleY,
@@ -571,11 +535,10 @@
                 
                 this.updateStatus(`Memproses unduhan ${qualityText} (${effectiveDPI} DPI)...`);
                 
-                // Gunakan toDataURL dengan multiplier untuk resolusi tinggi
                 const dataURL = this.canvas.toDataURL({
                     format: 'png',
                     multiplier: factor,
-                    quality: 1.0 // Selalu kualitas maksimum untuk PNG
+                    quality: 1.0
                 });
                 
                 const link = document.createElement('a');
@@ -589,8 +552,7 @@
             }
 
             updateCardCount() {
-                // HANYA hitung objek yang BUKAN background/placeholder, yang di Fabric.js adalah semua objek yang telah ditambahkan.
-                const count = this.canvas.getObjects().length; 
+                const count = this.canvas.getObjects().length;
                 document.getElementById('cardCount').textContent = `Jumlah Kartu: ${count}`;
             }
 
