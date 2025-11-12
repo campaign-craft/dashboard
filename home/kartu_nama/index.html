@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Kartu Nama</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { font-family: 'Inter', sans-serif; }
+        /* Menggabungkan selector untuk kedua canvas */
+        #cardCanvas, #cardBackCanvas {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            /* Tambahkan property ini agar kanvas mengisi kontainer */
+            width: 100%; 
+            max-width: 525px; /* Batasan maksimum visual */
+            height: auto;
+            aspect-ratio: 1050 / 642; 
+            background-color: white;
+            border: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-4 sm:p-8">
+
+    <div class="max-w-4xl mx-auto">
+      
+
+        <div class="flex flex-col lg:flex-row gap-8">
+
+            <div class="lg:w-1/2 p-6 bg-white rounded-xl shadow-lg h-fit">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-700">Detail Kartu</h2>
+
+                <div id="inputForm" class="space-y-4">
+                    <div>
+                        <label for="nameInput" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                        <input type="text" id="nameInput" value="VERA ARIANI" placeholder="Contoh: VERA ARIANI"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label for="titleInput" class="block text-sm font-medium text-gray-700">Jabatan</label>
+                        <input type="text" id="titleInput" value="UI/UX Designer Senior" placeholder="Contoh: Manajer Pemasaran"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label for="phoneInput" class="block text-sm font-medium text-gray-700">Nomor Telepon (Utama/HP)</label>
+                        <input type="text" id="phoneInput" value="+62 812 3456 7890" placeholder="Contoh: +62 81xxxx"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label for="emailInput" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="emailInput" value="risa.dewi@perusahaan.com" placeholder="Contoh: nama@domain.com"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label for="addressInput" class="block text-sm font-medium text-gray-700">Detail Kantor (Alamat, Tlp, Fax)</label>
+                        <textarea id="addressInput" rows="3"
+                                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">Editorial Office of Tribun Network
+Jl. Palmerah Selatan No. 14, Jakarta 10270
+P : 021 - 5483008  F : 021 - 5495360</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:w-1/2 flex flex-col items-center justify-start p-6 bg-white rounded-xl shadow-lg">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-700">Preview Kartu Nama</h2>
+
+                <!-- Container untuk kedua kartu (depan dan belakang) -->
+                <div class="flex flex-col gap-6 w-full max-w-[525px]">
+                    
+                    <!-- Sisi Depan Kartu (Asli) -->
+                    <div class="flex flex-col items-center">
+                        <p class="text-sm font-medium text-gray-500 mb-2">Sisi Depan</p>
+                        <canvas id="cardCanvas"></canvas>
+                    </div>
+
+                    <!-- Sisi Belakang Kartu (Baru) -->
+                    <div class="flex flex-col items-center">
+                        <p class="text-sm font-medium text-gray-500 mb-2">Sisi Belakang (Polosan)</p>
+                        <canvas id="cardBackCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Tombol Download Baru -->
+                <div class="mt-6 w-full space-y-3">
+                    <button id="downloadFrontButton"
+                        class="w-full px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        Download Sisi Depan (PNG)
+                    </button>
+                    <button id="downloadBackButton"
+                        class="w-full px-6 py-3 border border-indigo-500 text-base font-medium rounded-lg shadow-sm text-indigo-600 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        Download Sisi Belakang (PNG)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Konstanta
+        const CARD_WIDTH = 1050; // Resolusi Tinggi untuk Output Cetak/Download
+        const CARD_HEIGHT = 642; 
+        const LOGO_SIZE = 100;
+        const LOGO_URL = 'img.png'; 
+        
+        // URL Latar Belakang
+        const FRONT_BACKGROUND_URL = 'background.png'; 
+        const BACK_BACKGROUND_URL = 'back.png';       
+        const FALLBACK_COLOR = '#0D67B1'; // Warna biru solid
+
+        // Dapatkan Device Pixel Ratio untuk rendering tajam (DPR)
+        const dpr = window.devicePixelRatio || 1; 
+
+        // Elemen Canvas Sisi Depan
+        const canvas = document.getElementById('cardCanvas');
+        const ctx = canvas.getContext('2d');
+        // Elemen Canvas Sisi Belakang
+        const canvasBack = document.getElementById('cardBackCanvas');
+        const ctxBack = canvasBack.getContext('2d');
+        
+        /**
+         * Setup resolusi kanvas untuk rendering yang tajam (menggunakan DPR).
+         * @param {HTMLCanvasElement} c Elemen kanvas.
+         * @param {CanvasRenderingContext2D} c_ctx Konteks 2D kanvas.
+         */
+        function setupCanvas(c, c_ctx) {
+            // Kita gunakan resolusi internal yang tinggi (misalnya 2x ukuran tampilan)
+            // Ukuran tampilan maksimum adalah 525px, jadi resolusi internal bisa sekitar 1050px (CARD_WIDTH)
+            
+            // Set ukuran internal kanvas ke resolusi penuh kartu nama
+            c.width = CARD_WIDTH;
+            c.height = CARD_HEIGHT;
+            
+            // Reset skala, karena kita akan mengandalkan CSS untuk mengecilkan tampilan.
+            // Rendering akan dilakukan pada resolusi penuh (1050x642) dan kemudian dikecilkan oleh browser.
+            c_ctx.setTransform(1, 0, 0, 1, 0, 0); 
+            
+            // Coba terapkan skala DPR untuk kerapatan piksel tambahan di preview jika diperlukan,
+            // namun untuk kesederhanaan, kita akan menggambar pada CARD_WIDTH/HEIGHT dan membiarkan CSS menanganinya.
+            // Kita hanya perlu memastikan CSS style width/height diatur dengan benar, yang sudah dilakukan di <style>
+        }
+
+        // Setup Awal (Dipanggil di window.onload)
+        setupCanvas(canvas, ctx);
+        setupCanvas(canvasBack, ctxBack);
+        
+        // Elemen Input dan Tombol
+        const nameInput = document.getElementById('nameInput');
+        const titleInput = document.getElementById('titleInput');
+        const phoneInput = document.getElementById('phoneInput');
+        const emailInput = document.getElementById('emailInput');
+        const addressInput = document.getElementById('addressInput');
+        const downloadFrontButton = document.getElementById('downloadFrontButton');
+        const downloadBackButton = document.getElementById('downloadBackButton');
+
+        // Gambar Sisi Depan
+        const logoImage = new Image();
+        logoImage.onerror = () => {
+             console.error("Gagal memuat gambar logo.");
+             updatePreview();
+        };
+        logoImage.onload = updatePreview; 
+        logoImage.src = LOGO_URL; 
+
+        const frontBgImage = new Image();
+        frontBgImage.onerror = () => {
+             console.error("Gagal memuat gambar latar depan (background.png). Menggunakan warna solid.");
+             updatePreview();
+        };
+        frontBgImage.onload = updatePreview; 
+        frontBgImage.src = FRONT_BACKGROUND_URL;
+        
+        // Gambar Sisi Belakang
+        const backBgImage = new Image();
+        backBgImage.onerror = () => {
+             console.error("Gagal memuat gambar latar belakang (back.png). Menggunakan warna solid.");
+             updatePreview();
+        };
+        backBgImage.onload = updatePreview; 
+        backBgImage.src = BACK_BACKGROUND_URL;
+
+
+        /**
+         * Menggambar sisi depan kartu nama ke konteks yang diberikan.
+         * Resolusi yang digunakan adalah CARD_WIDTH x CARD_HEIGHT (1050x642).
+         * @param {CanvasRenderingContext2D} targetCtx Konteks untuk menggambar.
+         */
+        function drawFrontCard(targetCtx) {
+            
+            // Menggambar Latar Belakang SISI DEPAN
+            if (frontBgImage.complete && frontBgImage.naturalHeight !== 0) {
+                targetCtx.drawImage(frontBgImage, 0, 0, CARD_WIDTH, CARD_HEIGHT);
+            } else {
+                targetCtx.fillStyle = FALLBACK_COLOR;
+                targetCtx.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
+            }
+
+            const name = nameInput.value;
+            const title = titleInput.value;
+            const phone = phoneInput.value;
+            const email = emailInput.value;
+            const address = addressInput.value;
+
+            // Konten gambar selalu berdasarkan resolusi tinggi (1050x642)
+            const contentX = 60;
+            let currentY = 70; 
+            const logoX = contentX;
+            
+            // Gambar Logo
+            if (logoImage.complete && logoImage.naturalHeight !== 0) {
+                 targetCtx.drawImage(logoImage, logoX, currentY, LOGO_SIZE, LOGO_SIZE);
+            } else {
+                 targetCtx.fillStyle = '#FFFFFF';
+                 targetCtx.fillRect(logoX, currentY, LOGO_SIZE, LOGO_SIZE);
+            }
+            
+            currentY += LOGO_SIZE + 80;
+
+            // Gambar Nama
+            targetCtx.fillStyle = '#FFFFFF';
+            targetCtx.font = 'bold 50px Inter, sans-serif';
+            targetCtx.fillText(name, contentX, currentY);
+
+            // Gambar Jabatan
+            currentY += 40;
+            targetCtx.fillStyle = '#FFFFFF';
+            targetCtx.font = 'bold 26px Inter, sans-serif';
+            targetCtx.fillText(title, contentX, currentY);
+
+            // Gambar Detail Kontak
+            currentY += 120; 
+            targetCtx.fillStyle = '#FFFFFF';
+            targetCtx.font = '22px Inter, sans-serif';
+            const contactX = contentX;
+
+            targetCtx.fillText('HP: ' + phone, contactX, currentY);
+            currentY += 35;
+
+            targetCtx.fillText('Email: ' + email, contactX, currentY);
+            
+            // Gambar Alamat
+            currentY += 50;
+            targetCtx.fillStyle = '#FFFFFF';
+            targetCtx.font = '22px Inter, sans-serif';
+
+            const addressLines = address.split('\n');
+            addressLines.forEach(line => {
+                targetCtx.fillText(line, contactX, currentY);
+                currentY += 30;
+            });
+        }
+        
+        /**
+         * Menggambar sisi belakang kartu nama (polosan back.png) ke konteks yang diberikan.
+         * Resolusi yang digunakan adalah CARD_WIDTH x CARD_HEIGHT (1050x642).
+         * @param {CanvasRenderingContext2D} targetCtx Konteks untuk menggambar.
+         */
+        function drawBackCard(targetCtx) {
+            
+            // Menggambar Latar Belakang SISI BELAKANG (menggunakan backBgImage)
+            if (backBgImage.complete && backBgImage.naturalHeight !== 0) {
+                targetCtx.drawImage(backBgImage, 0, 0, CARD_WIDTH, CARD_HEIGHT);
+            } else {
+                targetCtx.fillStyle = FALLBACK_COLOR;
+                targetCtx.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
+            }
+            // Sisi belakang tetap polosan tanpa teks
+        }
+        
+        // Fungsi untuk memperbarui kedua kartu di PREVIEW
+        function updatePreview() {
+            // Sisi Depan
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawFrontCard(ctx);
+
+            // Sisi Belakang
+            ctxBack.clearRect(0, 0, canvasBack.width, canvasBack.height);
+            drawBackCard(ctxBack);
+        }
+        
+        /**
+         * Fungsi untuk menangani unduhan gambar beresolusi penuh.
+         * @param {HTMLCanvasElement} canvasToDownload Kanvas yang akan diunduh (cardCanvas atau cardBackCanvas).
+         * @param {string} filename Nama file untuk diunduh.
+         */
+        function handleDownload(canvasToDownload, filename) {
+             try {
+                // 1. Dapatkan Data URL dari kanvas (sudah beresolusi penuh)
+                const imageURL = canvasToDownload.toDataURL('image/png');
+
+                // 2. Buat elemen link temporer
+                const a = document.createElement('a');
+                a.href = imageURL;
+                a.download = filename;
+
+                // 3. Simulasikan klik untuk memicu unduhan
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                console.log(`Berhasil mengunduh: ${filename}`);
+
+            } catch (error) {
+                console.error("Gagal mengunduh kartu:", error);
+                // Mengganti alert() dengan console.log()
+                console.log("Terjadi kesalahan saat mencoba mengunduh kartu. Silakan cek konsol.");
+            }
+        }
+
+        // Fungsi Download untuk Sisi Depan
+        function downloadFrontCard() {
+            handleDownload(canvas, 'kartu-nama-depan.png');
+        }
+        
+        // Fungsi Download untuk Sisi Belakang
+        function downloadBackCardHandler() {
+            handleDownload(canvasBack, 'kartu-nama-belakang.png');
+        }
+
+
+        const allInputs = document.querySelectorAll('#inputForm input, #inputForm textarea');
+        allInputs.forEach(input => {
+            input.addEventListener('input', updatePreview); 
+        });
+
+        // Event Listeners Baru
+        downloadFrontButton.addEventListener('click', downloadFrontCard);
+        downloadBackButton.addEventListener('click', downloadBackCardHandler);
+
+        window.onload = () => {
+             // Panggil setup ulang jika window di-resize
+             window.addEventListener('resize', () => {
+                 setupCanvas(canvas, ctx);
+                 setupCanvas(canvasBack, ctxBack);
+                 updatePreview();
+             });
+
+             // Panggil updatePreview setelah semua gambar dimuat
+             updatePreview();
+        };
+
+    </script>
+</body>
+</html>
