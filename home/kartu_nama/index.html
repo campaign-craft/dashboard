@@ -353,15 +353,21 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
             
             activeCardIndex = index;
             const selectedCard = businessCards[index];
-            loadCardDataToInputs(selectedCard);
             
-            // Tambahkan kelas 'active' ke item yang baru
-            const currentItem = document.querySelector(`.card-item[data-index="${activeCardIndex}"]`);
-            if (currentItem) {
-                 currentItem.classList.add('active');
+            // Hanya muat jika ada kartu yang dipilih
+            if (selectedCard) {
+                loadCardDataToInputs(selectedCard);
+                // Tambahkan kelas 'active' ke item yang baru
+                const currentItem = document.querySelector(`.card-item[data-index="${activeCardIndex}"]`);
+                if (currentItem) {
+                     currentItem.classList.add('active');
+                }
+                updateDownloadButtons(selectedCard.name);
+            } else {
+                clearFormForNewCard();
+                updateDownloadButtons(null);
             }
-            
-            updateDownloadButtons(selectedCard.name);
+
             updatePreview();
         }
         
@@ -376,16 +382,17 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
                 
                 // Jika yang dihapus adalah kartu aktif
                 if (activeCardIndex === indexToDelete) {
-                    activeCardIndex = -1;
-                    clearFormForNewCard();
-                    updateDownloadButtons(null);
+                    // Coba pilih kartu sebelumnya, jika tidak ada, atur ke -1
+                    const newIndex = indexToDelete > 0 ? indexToDelete - 1 : -1;
+                    activeCardIndex = -1; // Reset dulu agar seleksi berikutnya bekerja
+                    selectCard(newIndex);
                 } else if (activeCardIndex > indexToDelete) {
                     // Sesuaikan indeks aktif jika kartu dihapus di atasnya
                     activeCardIndex--;
                 }
                 
                 renderCardList();
-                updatePreview();
+                // updatePreview & updateDownloadButtons dipanggil di selectCard
             }
         }
         
@@ -444,22 +451,26 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
         addCardButton.addEventListener('click', () => {
             const newCard = getCardDataFromInputs();
             if (newCard.name === '') {
-                alert('Nama Lengkap tidak boleh kosong.');
+                // Mengganti alert() dengan pesan di konsol atau custom modal jika diperlukan
+                console.error('Nama Lengkap tidak boleh kosong.');
+                // Untuk user experience yang lebih baik, fokuskan pada input yang kosong
+                nameInput.focus();
                 return;
             }
             
             // Tambahkan ke daftar
             businessCards.push(newCard);
             // Pilih kartu yang baru ditambahkan
+            renderCardList(); // Render dulu agar item baru muncul
             selectCard(businessCards.length - 1); 
             // Kosongkan form untuk entri berikutnya
             clearFormForNewCard();
-            renderCardList();
         });
         
         updateCardButton.addEventListener('click', () => {
             if (activeCardIndex === -1) {
-                alert('Silakan pilih kartu dari daftar atau tambahkan kartu baru.');
+                // Mengganti alert() dengan pesan di konsol
+                console.warn('Silakan pilih kartu dari daftar atau tambahkan kartu baru.');
                 return;
             }
             
@@ -536,7 +547,8 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
                  updatePreview();
              });
              
-             // Tambahkan data dummy untuk memulai (jika diperlukan)
+             // --- KODE DUMMY YANG DIHAPUS ---
+             /*
              businessCards.push({
                  id: Date.now() + 1,
                  name: "VERA ARIANI",
@@ -547,9 +559,13 @@ P : 021 - 5483008  F : 021 - 5495360</textarea>
                  name: "RIZKY HIDAYAT",
                  title: "Manajer Pemasaran"
              });
+             */
+             // --- END KODE DUMMY YANG DIHAPUS ---
 
+             // Panggil renderCardList dan selectCard untuk inisialisasi UI
              renderCardList();
-             selectCard(0); // Pilih kartu pertama sebagai default
+             // Kita tetap memanggil selectCard(-1) untuk memastikan preview dan tombol download disetel ulang ke status "kosong"
+             selectCard(-1);
         };
 
     </script>
