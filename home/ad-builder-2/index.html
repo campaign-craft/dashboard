@@ -1,0 +1,3125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembuat Iklan Dummy - Advanced</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip-utils/0.1.0/jszip-utils.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f8ff;
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 102, 177, 0.15);
+        }
+        h1 {
+            text-align: center;
+            color: #0066B1;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        .form-section {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        select, input[type="file"], input[type="text"], textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        select:focus, input[type="file"]:focus, input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #0066B1;
+            box-shadow: 0 0 0 3px rgba(0, 102, 177, 0.1);
+        }
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        .size-info {
+            background: #0066B1;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .size-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .upload-area {
+            border: 3px dashed #cbd5e0;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-area:hover {
+            border-color: #0066B1;
+            background: #f8fbff;
+        }
+        .upload-area.dragover {
+            border-color: #0066B1;
+            background: #f0f8ff;
+            transform: scale(1.02);
+        }
+        .upload-icon {
+            font-size: 48px;
+            color: #a0aec0;
+            margin-bottom: 15px;
+        }
+        button {
+            background: #db1f25;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        button:hover {
+            background: #c51e24;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(219, 31, 37, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .preview-area {
+            margin-top: 40px;
+            border-top: 3px solid #e2e8f0;
+            padding-top: 30px;
+        }
+        .preview-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .preview-header h2 {
+            color: #0066B1;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        iframe {
+            width: 100%;
+            min-height: 800px;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative; /* For overlay positioning */
+        }
+        .file-info {
+            background: #e6fffa;
+            border: 1px solid #38b2ac;
+            color: #234e52;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .error {
+            background: #fed7d7;
+            border: 1px solid #e53e3e;
+            color: #742a2a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0066B1;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Styles for radio buttons */
+        .ad-type-selection {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .ad-type-selection label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 500;
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 16px;
+        }
+        .ad-type-selection input[type="radio"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        /* Overlay for click-through */
+        .ad-overlay-container {
+            position: relative; /* Important for absolute positioning of overlay */
+            width: 100%;
+            height: 100%;
+            display: block; /* To ensure it takes full space */
+        }
+
+        .ad-click-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0); /* Transparent */
+            z-index: 10; /* Ensure it's above the iframe/image */
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Advanced Ad Builder</h1>
+        <p class="subtitle">Buat iklan dummy dengan berbagai format dan template profesional</p>
+
+        <div class="form-section">
+            <div class="form-group">
+                <label>Pilih Tipe Iklan:</label>
+                <div class="ad-type-selection">
+                    <label>
+                        <input type="radio" name="ad_type" value="image" checked onchange="toggleAdInputs()"> Gambar Iklan
+                    </label>
+                    <label>
+                        <input type="radio" name="ad_type" value="script" onchange="toggleAdInputs()"> Script Iklan
+                    </label>
+                    <label>
+                        <input type="radio" name="ad_type" value="html5_zip" onchange="toggleAdInputs()"> HTML5 ZIP
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="adSlotSelect">Pilih Format Iklan:</label>
+                <select id="adSlotSelect" onchange="updateGenerateButton()">
+                    <option value="">-- Pilih Format Iklan --</option>
+                    <optgroup label="Desktop">
+                        <option value="120x600">Skin Ad (120x600)</option>
+                    </optgroup>
+                    <optgroup label="Mobile">
+                        <option value="320x480">Pushdown (320x480)</option>
+                        <option value="mto-with-pin">MTO - With Pin (320x100)</option>
+                        <option value="mto-without-pin">MTO - Without Pin (320x100)</option>
+                        <option value="mto-with-pin-pushdown">MTO - With Pin + Pushdown (320x480)</option>
+                        <option value="mto-without-pin-pushdown">MTO - Without Pin + Pushdown (320x480)</option>
+                    </optgroup>
+                </select>
+                <div id="sizeInfo" class="size-info" style="display: none;">
+                    <div class="size-details">
+                        <span id="slotName"></span>
+                        <span id="slotDimensions"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="imageAdInputs">
+                <div class="form-group" id="adImageLeftGroup" style="display: none;">
+                    <label for="adImageLeft">Upload Gambar Iklan Kiri (Skin Ad):</label>
+                    <div class="upload-area" onclick="document.getElementById('adImageLeft').click()" 
+                        ondragover="handleDragOver(event, 'adImageLeft')" ondrop="handleDrop(event, 'adImageLeft')">
+                        <div class="upload-icon">📎</div>
+                        <p><strong>Klik untuk upload</strong> atau drag & drop file di sini</p>
+                        <p>Format: JPG, PNG, GIF | Ukuran akan disesuaikan otomatis</p>
+                    </div>
+                    <input type="file" id="adImageLeft" accept="image/png, image/jpeg, image/gif" 
+                            onchange="handleFileSelect('left')" style="display: none;">
+                    <div id="fileInfoLeft"></div>
+                </div>
+                <div class="form-group" id="adImageRightGroup" style="display: none;">
+                    <label for="adImageRight">Upload Gambar Iklan Kanan (Skin Ad):</label>
+                    <div class="upload-area" onclick="document.getElementById('adImageRight').click()" 
+                        ondragover="handleDragOver(event, 'adImageRight')" ondrop="handleDrop(event, 'adImageRight')">
+                        <div class="upload-icon">📎</div>
+                        <p><strong>Klik untuk upload</strong> atau drag & drop file di sini</p>
+                        <p>Format: JPG, PNG, GIF | Ukuran akan disesuaikan otomatis</p>
+                    </div>
+                    <input type="file" id="adImageRight" accept="image/png, image/jpeg, image/gif" 
+                            onchange="handleFileSelect('right')" style="display: none;">
+                    <div id="fileInfoRight"></div>
+                </div>
+
+                <div class="form-group" id="mtoImagesGroup" style="display: none;">
+                    <label>Upload Gambar Iklan (MTO - With Pin / Without Pin / + Pushdown):</label>
+                    <div class="sub-group" style="margin-bottom: 15px;">
+                        <label for="mtoImage1" style="font-size: 1em; text-transform: none; font-weight: 500;">Iklan 1 (300x250):</label>
+                        <div class="upload-area" onclick="document.getElementById('mtoImage1').click()" 
+                            ondragover="handleDragOver(event, 'mtoImage1')" ondrop="handleDrop(event, 'mtoImage1')">
+                            <div class="upload-icon">📎</div>
+                            <p><strong>Klik untuk upload</strong> atau drag & drop file di sini</p>
+                        </div>
+                        <input type="file" id="mtoImage1" accept="image/png, image/jpeg, image/gif" 
+                                onchange="handleFileSelect('mto1')" style="display: none;">
+                        <div id="fileInfoMTO1"></div>
+                    </div>
+
+                    <div class="sub-group" style="margin-bottom: 15px;">
+                        <label for="mtoImage2" style="font-size: 1em; text-transform: none; font-weight: 500;">Iklan 2 (320x100):</label>
+                        <div class="upload-area" onclick="document.getElementById('mtoImage2').click()" 
+                            ondragover="handleDragOver(event, 'mtoImage2')" ondrop="handleDrop(event, 'mtoImage2')">
+                            <div class="upload-icon">📎</div>
+                            <p><strong>Klik untuk upload</strong> atau drag & drop file di sini</p>
+                        </div>
+                        <input type="file" id="mtoImage2" accept="image/png, image/jpeg, image/gif" 
+                                onchange="handleFileSelect('mto2')" style="display: none;">
+                        <div id="fileInfoMTO2"></div>
+                    </div>
+
+                    <div class="sub-group" id="mtoImage3Group">
+                        <label for="mtoImage3" style="font-size: 1em; text-transform: none; font-weight: 500;">Iklan 3 (150x150):</label>
+                        <div class="upload-area" onclick="document.getElementById('mtoImage3').click()" 
+                            ondragover="handleDragOver(event, 'mtoImage3')" ondrop="handleDrop(event, 'mtoImage3')">
+                            <div class="upload-icon">📎</div>
+                            <p><strong>Klik untuk upload</strong> atau drag & drop file di sini</p>
+                        </div>
+                        <input type="file" id="mtoImage3" accept="image/png, image/jpeg, image/gif" 
+                                onchange="handleFileSelect('mto3')" style="display: none;">
+                        <div id="fileInfoMTO3"></div>
+                    </div>
+
+                    <div class="sub-group" id="mtoImage4Group" style="display: none;">
+                        <label for="mtoImage4" style="font-size: 1em; text-transform: none; font-weight: 500;">Iklan 4 (320x480):</label>
+                        <div class="upload-area" onclick="document.getElementById('mtoImage4').click()" 
+                            ondragover="handleDragOver(event, 'mtoImage4')" ondrop="handleDrop(event, 'mtoImage4')">
+                            <div class="upload-icon">📎</div>
+                            <p><strong>Klik untuk upload</strong> atau drag & drop file di sini</p>
+                        </div>
+                        <input type="file" id="mtoImage4" accept="image/png, image/jpeg, image/gif" 
+                                onchange="handleFileSelect('mto4')" style="display: none;">
+                        <div id="fileInfoMTO4"></div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="adImageSingleGroup">
+                    <label for="adImageSingle">Upload Gambar Iklan:</label>
+                    <div class="upload-area" onclick="document.getElementById('adImageSingle').click()" 
+                        ondragover="handleDragOver(event, 'adImageSingle')" ondrop="handleDrop(event, 'adImageSingle')">
+                        <div class="upload-icon">📎</div>
+                        <p><strong>Klik untuk upload</strong> atau drag & drop file di sini</p>
+                        <p>Format: JPG, PNG, GIF | Ukuran akan disesuaikan otomatis</p>
+                    </div>
+                    <input type="file" id="adImageSingle" accept="image/png, image/jpeg, image/gif" 
+                            onchange="handleFileSelect('single')" style="display: none;">
+                    <div id="fileInfoSingle"></div>
+                </div>
+            </div>
+
+            <div id="scriptAdInputs" style="display: none;">
+                <div class="form-group" id="adScriptSingleGroup">
+                    <label for="adScript">Tempel Script Iklan Anda:</label>
+                    <textarea id="adScript" placeholder="Tempel kode script iklan di sini (misal: Google AdSense, DCM, dll.)" onkeyup="updateGenerateButton()"></textarea>
+                </div>
+
+                <div id="mtoScriptGroup" style="display: none;">
+                    <label>Tempel Script Iklan untuk MTO - With Pin / Without Pin / + Pushdown:</label>
+                    <div class="form-group">
+                        <label for="mtoScript1" style="font-size: 1em; text-transform: none; font-weight: 500;">Script Iklan 1 (Slot 300x250):</label>
+                        <textarea id="mtoScript1" placeholder="Script untuk slot 300x250" onkeyup="updateGenerateButton()"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="mtoScript2" style="font-size: 1em; text-transform: none; font-weight: 500;">Script Iklan 2 (Slot 320x100):</label>
+                        <textarea id="mtoScript2" placeholder="Script untuk slot 320x100" onkeyup="updateGenerateButton()"></textarea>
+                    </div>
+                    <div class="form-group" id="mtoScript3Group">
+                        <label for="mtoScript3" style="font-size: 1em; text-transform: none; font-weight: 500;">Script Iklan 3 (Slot 150x150):</label>
+                        <textarea id="mtoScript3" placeholder="Script untuk slot 150x150" onkeyup="updateGenerateButton()"></textarea>
+                    </div>
+                    <div class="form-group" id="mtoScript4Group" style="display: none;">
+                        <label for="mtoScript4" style="font-size: 1em; text-transform: none; font-weight: 500;">Script Iklan 4 (Slot 320x480):</label>
+                        <textarea id="mtoScript4" placeholder="Script untuk slot 320x480" onkeyup="updateGenerateButton()"></textarea>
+                    </div>
+                </div>
+                <p style="font-size: 0.9em; color: #718096;">*Pastikan script iklan memiliki dimensi yang sesuai atau fleksibel.</p>
+            </div>
+
+            <div id="html5ZipInputs" style="display: none;">
+                <div class="form-group" id="singleHtml5ZipGroup">
+                    <label for="html5ZipFile">Upload File ZIP HTML5:</label>
+                    <div class="upload-area" onclick="document.getElementById('html5ZipFile').click()" 
+                         ondragover="handleDragOverZip(event, 'single')" ondrop="handleDropZip(event, 'single')">
+                        <div class="upload-icon">📦</div>
+                        <p><strong>Klik untuk upload</strong> atau drag & drop file ZIP di sini</p>
+                        <p>Pastikan berisi file `index.html` di root direktori.</p>
+                    </div>
+                    <input type="file" id="html5ZipFile" accept=".zip" 
+                            onchange="handleHtml5ZipSelect('single')" style="display: none;">
+                    <div id="zipFileInfo"></div>
+                </div>
+
+                <div id="mtoHtml5ZipGroup" style="display: none;">
+                    <label>Upload File ZIP HTML5 untuk MTO - With Pin / Without Pin / + Pushdown:</label>
+                    <div class="sub-group" style="margin-bottom: 15px;">
+                        <label for="mtoHtml5Zip1" style="font-size: 1em; text-transform: none; font-weight: 500;">HTML5 ZIP Iklan 1 (300x250):</label>
+                        <div class="upload-area" onclick="document.getElementById('mtoHtml5Zip1').click()" 
+                             ondragover="handleDragOverZip(event, 'mto1')" ondrop="handleDropZip(event, 'mto1')">
+                            <div class="upload-icon">📦</div>
+                            <p><strong>Klik untuk upload</strong> atau drag & drop file ZIP di sini</p>
+                        </div>
+                        <input type="file" id="mtoHtml5Zip1" accept=".zip" 
+                                onchange="handleHtml5ZipSelect('mto1')" style="display: none;">
+                        <div id="zipFileInfoMTO1"></div>
+                    </div>
+
+                    <div class="sub-group" style="margin-bottom: 15px;">
+                        <label for="mtoHtml5Zip2" style="font-size: 1em; text-transform: none; font-weight: 500;">HTML5 ZIP Iklan 2 (320x100):</label>
+                        <div class="upload-area" onclick="document.getElementById('mtoHtml5Zip2').click()" 
+                             ondragover="handleDragOverZip(event, 'mto2')" ondrop="handleDropZip(event, 'mto2')">
+                            <div class="upload-icon">📦</div>
+                            <p><strong>Klik untuk upload</strong> atau drag & drop file ZIP di sini</p>
+                        </div>
+                        <input type="file" id="mtoHtml5Zip2" accept=".zip" 
+                                onchange="handleHtml5ZipSelect('mto2')" style="display: none;">
+                        <div id="zipFileInfoMTO2"></div>
+                    </div>
+
+                    <div class="sub-group" id="mtoHtml5Zip3Group">
+                        <label for="mtoHtml5Zip3" style="font-size: 1em; text-transform: none; font-weight: 500;">HTML5 ZIP Iklan 3 (150x150):</label>
+                        <div class="upload-area" onclick="document.getElementById('mtoHtml5Zip3').click()" 
+                             ondragover="handleDragOverZip(event, 'mto3')" ondrop="handleDropZip(event, 'mto3')">
+                            <div class="upload-icon">📦</div>
+                            <p><strong>Klik untuk upload</strong> atau drag & drop file ZIP di sini</p>
+                        </div>
+                        <input type="file" id="mtoHtml5Zip3" accept=".zip" 
+                                onchange="handleHtml5ZipSelect('mto3')" style="display: none;">
+                        <div id="zipFileInfoMTO3"></div>
+                    </div>
+
+                    <div class="sub-group" id="mtoHtml5Zip4Group" style="display: none;">
+                        <label for="mtoHtml5Zip4" style="font-size: 1em; text-transform: none; font-weight: 500;">HTML5 ZIP Iklan 4 (320x480):</label>
+                        <div class="upload-area" onclick="document.getElementById('mtoHtml5Zip4').click()" 
+                             ondragover="handleDragOverZip(event, 'mto4')" ondrop="handleDropZip(event, 'mto4')">
+                            <div class="upload-icon">📦</div>
+                            <p><strong>Klik untuk upload</strong> atau drag & drop file ZIP di sini</p>
+                        </div>
+                        <input type="file" id="mtoHtml5Zip4" accept=".zip" 
+                                onchange="handleHtml5ZipSelect('mto4')" style="display: none;">
+                        <div id="zipFileInfoMTO4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" id="backgroundColorGroup" style="display: none;"> 
+                <label for="backgroundColor" style="font-size: 1em; text-transform: none; font-weight: 500;">Kode Warna Background (contoh: #f0f8ff):</label>
+                <input type="text" id="backgroundColor" placeholder="#f0f8ff" onkeyup="updateGenerateButton()">
+            </div>
+
+            <div class="form-group">
+                <label for="landingPageUrl">URL Landing Page (Opsional):</label>
+                <input type="text" id="landingPageUrl" placeholder="Contoh: www.example.com atau example.com" onkeyup="updateGenerateButton()">
+            </div>
+
+            <!-- NEW: Logo Replacement Tool -->
+            <div class="form-section">
+                <label for="logoReplacementSelect">Ganti URL Logo (Opsional):</label>
+                <select id="logoReplacementSelect" onchange="updateGenerateButton()">
+                    <option value="default">-- Biarkan Logo Default --</option>
+                    <option value="jabar">Logo Jabar</option>
+                    <option value="bali">Logo Bali</option>
+                    <option value="jateng">Logo Jateng</option>
+                    <option value="serambi">Logo Serambi</option>
+                    <option value="banten">Logo Banten</option>
+                    <option value="surya">Logo Surya</option>
+                    <option value="suryamalang">Logo Surya Malang</option>
+                    <option value="timur">Logo Tribun Timur</option>
+                    <option value="medan">Logo Tribun Medan</option>
+                    <option value="sripo">Logo Sriwijaya Post</option>
+                    <option value="lampung">Logo Tribun Lampung</option>
+                    <option value="banjarmasin">Logo Banjarmasin Post</option>
+                    <option value="papua">Logo Tribun Papua</option>
+                    <option value="jogja">Logo Tribun Jogja</option>
+                    <option value="solo">Logo Tribun Solo</option>
+                </select>
+                <p style="font-size: 0.9em; color: #718096; margin-top: 10px;">*Akan mengganti URL logo 'tribunnews.svg' di template.</p>
+            </div>
+            <!-- END NEW: Logo Replacement Tool -->
+
+            <button id="generateBtn" onclick="generateAd()" disabled>
+                🚀 Generate Preview
+            </button>
+            
+            <button id="downloadBtn" onclick="downloadAdContent()" disabled style="margin-top: 15px; background: #0066B1;">
+                💾 Download Iklan
+            </button>
+        </div>
+
+        <div class="preview-area">
+            <div class="preview-header">
+                <h2>📋 Preview Template</h2>
+                <p id="previewSubtitle">Iklan Anda akan ditampilkan dalam konteks template website</p>
+            </div>
+            <iframe id="adPreview" src="about:blank"></iframe>
+        </div>
+    </div>
+
+    <script>
+        const adSlots = {
+            // Desktop
+            "120x600": { name: "Skin Ad", width: 120, height: 600, template: "template_skin_ad.html" },
+            // Mobile
+            "320x480": { name: "Pushdown", width: 320, height: 480, template: "template_pushdown.html" },
+            "mto-with-pin": { name: "MTO - With Pin", width: 320, height: 100, template: "template_mto_with_pin.html" }, // Using 320x100 as main size
+            "mto-without-pin": { name: "MTO - Without Pin", width: 320, height: 100, template: "template_mto_without_pin.html" },
+            "mto-with-pin-pushdown": { name: "MTO - With Pin + Pushdown", width: 320, height: 480, template: "template_mto_with_pin_pushdown.html" },
+            "mto-without-pin-pushdown": { name: "MTO - Without Pin + Pushdown", width: 320, height: 480, template: "template_mto_without_pin_pushdown.html" } // New MTO Without Pin + Pushdown (uses same template as with pin + pushdown but removes slot 3)
+        };
+
+        // NEW: Define logo URLs
+        const logoUrls = {
+            "default": "https://asset-1.tstatic.net/img/logo/tribun/svg/tribunnews.svg",
+            "jabar": "https://asset-1.tstatic.net/img/logo/daerah/svg3/tribunjabar5.svg",
+            "bali": "https://asset-1.tstatic.net/img/logo/daerah/svg3/tribunbali.svg",
+            "jateng": "https://asset-1.tstatic.net/img/logo/daerah/svg3/tribunjateng.svg",
+            "serambi": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/serambiindonesia.svg',
+            "banten": 'https://asset-1.tribunnews.com/img/logo/tribun/svg/tribunbanten2.svg',
+            "surya": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/suryamalang.svg',
+            "suryamalang": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/suryamalang.svg',
+            "timur": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribuntimur.svg',
+            "medan": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunmedan.svg',
+            "sripo": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/sriwijayapost.svg',
+            "lampung": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunlampung.svg',
+            "banjarmasin": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/banjarmasinpost.svg',
+            "papua": 'https://asset-1.tribunnews.com/img/logo/tribun/svg/tribunpapua2.svg',
+            "jogja": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunjogja.svg',
+            "solo": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunsolo.svg'
+        };
+        const defaultTribunnewsLogoUrl = "https://asset-1.tstatic.net/img/logo/tribun/svg/tribunnews.svg";
+
+        let selectedImageFileLeft = null; // For Skin Ad left image
+        let selectedImageFileRight = null; // For Skin Ad right image
+        let selectedImageFileSingle = null; // For other single image ad types (e.g., Pushdown)
+
+        let selectedImageFileMTO1 = null; // MTO Image 1 (300x250)
+        let selectedImageFileMTO2 = null; // MTO Image 2 (320x100)
+        let selectedImageFileMTO3 = null; // MTO Image 3 (150x150)
+        let selectedImageFileMTO4 = null; // MTO Image 4 (320x480)
+
+        // NEW: HTML5 ZIP Variables
+        let selectedZipFileSingle = null; // For single HTML5 ZIP ad types
+        let html5AdFilesForDownloadSingle = {}; 
+        let html5AdOriginalIndexHtmlContentSingle = ''; 
+        let html5AdBlobUrlsSingle = {};
+
+        let selectedZipFileMTO1 = null; // MTO HTML5 ZIP 1
+        let html5AdFilesForDownloadMTO1 = {};
+        let html5AdOriginalIndexHtmlContentMTO1 = '';
+        let html5AdBlobUrlsMTO1 = {};
+
+        let selectedZipFileMTO2 = null; // MTO HTML5 ZIP 2
+        let html5AdFilesForDownloadMTO2 = {};
+        let html5AdOriginalIndexHtmlContentMTO2 = '';
+        let html5AdBlobUrlsMTO2 = {};
+
+        let selectedZipFileMTO3 = null; // MTO HTML5 ZIP 3
+        let html5AdFilesForDownloadMTO3 = {};
+        let html5AdOriginalIndexHtmlContentMTO3 = '';
+        let html5AdBlobUrlsMTO3 = {};
+
+        let selectedZipFileMTO4 = null; // MTO HTML5 ZIP 4
+        let html5AdFilesForDownloadMTO4 = {};
+        let html5AdOriginalIndexHtmlContentMTO4 = '';
+        let html5AdBlobUrlsMTO4 = {};
+
+        let generatedHTML = null; // HTML of the *main template* with ad content for preview
+
+        function getSelectedAdType() {
+            return document.querySelector('input[name="ad_type"]:checked').value;
+        }
+
+        // Toggles visibility of ad content input sections and specific image inputs
+        function toggleAdInputs() {
+            const adType = getSelectedAdType();
+            const adSlotSelect = document.getElementById('adSlotSelect');
+            const selectedSlotValue = adSlotSelect.value;
+
+            const imageAdInputs = document.getElementById('imageAdInputs');
+            const scriptAdInputs = document.getElementById('scriptAdInputs');
+            const html5ZipInputs = document.getElementById('html5ZipInputs');
+            
+            // Image Upload Groups
+            const adImageLeftGroup = document.getElementById('adImageLeftGroup');
+            const adImageRightGroup = document.getElementById('adImageRightGroup');
+            const adImageSingleGroup = document.getElementById('adImageSingleGroup');
+            const mtoImagesGroup = document.getElementById('mtoImagesGroup');
+            const mtoImage3Group = document.getElementById('mtoImage3Group');
+            const mtoImage4Group = document.getElementById('mtoImage4Group');
+            
+            // HTML5 ZIP Groups
+            const singleHtml5ZipGroup = document.getElementById('singleHtml5ZipGroup');
+            const mtoHtml5ZipGroup = document.getElementById('mtoHtml5ZipGroup');
+            const mtoHtml5Zip3Group = document.getElementById('mtoHtml5Zip3Group');
+            const mtoHtml5Zip4Group = document.getElementById('mtoHtml5Zip4Group');
+
+            const backgroundColorGroup = document.getElementById('backgroundColorGroup');
+
+            // File Info Dives - Image
+            const fileInfoLeft = document.getElementById('fileInfoLeft');
+            const fileInfoRight = document.getElementById('fileInfoRight');
+            const fileInfoSingle = document.getElementById('fileInfoSingle');
+            const fileInfoMTO1 = document.getElementById('fileInfoMTO1');
+            const fileInfoMTO2 = document.getElementById('fileInfoMTO2');
+            const fileInfoMTO3 = document.getElementById('fileInfoMTO3');
+            const fileInfoMTO4 = document.getElementById('fileInfoMTO4');
+
+            // File Info Dives - HTML5 ZIP
+            const zipFileInfo = document.getElementById('zipFileInfo');
+            const zipFileInfoMTO1 = document.getElementById('zipFileInfoMTO1');
+            const zipFileInfoMTO2 = document.getElementById('zipFileInfoMTO2');
+            const zipFileInfoMTO3 = document.getElementById('zipFileInfoMTO3');
+            const zipFileInfoMTO4 = document.getElementById('zipFileInfoMTO4');
+            
+            const adScriptTextarea = document.getElementById('adScript');
+            const mtoScriptGroup = document.getElementById('mtoScriptGroup');
+            const mtoScript1 = document.getElementById('mtoScript1');
+            const mtoScript2 = document.getElementById('mtoScript2');
+            const mtoScript3 = document.getElementById('mtoScript3');
+            const mtoScript4 = document.getElementById('mtoScript4');
+            const mtoScript3Group = document.getElementById('mtoScript3Group');
+            const mtoScript4Group = document.getElementById('mtoScript4Group');
+            const previewSubtitle = document.getElementById('previewSubtitle');
+
+            // Reset all ad content specific inputs
+            selectedImageFileLeft = null;
+            selectedImageFileRight = null;
+            selectedImageFileSingle = null;
+            selectedImageFileMTO1 = null;
+            selectedImageFileMTO2 = null;
+            selectedImageFileMTO3 = null;
+            selectedImageFileMTO4 = null;
+            fileInfoLeft.innerHTML = '';
+            fileInfoRight.innerHTML = '';
+            fileInfoSingle.innerHTML = '';
+            fileInfoMTO1.innerHTML = '';
+            fileInfoMTO2.innerHTML = '';
+            fileInfoMTO3.innerHTML = '';
+            fileInfoMTO4.innerHTML = '';
+            
+            selectedZipFileSingle = null;
+            html5AdFilesForDownloadSingle = {};
+            html5AdOriginalIndexHtmlContentSingle = '';
+            zipFileInfo.innerHTML = '';
+
+            selectedZipFileMTO1 = null;
+            html5AdFilesForDownloadMTO1 = {};
+            html5AdOriginalIndexHtmlContentMTO1 = '';
+            zipFileInfoMTO1.innerHTML = '';
+
+            selectedZipFileMTO2 = null;
+            html5AdFilesForDownloadMTO2 = {};
+            html5AdOriginalIndexHtmlContentMTO2 = '';
+            zipFileInfoMTO2.innerHTML = '';
+
+            selectedZipFileMTO3 = null;
+            html5AdFilesForDownloadMTO3 = {};
+            html5AdOriginalIndexHtmlContentMTO3 = '';
+            zipFileInfoMTO3.innerHTML = '';
+
+            selectedZipFileMTO4 = null;
+            html5AdFilesForDownloadMTO4 = {};
+            html5AdOriginalIndexHtmlContentMTO4 = '';
+            zipFileInfoMTO4.innerHTML = '';
+
+            adScriptTextarea.value = '';
+            // Clear MTO scripts
+            if (mtoScript1) mtoScript1.value = '';
+            if (mtoScript2) mtoScript2.value = '';
+            if (mtoScript3) mtoScript3.value = '';
+            if (mtoScript4) mtoScript4.value = '';
+            document.getElementById('backgroundColor').value = ''; // Clear background color input
+
+            // Clear any previously generated blob URLs for HTML5 ads preview
+            clearHtml5BlobUrls();
+
+            // Hide all main input sections
+            imageAdInputs.style.display = 'none';
+            scriptAdInputs.style.display = 'none';
+            html5ZipInputs.style.display = 'none';
+            backgroundColorGroup.style.display = 'none'; // Hide background color by default
+
+            // Hide all specific image input groups
+            adImageLeftGroup.style.display = 'none';
+            adImageRightGroup.style.display = 'none';
+            adImageSingleGroup.style.display = 'none';
+            mtoImagesGroup.style.display = 'none';
+            mtoImage3Group.style.display = 'block'; // Default to block, will be hidden if 'without-pin'
+            mtoImage4Group.style.display = 'block'; // Default to block, will be hidden if not '+pushdown'
+            
+            // Hide all specific script input groups
+            adScriptSingleGroup.style.display = 'none';
+            mtoScriptGroup.style.display = 'none';
+            mtoScript3Group.style.display = 'block'; // Default to block, will be hidden if 'without-pin'
+            mtoScript4Group.style.display = 'block'; // Default to block, will be hidden if not '+pushdown'
+
+            // Hide all specific HTML5 ZIP input groups
+            singleHtml5ZipGroup.style.display = 'none';
+            mtoHtml5ZipGroup.style.display = 'none';
+            mtoHtml5Zip3Group.style.display = 'block'; // Default to block, will be hidden if 'without-pin'
+            mtoHtml5Zip4Group.style.display = 'block'; // Default to block, will be hidden if not '+pushdown'
+
+            // *** START MODIFIKASI UNTUK MTO-WITH-PIN / WITHOUT-PIN / + PUSHDOWN ***
+            if (selectedSlotValue.startsWith('mto-') && (adType === 'script' || adType === 'html5_zip')) {
+                // Jika MTO - With Pin, Without Pin, atau + Pushdown dipilih DAN tipe iklan adalah Script atau HTML5 ZIP,
+                // paksa untuk menampilkan input upload gambar untuk grup MTO
+                imageAdInputs.style.display = 'block';
+                mtoImagesGroup.style.display = 'block'; 
+                // Perbarui subtitle preview untuk mencerminkan bahwa ini akan menjadi iklan gambar
+                previewSubtitle.textContent = 'Untuk slot MTO, input Iklan Script dan HTML5 ZIP akan diunggah sebagai Gambar Iklan.';
+
+            } else if (adType === 'image') {
+                // *** END MODIFIKASI UNTUK MTO-WITH-PIN / WITHOUT-PIN / + PUSHDOWN ***
+                
+                imageAdInputs.style.display = 'block';
+                previewSubtitle.textContent = 'Iklan Anda akan ditampilkan dalam konteks template website';
+                
+                if (selectedSlotValue === '120x600') { // Skin Ad
+                    adImageLeftGroup.style.display = 'block';
+                    adImageRightGroup.style.display = 'block';
+                } else if (selectedSlotValue.startsWith('mto-')) { // MTO - With Pin / Without Pin / + Pushdown
+                    mtoImagesGroup.style.display = 'block';
+                }
+                else { // Other single image ads (e.g. Pushdown)
+                    adImageSingleGroup.style.display = 'block';
+                }
+
+            } else if (adType === 'script') {
+                scriptAdInputs.style.display = 'block';
+                previewSubtitle.textContent = 'Script iklan Anda akan ditampilkan dalam iframe. Pastikan ukurannya sesuai.';
+            } else if (adType === 'html5_zip') {
+                html5ZipInputs.style.display = 'block';
+                previewSubtitle.textContent = 'Iklan HTML5 akan dimuat dari file ZIP yang diunggah.';
+            }
+            updateGenerateButton();
+        }
+
+        // Cleans up blob URLs to prevent memory leaks (for preview only)
+        function clearHtml5BlobUrls() {
+            for (const path in html5AdBlobUrlsSingle) {
+                URL.revokeObjectURL(html5AdBlobUrlsSingle[path]);
+            }
+            html5AdBlobUrlsSingle = {};
+
+            for (const path in html5AdBlobUrlsMTO1) {
+                URL.revokeObjectURL(html5AdBlobUrlsMTO1[path]);
+            }
+            html5AdBlobUrlsMTO1 = {};
+
+            for (const path in html5AdBlobUrlsMTO2) {
+                URL.revokeObjectURL(html5AdBlobUrlsMTO2[path]);
+            }
+            html5AdBlobUrlsMTO2 = {};
+
+            for (const path in html5AdBlobUrlsMTO3) {
+                URL.revokeObjectURL(html5AdBlobUrlsMTO3[path]);
+            }
+            html5AdBlobUrlsMTO3 = {};
+
+            for (const path in html5AdBlobUrlsMTO4) {
+                URL.revokeObjectURL(html5AdBlobUrlsMTO4[path]);
+            }
+            html5AdBlobUrlsMTO4 = {};
+        }
+
+        function updateSlotInfo() {
+            const select = document.getElementById('adSlotSelect');
+            const sizeInfo = document.getElementById('sizeInfo');
+            const slotName = document.getElementById('slotName');
+            const slotDimensions = document.getElementById('slotDimensions');
+            const iframe = document.getElementById('adPreview');
+            const adType = getSelectedAdType();
+            const backgroundColorGroup = document.getElementById('backgroundColorGroup');
+
+            // Get specific MTO input groups
+            const mtoImage3Group = document.getElementById('mtoImage3Group');
+            const mtoImage4Group = document.getElementById('mtoImage4Group');
+            const mtoScript3Group = document.getElementById('mtoScript3Group');
+            const mtoScript4Group = document.getElementById('mtoScript4Group');
+            const mtoHtml5Zip3Group = document.getElementById('mtoHtml5Zip3Group');
+            const mtoHtml5Zip4Group = document.getElementById('mtoHtml5Zip4Group');
+
+
+            if (select.value) {
+                const slot = adSlots[select.value];
+                sizeInfo.style.display = 'block';
+                slotName.textContent = slot.name;
+                slotDimensions.textContent = `${slot.width} × ${slot.height} pixels`; // This is main size for MTO
+
+                if (select.value === '320x480' || select.value.startsWith('mto-')) { // MTO With/Without Pin / + Pushdown
+                    iframe.style.width = '400px'; 
+                    iframe.style.margin = '0 auto';
+                    iframe.style.display = 'block';
+                } else { // Desktop or other
+                    iframe.style.width = '100%';
+                    iframe.style.margin = '';
+                }
+
+                // Update image input visibility based on selected slot
+                const adImageLeftGroup = document.getElementById('adImageLeftGroup');
+                const adImageRightGroup = document.getElementById('adImageRightGroup');
+                const adImageSingleGroup = document.getElementById('adImageSingleGroup');
+                const mtoImagesGroup = document.getElementById('mtoImagesGroup');
+
+                if (adType === 'image') {
+                    if (select.value === '120x600') { // Skin Ad
+                        adImageLeftGroup.style.display = 'block';
+                        adImageRightGroup.style.display = 'block';
+                        adImageSingleGroup.style.display = 'none';
+                        mtoImagesGroup.style.display = 'none';
+                    } else if (select.value.startsWith('mto-')) { // MTO - With Pin / Without Pin / + Pushdown
+                        adImageLeftGroup.style.display = 'none';
+                        adImageRightGroup.style.display = 'none';
+                        adImageSingleGroup.style.display = 'none';
+                        mtoImagesGroup.style.display = 'block';
+                        // Toggle MTO Image 3 & 4 based on selected MTO type
+                        if (select.value === 'mto-without-pin' || select.value === 'mto-without-pin-pushdown') { // Added new option
+                            mtoImage3Group.style.display = 'none';
+                            mtoImage4Group.style.display = 'block'; // Always show 4th for pushdown
+                        } else if (select.value === 'mto-with-pin') {
+                            mtoImage3Group.style.display = 'block';
+                            mtoImage4Group.style.display = 'none';
+                        } else if (select.value === 'mto-with-pin-pushdown') {
+                            mtoImage3Group.style.display = 'block';
+                            mtoImage4Group.style.display = 'block';
+                        }
+                    } else { // Other single image ads (e.g. Pushdown)
+                        adImageLeftGroup.style.display = 'none';
+                        adImageRightGroup.style.display = 'none';
+                        adImageSingleGroup.style.display = 'block';
+                        mtoImagesGroup.style.display = 'none';
+                    }
+                } else { // If not image type, hide all image specific inputs
+                    adImageLeftGroup.style.display = 'none';
+                    adImageRightGroup.style.display = 'none';
+                    adImageSingleGroup.style.display = 'none';
+                    mtoImagesGroup.style.display = 'none';
+                }
+
+                // Update script input visibility based on selected slot
+                const adScriptSingleGroup = document.getElementById('adScriptSingleGroup');
+                const mtoScriptGroup = document.getElementById('mtoScriptGroup');
+                if (adType === 'script') {
+                    if (select.value.startsWith('mto-')) { // MTO With/Without Pin / + Pushdown
+                        adScriptSingleGroup.style.display = 'none';
+                        mtoScriptGroup.style.display = 'block';
+                        // Toggle MTO Script 3 & 4 based on selected MTO type
+                        if (select.value === 'mto-without-pin' || select.value === 'mto-without-pin-pushdown') { // Added new option
+                            mtoScript3Group.style.display = 'none';
+                            mtoScript4Group.style.display = 'block'; // Always show 4th for pushdown
+                        } else if (select.value === 'mto-with-pin') {
+                            mtoScript3Group.style.display = 'block';
+                            mtoScript4Group.style.display = 'none';
+                        } else if (select.value === 'mto-with-pin-pushdown') {
+                            mtoScript3Group.style.display = 'block';
+                            mtoScript4Group.style.display = 'block';
+                        }
+                    } else {
+                        adScriptSingleGroup.style.display = 'block';
+                        mtoScriptGroup.style.display = 'none';
+                    }
+                } else {
+                    adScriptSingleGroup.style.display = 'none';
+                    mtoScriptGroup.style.display = 'none';
+                }
+
+                // NEW: Update HTML5 ZIP input visibility based on selected slot
+                const singleHtml5ZipGroup = document.getElementById('singleHtml5ZipGroup');
+                const mtoHtml5ZipGroup = document.getElementById('mtoHtml5ZipGroup');
+                if (adType === 'html5_zip') {
+                    if (select.value.startsWith('mto-')) { // MTO With/Without Pin / + Pushdown
+                        singleHtml5ZipGroup.style.display = 'none';
+                        mtoHtml5ZipGroup.style.display = 'block';
+                        // Toggle MTO HTML5 ZIP 3 & 4 based on selected MTO type
+                        if (select.value === 'mto-without-pin' || select.value === 'mto-without-pin-pushdown') { // Added new option
+                            mtoHtml5Zip3Group.style.display = 'none';
+                            mtoHtml5Zip4Group.style.display = 'block'; // Always show 4th for pushdown
+                        } else if (select.value === 'mto-with-pin') {
+                            mtoHtml5Zip3Group.style.display = 'block';
+                            mtoHtml5Zip4Group.style.display = 'none';
+                        } else if (select.value === 'mto-with-pin-pushdown') {
+                            mtoHtml5Zip3Group.style.display = 'block';
+                            mtoHtml5Zip4Group.style.display = 'block';
+                        }
+                    } else {
+                        singleHtml5ZipGroup.style.display = 'block';
+                        mtoHtml5ZipGroup.style.display = 'none';
+                    }
+                } else {
+                    singleHtml5ZipGroup.style.display = 'none';
+                    mtoHtml5ZipGroup.style.display = 'none';
+                }
+
+                // Control visibility of backgroundColor input based on ad type AND slot
+                if ((adType === 'image' || adType === 'script' || adType === 'html5_zip') && select.value.startsWith('mto-')) { // MTO With/Without Pin / + Pushdown
+                    backgroundColorGroup.style.display = 'block';
+                } else {
+                    backgroundColorGroup.style.display = 'none';
+                }
+
+
+            } else { // If no slot selected
+                sizeInfo.style.display = 'none';
+                iframe.style.width = '100%';
+                iframe.style.margin = '';
+                // Hide all image inputs if no slot is selected
+                document.getElementById('adImageLeftGroup').style.display = 'none';
+                document.getElementById('adImageRightGroup').style.display = 'none';
+                document.getElementById('adImageSingleGroup').style.display = 'none';
+                document.getElementById('mtoImagesGroup').style.display = 'none';
+                // Hide all script inputs if no slot is selected
+                document.getElementById('adScriptSingleGroup').style.display = 'none';
+                document.getElementById('mtoScriptGroup').style.display = 'none';
+                // Hide all HTML5 ZIP inputs if no slot is selected
+                document.getElementById('singleHtml5ZipGroup').style.display = 'none';
+                document.getElementById('mtoHtml5ZipGroup').style.display = 'none';
+
+                backgroundColorGroup.style.display = 'none'; // Also hide background color
+            }
+            updateGenerateButton(); // Re-evaluate generate button state
+        }
+
+        // --- Image Upload Handlers ---
+        function handleDragOver(e, inputId) { 
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDrop(e, inputId) { 
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const fileInput = document.getElementById(inputId);
+                fileInput.files = files; // Assign files to the input
+                // Call handleFileSelect with the correct type based on inputId
+                if (inputId === 'adImageLeft') handleFileSelect('left');
+                else if (inputId === 'adImageRight') handleFileSelect('right');
+                else if (inputId === 'adImageSingle') handleFileSelect('single');
+                else if (inputId === 'mtoImage1') handleFileSelect('mto1');
+                else if (inputId === 'mtoImage2') handleFileSelect('mto2');
+                else if (inputId === 'mtoImage3') handleFileSelect('mto3');
+                else if (inputId === 'mtoImage4') handleFileSelect('mto4');
+            }
+        }
+
+        function handleFileSelect(type) { 
+            let fileInput;
+            let fileInfoDiv;
+            let selectedFileVar;
+
+            if (type === 'left') {
+                fileInput = document.getElementById('adImageLeft');
+                fileInfoDiv = document.getElementById('fileInfoLeft');
+            } else if (type === 'right') {
+                fileInput = document.getElementById('adImageRight');
+                fileInfoDiv = document.getElementById('fileInfoRight');
+            } else if (type === 'single') {
+                fileInput = document.getElementById('adImageSingle');
+                fileInfoDiv = document.getElementById('fileInfoSingle');
+            } else if (type === 'mto1') {
+                fileInput = document.getElementById('mtoImage1');
+                fileInfoDiv = document.getElementById('fileInfoMTO1');
+            } else if (type === 'mto2') {
+                fileInput = document.getElementById('mtoImage2');
+                fileInfoDiv = document.getElementById('fileInfoMTO2');
+            } else if (type === 'mto3') {
+                fileInput = document.getElementById('mtoImage3');
+                fileInfoDiv = document.getElementById('fileInfoMTO3');
+            } else if (type === 'mto4') {
+                fileInput = document.getElementById('mtoImage4');
+                fileInfoDiv = document.getElementById('fileInfoMTO4');
+            } else {
+                return;
+            }
+            
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (!validTypes.includes(file.type)) {
+                    fileInfoDiv.innerHTML = '<div class="error">❌ Format file tidak didukung. Gunakan JPG, PNG, atau GIF.</div>';
+                    selectedFileVar = null; // Set to null if invalid
+                } else {
+                    const fileSize = (file.size / 1024 / 1024).toFixed(2);
+                    fileInfoDiv.innerHTML = `
+                        <div class="file-info">
+                            ✅ <strong>${file.name}</strong><br>
+                            Ukuran: ${fileSize} MB | Tipe: ${file.type}
+                        </div>
+                    `;
+                    selectedFileVar = file; // Assign the file
+                }
+            } else {
+                selectedFileVar = null; // Set to null if no file
+                fileInfoDiv.innerHTML = '';
+            }
+
+            // Update the correct global variable
+            if (type === 'left') {
+                selectedImageFileLeft = selectedFileVar;
+            } else if (type === 'right') {
+                selectedImageFileRight = selectedFileVar;
+            } else if (type === 'single') {
+                selectedImageFileSingle = selectedFileVar;
+            } else if (type === 'mto1') {
+                selectedImageFileMTO1 = selectedFileVar;
+            } else if (type === 'mto2') {
+                selectedImageFileMTO2 = selectedFileVar;
+            } else if (type === 'mto3') {
+                selectedImageFileMTO3 = selectedFileVar;
+            } else if (type === 'mto4') {
+                selectedImageFileMTO4 = selectedFileVar;
+            }
+            updateGenerateButton();
+        }
+
+        // --- HTML5 ZIP Upload Handlers ---
+        function handleDragOverZip(e, type) { 
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDropZip(e, type) { 
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const fileInputId = type === 'single' ? 'html5ZipFile' : `mtoHtml5Zip${type.replace('mto','')}`;
+                const fileInput = document.getElementById(fileInputId);
+                fileInput.files = files;
+                handleHtml5ZipSelect(type);
+            }
+        }
+
+        async function handleHtml5ZipSelect(type) { 
+            let fileInput;
+            let zipFileInfoDiv;
+            let selectedZipFileVar;
+            let html5AdFilesForDownloadVar;
+            let html5AdOriginalIndexHtmlContentVar;
+
+            if (type === 'single') {
+                fileInput = document.getElementById('html5ZipFile');
+                zipFileInfoDiv = document.getElementById('zipFileInfo');
+                selectedZipFileVar = selectedZipFileSingle;
+                html5AdFilesForDownloadVar = html5AdFilesForDownloadSingle;
+                html5AdOriginalIndexHtmlContentVar = html5AdOriginalIndexHtmlContentSingle;
+            } else if (type === 'mto1') {
+                fileInput = document.getElementById('mtoHtml5Zip1');
+                zipFileInfoDiv = document.getElementById('zipFileInfoMTO1');
+                selectedZipFileVar = selectedZipFileMTO1;
+                html5AdFilesForDownloadVar = html5AdFilesForDownloadMTO1;
+                html5AdOriginalIndexHtmlContentVar = html5AdOriginalIndexHtmlContentMTO1;
+            } else if (type === 'mto2') {
+                fileInput = document.getElementById('mtoHtml5Zip2');
+                zipFileInfoDiv = document.getElementById('zipFileInfoMTO2');
+                selectedZipFileVar = selectedZipFileMTO2;
+                html5AdFilesForDownloadVar = html5AdFilesForDownloadMTO2;
+                html5AdOriginalIndexHtmlContentVar = html5AdOriginalIndexHtmlContentMTO2;
+            } else if (type === 'mto3') {
+                fileInput = document.getElementById('mtoHtml5Zip3');
+                zipFileInfoDiv = document.getElementById('zipFileInfoMTO3');
+                selectedZipFileVar = selectedZipFileMTO3;
+                html5AdFilesForDownloadVar = html5AdFilesForDownloadMTO3;
+                html5AdOriginalIndexHtmlContentVar = html5AdOriginalIndexHtmlContentMTO3;
+            } else if (type === 'mto4') {
+                fileInput = document.getElementById('mtoHtml5Zip4');
+                zipFileInfoDiv = document.getElementById('zipFileInfoMTO4');
+                selectedZipFileVar = selectedZipFileMTO4;
+                html5AdFilesForDownloadVar = html5AdFilesForDownloadMTO4;
+                html5AdOriginalIndexHtmlContentVar = html5AdOriginalIndexHtmlContentMTO4;
+            } else {
+                return;
+            }
+            
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                if (file.type !== 'application/zip' && file.type !== 'application/x-zip-compressed') {
+                    zipFileInfoDiv.innerHTML = '<div class="error">❌ Format file tidak didukung. Mohon upload file .zip.</div>';
+                    if (type === 'single') selectedZipFileSingle = null;
+                    else if (type === 'mto1') selectedZipFileMTO1 = null;
+                    else if (type === 'mto2') selectedZipFileMTO2 = null;
+                    else if (type === 'mto3') selectedZipFileMTO3 = null;
+                    else if (type === 'mto4') selectedZipFileMTO4 = null;
+                    updateGenerateButton();
+                    return;
+                }
+                const fileSize = (file.size / 1024 / 1024).toFixed(2);
+                zipFileInfoDiv.innerHTML = `
+                    <div class="file-info">
+                        ✅ <strong>${file.name}</strong><br>
+                        Ukuran: ${fileSize} MB | Tipe: ${file.type}
+                        <div class="loading" style="margin-top: 10px; padding: 0;">
+                            <div class="spinner" style="width: 20px; height: 20px; border-width: 3px;"></div>
+                            <p style="margin-top: 5px;">Membaca file ZIP...</p>
+                        </div>
+                    </div>
+                `;
+
+                try {
+                    const zip = new JSZip();
+                    const zipData = await file.arrayBuffer();
+                    const loadedZip = await zip.loadAsync(zipData);
+
+                    let mainHtmlFound = false;
+                    // Dynamically assign to the correct global variable based on 'type'
+                    if (type === 'single') {
+                        html5AdFilesForDownloadSingle = {};
+                        html5AdOriginalIndexHtmlContentSingle = '';
+                    } else if (type === 'mto1') {
+                        html5AdFilesForDownloadMTO1 = {};
+                        html5AdOriginalIndexHtmlContentMTO1 = '';
+                    } else if (type === 'mto2') {
+                        html5AdFilesForDownloadMTO2 = {};
+                        html5AdOriginalIndexHtmlContentMTO2 = '';
+                    } else if (type === 'mto3') {
+                        html5AdFilesForDownloadMTO3 = {};
+                        html5AdOriginalIndexHtmlContentMTO3 = '';
+                    } else if (type === 'mto4') {
+                        html5AdFilesForDownloadMTO4 = {};
+                        html5AdOriginalIndexHtmlContentMTO4 = '';
+                    }
+
+                    const filePromises = [];
+                    loadedZip.forEach((relativePath, zipEntry) => {
+                        const normalizedPath = relativePath.replace(/\\/g, '/'); 
+                        if (!zipEntry.dir) {
+                            filePromises.push(zipEntry.async('blob').then(blob => {
+                                if (normalizedPath === 'index.html' || normalizedPath.endsWith('/index.html')) {
+                                    mainHtmlFound = true;
+                                    zipEntry.async('string').then(content => {
+                                        if (type === 'single') html5AdOriginalIndexHtmlContentSingle = content;
+                                        else if (type === 'mto1') html5AdOriginalIndexHtmlContentMTO1 = content;
+                                        else if (type === 'mto2') html5AdOriginalIndexHtmlContentMTO2 = content;
+                                        else if (type === 'mto3') html5AdOriginalIndexHtmlContentMTO3 = content;
+                                        else if (type === 'mto4') html5AdOriginalIndexHtmlContentMTO4 = content;
+                                    });
+                                }
+                                if (type === 'single') html5AdFilesForDownloadSingle[normalizedPath] = blob;
+                                else if (type === 'mto1') html5AdFilesForDownloadMTO1[normalizedPath] = blob;
+                                else if (type === 'mto2') html5AdFilesForDownloadMTO2[normalizedPath] = blob;
+                                else if (type === 'mto3') html5AdFilesForDownloadMTO3[normalizedPath] = blob;
+                                else if (type === 'mto4') html5AdFilesForDownloadMTO4[normalizedPath] = blob;
+                            }));
+                        }
+                    });
+
+                    await Promise.all(filePromises);
+
+                    if (!mainHtmlFound) {
+                        zipFileInfoDiv.innerHTML = '<div class="error">❌ File `index.html` tidak ditemukan di root direktori ZIP.</div>';
+                        if (type === 'single') selectedZipFileSingle = null;
+                        else if (type === 'mto1') selectedZipFileMTO1 = null;
+                        else if (type === 'mto2') selectedZipFileMTO2 = null;
+                        else if (type === 'mto3') selectedZipFileMTO3 = null;
+                        else if (type === 'mto4') selectedZipFileMTO4 = null;
+                        updateGenerateButton();
+                        return;
+                    }
+
+                    zipFileInfoDiv.innerHTML = `
+                        <div class="file-info">
+                            ✅ <strong>${file.name}</strong><br>
+                            Ukuran: ${fileSize} MB | Tipe: ${file.type}<br>
+                            Status: File ZIP berhasil dibaca.
+                        </div>
+                    `;
+
+                    if (type === 'single') selectedZipFileSingle = file;
+                    else if (type === 'mto1') selectedZipFileMTO1 = file;
+                    else if (type === 'mto2') selectedZipFileMTO2 = file;
+                    else if (type === 'mto3') selectedZipFileMTO3 = file;
+                    else if (type === 'mto4') selectedZipFileMTO4 = file;
+
+                } catch (error) {
+                    zipFileInfoDiv.innerHTML = `<div class="error">❌ Gagal membaca file ZIP: ${error.message}</div>`;
+                    if (type === 'single') selectedZipFileSingle = null;
+                    else if (type === 'mto1') selectedZipFileMTO1 = null;
+                    else if (type === 'mto2') selectedZipFileMTO2 = null;
+                    else if (type === 'mto3') selectedZipFileMTO3 = null;
+                    else if (type === 'mto4') selectedZipFileMTO4 = null;
+                }
+            } else {
+                if (type === 'single') {selectedZipFileSingle = null; zipFileInfoDiv.innerHTML = '';}
+                else if (type === 'mto1') {selectedZipFileMTO1 = null; zipFileInfoDiv.innerHTML = '';}
+                else if (type === 'mto2') {selectedZipFileMTO2 = null; zipFileInfoDiv.innerHTML = '';}
+                else if (type === 'mto3') {selectedZipFileMTO3 = null; zipFileInfoDiv.innerHTML = '';}
+                else if (type === 'mto4') {selectedZipFileMTO4 = null; zipFileInfoDiv.innerHTML = '';}
+            }
+            updateGenerateButton();
+        }
+
+        function updateGenerateButton() {
+            const select = document.getElementById('adSlotSelect');
+            const generateBtn = document.getElementById('generateBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const adType = getSelectedAdType();
+            const adScriptTextarea = document.getElementById('adScript');
+            const mtoScript1 = document.getElementById('mtoScript1');
+            const mtoScript2 = document.getElementById('mtoScript2');
+            const mtoScript3 = document.getElementById('mtoScript3');
+            const mtoScript4 = document.getElementById('mtoScript4');
+            const backgroundColor = document.getElementById('backgroundColor').value.trim();
+
+            let canGenerate = false;
+            let canDownload = false; // Separate flag for download
+
+            if (adType === 'image') {
+                if (select.value === '120x600') {
+                    canGenerate = selectedImageFileLeft && selectedImageFileRight;
+                } else if (select.value === 'mto-with-pin') {
+                    canGenerate = selectedImageFileMTO1 && selectedImageFileMTO2 && selectedImageFileMTO3 && backgroundColor !== '';
+                } else if (select.value === 'mto-without-pin') {
+                    canGenerate = selectedImageFileMTO1 && selectedImageFileMTO2 && backgroundColor !== '';
+                } else if (select.value === 'mto-with-pin-pushdown') {
+                    canGenerate = selectedImageFileMTO1 && selectedImageFileMTO2 && selectedImageFileMTO3 && selectedImageFileMTO4 && backgroundColor !== '';
+                } else if (select.value === 'mto-without-pin-pushdown') { // New MTO Without Pin + Pushdown logic
+                    canGenerate = selectedImageFileMTO1 && selectedImageFileMTO2 && selectedImageFileMTO4 && backgroundColor !== ''; // No selectedImageFileMTO3
+                } else {
+                    canGenerate = selectedImageFileSingle;
+                }
+                canGenerate = canGenerate && select.value;
+                canDownload = canGenerate && generatedHTML; // Can only download if generated for image type
+            } else if (adType === 'script') {
+                if (select.value === 'mto-with-pin') {
+                    canGenerate = (mtoScript1 && mtoScript1.value.trim() !== '') &&
+                                  (mtoScript2 && mtoScript2.value.trim() !== '') &&
+                                  (mtoScript3 && mtoScript3.value.trim() !== '') &&
+                                  backgroundColor !== '';
+                } else if (select.value === 'mto-without-pin') {
+                    canGenerate = (mtoScript1 && mtoScript1.value.trim() !== '') &&
+                                  (mtoScript2 && mtoScript2.value.trim() !== '') &&
+                                  backgroundColor !== '';
+                } else if (select.value === 'mto-with-pin-pushdown') {
+                    canGenerate = (mtoScript1 && mtoScript1.value.trim() !== '') &&
+                                  (mtoScript2 && mtoScript2.value.trim() !== '') &&
+                                  (mtoScript3 && mtoScript3.value.trim() !== '') &&
+                                  (mtoScript4 && mtoScript4.value.trim() !== '') &&
+                                  backgroundColor !== '';
+                } else if (select.value === 'mto-without-pin-pushdown') { // New MTO Without Pin + Pushdown logic
+                    canGenerate = (mtoScript1 && mtoScript1.value.trim() !== '') &&
+                                  (mtoScript2 && mtoScript2.value.trim() !== '') &&
+                                  (mtoScript4 && mtoScript4.value.trim() !== '') && // No mtoScript3
+                                  backgroundColor !== '';
+                } else {
+                    canGenerate = adScriptTextarea.value.trim() !== '';
+                }
+                canGenerate = canGenerate && select.value;
+                canDownload = canGenerate && generatedHTML; // Can only download if generated for script type (except MTO script which generates directly in download)
+                if (select.value.startsWith('mto-') && canGenerate) { // MTO script can be downloaded directly once inputs are filled
+                     canDownload = true;
+                }
+            } else if (adType === 'html5_zip') {
+                if (select.value === 'mto-with-pin') {
+                    canGenerate = select.value && selectedZipFileMTO1 && Object.keys(html5AdFilesForDownloadMTO1).length > 0 &&
+                                  selectedZipFileMTO2 && Object.keys(html5AdFilesForDownloadMTO2).length > 0 &&
+                                  selectedZipFileMTO3 && Object.keys(html5AdFilesForDownloadMTO3).length > 0 &&
+                                  backgroundColor !== '';
+                } else if (select.value === 'mto-without-pin') {
+                    canGenerate = select.value && selectedZipFileMTO1 && Object.keys(html5AdFilesForDownloadMTO1).length > 0 &&
+                                  selectedZipFileMTO2 && Object.keys(html5AdFilesForDownloadMTO2).length > 0 &&
+                                  backgroundColor !== '';
+                } else if (select.value === 'mto-with-pin-pushdown') {
+                    canGenerate = select.value && selectedZipFileMTO1 && Object.keys(html5AdFilesForDownloadMTO1).length > 0 &&
+                                  selectedZipFileMTO2 && Object.keys(html5AdFilesForDownloadMTO2).length > 0 &&
+                                  selectedZipFileMTO3 && Object.keys(html5AdFilesForDownloadMTO3).length > 0 &&
+                                  selectedZipFileMTO4 && Object.keys(html5AdFilesForDownloadMTO4).length > 0 &&
+                                  backgroundColor !== '';
+                } else if (select.value === 'mto-without-pin-pushdown') { // New MTO Without Pin + Pushdown logic
+                    canGenerate = select.value && selectedZipFileMTO1 && Object.keys(html5AdFilesForDownloadMTO1).length > 0 &&
+                                  selectedZipFileMTO2 && Object.keys(html5AdFilesForDownloadMTO2).length > 0 &&
+                                  selectedZipFileMTO4 && Object.keys(html5AdFilesForDownloadMTO4).length > 0 && // No selectedZipFileMTO3
+                                  backgroundColor !== '';
+                } else {
+                    canGenerate = select.value && selectedZipFileSingle && Object.keys(html5AdFilesForDownloadSingle).length > 0;
+                }
+                canDownload = canGenerate; // For HTML5 ZIP, if can generate, can download (processing is done on upload)
+            }
+            
+            generateBtn.disabled = !canGenerate;
+            downloadBtn.disabled = !canDownload;
+
+            // Update button text dynamically
+            if (adType === 'html5_zip') {
+                downloadBtn.textContent = '💾 Download Bundel HTML5';
+            } else if (adType === 'image') {
+                downloadBtn.textContent = '💾 Download Bundel Gambar';
+            } else {
+                downloadBtn.textContent = '💾 Download HTML';
+            }
+            
+            updateSlotInfo(); // This will also update image input visibility
+        }
+
+        function ensureUrlProtocol(urlString) {
+            if (!urlString) {
+                return '';
+            }
+            const hasProtocol = /^(https?:\/\/|\/\/)/i.test(urlString);
+            if (!hasProtocol) {
+                return `https://${urlString}`;
+            }
+            return urlString;
+        }
+
+        /**
+         * Replaces a specific logo URL in the given HTML content.
+         * @param {string} htmlString - The HTML content as a string.
+         * @param {string} oldUrl - The URL to be replaced.
+         * @param {string} newUrl - The new URL to replace with.
+         * @returns {string} The HTML content with the logo URL replaced.
+         */
+        function replaceLogoUrl(htmlString, oldUrl, newUrl) {
+            // Create a temporary DOM parser
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlString, 'text/html');
+
+            // Find all image elements
+            const images = doc.querySelectorAll('img');
+            images.forEach(img => {
+                // Check if the image's src matches the oldUrl
+                if (img.src === oldUrl) {
+                    img.src = newUrl;
+                }
+            });
+
+            // Find all elements that might have background-image style
+            // This is a more general approach, might need refinement based on actual templates
+            const allElements = doc.querySelectorAll('*');
+            allElements.forEach(element => {
+                const style = element.getAttribute('style');
+                if (style && style.includes(`url("${oldUrl}")`)) {
+                    element.style.backgroundImage = `url("${newUrl}")`;
+                }
+            });
+
+            // Return the modified HTML string
+            return doc.documentElement.outerHTML;
+        }
+
+
+        async function generateAd() {
+            const select = document.getElementById('adSlotSelect');
+            const iframe = document.getElementById('adPreview');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const adType = getSelectedAdType();
+            const slot = adSlots[select.value];
+            const landingPageUrlInput = document.getElementById('landingPageUrl');
+            let landingPageUrl = landingPageUrlInput.value.trim();
+            landingPageUrl = ensureUrlProtocol(landingPageUrl);
+            const backgroundColor = document.getElementById('backgroundColor').value.trim();
+
+            // NEW: Get selected logo replacement option
+            const logoReplacementSelect = document.getElementById('logoReplacementSelect');
+            const selectedLogoKey = logoReplacementSelect.value;
+            const newLogoUrl = logoUrls[selectedLogoKey];
+
+            if (!select.value) {
+                alert('Mohon pilih format iklan terlebih dahulu!');
+                return;
+            }
+
+            clearHtml5BlobUrls(); // Clear ALL previous HTML5 blob URLs
+
+            iframe.src = 'about:blank';
+            iframe.contentDocument.body.innerHTML = `
+                <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; font-family: Arial, sans-serif;">
+                    <div class="spinner"></div>
+                    <p style="color: #718096;">Sedang memuat ${adType === 'html5_zip' ? 'file ZIP...' : 'template...'}</p>
+                </div>
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                    .spinner {
+                        border: 4px solid #f3f3f3; border-top: 4px solid #0066B1; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px;
+                    }
+                </style>
+            `;
+
+            try {
+                const response = await fetch(slot.template);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
+                }
+                let templateHTML = await response.text();
+                
+                // NEW: Apply logo replacement if not default
+                if (selectedLogoKey !== 'default') {
+                    templateHTML = replaceLogoUrl(templateHTML, defaultTribunnewsLogoUrl, newLogoUrl);
+                }
+
+                if (select.value.startsWith('mto-') && backgroundColor) {
+                    templateHTML = templateHTML.replace(
+                        /var colorTheme = "#[0-9a-fA-F]{6}";/,
+                        `var colorTheme = "${backgroundColor}";`
+                    );
+                }
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(templateHTML, 'text/html');
+                
+                let finalAdContentHtml = ''; 
+
+                const adScriptTextarea = document.getElementById('adScript');
+                const mtoScript1 = document.getElementById('mtoScript1');
+                const mtoScript2 = document.getElementById('mtoScript2');
+                const mtoScript3 = document.getElementById('mtoScript3');
+                const mtoScript4 = document.getElementById('mtoScript4');
+
+                if (adType === 'image') {
+                    if (select.value === '120x600') {
+                        if (!selectedImageFileLeft || !selectedImageFileRight) {
+                            alert('Mohon upload gambar iklan kiri dan kanan terlebih dahulu!');
+                            return;
+                        }
+                        const readerLeft = new FileReader();
+                        const readerRight = new FileReader();
+
+                        const readPromiseLeft = new Promise(resolve => {
+                            readerLeft.onload = e => resolve(e.target.result);
+                            readerLeft.onerror = e => reject(new Error('Failed to read left image file.'));
+                        });
+                        const readPromiseRight = new Promise(resolve => {
+                            readerRight.onload = e => resolve(e.target.result);
+                            readerRight.onerror = e => reject(new Error('Failed to read right image file.'));
+                        });
+                        
+                        readerLeft.readAsDataURL(selectedImageFileLeft);
+                        readerRight.readAsDataURL(selectedImageFileRight);
+
+                        const imageUrlLeft = await readPromiseLeft;
+                        const imageUrlRight = await readPromiseRight;
+
+                        const adSlotLeft = doc.querySelector('.ad-slot-left');
+                        const adSlotRight = doc.querySelector('.ad-slot-right');
+
+                        if (adSlotLeft) {
+                            let content = `<img src="${imageUrlLeft}" alt="Advertisement Left" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotLeft.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotLeft.innerHTML = content;
+                            }
+                        }
+                        if (adSlotRight) {
+                            let content = `<img src="${imageUrlRight}" alt="Advertisement Right" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotRight.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotRight.innerHTML = content;
+                            }
+                        }
+                        finalAdContentHtml = '';
+                    } else if (select.value === 'mto-with-pin') {
+                        if (!selectedImageFileMTO1 || !selectedImageFileMTO2 || !selectedImageFileMTO3 || !backgroundColor) {
+                            alert('Mohon upload ketiga gambar dan masukkan kode warna background untuk MTO - With Pin!');
+                            return;
+                        }
+                        const readerMTO1 = new FileReader();
+                        const readerMTO2 = new FileReader();
+                        const readerMTO3 = new FileReader();
+
+                        const readPromiseMTO1 = new Promise(resolve => { readerMTO1.onload = e => resolve(e.target.result); readerMTO1.onerror = e => reject(new Error('Failed to read MTO image 1.')); });
+                        const readPromiseMTO2 = new Promise(resolve => { readerMTO2.onload = e => resolve(e.target.result); readerMTO2.onerror = e => reject(new Error('Failed to read MTO image 2.')); });
+                        const readPromiseMTO3 = new Promise(resolve => { readerMTO3.onload = e => resolve(e.target.result); readerMTO3.onerror = e => reject(new Error('Failed to read MTO image 3.')); });
+                        
+                        readerMTO1.readAsDataURL(selectedImageFileMTO1);
+                        readerMTO2.readAsDataURL(selectedImageFileMTO2);
+                        readerMTO3.readAsDataURL(selectedImageFileMTO3);
+
+                        const imageUrlMTO1 = await readPromiseMTO1;
+                        const imageUrlMTO2 = await readPromiseMTO2;
+                        const imageUrlMTO3 = await readPromiseMTO3;
+
+                        const adSlotMTO1 = doc.querySelector('.ad-slot-mto1');
+                        const adSlotMTO2 = doc.querySelector('.ad-slot-mto2');
+                        const adSlotMTO3 = doc.querySelector('.ad-slot-mto3');
+
+                        if (adSlotMTO1) {
+                            let content = `<img src="${imageUrlMTO1}" alt="MTO Ad 1" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotMTO1.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotMTO1.innerHTML = content;
+                            }
+                        }
+                        if (adSlotMTO2) {
+                            let content = `<img src="${imageUrlMTO2}" alt="MTO Ad 2" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotMTO2.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotMTO2.innerHTML = content;
+                            }
+                        }
+                        if (adSlotMTO3) {
+                            let content = `<img src="${imageUrlMTO3}" alt="MTO Ad 3" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotMTO3.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotMTO3.innerHTML = content;
+                            }
+                        }
+                        finalAdContentHtml = '';
+                    } else if (select.value === 'mto-without-pin') {
+                        if (!selectedImageFileMTO1 || !selectedImageFileMTO2 || !backgroundColor) {
+                            alert('Mohon upload kedua gambar dan masukkan kode warna background untuk MTO - Without Pin!');
+                            return;
+                        }
+                        const readerMTO1 = new FileReader();
+                        const readerMTO2 = new FileReader();
+
+                        const readPromiseMTO1 = new Promise(resolve => { readerMTO1.onload = e => resolve(e.target.result); readerMTO1.onerror = e => reject(new Error('Failed to read MTO image 1.')); });
+                        const readPromiseMTO2 = new Promise(resolve => { readerMTO2.onload = e => resolve(e.target.result); readerMTO2.onerror = e => reject(new Error('Failed to read MTO image 2.')); });
+                        
+                        readerMTO1.readAsDataURL(selectedImageFileMTO1);
+                        readerMTO2.readAsDataURL(selectedImageFileMTO2);
+
+                        const imageUrlMTO1 = await readPromiseMTO1;
+                        const imageUrlMTO2 = await readPromiseMTO2;
+
+                        const adSlotMTO1 = doc.querySelector('.ad-slot-mto1');
+                        const adSlotMTO2 = doc.querySelector('.ad-slot-mto2');
+                        // No adSlotMTO3 for 'without-pin'
+
+                        if (adSlotMTO1) {
+                            let content = `<img src="${imageUrlMTO1}" alt="MTO Ad 1" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotMTO1.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotMTO1.innerHTML = content;
+                            }
+                        }
+                        if (adSlotMTO2) {
+                            let content = `<img src="${imageUrlMTO2}" alt="MTO Ad 2" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotMTO2.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotMTO2.innerHTML = content;
+                            }
+                        }
+                        // Remove adSlotMTO3 if it exists in the template but not needed for 'without-pin'
+                        const adSlotMTO3 = doc.querySelector('.ad-slot-mto3');
+                        if (adSlotMTO3) {
+                            adSlotMTO3.remove();
+                        }
+                        finalAdContentHtml = '';
+
+                    } else if (select.value === 'mto-with-pin-pushdown') {
+                        if (!selectedImageFileMTO1 || !selectedImageFileMTO2 || !selectedImageFileMTO3 || !selectedImageFileMTO4 || !backgroundColor) {
+                            alert('Mohon upload keempat gambar dan masukkan kode warna background untuk MTO - With Pin + Pushdown!');
+                            return;
+                        }
+                        const readerMTO1 = new FileReader();
+                        const readerMTO2 = new FileReader();
+                        const readerMTO3 = new FileReader();
+                        const readerMTO4 = new FileReader();
+
+                        const readPromiseMTO1 = new Promise(resolve => { readerMTO1.onload = e => resolve(e.target.result); readerMTO1.onerror = e => reject(new Error('Failed to read MTO image 1.')); });
+                        const readPromiseMTO2 = new Promise(resolve => { readerMTO2.onload = e => resolve(e.target.result); readerMTO2.onerror = e => reject(new Error('Failed to read MTO image 2.')); });
+                        const readPromiseMTO3 = new Promise(resolve => { readerMTO3.onload = e => resolve(e.target.result); readerMTO3.onerror = e => reject(new Error('Failed to read MTO image 3.')); });
+                        const readPromiseMTO4 = new Promise(resolve => { readerMTO4.onload = e => resolve(e.target.result); readerMTO4.onerror = e => reject(new Error('Failed to read MTO image 4.')); });
+                        
+                        readerMTO1.readAsDataURL(selectedImageFileMTO1);
+                        readerMTO2.readAsDataURL(selectedImageFileMTO2);
+                        readerMTO3.readAsDataURL(selectedImageFileMTO3);
+                        readerMTO4.readAsDataURL(selectedImageFileMTO4);
+
+                        const imageUrlMTO1 = await readPromiseMTO1;
+                        const imageUrlMTO2 = await readPromiseMTO2;
+                        const imageUrlMTO3 = await readPromiseMTO3;
+                        const imageUrlMTO4 = await readPromiseMTO4;
+
+                        const adSlotMTO1 = doc.querySelector('.ad-slot-mto1');
+                        const adSlotMTO2 = doc.querySelector('.ad-slot-mto2');
+                        const adSlotMTO3 = doc.querySelector('.ad-slot-mto3');
+                        const adSlotMTO4 = doc.querySelector('.ad-slot-mto4');
+
+                        if (adSlotMTO1) {
+                            let content = `<img src="${imageUrlMTO1}" alt="MTO Ad 1" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotMTO1.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotMTO1.innerHTML = content;
+                            }
+                        }
+                        if (adSlotMTO2) {
+                            let content = `<img src="${imageUrlMTO2}" alt="MTO Ad 2" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotMTO2.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotMTO2.innerHTML = content;
+                            }
+                        }
+                        if (adSlotMTO3) {
+                            let content = `<img src="${imageUrlMTO3}" alt="MTO Ad 3" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotMTO3.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotMTO3.innerHTML = content;
+                            }
+                        }
+                        if (adSlotMTO4) {
+                            let content = `<img src="${imageUrlMTO4}" alt="MTO Ad 4" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotMTO4.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotMTO4.innerHTML = content;
+                            }
+                        }
+                        finalAdContentHtml = '';
+                    } else if (select.value === 'mto-without-pin-pushdown') { // New MTO Without Pin + Pushdown logic
+                        if (!selectedImageFileMTO1 || !selectedImageFileMTO2 || !selectedImageFileMTO4 || !backgroundColor) {
+                            alert('Mohon upload gambar Iklan 1, Iklan 2, Iklan 4, dan masukkan kode warna background untuk MTO - Without Pin + Pushdown!');
+                            return;
+                        }
+                        const readerMTO1 = new FileReader();
+                        const readerMTO2 = new FileReader();
+                        const readerMTO4 = new FileReader();
+
+                        const readPromiseMTO1 = new Promise(resolve => { readerMTO1.onload = e => resolve(e.target.result); readerMTO1.onerror = e => reject(new Error('Failed to read MTO image 1.')); });
+                        const readPromiseMTO2 = new Promise(resolve => { readerMTO2.onload = e => resolve(e.target.result); readerMTO2.onerror = e => reject(new Error('Failed to read MTO image 2.')); });
+                        const readPromiseMTO4 = new Promise(resolve => { readerMTO4.onload = e => resolve(e.target.result); readerMTO4.onerror = e => reject(new Error('Failed to read MTO image 4.')); });
+                        
+                        readerMTO1.readAsDataURL(selectedImageFileMTO1);
+                        readerMTO2.readAsDataURL(selectedImageFileMTO2);
+                        readerMTO4.readAsDataURL(selectedImageFileMTO4);
+
+                        const imageUrlMTO1 = await readPromiseMTO1;
+                        const imageUrlMTO2 = await readPromiseMTO2;
+                        const imageUrlMTO4 = await readPromiseMTO4;
+
+                        const adSlotMTO1 = doc.querySelector('.ad-slot-mto1');
+                        const adSlotMTO2 = doc.querySelector('.ad-slot-mto2');
+                        const adSlotMTO3 = doc.querySelector('.ad-slot-mto3'); // Get slot3 to remove it
+                        const adSlotMTO4 = doc.querySelector('.ad-slot-mto4');
+
+                        if (adSlotMTO1) {
+                            let content = `<img src="${imageUrlMTO1}" alt="MTO Ad 1" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotMTO1.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotMTO1.innerHTML = content;
+                            }
+                        }
+                        if (adSlotMTO2) {
+                            let content = `<img src="${imageUrlMTO2}" alt="MTO Ad 2" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotMTO2.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotMTO2.innerHTML = content;
+                            }
+                        }
+                        if (adSlotMTO3) { // Remove slot3
+                            adSlotMTO3.remove();
+                        }
+                        if (adSlotMTO4) {
+                            let content = `<img src="${imageUrlMTO4}" alt="MTO Ad 4" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            if (landingPageUrl) {
+                                adSlotMTO4.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                            } else {
+                                adSlotMTO4.innerHTML = content;
+                            }
+                        }
+                        finalAdContentHtml = '';
+                    }
+                    else {
+                        if (!selectedImageFileSingle) {
+                            alert('Mohon upload gambar iklan terlebih dahulu!');
+                            return;
+                        }
+                        const reader = new FileReader();
+                        const readPromise = new Promise(resolve => {
+                            reader.onload = e => resolve(e.target.result);
+                            reader.onerror = e => reject(new Error('Failed to read image file.'));
+                        });
+                        
+                        reader.readAsDataURL(selectedImageFileSingle);
+                        const imageUrl = await readPromise;
+                        
+                        finalAdContentHtml = `<img src="${imageUrl}" alt="Advertisement" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                    }
+                } 
+                else if (adType === 'script') {
+                    if (select.value === 'mto-with-pin') {
+                        if (!mtoScript1.value.trim() || !mtoScript2.value.trim() || !mtoScript3.value.trim() || !backgroundColor) {
+                            alert('Mohon tempel ketiga script iklan dan masukkan kode warna background untuk MTO - With Pin!');
+                            return;
+                        }
+                        const slot1 = doc.querySelector('.ad-slot-mto1');
+                        const slot2 = doc.querySelector('.ad-slot-mto2');
+                        const slot3 = doc.querySelector('.ad-slot-mto3');
+
+                        if (slot1) slot1.innerHTML = mtoScript1.value.trim();
+                        if (slot2) slot2.innerHTML = mtoScript2.value.trim();
+                        if (slot3) slot3.innerHTML = mtoScript3.value.trim();
+
+                        finalAdContentHtml = '';
+
+                    } else if (select.value === 'mto-without-pin') {
+                        if (!mtoScript1.value.trim() || !mtoScript2.value.trim() || !backgroundColor) {
+                            alert('Mohon tempel kedua script iklan dan masukkan kode warna background untuk MTO - Without Pin!');
+                            return;
+                        }
+                        const slot1 = doc.querySelector('.ad-slot-mto1');
+                        const slot2 = doc.querySelector('.ad-slot-mto2');
+                        // No slot3 for 'without-pin'
+
+                        if (slot1) slot1.innerHTML = mtoScript1.value.trim();
+                        if (slot2) slot2.innerHTML = mtoScript2.value.trim();
+
+                        // Remove adSlotMTO3 if it exists in the template but not needed for 'without-pin'
+                        const adSlotMTO3 = doc.querySelector('.ad-slot-mto3');
+                        if (adSlotMTO3) {
+                            adSlotMTO3.remove();
+                        }
+                        finalAdContentHtml = '';
+
+                    } else if (select.value === 'mto-with-pin-pushdown') {
+                        if (!mtoScript1.value.trim() || !mtoScript2.value.trim() || !mtoScript3.value.trim() || !mtoScript4.value.trim() || !backgroundColor) {
+                            alert('Mohon tempel keempat script iklan dan masukkan kode warna background untuk MTO - With Pin + Pushdown!');
+                            return;
+                        }
+                        const slot1 = doc.querySelector('.ad-slot-mto1');
+                        const slot2 = doc.querySelector('.ad-slot-mto2');
+                        const slot3 = doc.querySelector('.ad-slot-mto3');
+                        const slot4 = doc.querySelector('.ad-slot-mto4');
+
+                        if (slot1) slot1.innerHTML = mtoScript1.value.trim();
+                        if (slot2) slot2.innerHTML = mtoScript2.value.trim();
+                        if (slot3) slot3.innerHTML = mtoScript3.value.trim();
+                        if (slot4) slot4.innerHTML = mtoScript4.value.trim();
+
+                        finalAdContentHtml = '';
+
+                    } else if (select.value === 'mto-without-pin-pushdown') { // New MTO Without Pin + Pushdown logic
+                        if (!mtoScript1.value.trim() || !mtoScript2.value.trim() || !mtoScript4.value.trim() || !backgroundColor) {
+                            alert('Mohon tempel script iklan 1, 2, 4 dan masukkan kode warna background untuk MTO - Without Pin + Pushdown!');
+                            return;
+                        }
+                        const slot1 = doc.querySelector('.ad-slot-mto1');
+                        const slot2 = doc.querySelector('.ad-slot-mto2');
+                        const slot3 = doc.querySelector('.ad-slot-mto3'); // Get slot3 to remove it
+                        const slot4 = doc.querySelector('.ad-slot-mto4');
+
+                        if (slot1) slot1.innerHTML = mtoScript1.value.trim();
+                        if (slot2) slot2.innerHTML = mtoScript2.value.trim();
+                        if (slot3) slot3.remove(); // Remove slot3
+                        if (slot4) slot4.innerHTML = mtoScript4.value.trim();
+
+                        finalAdContentHtml = '';
+
+                    } else {
+                        const adScriptContent = adScriptTextarea.value.trim();
+                        if (!adScriptContent) {
+                            alert('Mohon tempel script iklan terlebih dahulu!');
+                            return;
+                        }
+                        finalAdContentHtml = adScriptContent;
+                    }
+                }
+                else if (adType === 'html5_zip') {
+                    // NEW: Check if MTO or single HTML5 ZIP
+                    if (select.value === 'mto-with-pin') {
+                        if (!selectedZipFileMTO1 || Object.keys(html5AdFilesForDownloadMTO1).length === 0 || !html5AdOriginalIndexHtmlContentMTO1 ||
+                            !selectedZipFileMTO2 || Object.keys(html5AdFilesForDownloadMTO2).length === 0 || !html5AdOriginalIndexHtmlContentMTO2 ||
+                            !selectedZipFileMTO3 || Object.keys(html5AdFilesForDownloadMTO3).length === 0 || !html5AdOriginalIndexHtmlContentMTO3 ||
+                            !backgroundColor) 
+                        {
+                            alert('Mohon upload ketiga file ZIP HTML5 dan masukkan kode warna background untuk MTO - With Pin!');
+                            return;
+                        }
+
+                        // Process and create Blob URLs for each MTO HTML5 ZIP
+                        const createHtml5IframeSrc = (filesForDownload, originalContent, blobUrlsMap) => {
+                            for (const path in filesForDownload) {
+                                blobUrlsMap[path] = URL.createObjectURL(filesForDownload[path]);
+                            }
+                            let iframeSrcContent = originalContent;
+                            for (const path in blobUrlsMap) {
+                                const filename = path.split('/').pop();
+                                const blobUrl = blobUrlsMap[path];
+                                const escapedFilename = filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                                const regex = new RegExp(`(["'])(?!data:|http:\/\/|https:\/\/|ftp:\/\/|file:\/\/\/)(?:\\.\\.\\/)*${escapedFilename}(["'])`, 'g');
+                                iframeSrcContent = iframeSrcContent.replace(regex, `$1${blobUrl}$2`);
+                            }
+                            const htmlBlob = new Blob([iframeSrcContent], { type: 'text/html' });
+                            return URL.createObjectURL(htmlBlob);
+                        };
+
+                        const iframeSrcUrlMTO1 = createHtml5IframeSrc(html5AdFilesForDownloadMTO1, html5AdOriginalIndexHtmlContentMTO1, html5AdBlobUrlsMTO1);
+                        const iframeSrcUrlMTO2 = createHtml5IframeSrc(html5AdFilesForDownloadMTO2, html5AdOriginalIndexHtmlContentMTO2, html5AdBlobUrlsMTO2);
+                        const iframeSrcUrlMTO3 = createHtml5IframeSrc(html5AdFilesForDownloadMTO3, html5AdOriginalIndexHtmlContentMTO3, html5AdBlobUrlsMTO3);
+
+                        const slot1 = doc.querySelector('.ad-slot-mto1');
+                        const slot2 = doc.querySelector('.ad-slot-mto2');
+                        const slot3 = doc.querySelector('.ad-slot-mto3');
+
+                        if (slot1) slot1.innerHTML = `<iframe src="${iframeSrcUrlMTO1}" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                        if (slot2) slot2.innerHTML = `<iframe src="${iframeSrcUrlMTO2}" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                        if (slot3) slot3.innerHTML = `<iframe src="${iframeSrcUrlMTO3}" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                        
+                        finalAdContentHtml = '';
+
+                    } else if (select.value === 'mto-without-pin') {
+                        if (!selectedZipFileMTO1 || Object.keys(html5AdFilesForDownloadMTO1).length === 0 || !html5AdOriginalIndexHtmlContentMTO1 ||
+                            !selectedZipFileMTO2 || Object.keys(html5AdFilesForDownloadMTO2).length === 0 || !html5AdOriginalIndexHtmlContentMTO2 ||
+                            !backgroundColor) 
+                        {
+                            alert('Mohon upload kedua file ZIP HTML5 dan masukkan kode warna background untuk MTO - Without Pin!');
+                            return;
+                        }
+
+                        // Process and create Blob URLs for each MTO HTML5 ZIP
+                        const createHtml5IframeSrc = (filesForDownload, originalContent, blobUrlsMap) => {
+                            for (const path in filesForDownload) {
+                                blobUrlsMap[path] = URL.createObjectURL(filesForDownload[path]);
+                            }
+                            let iframeSrcContent = originalContent;
+                            for (const path in blobUrlsMap) {
+                                const filename = path.split('/').pop();
+                                const blobUrl = blobUrlsMap[path];
+                                const escapedFilename = filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                                const regex = new RegExp(`(["'])(?!data:|http:\/\/|https:\/\/|ftp:\/\/|file:\/\/\/)(?:\\.\\.\\/)*${escapedFilename}(["'])`, 'g');
+                                iframeSrcContent = iframeSrcContent.replace(regex, `$1${blobUrl}$2`);
+                            }
+                            const htmlBlob = new Blob([iframeSrcContent], { type: 'text/html' });
+                            return URL.createObjectURL(htmlBlob);
+                        };
+
+                        const iframeSrcUrlMTO1 = createHtml5IframeSrc(html5AdFilesForDownloadMTO1, html5AdOriginalIndexHtmlContentMTO1, html5AdBlobUrlsMTO1);
+                        const iframeSrcUrlMTO2 = createHtml5IframeSrc(html5AdFilesForDownloadMTO2, html5AdOriginalIndexHtmlContentMTO2, html5AdBlobUrlsMTO2);
+
+                        const slot1 = doc.querySelector('.ad-slot-mto1');
+                        const slot2 = doc.querySelector('.ad-slot-mto2');
+                        // No slot3 for 'without-pin'
+
+                        if (slot1) slot1.innerHTML = `<iframe src="${iframeSrcUrlMTO1}" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                        if (slot2) slot2.innerHTML = `<iframe src="${iframeSrcUrlMTO2}" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+
+                        // Remove adSlotMTO3 if it exists in the template but not needed for 'without-pin'
+                        const adSlotMTO3 = doc.querySelector('.ad-slot-mto3');
+                        if (adSlotMTO3) {
+                            adSlotMTO3.remove();
+                        }
+                        finalAdContentHtml = '';
+
+                    } else if (select.value === 'mto-with-pin-pushdown') {
+                        if (!selectedZipFileMTO1 || Object.keys(html5AdFilesForDownloadMTO1).length === 0 || !html5AdOriginalIndexHtmlContentMTO1 ||
+                            !selectedZipFileMTO2 || Object.keys(html5AdFilesForDownloadMTO2).length === 0 || !html5AdOriginalIndexHtmlContentMTO2 ||
+                            !selectedZipFileMTO3 || Object.keys(html5AdFilesForDownloadMTO3).length === 0 || !html5AdOriginalIndexHtmlContentMTO3 ||
+                            !selectedZipFileMTO4 || Object.keys(html5AdFilesForDownloadMTO4).length === 0 || !html5AdOriginalIndexHtmlContentMTO4 ||
+                            !backgroundColor) 
+                        {
+                            alert('Mohon upload keempat file ZIP HTML5 dan masukkan kode warna background untuk MTO - With Pin + Pushdown!');
+                            return;
+                        }
+
+                        // Process and create Blob URLs for each MTO HTML5 ZIP
+                        const createHtml5IframeSrc = (filesForDownload, originalContent, blobUrlsMap) => {
+                            for (const path in filesForDownload) {
+                                blobUrlsMap[path] = URL.createObjectURL(filesForDownload[path]);
+                            }
+                            let iframeSrcContent = originalContent;
+                            for (const path in blobUrlsMap) {
+                                const filename = path.split('/').pop();
+                                const blobUrl = blobUrlsMap[path];
+                                const escapedFilename = filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                                const regex = new RegExp(`(["'])(?!data:|http:\/\/|https:\/\/|ftp:\/\/|file:\/\/\/)(?:\\.\\.\\/)*${escapedFilename}(["'])`, 'g');
+                                iframeSrcContent = iframeSrcContent.replace(regex, `$1${blobUrl}$2`);
+                            }
+                            const htmlBlob = new Blob([iframeSrcContent], { type: 'text/html' });
+                            return URL.createObjectURL(htmlBlob);
+                        };
+
+                        const iframeSrcUrlMTO1 = createHtml5IframeSrc(html5AdFilesForDownloadMTO1, html5AdOriginalIndexHtmlContentMTO1, html5AdBlobUrlsMTO1);
+                        const iframeSrcUrlMTO2 = createHtml5IframeSrc(html5AdFilesForDownloadMTO2, html5AdOriginalIndexHtmlContentMTO2, html5AdBlobUrlsMTO2);
+                        const iframeSrcUrlMTO3 = createHtml5IframeSrc(html5AdFilesForDownloadMTO3, html5AdOriginalIndexHtmlContentMTO3, html5AdBlobUrlsMTO3);
+                        const iframeSrcUrlMTO4 = createHtml5IframeSrc(html5AdFilesForDownloadMTO4, html5AdOriginalIndexHtmlContentMTO4, html5AdBlobUrlsMTO4);
+
+                        const slot1 = doc.querySelector('.ad-slot-mto1');
+                        const slot2 = doc.querySelector('.ad-slot-mto2');
+                        const slot3 = doc.querySelector('.ad-slot-mto3');
+                        const slot4 = doc.querySelector('.ad-slot-mto4');
+
+                        if (slot1) slot1.innerHTML = `<iframe src="${iframeSrcUrlMTO1}" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                        if (slot2) slot2.innerHTML = `<iframe src="${iframeSrcUrlMTO2}" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                        if (slot3) slot3.innerHTML = `<iframe src="${iframeSrcUrlMTO3}" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                        if (slot4) slot4.innerHTML = `<iframe src="${iframeSrcUrlMTO4}" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                        
+                        finalAdContentHtml = '';
+
+                    } else if (select.value === 'mto-without-pin-pushdown') { // New MTO Without Pin + Pushdown logic
+                        if (!selectedZipFileMTO1 || Object.keys(html5AdFilesForDownloadMTO1).length === 0 || !html5AdOriginalIndexHtmlContentMTO1 ||
+                            !selectedZipFileMTO2 || Object.keys(html5AdFilesForDownloadMTO2).length === 0 || !html5AdOriginalIndexHtmlContentMTO2 ||
+                            !selectedZipFileMTO4 || Object.keys(html5AdFilesForDownloadMTO4).length === 0 || !html5AdOriginalIndexHtmlContentMTO4 ||
+                            !backgroundColor) 
+                        {
+                            alert('Mohon upload file ZIP HTML5 Iklan 1, Iklan 2, Iklan 4, dan masukkan kode warna background untuk MTO - Without Pin + Pushdown!');
+                            return;
+                        }
+
+                        // Process and create Blob URLs for each MTO HTML5 ZIP
+                        const createHtml5IframeSrc = (filesForDownload, originalContent, blobUrlsMap) => {
+                            for (const path in filesForDownload) {
+                                blobUrlsMap[path] = URL.createObjectURL(filesForDownload[path]);
+                            }
+                            let iframeSrcContent = originalContent;
+                            for (const path in blobUrlsMap) {
+                                const filename = path.split('/').pop();
+                                const blobUrl = blobUrlsMap[path];
+                                const escapedFilename = filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                                const regex = new RegExp(`(["'])(?!data:|http:\/\/|https:\/\/|ftp:\/\/|file:\/\/\/)(?:\\.\\.\\/)*${escapedFilename}(["'])`, 'g');
+                                iframeSrcContent = iframeSrcContent.replace(regex, `$1${blobUrl}$2`);
+                            }
+                            const htmlBlob = new Blob([iframeSrcContent], { type: 'text/html' });
+                            return URL.createObjectURL(htmlBlob);
+                        };
+
+                        const iframeSrcUrlMTO1 = createHtml5IframeSrc(html5AdFilesForDownloadMTO1, html5AdOriginalIndexHtmlContentMTO1, html5AdBlobUrlsMTO1);
+                        const iframeSrcUrlMTO2 = createHtml5IframeSrc(html5AdFilesForDownloadMTO2, html5AdOriginalIndexHtmlContentMTO2, html5AdBlobUrlsMTO2);
+                        const iframeSrcUrlMTO4 = createHtml5IframeSrc(html5AdFilesForDownloadMTO4, html5AdOriginalIndexHtmlContentMTO4, html5AdBlobUrlsMTO4);
+
+                        const slot1 = doc.querySelector('.ad-slot-mto1');
+                        const slot2 = doc.querySelector('.ad-slot-mto2');
+                        const slot3 = doc.querySelector('.ad-slot-mto3'); // Get slot3 to remove it
+                        const slot4 = doc.querySelector('.ad-slot-mto4');
+
+                        if (slot1) slot1.innerHTML = `<iframe src="${iframeSrcUrlMTO1}" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                        if (slot2) slot2.innerHTML = `<iframe src="${iframeSrcUrlMTO2}" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                        if (slot3) slot3.remove(); // Remove slot3
+                        if (slot4) slot4.innerHTML = `<iframe src="${iframeSrcUrlMTO4}" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                        
+                        finalAdContentHtml = '';
+
+                    } else { // Single HTML5 ZIP
+                        if (!selectedZipFileSingle || Object.keys(html5AdFilesForDownloadSingle).length === 0 || !html5AdOriginalIndexHtmlContentSingle) {
+                            alert('Mohon upload dan tunggu file ZIP HTML5 diproses terlebih dahulu!');
+                            return;
+                        }
+
+                        for (const path in html5AdFilesForDownloadSingle) {
+                            html5AdBlobUrlsSingle[path] = URL.createObjectURL(html5AdFilesForDownloadSingle[path]);
+                        }
+
+                        let iframeSrcContent = html5AdOriginalIndexHtmlContentSingle;
+                        for (const path in html5AdBlobUrlsSingle) {
+                            const filename = path.split('/').pop();
+                            const blobUrl = html5AdBlobUrlsSingle[path];
+                            const escapedFilename = filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                            const regex = new RegExp(`(["'])(?!data:|http:\/\/|https:\/\/|ftp:\/\/|file:\/\/\/)(?:\\.\\.\\/)*${escapedFilename}(["'])`, 'g');
+                            iframeSrcContent = iframeSrcContent.replace(regex, `$1${blobUrl}$2`);
+                        }
+
+                        const htmlBlob = new Blob([iframeSrcContent], { type: 'text/html' });
+                        const iframeSrcUrl = URL.createObjectURL(htmlBlob); 
+
+                        finalAdContentHtml = `
+                            <iframe src="${iframeSrcUrl}" 
+                                    style="width:100%; height:100%; border:none; display:block;"
+                                    allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen=""
+                                    sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation">
+                            </iframe>
+                        `;
+                    }
+                }
+
+                // Loop through general ad slots for non-Skin Ad/non-MTO types or for script/HTML5 single
+                if ((!select.value.startsWith('mto-') && select.value !== '120x600') || (adType === 'script' && !select.value.startsWith('mto-')) || (adType === 'html5_zip' && !select.value.startsWith('mto-'))) {
+                    const mainAdSlots = doc.querySelectorAll('.ad-slot');
+                    mainAdSlots.forEach(adSlot => {
+                        if (landingPageUrl && (adType === 'script' || adType === 'html5_zip')) {
+                            adSlot.innerHTML = `
+                                <div class="ad-overlay-container">
+                                    ${finalAdContentHtml}
+                                    <a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" class="ad-click-overlay"></a>
+                                </div>
+                            `;
+                        } else if (adType === 'image' && landingPageUrl) {
+                            adSlot.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${finalAdContentHtml}</a>`;
+                        } else {
+                            adSlot.innerHTML = finalAdContentHtml;
+                        }
+                    });
+                }
+
+                generatedHTML = doc.documentElement.outerHTML; 
+                iframe.contentDocument.open();
+                iframe.contentDocument.write(generatedHTML);
+                iframe.contentDocument.close();
+                downloadBtn.disabled = false;
+
+            } catch (error) {
+                console.error('Error in generateAd:', error);
+                iframe.contentDocument.body.innerHTML = `
+                    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; font-family: Arial, sans-serif; color: #e53e3e;">
+                        <h2>❌ Error Memuat Iklan</h2>
+                        <p>${error.message}</p>
+                        <p><small>Pastikan format iklan dipilih, gambar/script/ZIP diupload dengan benar. Untuk ZIP, pastikan ada 'index.html' di root. Untuk Skin Ad, pastikan kedua gambar diupload. Untuk MTO - With Pin, pastikan ketiga gambar diupload dan kode warna background diisi. Untuk MTO - Without Pin, pastikan kedua gambar diupload dan kode warna background diisi. Untuk MTO - With Pin + Pushdown, pastikan keempat gambar diupload dan kode warna background diisi. Untuk MTO - Without Pin + Pushdown, pastikan gambar Iklan 1, Iklan 2, Iklan 4 diupload dan kode warna background diisi. Untuk HTML5 ZIP MTO, pastikan file ZIP yang relevan diupload dan kode warna background diisi.</small></p>
+                    </div>
+                `;
+                generatedHTML = null;
+                downloadBtn.disabled = true;
+            }
+        }
+
+        async function downloadAdContent() {
+            const select = document.getElementById('adSlotSelect');
+            const slot = adSlots[select.value];
+            const adType = getSelectedAdType();
+            const landingPageUrlInput = document.getElementById('landingPageUrl');
+            let landingPageUrl = landingPageUrlInput.value.trim();
+            landingPageUrl = ensureUrlProtocol(landingPageUrl);
+            const backgroundColor = document.getElementById('backgroundColor').value.trim();
+
+            // NEW: Get selected logo replacement option for download
+            const logoReplacementSelect = document.getElementById('logoReplacementSelect');
+            const selectedLogoKey = logoReplacementSelect.value;
+            const newLogoUrl = logoUrls[selectedLogoKey];
+
+            const downloadZip = new JSZip();
+
+            const adScriptTextarea = document.getElementById('adScript');
+            const mtoScript1 = document.getElementById('mtoScript1');
+            const mtoScript2 = document.getElementById('mtoScript2');
+            const mtoScript3 = document.getElementById('mtoScript3');
+            const mtoScript4 = document.getElementById('mtoScript4');
+
+            if (adType === 'html5_zip') {
+                // NEW: Handle MTO HTML5 ZIP
+                if (select.value === 'mto-with-pin') {
+                    if (!selectedZipFileMTO1 || Object.keys(html5AdFilesForDownloadMTO1).length === 0 || !html5AdOriginalIndexHtmlContentMTO1 ||
+                        !selectedZipFileMTO2 || Object.keys(html5AdFilesForDownloadMTO2).length === 0 || !html5AdOriginalIndexHtmlContentMTO2 ||
+                        !selectedZipFileMTO3 || Object.keys(html5AdFilesForDownloadMTO3).length === 0 || !html5AdOriginalIndexHtmlContentMTO3 ||
+                        !backgroundColor) 
+                    {
+                        alert('Mohon upload ketiga file ZIP HTML5 dan masukkan kode warna background untuk MTO - With Pin!');
+                        return;
+                    }
+
+                    const addHtml5FilesToZip = (zipInstance, folderName, filesForDownload, originalIndexHtmlContent) => {
+                        let modifiedHtml5IndexHtmlContent = originalIndexHtmlContent;
+                        if (landingPageUrl) {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(modifiedHtml5IndexHtmlContent, 'text/html');
+                            const body = doc.querySelector('body');
+                            if (body) {
+                                const overlayDiv = doc.createElement('a');
+                                overlayDiv.href = landingPageUrl;
+                                overlayDiv.target = "_blank";
+                                overlayDiv.rel = "noopener noreferrer";
+                                overlayDiv.style.cssText = `
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background: rgba(255, 255, 255, 0);
+                                    z-index: 9999;
+                                    cursor: pointer;
+                                    display: block;
+                                `;
+                                body.style.position = 'relative';
+                                body.appendChild(overlayDiv);
+                                modifiedHtml5IndexHtmlContent = doc.documentElement.outerHTML;
+                            }
+                        }
+                        for (const path in filesForDownload) {
+                            if (path === 'index.html') {
+                                zipInstance.file(`${folderName}/${path}`, modifiedHtml5IndexHtmlContent);
+                            } else {
+                                zipInstance.file(`${folderName}/${path}`, filesForDownload[path]);
+                            }
+                        }
+                    };
+
+                    addHtml5FilesToZip(downloadZip, 'html5_ad_1', html5AdFilesForDownloadMTO1, html5AdOriginalIndexHtmlContentMTO1);
+                    addHtml5FilesToZip(downloadZip, 'html5_ad_2', html5AdFilesForDownloadMTO2, html5AdOriginalIndexHtmlContentMTO2);
+                    addHtml5FilesToZip(downloadZip, 'html5_ad_3', html5AdFilesForDownloadMTO3, html5AdOriginalIndexHtmlContentMTO3);
+
+                    const response = await fetch(slot.template);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
+                    }
+                    let templateContent = await response.text();
+                    
+                    // NEW: Apply logo replacement to the template HTML for download
+                    if (selectedLogoKey !== 'default') {
+                        templateContent = replaceLogoUrl(templateContent, defaultTribunnewsLogoUrl, newLogoUrl);
+                    }
+
+                    if (select.value.startsWith('mto-') && backgroundColor) {
+                        templateContent = templateContent.replace(
+                            /var colorTheme = "#[0-9a-fA-F]{6}";/,
+                            `var colorTheme = "${backgroundColor}";`
+                        );
+                    }
+
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(templateContent, 'text/html');
+
+                    const slot1 = doc.querySelector('.ad-slot-mto1');
+                    const slot2 = doc.querySelector('.ad-slot-mto2');
+                    const slot3 = doc.querySelector('.ad-slot-mto3');
+
+                    if (slot1) slot1.innerHTML = `<iframe src="html5_ad_1/index.html" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                    if (slot2) slot2.innerHTML = `<iframe src="html5_ad_2/index.html" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                    if (slot3) slot3.innerHTML = `<iframe src="html5_ad_3/index.html" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+
+                    downloadZip.file(`index.html`, doc.documentElement.outerHTML);
+
+                } else if (select.value === 'mto-without-pin') {
+                    if (!selectedZipFileMTO1 || Object.keys(html5AdFilesForDownloadMTO1).length === 0 || !html5AdOriginalIndexHtmlContentMTO1 ||
+                        !selectedZipFileMTO2 || Object.keys(html5AdFilesForDownloadMTO2).length === 0 || !html5AdOriginalIndexHtmlContentMTO2 ||
+                        !backgroundColor) 
+                    {
+                        alert('Mohon upload kedua file ZIP HTML5 dan masukkan kode warna background untuk MTO - Without Pin!');
+                        return;
+                    }
+
+                    const addHtml5FilesToZip = (zipInstance, folderName, filesForDownload, originalIndexHtmlContent) => {
+                        let modifiedHtml5IndexHtmlContent = originalIndexHtmlContent;
+                        if (landingPageUrl) {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(modifiedHtml5IndexHtmlContent, 'text/html');
+                            const body = doc.querySelector('body');
+                            if (body) {
+                                const overlayDiv = doc.createElement('a');
+                                overlayDiv.href = landingPageUrl;
+                                overlayDiv.target = "_blank";
+                                overlayDiv.rel = "noopener noreferrer";
+                                overlayDiv.style.cssText = `
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background: rgba(255, 255, 255, 0);
+                                    z-index: 9999;
+                                    cursor: pointer;
+                                    display: block;
+                                `;
+                                body.style.position = 'relative';
+                                body.appendChild(overlayDiv);
+                                modifiedHtml5IndexHtmlContent = doc.documentElement.outerHTML;
+                            }
+                        }
+                        for (const path in filesForDownload) {
+                            if (path === 'index.html') {
+                                zipInstance.file(`${folderName}/${path}`, modifiedHtml5IndexHtmlContent);
+                            } else {
+                                zipInstance.file(`${folderName}/${path}`, filesForDownload[path]);
+                            }
+                        }
+                    };
+
+                    addHtml5FilesToZip(downloadZip, 'html5_ad_1', html5AdFilesForDownloadMTO1, html5AdOriginalIndexHtmlContentMTO1);
+                    addHtml5FilesToZip(downloadZip, 'html5_ad_2', html5AdFilesForDownloadMTO2, html5AdOriginalIndexHtmlContentMTO2);
+                    // No html5_ad_3 for 'without-pin'
+
+                    const response = await fetch(slot.template);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
+                    }
+                    let templateContent = await response.text();
+                    
+                    // NEW: Apply logo replacement to the template HTML for download
+                    if (selectedLogoKey !== 'default') {
+                        templateContent = replaceLogoUrl(templateContent, defaultTribunnewsLogoUrl, newLogoUrl);
+                    }
+
+                    if (select.value.startsWith('mto-') && backgroundColor) {
+                        templateContent = templateContent.replace(
+                            /var colorTheme = "#[0-9a-fA-F]{6}";/,
+                            `var colorTheme = "${backgroundColor}";`
+                        );
+                    }
+
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(templateContent, 'text/html');
+
+                    const slot1 = doc.querySelector('.ad-slot-mto1');
+                    const slot2 = doc.querySelector('.ad-slot-mto2');
+                    const slot3 = doc.querySelector('.ad-slot-mto3'); // Get slot3 to remove it
+
+                    if (slot1) slot1.innerHTML = `<iframe src="html5_ad_1/index.html" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                    if (slot2) slot2.innerHTML = `<iframe src="html5_ad_2/index.html" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                    if (slot3) slot3.remove(); // Remove slot3
+
+                    downloadZip.file(`index.html`, doc.documentElement.outerHTML);
+
+                } else if (select.value === 'mto-with-pin-pushdown') {
+                    if (!selectedZipFileMTO1 || Object.keys(html5AdFilesForDownloadMTO1).length === 0 || !html5AdOriginalIndexHtmlContentMTO1 ||
+                        !selectedZipFileMTO2 || Object.keys(html5AdFilesForDownloadMTO2).length === 0 || !html5AdOriginalIndexHtmlContentMTO2 ||
+                        !selectedZipFileMTO3 || Object.keys(html5AdFilesForDownloadMTO3).length === 0 || !html5AdOriginalIndexHtmlContentMTO3 ||
+                        !selectedZipFileMTO4 || Object.keys(html5AdFilesForDownloadMTO4).length === 0 || !html5AdOriginalIndexHtmlContentMTO4 ||
+                        !backgroundColor) 
+                    {
+                        alert('Mohon upload keempat file ZIP HTML5 dan masukkan kode warna background untuk MTO - With Pin + Pushdown!');
+                        return;
+                    }
+
+                    const addHtml5FilesToZip = (zipInstance, folderName, filesForDownload, originalIndexHtmlContent) => {
+                        let modifiedHtml5IndexHtmlContent = originalIndexHtmlContent;
+                        if (landingPageUrl) {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(modifiedHtml5IndexHtmlContent, 'text/html');
+                            const body = doc.querySelector('body');
+                            if (body) {
+                                const overlayDiv = doc.createElement('a');
+                                overlayDiv.href = landingPageUrl;
+                                overlayDiv.target = "_blank";
+                                overlayDiv.rel = "noopener noreferrer";
+                                overlayDiv.style.cssText = `
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background: rgba(255, 255, 255, 0);
+                                    z-index: 9999;
+                                    cursor: pointer;
+                                    display: block;
+                                `;
+                                body.style.position = 'relative';
+                                body.appendChild(overlayDiv);
+                                modifiedHtml5IndexHtmlContent = doc.documentElement.outerHTML;
+                            }
+                        }
+                        for (const path in filesForDownload) {
+                            if (path === 'index.html') {
+                                zipInstance.file(`${folderName}/${path}`, modifiedHtml5IndexHtmlContent);
+                            } else {
+                                zipInstance.file(`${folderName}/${path}`, filesForDownload[path]);
+                            }
+                        }
+                    };
+
+                    addHtml5FilesToZip(downloadZip, 'html5_ad_1', html5AdFilesForDownloadMTO1, html5AdOriginalIndexHtmlContentMTO1);
+                    addHtml5FilesToZip(downloadZip, 'html5_ad_2', html5AdFilesForDownloadMTO2, html5AdOriginalIndexHtmlContentMTO2);
+                    addHtml5FilesToZip(downloadZip, 'html5_ad_3', html5AdFilesForDownloadMTO3, html5AdOriginalIndexHtmlContentMTO3);
+                    addHtml5FilesToZip(downloadZip, 'html5_ad_4', html5AdFilesForDownloadMTO4, html5AdOriginalIndexHtmlContentMTO4);
+
+                    const response = await fetch(slot.template);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
+                    }
+                    let templateContent = await response.text();
+                    
+                    // NEW: Apply logo replacement to the template HTML for download
+                    if (selectedLogoKey !== 'default') {
+                        templateContent = replaceLogoUrl(templateContent, defaultTribunnewsLogoUrl, newLogoUrl);
+                    }
+
+                    if (select.value.startsWith('mto-') && backgroundColor) {
+                        templateContent = templateContent.replace(
+                            /var colorTheme = "#[0-9a-fA-F]{6}";/,
+                            `var colorTheme = "${backgroundColor}";`
+                        );
+                    }
+
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(templateContent, 'text/html');
+
+                    const slot1 = doc.querySelector('.ad-slot-mto1');
+                    const slot2 = doc.querySelector('.ad-slot-mto2');
+                    const slot3 = doc.querySelector('.ad-slot-mto3');
+                    const slot4 = doc.querySelector('.ad-slot-mto4');
+
+                    if (slot1) slot1.innerHTML = `<iframe src="html5_ad_1/index.html" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                    if (slot2) slot2.innerHTML = `<iframe src="html5_ad_2/index.html" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                    if (slot3) slot3.innerHTML = `<iframe src="html5_ad_3/index.html" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                    if (slot4) slot4.innerHTML = `<iframe src="html5_ad_4/index.html" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+
+                    downloadZip.file(`index.html`, doc.documentElement.outerHTML);
+
+                } else if (select.value === 'mto-without-pin-pushdown') { // New MTO Without Pin + Pushdown logic
+                    if (!selectedZipFileMTO1 || Object.keys(html5AdFilesForDownloadMTO1).length === 0 || !html5AdOriginalIndexHtmlContentMTO1 ||
+                        !selectedZipFileMTO2 || Object.keys(html5AdFilesForDownloadMTO2).length === 0 || !html5AdOriginalIndexHtmlContentMTO2 ||
+                        !selectedZipFileMTO4 || Object.keys(html5AdFilesForDownloadMTO4).length === 0 || !html5AdOriginalIndexHtmlContentMTO4 ||
+                        !backgroundColor) 
+                    {
+                        alert('Mohon upload file ZIP HTML5 Iklan 1, Iklan 2, Iklan 4, dan masukkan kode warna background untuk MTO - Without Pin + Pushdown!');
+                        return;
+                    }
+
+                    const addHtml5FilesToZip = (zipInstance, folderName, filesForDownload, originalIndexHtmlContent) => {
+                        let modifiedHtml5IndexHtmlContent = originalIndexHtmlContent;
+                        if (landingPageUrl) {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(modifiedHtml5IndexHtmlContent, 'text/html');
+                            const body = doc.querySelector('body');
+                            if (body) {
+                                const overlayDiv = doc.createElement('a');
+                                overlayDiv.href = landingPageUrl;
+                                overlayDiv.target = "_blank";
+                                overlayDiv.rel = "noopener noreferrer";
+                                overlayDiv.style.cssText = `
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background: rgba(255, 255, 255, 0);
+                                    z-index: 9999;
+                                    cursor: pointer;
+                                    display: block;
+                                `;
+                                body.style.position = 'relative';
+                                body.appendChild(overlayDiv);
+                                modifiedHtml5IndexHtmlContent = doc.documentElement.outerHTML;
+                            }
+                        }
+                        for (const path in filesForDownload) {
+                            if (path === 'index.html') {
+                                zipInstance.file(`${folderName}/${path}`, modifiedHtml5IndexHtmlContent);
+                            } else {
+                                zipInstance.file(`${folderName}/${path}`, filesForDownload[path]);
+                            }
+                        }
+                    };
+
+                    addHtml5FilesToZip(downloadZip, 'html5_ad_1', html5AdFilesForDownloadMTO1, html5AdOriginalIndexHtmlContentMTO1);
+                    addHtml5FilesToZip(downloadZip, 'html5_ad_2', html5AdFilesForDownloadMTO2, html5AdOriginalIndexHtmlContentMTO2);
+                    addHtml5FilesToZip(downloadZip, 'html5_ad_4', html5AdFilesForDownloadMTO4, html5AdOriginalIndexHtmlContentMTO4);
+
+                    const response = await fetch(slot.template);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
+                    }
+                    let templateContent = await response.text();
+                    
+                    // NEW: Apply logo replacement to the template HTML for download
+                    if (selectedLogoKey !== 'default') {
+                        templateContent = replaceLogoUrl(templateContent, defaultTribunnewsLogoUrl, newLogoUrl);
+                    }
+
+                    if (select.value.startsWith('mto-') && backgroundColor) {
+                        templateContent = templateContent.replace(
+                            /var colorTheme = "#[0-9a-fA-F]{6}";/,
+                            `var colorTheme = "${backgroundColor}";`
+                        );
+                    }
+
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(templateContent, 'text/html');
+
+                    const slot1 = doc.querySelector('.ad-slot-mto1');
+                    const slot2 = doc.querySelector('.ad-slot-mto2');
+                    const slot3 = doc.querySelector('.ad-slot-mto3'); // Get slot3 to remove it
+                    const slot4 = doc.querySelector('.ad-slot-mto4');
+
+                    if (slot1) slot1.innerHTML = `<iframe src="html5_ad_1/index.html" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                    if (slot2) slot2.innerHTML = `<iframe src="html5_ad_2/index.html" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+                    if (slot3) slot3.remove(); // Remove slot3
+                    if (slot4) slot4.innerHTML = `<iframe src="html5_ad_4/index.html" style="width:100%; height:100%; border:none; display:block;" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation"></iframe>`;
+
+                    downloadZip.file(`index.html`, doc.documentElement.outerHTML);
+
+                } else { // Single HTML5 ZIP
+                    if (!selectedZipFileSingle || Object.keys(html5AdFilesForDownloadSingle).length === 0 || !html5AdOriginalIndexHtmlContentSingle) {
+                        alert('Mohon upload dan tunggu file ZIP HTML5 diproses, lalu generate preview terlebih dahulu!');
+                        return;
+                    }
+
+                    const html5AdFolderName = 'html5_ad';
+                    let modifiedHtml5IndexHtmlContent = html5AdOriginalIndexHtmlContentSingle;
+
+                    if (landingPageUrl) {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(modifiedHtml5IndexHtmlContent, 'text/html');
+                        const body = doc.querySelector('body');
+                        if (body) {
+                            const overlayDiv = doc.createElement('a');
+                            overlayDiv.href = landingPageUrl;
+                            overlayDiv.target = "_blank";
+                            overlayDiv.rel = "noopener noreferrer";
+                            overlayDiv.style.cssText = `
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                background: rgba(255, 255, 255, 0);
+                                z-index: 9999;
+                                cursor: pointer;
+                                display: block;
+                            `;
+                            body.style.position = 'relative';
+                            body.appendChild(overlayDiv);
+                            modifiedHtml5IndexHtmlContent = doc.documentElement.outerHTML;
+                        }
+                    }
+                    
+                    for (const path in html5AdFilesForDownloadSingle) {
+                        if (path === 'index.html') {
+                            downloadZip.file(`${html5AdFolderName}/${path}`, modifiedHtml5IndexHtmlContent);
+                        } else {
+                            downloadZip.file(`${html5AdFolderName}/${path}`, html5AdFilesForDownloadSingle[path]);
+                        }
+                    }
+
+                    const response = await fetch(slot.template);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
+                    }
+                    let templateContent = await response.text();
+
+                    // NEW: Apply logo replacement to the template HTML for download
+                    if (selectedLogoKey !== 'default') {
+                        templateContent = replaceLogoUrl(templateContent, defaultTribunnewsLogoUrl, newLogoUrl);
+                    }
+
+                    if (select.value.startsWith('mto-') && backgroundColor) {
+                        templateContent = templateContent.replace(
+                            /var colorTheme = "#[0-9a-fA-F]{6}";/,
+                            `var colorTheme = "${backgroundColor}";`
+                        );
+                    }
+
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(templateContent, 'text/html');
+                    const adSlot = doc.querySelector('.ad-slot');
+
+                    if (!adSlot) {
+                        throw new Error('Elemen .ad-slot tidak ditemukan di template download. Pastikan template HTML Anda memiliki div dengan class="ad-slot".');
+                    }
+
+                    adSlot.innerHTML = `
+                        <iframe src="${html5AdFolderName}/index.html" 
+                                style="width:100%; height:100%; border:none; display:block;"
+                                allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen=""
+                                sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation">
+                        </iframe>
+                    `;
+
+                    downloadZip.file(`index.html`, doc.documentElement.outerHTML);
+                }
+
+                const downloadFilename = `iklan_bundle_html5_${slot.name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}.zip`;
+                const newZipBlob = await downloadZip.generateAsync({ type: "blob" });
+
+                const url = window.URL.createObjectURL(newZipBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = downloadFilename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+
+                const originalText = document.getElementById('downloadBtn').innerHTML;
+                document.getElementById('downloadBtn').innerHTML = '✅ Bundel Downloaded!';
+                setTimeout(() => {
+                    document.getElementById('downloadBtn').innerHTML = originalText;
+                }, 2000);
+
+            } else if (adType === 'image') {
+                if (!generatedHTML) {
+                    alert('Mohon generate preview terlebih dahulu!');
+                    return;
+                }
+
+                const adImageFolderName = 'images';
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(generatedHTML, 'text/html');
+
+                // NEW: Apply logo replacement to the generatedHTML (for image ads, this is the main template)
+                if (selectedLogoKey !== 'default') {
+                    doc = parser.parseFromString(replaceLogoUrl(doc.documentElement.outerHTML, defaultTribunnewsLogoUrl, newLogoUrl), 'text/html');
+                }
+
+                if (select.value === '120x600') {
+                    if (!selectedImageFileLeft || !selectedImageFileRight) {
+                        alert('Mohon upload gambar kiri dan kanan terlebih dahulu untuk Skin Ad!');
+                        return;
+                    }
+
+                    const imageFileNameLeft = selectedImageFileLeft.name;
+                    const imageFileNameRight = selectedImageFileRight.name;
+
+                    const imageArrayBufferLeft = await selectedImageFileLeft.arrayBuffer();
+                    const imageArrayBufferRight = await selectedImageFileRight.arrayBuffer();
+
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameLeft}`, imageArrayBufferLeft);
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameRight}`, imageArrayBufferRight);
+
+                    const adSlotLeft = doc.querySelector('.ad-slot-left');
+                    const adSlotRight = doc.querySelector('.ad-slot-right');
+
+                    let imgElementLeft = adSlotLeft ? adSlotLeft.querySelector('img') : null;
+                    if (imgElementLeft) {
+                        imgElementLeft.src = `${adImageFolderName}/${imageFileNameLeft}`;
+                    } else if (adSlotLeft) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameLeft}" alt="Advertisement Left" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotLeft.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotLeft.innerHTML = content;
+                        }
+                    }
+
+                    let imgElementRight = adSlotRight ? adSlotRight.querySelector('img') : null;
+                    if (imgElementRight) {
+                        imgElementRight.src = `${adImageFolderName}/${imageFileNameRight}`;
+                    } else if (adSlotRight) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameRight}" alt="Advertisement Right" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotRight.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotRight.innerHTML = content;
+                        }
+                    }
+
+                } else if (select.value === 'mto-with-pin') {
+                    if (!selectedImageFileMTO1 || !selectedImageFileMTO2 || !selectedImageFileMTO3 || !backgroundColor) {
+                        alert('Mohon upload ketiga gambar dan isi background color untuk MTO - With Pin!');
+                        return;
+                    }
+
+                    const imageFileNameMTO1 = selectedImageFileMTO1.name;
+                    const imageFileNameMTO2 = selectedImageFileMTO2.name;
+                    const imageFileNameMTO3 = selectedImageFileMTO3.name;
+
+                    const imageArrayBufferMTO1 = await selectedImageFileMTO1.arrayBuffer();
+                    const imageArrayBufferMTO2 = await selectedImageFileMTO2.arrayBuffer();
+                    const imageArrayBufferMTO3 = await selectedImageFileMTO3.arrayBuffer();
+
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameMTO1}`, imageArrayBufferMTO1);
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameMTO2}`, imageArrayBufferMTO2);
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameMTO3}`, imageArrayBufferMTO3);
+
+                    const adSlotMTO1 = doc.querySelector('.ad-slot-mto1');
+                    const adSlotMTO2 = doc.querySelector('.ad-slot-mto2');
+                    const adSlotMTO3 = doc.querySelector('.ad-slot-mto3');
+                    
+                    let imgElementMTO1 = adSlotMTO1 ? adSlotMTO1.querySelector('img') : null;
+                    if (imgElementMTO1) {
+                        imgElementMTO1.src = `${adImageFolderName}/${imageFileNameMTO1}`;
+                    } else if (adSlotMTO1) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameMTO1}" alt="MTO Ad 1" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotMTO1.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotMTO1.innerHTML = content;
+                        }
+                    }
+
+                    let imgElementMTO2 = adSlotMTO2 ? adSlotMTO2.querySelector('img') : null;
+                    if (imgElementMTO2) {
+                        imgElementMTO2.src = `${adImageFolderName}/${imageFileNameMTO2}`;
+                    } else if (adSlotMTO2) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameMTO2}" alt="MTO Ad 2" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotMTO2.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotMTO2.innerHTML = content;
+                        }
+                    }
+
+                    let imgElementMTO3 = adSlotMTO3 ? adSlotMTO3.querySelector('img') : null;
+                    if (imgElementMTO3) {
+                        imgElementMTO3.src = `${adImageFolderName}/${imageFileNameMTO3}`;
+                    } else if (adSlotMTO3) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameMTO3}" alt="MTO Ad 3" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotMTO3.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotMTO3.innerHTML = content;
+                        }
+                    }
+
+                } else if (select.value === 'mto-without-pin') {
+                    if (!selectedImageFileMTO1 || !selectedImageFileMTO2 || !backgroundColor) {
+                        alert('Mohon upload kedua gambar dan isi background color untuk MTO - Without Pin!');
+                        return;
+                    }
+
+                    const imageFileNameMTO1 = selectedImageFileMTO1.name;
+                    const imageFileNameMTO2 = selectedImageFileMTO2.name;
+
+                    const imageArrayBufferMTO1 = await selectedImageFileMTO1.arrayBuffer();
+                    const imageArrayBufferMTO2 = await selectedImageFileMTO2.arrayBuffer();
+
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameMTO1}`, imageArrayBufferMTO1);
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameMTO2}`, imageArrayBufferMTO2);
+
+                    const adSlotMTO1 = doc.querySelector('.ad-slot-mto1');
+                    const adSlotMTO2 = doc.querySelector('.ad-slot-mto2');
+                    const adSlotMTO3 = doc.querySelector('.ad-slot-mto3'); // Get slot3 to remove it
+                    
+                    let imgElementMTO1 = adSlotMTO1 ? adSlotMTO1.querySelector('img') : null;
+                    if (imgElementMTO1) {
+                        imgElementMTO1.src = `${adImageFolderName}/${imageFileNameMTO1}`;
+                    } else if (adSlotMTO1) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameMTO1}" alt="MTO Ad 1" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotMTO1.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotMTO1.innerHTML = content;
+                        }
+                    }
+
+                    let imgElementMTO2 = adSlotMTO2 ? adSlotMTO2.querySelector('img') : null;
+                    if (imgElementMTO2) {
+                        imgElementMTO2.src = `${adImageFolderName}/${imageFileNameMTO2}`;
+                    } else if (adSlotMTO2) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameMTO2}" alt="MTO Ad 2" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotMTO2.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotMTO2.innerHTML = content;
+                        }
+                    }
+                    if (adSlotMTO3) { // Remove slot3
+                        adSlotMTO3.remove();
+                    }
+
+                } else if (select.value === 'mto-with-pin-pushdown') {
+                    if (!selectedImageFileMTO1 || !selectedImageFileMTO2 || !selectedImageFileMTO3 || !selectedImageFileMTO4 || !backgroundColor) {
+                        alert('Mohon upload keempat gambar dan isi background color untuk MTO - With Pin + Pushdown!');
+                        return;
+                    }
+
+                    const imageFileNameMTO1 = selectedImageFileMTO1.name;
+                    const imageFileNameMTO2 = selectedImageFileMTO2.name;
+                    const imageFileNameMTO3 = selectedImageFileMTO3.name;
+                    const imageFileNameMTO4 = selectedImageFileMTO4.name;
+
+                    const imageArrayBufferMTO1 = await selectedImageFileMTO1.arrayBuffer();
+                    const imageArrayBufferMTO2 = await selectedImageFileMTO2.arrayBuffer();
+                    const imageArrayBufferMTO3 = await selectedImageFileMTO3.arrayBuffer();
+                    const imageArrayBufferMTO4 = await selectedImageFileMTO4.arrayBuffer();
+
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameMTO1}`, imageArrayBufferMTO1);
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameMTO2}`, imageArrayBufferMTO2);
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameMTO3}`, imageArrayBufferMTO3);
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameMTO4}`, imageArrayBufferMTO4);
+
+                    const adSlotMTO1 = doc.querySelector('.ad-slot-mto1');
+                    const adSlotMTO2 = doc.querySelector('.ad-slot-mto2');
+                    const adSlotMTO3 = doc.querySelector('.ad-slot-mto3');
+                    const adSlotMTO4 = doc.querySelector('.ad-slot-mto4');
+                    
+                    let imgElementMTO1 = adSlotMTO1 ? adSlotMTO1.querySelector('img') : null;
+                    if (imgElementMTO1) {
+                        imgElementMTO1.src = `${adImageFolderName}/${imageFileNameMTO1}`;
+                    } else if (adSlotMTO1) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameMTO1}" alt="MTO Ad 1" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotMTO1.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotMTO1.innerHTML = content;
+                        }
+                    }
+
+                    let imgElementMTO2 = adSlotMTO2 ? adSlotMTO2.querySelector('img') : null;
+                    if (imgElementMTO2) {
+                        imgElementMTO2.src = `${adImageFolderName}/${imageFileNameMTO2}`;
+                    } else if (adSlotMTO2) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameMTO2}" alt="MTO Ad 2" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotMTO2.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotMTO2.innerHTML = content;
+                        }
+                    }
+
+                    let imgElementMTO3 = adSlotMTO3 ? adSlotMTO3.querySelector('img') : null;
+                    if (imgElementMTO3) {
+                        imgElementMTO3.src = `${adImageFolderName}/${imageFileNameMTO3}`;
+                    } else if (adSlotMTO3) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameMTO3}" alt="MTO Ad 3" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotMTO3.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotMTO3.innerHTML = content;
+                        }
+                    }
+
+                    let imgElementMTO4 = adSlotMTO4 ? adSlotMTO4.querySelector('img') : null;
+                    if (imgElementMTO4) {
+                        imgElementMTO4.src = `${adImageFolderName}/${imageFileNameMTO4}`;
+                    } else if (adSlotMTO4) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameMTO4}" alt="MTO Ad 4" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotMTO4.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotMTO4.innerHTML = content;
+                        }
+                    }
+
+                } else if (select.value === 'mto-without-pin-pushdown') { // New MTO Without Pin + Pushdown logic
+                    if (!selectedImageFileMTO1 || !selectedImageFileMTO2 || !selectedImageFileMTO4 || !backgroundColor) {
+                        alert('Mohon upload gambar Iklan 1, Iklan 2, Iklan 4, dan isi background color untuk MTO - Without Pin + Pushdown!');
+                        return;
+                    }
+
+                    const imageFileNameMTO1 = selectedImageFileMTO1.name;
+                    const imageFileNameMTO2 = selectedImageFileMTO2.name;
+                    const imageFileNameMTO4 = selectedImageFileMTO4.name;
+
+                    const imageArrayBufferMTO1 = await selectedImageFileMTO1.arrayBuffer();
+                    const imageArrayBufferMTO2 = await selectedImageFileMTO2.arrayBuffer();
+                    const imageArrayBufferMTO4 = await selectedImageFileMTO4.arrayBuffer();
+
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameMTO1}`, imageArrayBufferMTO1);
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameMTO2}`, imageArrayBufferMTO2);
+                    downloadZip.file(`${adImageFolderName}/${imageFileNameMTO4}`, imageArrayBufferMTO4);
+
+                    const adSlotMTO1 = doc.querySelector('.ad-slot-mto1');
+                    const adSlotMTO2 = doc.querySelector('.ad-slot-mto2');
+                    const adSlotMTO3 = doc.querySelector('.ad-slot-mto3'); // Get slot3 to remove it
+                    const adSlotMTO4 = doc.querySelector('.ad-slot-mto4');
+                    
+                    let imgElementMTO1 = adSlotMTO1 ? adSlotMTO1.querySelector('img') : null;
+                    if (imgElementMTO1) {
+                        imgElementMTO1.src = `${adImageFolderName}/${imageFileNameMTO1}`;
+                    } else if (adSlotMTO1) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameMTO1}" alt="MTO Ad 1" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotMTO1.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotMTO1.innerHTML = content;
+                        }
+                    }
+
+                    let imgElementMTO2 = adSlotMTO2 ? adSlotMTO2.querySelector('img') : null;
+                    if (imgElementMTO2) {
+                        imgElementMTO2.src = `${adImageFolderName}/${imageFileNameMTO2}`;
+                    } else if (adSlotMTO2) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameMTO2}" alt="MTO Ad 2" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotMTO2.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotMTO2.innerHTML = content;
+                        }
+                    }
+                    if (adSlotMTO3) { // Remove slot3
+                        adSlotMTO3.remove();
+                    }
+
+                    let imgElementMTO4 = adSlotMTO4 ? adSlotMTO4.querySelector('img') : null;
+                    if (imgElementMTO4) {
+                        imgElementMTO4.src = `${adImageFolderName}/${imageFileNameMTO4}`;
+                    } else if (adSlotMTO4) {
+                        let content = `<img src="${adImageFolderName}/${imageFileNameMTO4}" alt="MTO Ad 4" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            adSlotMTO4.innerHTML = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${content}</a>`;
+                        } else {
+                            adSlotMTO4.innerHTML = content;
+                        }
+                    }
+
+                } else {
+                    if (!selectedImageFileSingle) {
+                        alert('Mohon upload gambar, pilih format, dan generate preview terlebih dahulu!');
+                        return;
+                    }
+
+                    const imageFileName = selectedImageFileSingle.name;
+                    const imageArrayBuffer = await selectedImageFileSingle.arrayBuffer();
+                    downloadZip.file(`${adImageFolderName}/${imageFileName}`, imageArrayBuffer);
+
+                    const adSlot = doc.querySelector('.ad-slot');
+                    let imgElement = adSlot.querySelector('img');
+                    if (imgElement) {
+                        imgElement.src = `${adImageFolderName}/${imageFileName}`;
+                    } else {
+                        let imageHtml = `<img src="${adImageFolderName}/${imageFileName}" alt="Advertisement" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (landingPageUrl) {
+                            imageHtml = `<a href="${landingPageUrl}" target="_blank" rel="noopener noreferrer" style="display:block; width:100%; height:100%; text-decoration:none;">${imageHtml}</a>`;
+                        }
+                        adSlot.innerHTML = imageHtml;
+                    }
+                }
+                
+                downloadZip.file('index.html', doc.documentElement.outerHTML);
+
+                const downloadFilename = `iklan_bundle_gambar_${slot.name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}.zip`;
+                const newZipBlob = await downloadZip.generateAsync({ type: "blob" });
+
+                const url = window.URL.createObjectURL(newZipBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = downloadFilename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+
+                const originalText = document.getElementById('downloadBtn').innerHTML;
+                document.getElementById('downloadBtn').innerHTML = '✅ Bundel Downloaded!';
+                setTimeout(() => {
+                    document.getElementById('downloadBtn').innerHTML = originalText;
+                }, 2000);
+
+            } else if (adType === 'script') {
+                let finalHtmlToDownload = '';
+
+                if (select.value === 'mto-with-pin') {
+                    if (!mtoScript1.value.trim() || !mtoScript2.value.trim() || !mtoScript3.value.trim() || !backgroundColor) {
+                        alert('Mohon tempel ketiga script iklan dan masukkan kode warna background untuk MTO - With Pin!');
+                        return;
+                    }
+
+                    const response = await fetch(slot.template);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
+                    }
+                    let templateContent = await response.text();
+                    
+                    // NEW: Apply logo replacement to the template HTML for download
+                    if (selectedLogoKey !== 'default') {
+                        templateContent = replaceLogoUrl(templateContent, defaultTribunnewsLogoUrl, newLogoUrl);
+                    }
+
+                    if (select.value.startsWith('mto-') && backgroundColor) {
+                        templateContent = templateContent.replace(
+                            /var colorTheme = "#[0-9a-fA-F]{6}";/,
+                            `var colorTheme = "${backgroundColor}";`
+                        );
+                    }
+
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(templateContent, 'text/html');
+
+                    const slot1 = doc.querySelector('.ad-slot-mto1');
+                    const slot2 = doc.querySelector('.ad-slot-mto2');
+                    const slot3 = doc.querySelector('.ad-slot-mto3');
+
+                    if (slot1) slot1.innerHTML = mtoScript1.value.trim();
+                    if (slot2) slot2.innerHTML = mtoScript2.value.trim();
+                    if (slot3) slot3.innerHTML = mtoScript3.value.trim();
+                    
+                    if (landingPageUrl) {
+                        const adSlotsToOverlay = doc.querySelectorAll('.ad-slot-mto1, .ad-slot-mto2, .ad-slot-mto3');
+                        adSlotsToOverlay.forEach(adSlot => {
+                            adSlot.style.position = 'relative';
+                            const overlayDiv = doc.createElement('a');
+                            overlayDiv.href = landingPageUrl;
+                            overlayDiv.target = "_blank";
+                            overlayDiv.rel = "noopener noreferrer";
+                            overlayDiv.style.cssText = `
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                background: rgba(255, 255, 255, 0);
+                                z-index: 9999;
+                                cursor: pointer;
+                                display: block;
+                            `;
+                            adSlot.appendChild(overlayDiv);
+                        });
+                    }
+
+                    finalHtmlToDownload = doc.documentElement.outerHTML;
+
+                } else if (select.value === 'mto-without-pin') {
+                    if (!mtoScript1.value.trim() || !mtoScript2.value.trim() || !backgroundColor) {
+                        alert('Mohon tempel kedua script iklan dan masukkan kode warna background untuk MTO - Without Pin!');
+                        return;
+                    }
+
+                    const response = await fetch(slot.template);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
+                    }
+                    let templateContent = await response.text();
+                    
+                    // NEW: Apply logo replacement to the template HTML for download
+                    if (selectedLogoKey !== 'default') {
+                        templateContent = replaceLogoUrl(templateContent, defaultTribunnewsLogoUrl, newLogoUrl);
+                    }
+
+                    if (select.value.startsWith('mto-') && backgroundColor) {
+                        templateContent = templateContent.replace(
+                            /var colorTheme = "#[0-9a-fA-F]{6}";/,
+                            `var colorTheme = "${backgroundColor}";`
+                        );
+                    }
+
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(templateContent, 'text/html');
+
+                    const slot1 = doc.querySelector('.ad-slot-mto1');
+                    const slot2 = doc.querySelector('.ad-slot-mto2');
+                    const slot3 = doc.querySelector('.ad-slot-mto3'); // Get slot3 to remove it
+
+                    if (slot1) slot1.innerHTML = mtoScript1.value.trim();
+                    if (slot2) slot2.innerHTML = mtoScript2.value.trim();
+                    if (slot3) slot3.remove(); // Remove slot3
+                    
+                    if (landingPageUrl) {
+                        const adSlotsToOverlay = doc.querySelectorAll('.ad-slot-mto1, .ad-slot-mto2'); // Only two slots
+                        adSlotsToOverlay.forEach(adSlot => {
+                            adSlot.style.position = 'relative';
+                            const overlayDiv = doc.createElement('a');
+                            overlayDiv.href = landingPageUrl;
+                            overlayDiv.target = "_blank";
+                            overlayDiv.rel = "noopener noreferrer";
+                            overlayDiv.style.cssText = `
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                background: rgba(255, 255, 255, 0);
+                                z-index: 9999;
+                                cursor: pointer;
+                                display: block;
+                            `;
+                            adSlot.appendChild(overlayDiv);
+                        });
+                    }
+
+                    finalHtmlToDownload = doc.documentElement.outerHTML;
+
+                } else if (select.value === 'mto-with-pin-pushdown') {
+                    if (!mtoScript1.value.trim() || !mtoScript2.value.trim() || !mtoScript3.value.trim() || !mtoScript4.value.trim() || !backgroundColor) {
+                        alert('Mohon tempel keempat script iklan dan masukkan kode warna background untuk MTO - With Pin + Pushdown!');
+                        return;
+                    }
+
+                    const response = await fetch(slot.template);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
+                    }
+                    let templateContent = await response.text();
+                    
+                    // NEW: Apply logo replacement to the template HTML for download
+                    if (selectedLogoKey !== 'default') {
+                        templateContent = replaceLogoUrl(templateContent, defaultTribunnewsLogoUrl, newLogoUrl);
+                    }
+
+                    if (select.value.startsWith('mto-') && backgroundColor) {
+                        templateContent = templateContent.replace(
+                            /var colorTheme = "#[0-9a-fA-F]{6}";/,
+                            `var colorTheme = "${backgroundColor}";`
+                        );
+                    }
+
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(templateContent, 'text/html');
+
+                    const slot1 = doc.querySelector('.ad-slot-mto1');
+                    const slot2 = doc.querySelector('.ad-slot-mto2');
+                    const slot3 = doc.querySelector('.ad-slot-mto3');
+                    const slot4 = doc.querySelector('.ad-slot-mto4');
+
+                    if (slot1) slot1.innerHTML = mtoScript1.value.trim();
+                    if (slot2) slot2.innerHTML = mtoScript2.value.trim();
+                    if (slot3) slot3.innerHTML = mtoScript3.value.trim();
+                    if (slot4) slot4.innerHTML = mtoScript4.value.trim();
+                    
+                    if (landingPageUrl) {
+                        const adSlotsToOverlay = doc.querySelectorAll('.ad-slot-mto1, .ad-slot-mto2, .ad-slot-mto3, .ad-slot-mto4'); // All four slots
+                        adSlotsToOverlay.forEach(adSlot => {
+                            adSlot.style.position = 'relative';
+                            const overlayDiv = doc.createElement('a');
+                            overlayDiv.href = landingPageUrl;
+                            overlayDiv.target = "_blank";
+                            overlayDiv.rel = "noopener noreferrer";
+                            overlayDiv.style.cssText = `
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                background: rgba(255, 255, 255, 0);
+                                z-index: 9999;
+                                cursor: pointer;
+                                display: block;
+                            `;
+                            adSlot.appendChild(overlayDiv);
+                        });
+                    }
+
+                    finalHtmlToDownload = doc.documentElement.outerHTML;
+
+                } else if (select.value === 'mto-without-pin-pushdown') { // New MTO Without Pin + Pushdown logic
+                    if (!mtoScript1.value.trim() || !mtoScript2.value.trim() || !mtoScript4.value.trim() || !backgroundColor) {
+                        alert('Mohon tempel script iklan 1, 2, 4 dan masukkan kode warna background untuk MTO - Without Pin + Pushdown!');
+                        return;
+                    }
+
+                    const response = await fetch(slot.template);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} - Template: ${slot.template}`);
+                    }
+                    let templateContent = await response.text();
+                    
+                    // NEW: Apply logo replacement to the template HTML for download
+                    if (selectedLogoKey !== 'default') {
+                        templateContent = replaceLogoUrl(templateContent, defaultTribunnewsLogoUrl, newLogoUrl);
+                    }
+
+                    if (select.value.startsWith('mto-') && backgroundColor) {
+                        templateContent = templateContent.replace(
+                            /var colorTheme = "#[0-9a-fA-F]{6}";/,
+                            `var colorTheme = "${backgroundColor}";`
+                        );
+                    }
+
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(templateContent, 'text/html');
+
+                    const slot1 = doc.querySelector('.ad-slot-mto1');
+                    const slot2 = doc.querySelector('.ad-slot-mto2');
+                    const slot3 = doc.querySelector('.ad-slot-mto3'); // Get slot3 to remove it
+                    const slot4 = doc.querySelector('.ad-slot-mto4');
+
+                    if (slot1) slot1.innerHTML = mtoScript1.value.trim();
+                    if (slot2) slot2.innerHTML = mtoScript2.value.trim();
+                    if (slot3) slot3.remove(); // Remove slot3
+                    if (slot4) slot4.innerHTML = mtoScript4.value.trim();
+                    
+                    if (landingPageUrl) {
+                        const adSlotsToOverlay = doc.querySelectorAll('.ad-slot-mto1, .ad-slot-mto2, .ad-slot-mto4'); // Only three slots
+                        adSlotsToOverlay.forEach(adSlot => {
+                            adSlot.style.position = 'relative';
+                            const overlayDiv = doc.createElement('a');
+                            overlayDiv.href = landingPageUrl;
+                            overlayDiv.target = "_blank";
+                            overlayDiv.rel = "noopener noreferrer";
+                            overlayDiv.style.cssText = `
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                background: rgba(255, 255, 255, 0);
+                                z-index: 9999;
+                                cursor: pointer;
+                                display: block;
+                            `;
+                            adSlot.appendChild(overlayDiv);
+                        });
+                    }
+
+                    finalHtmlToDownload = doc.documentElement.outerHTML;
+
+                } else {
+                    if (!generatedHTML) {
+                        alert('Mohon generate preview terlebih dahulu!');
+                        return;
+                    }
+                    finalHtmlToDownload = generatedHTML;
+                }
+
+                const filename = `iklan_script_${slot.name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}.html`;
+                
+                const blob = new Blob([finalHtmlToDownload], { type: 'text/html' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                const originalText = document.getElementById('downloadBtn').innerHTML;
+                document.getElementById('downloadBtn').innerHTML = '✅ HTML Downloaded!';
+                setTimeout(() => {
+                    document.getElementById('downloadBtn').innerHTML = originalText;
+                }, 2000);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            window.addEventListener('unload', function() {
+                clearHtml5BlobUrls();
+            });
+
+            document.querySelectorAll('.upload-area').forEach(area => {
+                area.addEventListener('dragleave', function(e) {
+                    if (!this.contains(e.relatedTarget)) {
+                        this.classList.remove('dragover');
+                    }
+                });
+            });
+            toggleAdInputs();
+            updateSlotInfo();
+        });
+    </script>
+</body>
+</html>

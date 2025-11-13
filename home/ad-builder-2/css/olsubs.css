@@ -1,0 +1,75 @@
+.ol_container {
+  top: 0;
+  width: 100%;
+  position: fixed;
+  z-index: 0;
+  display: none;
+  background: rgb(33, 33, 33);
+}
+
+.ol_big,
+.ol_small,
+.ol_close_ad {
+  width: 100%;
+  position: absolute;
+}
+
+.ol_big {
+  width: 320px;
+  height: 480px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+}
+
+.ol_small {
+  width: 320px;
+  height: 150px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+}
+
+.ol_close_ad {
+  right: 0;
+  width: 15px;
+  margin: 10px;
+  z-index: 99;
+}
+
+.ol_big img,
+.ol_small img,
+.ol_close_ad img {
+  width: 100%;
+}
+
+.ol_big iframe,
+.ol_small iframe {
+  border: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+}
+
+.ol_big iframe {
+  width: 320px;
+  height: 480px;
+}
+
+.ol_small iframe {
+  width: 320px;
+  height: 150px;
+}
+
+/* rewrite tribun */
+.wrap__container {
+  background: #f1f1f1;
+  position: relative;
+  z-index: 10;
+}
+
+.theader {
+  position: relative;
+}

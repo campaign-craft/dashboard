@@ -1,0 +1,93 @@
+.immersiveMobile{
+
+}
+.immersiveMobileFrame{
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    width: 15px;
+    z-index: 0;
+}
+.immersiveLeft{
+    left: 0;
+}
+.immersiveRight{
+    right: 0;
+}
+.immersivePoint{
+    position: fixed;
+    width: 120px;
+    height: 120px;
+    right: 0;
+    bottom: 20%;
+    overflow: hidden;
+    z-index: 9999;
+    -webkit-transition: all 0.4s ease-in;
+    -moz-transition: all 0.4s ease-in;
+    -ms-transition: all 0.4s ease-in;
+    -o-transition: all 0.4s ease-in;
+    transition: all 0.4s ease-in;
+    -webkit-box-shadow: -3px 3px 5px 0px rgba(0,0,0,0.5);
+    -moz-box-shadow: -3px 3px 5px 0px rgba(0,0,0,0.5);
+    box-shadow: -3px 3px 5px 0px rgba(0,0,0,0.5);
+}
+.immersivePoint img{
+    width: 100%;
+}
+.immersivePointOff{
+  right: -100%;
+}
+
+/* tribun rewrite*/
+#div-Top-MediumRectangle{
+    margin: 0;
+    
+}
+.main {
+    padding: 0px 15px 0;
+}
+.headline-container{
+    margin: 0;
+}
+.ol_swipe {
+    z-index: 1;
+}
+
+/* grid.id */
+header{
+    position: relative;
+    z-index: 99;
+    margin-bottom: 0;
+}
+#body section{
+    padding: 0 10px;
+}
+.row.text-center.mb10{
+    margin-bottom: 0;
+}
+#content{
+    padding: 0 15px;
+}
+#div-gpt-ad-mid-banner,
+#div-Inside-MediumRectangle,
+#div-Inside-MediumRectangle2,
+#div-gpt-ad-over-comment,
+#div-gpt-ad-below-comment{
+    margin: 0 -25px;
+}
+#div-Inside-MediumRectangle2{
+    width: 106% !important;
+    margin: 0 -10px;
+}
+#div-gpt-ad-mid-banner < div {
+    overflow: visible;
+}
+#div-gpt-ad-bottom-frame{
+    height: auto;
+}
+.btnclose{
+    z-index: 999999;
+}
+.reserved-topmedium:before{
+    background: none!important;
+}
