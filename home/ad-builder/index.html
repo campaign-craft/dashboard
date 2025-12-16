@@ -283,8 +283,10 @@
                         <option value="160x600">Skyscraper (160x600)</option>
                     </optgroup>
                     <optgroup label="Mobile">
-                        <!-- PERUBAHAN DI SINI: Diperbarui dari 300x250 menjadi 320x150 -->
-                        <option value="300x250_top">Top Banner (320x150)</option>
+                        <!-- Top Banner 320x150 (menggunakan template_top_banner_mobile.html) -->
+                        <option value="320x150_top">Top Banner (320x150)</option>
+                        <!-- Top Banner 300x250 (menggunakan template_top_banner2_mobile.html) -->
+                        <option value="300x250_top">Top Banner (300x250)</option> 
                         <option value="320x480">Pushdown (320x480)</option>
                         <option value="300x250_middle">Middle Banner (300x250)</option>
                         <option value="320x50">Horizontal Ad (320x50)</option>
@@ -400,8 +402,10 @@
             "120x600": { name: "Skin Ad", width: 120, height: 600, template: "template_skin_ad.html" },
             "160x600": { name: "Skyscraper", width: 160, height: 600, template: "template_skyscraper.html" },
             // Mobile
-            // PERUBAHAN DI SINI: Diperbarui dari 300x250 menjadi 320x150
-            "300x250_top": { name: "Top Banner (Mobile)", width: 320, height: 150, template: "template_top_banner_mobile.html" },
+            // Slot Top Banner (320x150)
+            "320x150_top": { name: "Top Banner (Mobile 320x150)", width: 320, height: 150, template: "template_top_banner_mobile.html" },
+            // Slot Top Banner (300x250) - Menggunakan template_top_banner2_mobile.html
+            "300x250_top": { name: "Top Banner (Mobile 300x250)", width: 300, height: 250, template: "template_top_banner2_mobile.html" }, 
             "320x480": { name: "Pushdown", width: 320, height: 480, template: "template_pushdown.html" },
             "300x250_middle": { name: "Middle Banner (Mobile)", width: 300, height: 250, template: "template_middle_banner_mobile.html" },
             "320x50": { name: "Horizontal Ad (Mobile)", width: 320, height: 50, template: "template_horizontal_ad_mobile.html" },
@@ -501,13 +505,10 @@
                 slotDimensions.textContent = `${slot.width} × ${slot.height} pixels`;
 
                 // NEW: Adjust iframe width and centering based on mobile/desktop
-                // Updated condition to include '300x250_top' and '300x250_middle'
-                if (select.value.includes('_mobile') || 
-                    select.value === '320x480' || 
-                    select.value === '320x50' || 
-                    select.value === '300x200' || 
-                    select.value === '300x250_top' || // Added this
-                    select.value === '300x250_middle') { // Added this
+                // Updated condition to include all mobile formats explicitly
+                const mobileFormats = ['320x150_top', '300x250_top', '320x480', '300x250_middle', '320x50', '300x600_mobile', '300x200'];
+                
+                if (mobileFormats.includes(select.value)) { 
                     // These are explicitly mobile formats
                     iframe.style.width = '400px'; 
                     iframe.style.margin = '0 auto'; // Center the iframe
