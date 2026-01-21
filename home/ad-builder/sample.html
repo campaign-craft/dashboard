@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad Preview Hub - Client Mockup Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .modal-active { overflow: hidden; }
+    </style>
+</head>
+<body class="bg-[#f1f5f9] text-slate-900 min-h-screen">
+
+    <!-- Navigasi -->
+    <nav class="bg-white border-b border-slate-200 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-30 shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center">
+                <i data-lucide="layout" class="w-5 h-5 text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold text-slate-800 leading-tight">Ad Preview <span class="text-indigo-600">Hub</span></h1>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Mockup Management</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <div class="relative hidden md:block">
+                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="Cari brand, sales, atau IAB..."
+                    class="pl-10 pr-4 py-2 bg-slate-100 border-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500 rounded-xl text-sm transition-all outline-none w-80 border"
+                >
+            </div>
+            <button 
+                onclick="openModal()"
+                class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-md shadow-indigo-100"
+            >
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Preview Baru</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Konten Utama -->
+    <main class="p-4 md:p-8 max-w-[1400px] mx-auto">
+        <div class="mb-6 flex items-center justify-between">
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                Dummy Inventory List
+                <span id="itemCount" class="bg-slate-200 text-slate-600 text-xs px-2 py-0.5 rounded-full">0 items</span>
+            </h2>
+        </div>
+
+        <!-- Wadah Tabel -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[1000px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200">
+                            <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider w-12 text-center">Preview</th>
+                            <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Brand Name</th>
+                            <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Sales Requester</th>
+                            <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">IAB Inventory</th>
+                            <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previewTableBody" class="divide-y divide-slate-100">
+                        <!-- Data akan diisi via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Form -->
+    <div id="modalOverlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="bg-white rounded-3xl w-full max-w-xl shadow-2xl relative overflow-hidden transform transition-all">
+            <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 id="modalTitle" class="text-xl font-bold text-slate-800">Buat Preview Baru</h3>
+                <button onclick="closeModal()" class="p-2 hover:bg-white rounded-full transition-all shadow-sm">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <form id="previewForm" class="p-8 space-y-4">
+                <input type="hidden" id="editId">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Nama Brand</label>
+                        <input 
+                            required id="brandName" type="text" 
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm"
+                            placeholder="Contoh: BRI Mo"
+                        >
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Sales Requester</label>
+                        <input 
+                            required id="salesPerson" type="text" 
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm"
+                            placeholder="Nama Sales"
+                        >
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">IAB Standard</label>
+                        <select id="inventoryType" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm">
+                            <option value="IAB Medium Rectangle">Medium Rectangle</option>
+                            <option value="IAB Leaderboard">Leaderboard</option>
+                            <option value="IAB Half Page">Half Page</option>
+                            <option value="IAB Billboard">Billboard</option>
+                            <option value="IAB Portrait">Portrait</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Ukuran</label>
+                        <select id="adSize" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm">
+                            <option value="300x250">300 x 250</option>
+                            <option value="728x90">728 x 90</option>
+                            <option value="300x600">300 x 600</option>
+                            <option value="970x250">970 x 250</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Image URL (Banner Mockup)</label>
+                    <input 
+                        id="imageUrl" type="text" 
+                        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm"
+                        placeholder="https://..."
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Status Mockup</label>
+                    <div class="flex gap-4 p-2">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="status" value="Ready" checked class="w-4 h-4 text-indigo-600">
+                            <span class="text-sm font-semibold text-slate-600 group-hover:text-indigo-600">Ready</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="status" value="Revision" class="w-4 h-4 text-indigo-600">
+                            <span class="text-sm font-semibold text-slate-600 group-hover:text-indigo-600">Revision</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="status" value="Draft" class="w-4 h-4 text-indigo-600">
+                            <span class="text-sm font-semibold text-slate-600 group-hover:text-indigo-600">Draft</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="pt-6 flex gap-3">
+                    <button type="button" onclick="closeModal()" class="flex-1 px-4 py-3 border border-slate-200 hover:bg-slate-50 rounded-xl font-bold text-slate-500 transition-all">Batal</button>
+                    <button type="submit" class="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-100 transition-all active:scale-95">Simpan Preview</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="fixed bottom-8 right-8 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-x-full transition-transform duration-300 z-50">
+        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+        <span id="notificationText" class="text-sm font-medium">Pesan berhasil</span>
+    </div>
+
+    <script>
+        // Data Dummy Awal
+        let lineItems = [
+            { id: 1, brand: 'IQOS - Heets Edition', salesPerson: 'Andi Pratama', inventory: 'IAB Billboard', size: '970x250', imageUrl: 'https://images.unsplash.com/photo-1628155130314-d5621551dfdf?w=400&q=80', status: 'Ready', date: '2024-03-20' },
+            { id: 2, brand: 'Djarum Black - Experience', salesPerson: 'Sinta Bella', inventory: 'IAB Half Page', size: '300x600', imageUrl: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=400&q=80', status: 'Revision', date: '2024-03-19' },
+            { id: 3, brand: 'BRI Mo - Super App', salesPerson: 'Budi Santoso', inventory: 'IAB Medium Rectangle', size: '300x250', imageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&q=80', status: 'Ready', date: '2024-03-18' },
+            { id: 4, brand: 'Epson EcoTank', salesPerson: 'Andi Pratama', inventory: 'IAB Leaderboard', size: '728x90', imageUrl: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=400&q=80', status: 'Draft', date: '2024-03-17' }
+        ];
+
+        // Inisialisasi Lucide Icons
+        function initIcons() {
+            lucide.createIcons();
+        }
+
+        // Render Tabel
+        function renderTable(data = lineItems) {
+            const tableBody = document.getElementById('previewTableBody');
+            const itemCount = document.getElementById('itemCount');
+            itemCount.innerText = `${data.length} items`;
+
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-20 text-center"><div class="flex flex-col items-center opacity-40"><i data-lucide="alert-circle" class="w-10 h-10 mb-2"></i><p class="text-sm font-medium">Data tidak ditemukan</p></div></td></tr>`;
+                initIcons();
+                return;
+            }
+
+            tableBody.innerHTML = data.map(item => {
+                const initials = item.salesPerson.split(' ').map(n => n[0]).join('');
+                const statusClass = item.status === 'Ready' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 
+                                    item.status === 'Revision' ? 'bg-amber-100 text-amber-700 border-amber-200' : 
+                                    'bg-slate-100 text-slate-500 border-slate-200';
+                const dotClass = item.status === 'Ready' ? 'bg-emerald-500' : 
+                                 item.status === 'Revision' ? 'bg-amber-500' : 'bg-slate-400';
+
+                return `
+                <tr class="hover:bg-slate-50/80 transition-colors group">
+                    <td class="px-6 py-4">
+                        <div class="relative w-12 h-12 rounded-lg bg-slate-100 overflow-hidden border border-slate-200 group-hover:scale-110 transition-transform cursor-zoom-in">
+                            <img src="${item.imageUrl || 'https://via.placeholder.com/150?text=No+Img'}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150?text=Error'">
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-slate-800">${item.brand}</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">ID: #PRE-${String(item.id).slice(-4)} • ${item.date}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-[10px] font-bold">${initials}</div>
+                            <span class="text-sm font-medium text-slate-600">${item.salesPerson}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="inline-flex flex-col">
+                            <span class="text-sm font-semibold text-slate-700">${item.inventory}</span>
+                            <span class="text-[10px] font-mono text-slate-400">${item.size}px</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold ${statusClass} border">
+                            <div class="w-1.5 h-1.5 rounded-full ${dotClass}"></div>
+                            ${item.status.toUpperCase()}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="copyShareLink(${item.id})" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="Share Link">
+                                <i data-lucide="copy" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="openModal(${item.id})" class="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all" title="Edit">
+                                <i data-lucide="edit-2" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="deleteItem(${item.id})" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Delete">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+            initIcons();
+        }
+
+        // Pencarian
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = lineItems.filter(item => 
+                item.brand.toLowerCase().includes(term) || 
+                item.salesPerson.toLowerCase().includes(term) ||
+                item.inventory.toLowerCase().includes(term)
+            );
+            renderTable(filtered);
+        });
+
+        // Modal Logic
+        function openModal(id = null) {
+            const modal = document.getElementById('modalOverlay');
+            const form = document.getElementById('previewForm');
+            const title = document.getElementById('modalTitle');
+            
+            form.reset();
+            if (id) {
+                const item = lineItems.find(i => i.id === id);
+                document.getElementById('editId').value = item.id;
+                document.getElementById('brandName').value = item.brand;
+                document.getElementById('salesPerson').value = item.salesPerson;
+                document.getElementById('inventoryType').value = item.inventory;
+                document.getElementById('adSize').value = item.size;
+                document.getElementById('imageUrl').value = item.imageUrl;
+                form.querySelector(`input[name="status"][value="${item.status}"]`).checked = true;
+                title.innerText = "Edit Dummy Preview";
+            } else {
+                document.getElementById('editId').value = "";
+                title.innerText = "Buat Preview Baru";
+            }
+            
+            modal.classList.remove('hidden');
+            document.body.classList.add('modal-active');
+            initIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.add('hidden');
+            document.body.classList.remove('modal-active');
+        }
+
+        // Simpan Data
+        document.getElementById('previewForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editId').value;
+            const formData = {
+                brand: document.getElementById('brandName').value,
+                salesPerson: document.getElementById('salesPerson').value,
+                inventory: document.getElementById('inventoryType').value,
+                size: document.getElementById('adSize').value,
+                imageUrl: document.getElementById('imageUrl').value,
+                status: document.querySelector('input[name="status"]:checked').value
+            };
+
+            if (id) {
+                const index = lineItems.findIndex(i => i.id == id);
+                lineItems[index] = { ...lineItems[index], ...formData };
+                showNotification('Preview berhasil diperbarui');
+            } else {
+                const newItem = {
+                    ...formData,
+                    id: Date.now(),
+                    date: new Date().toISOString().split('T')[0]
+                };
+                lineItems.unshift(newItem);
+                showNotification('Preview baru ditambahkan');
+            }
+
+            renderTable();
+            closeModal();
+        });
+
+        // Hapus Data
+        function deleteItem(id) {
+            if (confirm('Hapus preview ini?')) {
+                lineItems = lineItems.filter(i => i.id !== id);
+                renderTable();
+                showNotification('Preview dihapus');
+            }
+        }
+
+        // Copy Link
+        function copyShareLink(id) {
+            const link = `https://preview.hub/client/${id}`;
+            const el = document.createElement('textarea');
+            el.value = link;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showNotification('Link preview disalin!');
+        }
+
+        // Notifikasi
+        function showNotification(msg) {
+            const notif = document.getElementById('notification');
+            document.getElementById('notificationText').innerText = msg;
+            notif.classList.remove('translate-x-full');
+            setTimeout(() => {
+                notif.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        // Load Awal
+        window.onload = () => {
+            renderTable();
+        };
+    </script>
+</body>
+</html>
