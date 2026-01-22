@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Scratch Banner</title>
+    <!-- Memanggil Font Awesome Eksternal untuk hasil maksimal -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
             padding: 0;
@@ -53,7 +55,7 @@
             transition: opacity 0.5s ease-out;
         }
 
-        /* Instruksi Swipe SVG */
+        /* Instruksi Swipe */
         .swipe-instruction {
             position: absolute;
             top: 50%;
@@ -63,19 +65,21 @@
             text-align: center;
             pointer-events: none;
             transition: opacity 0.3s ease;
-            width: 90%; /* Memberikan ruang untuk teks panjang */
+            width: 90%;
         }
 
         .swipe-instruction.hidden {
             opacity: 0;
         }
 
-        .swipe-icon-svg {
-            width: 60px;
-            height: 60px;
-            filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+        /* Styling Ikon Font Awesome */
+        .swipe-icon-fa {
+            font-size: 60px;
+            color: white;
+            filter: drop-shadow(0 0 8px rgba(0,0,0,0.8));
             animation: swipe-move 2.5s infinite ease-in-out;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            display: block;
         }
 
         .swipe-text {
@@ -89,11 +93,11 @@
         }
 
         @keyframes swipe-move {
-            0% { transform: translateX(-40px); opacity: 0; }
+            0% { transform: translateX(-40px) rotate(-10deg); opacity: 0; }
             20% { opacity: 1; }
-            50% { transform: translateX(40px); }
+            50% { transform: translateX(40px) rotate(10deg); }
             80% { opacity: 1; }
-            100% { transform: translateX(-40px); opacity: 0; }
+            100% { transform: translateX(-40px) rotate(-10deg); opacity: 0; }
         }
     </style>
 </head>
@@ -105,11 +109,9 @@
 
         <!-- Instruksi Swipe -->
         <div id="swipe-ui" class="swipe-instruction">
-            <!-- Ikon Jari Tangan SVG -->
-            <svg class="swipe-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 10V5C9 3.89543 9.89543 3 11 3C12.1046 3 13 3.89543 13 5V11M9 10C9 11.1046 8.10457 12 7 12C5.89543 12 5 11.1046 5 10V8M9 10L9 14M13 11C13 12.1046 13.8954 13 15 13C16.1046 13 17 12.1046 17 11V9M13 11V14M13 14C13 16.2091 11.2091 18 9 18H8.5C6.84315 18 5.5 16.6569 5.5 15V14M17 11V14C17 16.2091 15.2091 18 13 18" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                <circle cx="11" cy="5" r="1" fill="white" opacity="0.5"/>
-            </svg>
+            <!-- Ikon Jari Tangan dari Font Awesome -->
+            <i class="fa-solid fa-hand-pointer swipe-icon-fa"></i>
+            
             <div class="swipe-text">
                 Usap untuk melihat kendaraan dengan<br>
                 <strong>Inovasi Cerdas & Revolusi Niaga Ramah Lingkungan</strong>
@@ -142,6 +144,7 @@
             };
 
             function setupCanvas() {
+                // Efek blur halus sesuai permintaan
                 ctx.filter = 'blur(5px) brightness(0.8)';
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 
@@ -206,6 +209,7 @@
 
                 const percentage = (clearCount / (pixels.length / 40)) * 100;
                 
+                // Threshold tetap 10%
                 if (percentage > 10) {
                     revealAll();
                 }
