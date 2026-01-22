@@ -53,39 +53,6 @@
             transition: opacity 0.5s ease-out;
         }
 
-        /* Tombol CTA Custom */
-        .button-container {
-            position: absolute;
-            bottom: 40px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            z-index: 10;
-            opacity: 0; /* Tersembunyi di awal */
-            visibility: hidden;
-            transition: opacity 0.8s ease-in, visibility 0.8s;
-            pointer-events: auto;
-        }
-
-        .custom-btn {
-            background-color: #ffffff;
-            color: #ff0000;
-            font-family: 'Arial', sans-serif;
-            font-weight: bold;
-            font-size: 16px;
-            padding: 12px 24px;
-            border-radius: 50px;
-            box-shadow: 0px 4px 15px rgba(0,0,0,0.3);
-            animation: glow-animation 2s infinite;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        @keyframes glow-animation {
-            0%, 100% { box-shadow: 0px 0px 5px rgba(255,255,255,0.4); transform: scale(1); }
-            50% { box-shadow: 0px 0px 20px rgba(255,255,255,0.8); transform: scale(1.03); }
-        }
-
         /* Instruksi Swipe SVG */
         .swipe-instruction {
             position: absolute;
@@ -147,12 +114,9 @@
 
         <!-- Konten Utama (Setelah Digosok) -->
         <div class="content-layer">
-            <!-- URL diperbarui ke Farizon Auto Indonesia -->
+            <!-- URL Farizon Auto Indonesia tetap ada pada gambar -->
             <a href="https://farizonautoindonesia.co.id/" target="_blank">
                 <img src="images/320x480.png" alt="Banner Promo">
-                <div class="button-container" id="js-button-container">
-                    <span class="custom-btn">CARI TAHU DISINI</span>
-                </div>
             </a>
         </div>
     </div>
@@ -164,7 +128,6 @@
             const canvas = document.getElementById('js-canvas');
             const ctx = canvas.getContext('2d', { willReadFrequently: true });
             const swipeUI = document.getElementById('swipe-ui');
-            const buttonContainer = document.getElementById('js-button-container');
             const img = new Image();
             
             let isDrawing = false;
@@ -176,6 +139,7 @@
             };
 
             function setupCanvas() {
+                // Efek blur halus sesuai permintaan sebelumnya
                 ctx.filter = 'blur(5px) brightness(0.8)';
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 
@@ -232,6 +196,7 @@
                 const pixels = imageData.data;
                 let clearCount = 0;
 
+                // Optimasi performa dengan stride pixel yang lebih besar
                 for (let i = 3; i < pixels.length; i += 40) {
                     if (pixels[i] === 0) {
                         clearCount++;
@@ -240,8 +205,8 @@
 
                 const percentage = (clearCount / (pixels.length / 40)) * 100;
                 
-                // Ambang batas diubah menjadi 30%
-                if (percentage > 30) {
+                // Ambang batas diturunkan menjadi 10%
+                if (percentage > 10) {
                     revealAll();
                 }
             }
@@ -249,10 +214,6 @@
             function revealAll() {
                 canvas.style.opacity = '0';
                 
-                // Memunculkan tombol CTA saat banner terbuka
-                buttonContainer.style.visibility = 'visible';
-                buttonContainer.style.opacity = '1';
-
                 setTimeout(() => {
                     if (canvas.parentNode) canvas.remove();
                 }, 500);
