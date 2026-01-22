@@ -1,0 +1,205 @@
+body {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.form{
+  z-index: -2;
+}
+
+.button{
+  text-align: center;
+  position: absolute;
+  bottom: 38px;
+  right: 0;
+  
+
+}
+
+.cta{
+  margin-right: 10px;
+}
+
+.cta img{
+  -webkit-animation: white 2s infinite;
+  -moz-animation: white 2s infinite;
+  -o-animation: white 2s infinite;
+  animation: white 2s infinite; 
+  border-radius: 10px;
+}
+
+.container {
+  position: relative;
+  width: 320px;
+  height: 480px;
+  margin: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  z-index: 5;
+  transition: 2s linear all;
+  /*cursor: crosshair;*/
+  cursor: url('../images/logo.png') 2 2,pointer;
+  /*cursor: none;*/
+}
+
+
+
+
+/* Swipe Animation */
+
+.swipe__icon {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 67px;
+    top: 50%;
+    opacity: 0;
+    visibility: visible;
+    z-index: 5
+}
+
+.swipe__icon.in-view{
+  animation: swipe-animation linear 2.5s 1s 5;  
+  transform-origin: 50% 50%;
+  -webkit-animation: swipe-animation linear 2.5s 1s 5;  
+  -webkit-transform-origin: 50% 50%;
+  -moz-animation: swipe-animation linear 2.5s 1s 5;  
+  -moz-transform-origin: 50% 50%;
+  -o-animation: swipe-animation linear 2.5s 1s 5;  
+  -o-transform-origin: 50% 50%;
+  -ms-animation: swipe-animation linear 2.5s 1s 5;  
+  -ms-transform-origin: 50% 50%;
+}
+
+@keyframes swipe-animation{
+  0% {
+    transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+  25% {
+    transform:  translate(-46px,0px)  rotate(-5deg) ;
+  }
+  50% {
+    transform:  translate(31px,0px)  rotate(3deg) ;
+  }
+  75% {
+    opacity: 1;
+    transform:  translate(-15px,0px)  rotate(-3deg) ;
+  }
+  100% {
+    opacity: 0;
+    transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+}
+
+@-moz-keyframes swipe-animation{
+  0% {
+    -moz-transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+  25% {
+    -moz-transform:  translate(-46px,0px)  rotate(-5deg) ;
+  }
+  50% {
+    -moz-transform:  translate(31px,0px)  rotate(3deg) ;
+  }
+  75% {
+    opacity: 1;
+    -moz-transform:  translate(-15px,0px)  rotate(-3deg) ;
+  }
+  100% {
+    opacity: 0;
+    -moz-transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+}
+
+@-webkit-keyframes swipe-animation {
+  0% {
+    -webkit-transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+  25% {
+    -webkit-transform:  translate(-46px,0px)  rotate(-5deg) ;
+  }
+  50% {
+    -webkit-transform:  translate(31px,0px)  rotate(3deg) ;
+  }
+  75% {
+    opacity: 1;
+    -webkit-transform:  translate(-15px,0px)  rotate(-3deg) ;
+  }
+  100% {
+    opacity: 0;
+    -webkit-transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+}
+
+@-o-keyframes swipe-animation {
+  0% {
+    -o-transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+  25% {
+    -o-transform:  translate(-46px,0px)  rotate(-5deg) ;
+  }
+  50% {
+    -o-transform:  translate(31px,0px)  rotate(3deg) ;
+  }
+  75% {
+    opacity: 1;
+    -o-transform:  translate(-15px,0px)  rotate(-3deg) ;
+  }
+  100% {
+    opacity: 0;
+    -o-transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+}
+
+@-ms-keyframes swipe-animation {
+  0% {
+    -ms-transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+  25% {
+    -ms-transform:  translate(-46px,0px)  rotate(-5deg) ;
+  }
+  50% {
+    -ms-transform:  translate(31px,0px)  rotate(3deg) ;
+  }
+  75% {
+    opacity: 1;
+    -ms-transform:  translate(-15px,0px)  rotate(-3deg) ;
+  }
+  100% {
+    opacity: 0;
+    -ms-transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+}
+
+@-webkit-keyframes white {
+  0%, 100% {
+   -webkit-box-shadow: 0px 0px 11px 5px rgba(255,255,255,0.5), inset 0px 0px 10px rgba(255, 255, 255, 0.5);
+  }
+
+  50% {
+    -webkit-box-shadow: 0px 0px 0px 0px rgba(255, 255, 255, 0), inset 0px 0px 0px rgba(255, 255, 255, 0);
+    box-shadow: 0px 0px 0px 0px rgba(255, 255, 255, 0), inset 0px 0px 0px rgba(255, 255, 255, 0); } }
+
+@-o-keyframes white {
+  0%, 100% {
+   -webkit-box-shadow: 0px 0px 11px 5px rgba(255,255,255,0.5), inset 0px 0px 10px rgba(255, 255, 255, 0.5); }
+
+  50% {
+    box-shadow: 0px 0px 0px 0px rgba(255, 255, 255, 0), inset 0px 0px 0px rgba(255, 255, 255, 0); } }
+
+@keyframes white {
+  0%, 100% {
+   -webkit-box-shadow: 0px 0px 11px 5px rgba(255,255,255,0.5), inset 0px 0px 6px rgba(255, 255, 255, 0.5); }
+
+  50% {
+    box-shadow: 0px 0px 0px 0px rgba(255, 255, 255, 0), inset 0px 0px 0px rgba(255, 255, 255, 0); } }
