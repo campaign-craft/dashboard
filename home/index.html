@@ -6,7 +6,6 @@
     <title>Dashboard Tim Produksi Iklan Tribun</title>
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <script>
-      // Konfigurasi Tailwind CSS kustom
       tailwind.config = {
         theme: {
           extend: {
@@ -21,7 +20,7 @@
               "2xl": "24px",
               "3xl": "32px",
               full: "9999px",
-              button: "8px", // Kustom untuk tombol
+              button: "8px",
             },
           },
         },
@@ -38,13 +37,11 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
     />
     <style>
-      /* Gaya dasar untuk body dan font */
       body {
         font-family: "Inter", sans-serif;
         background-color: #f9fafb;
       }
 
-      /* Efek transisi untuk kartu */
       .card-container {
         transition: all 0.3s ease;
       }
@@ -58,7 +55,6 @@
         transform: scale(1.1);
       }
 
-      /* Gaya untuk judul grup dengan garis bawah */
       .group-title {
         position: relative;
       }
@@ -168,7 +164,7 @@
           </a>
         </div>
       </div>
-      <!-- START: Grup Builder yang Dipisahkan -->
+
       <div class="mt-12 mb-8">
         <h2 class="text-lg font-semibold text-gray-800 group-title">
           Builder
@@ -189,7 +185,6 @@
                 Banner Ad Builder (Digital)
               </h3>
               <p class="text-gray-500 text-sm">Buat dummy banner iklan digital</p>
-
             </div>
           </a>
           <a
@@ -226,7 +221,6 @@
                 Display Ad Builder (Koran)
               </h3>
               <p class="text-gray-500 text-sm">Buat dummy display iklan untuk koran</p>
-
             </div>
           </a>
           <a
@@ -244,8 +238,6 @@
               <p class="text-gray-500 text-sm">Tools untuk membuat Video on Banner</p>
             </div>
           </a>
-          
-          <!-- START: Kartu Bizzinsight Banner BARU -->
           <a
             href="https://campaign-craft.github.io/dashboard/home/bizzinsight-banner/"
             target="_blank"
@@ -263,9 +255,6 @@
               </p>
             </div>
           </a>
-          <!-- END: Kartu Bizzinsight Banner BARU -->
-
-          <!-- START: Kartu Nama Tribun -->
           <a
             href="https://campaign-craft.github.io/dashboard/home/kartu_nama/"
             target="_blank"
@@ -283,12 +272,9 @@
               </p>
             </div>
           </a>
-          <!-- END: Kartu Nama Tribun -->
         </div>
       </div>
-      <!-- END: Grup Builder yang Dipisahkan -->
 
-      <!-- START: Grup Tools Lainnya -->
       <div class="mt-12 mb-8">
         <h2 class="text-lg font-semibold text-gray-800 group-title">
           Tools Lainnya
@@ -392,7 +378,7 @@
           </a>
         </div>
       </div>
-      <!-- END: Grup Tools Lainnya -->
+
       <div class="mt-12">
         <h2 class="text-lg font-semibold text-gray-800 group-title">
           Quick Links
@@ -502,8 +488,7 @@
         const piketInfoElement = document.getElementById("piket-info");
 
         if (dateElement && piketInfoElement) {
-          // Mengatur ulang urutan nama sesuai rotasi yang diinginkan: Septian -> Cenot -> Andy -> Fenty
-          const names = ["Septian", "Cenot", "Andy", "Fenty"];
+          const names = ["Septian", "Andy", "Fenty"];
 
           // Tanggal mulai piket Septian (Senin, 23 Juni 2025)
           const startDatePiketSeptian = new Date("2025-06-23T00:00:00");
@@ -511,11 +496,10 @@
           // Fungsi untuk mendapatkan tanggal Senin di awal minggu
           function getStartOfWeek(date) {
             const d = new Date(date);
-            const day = d.getDay(); // 0 = Minggu, 1 = Senin, ..., 6 = Sabtu
-            // Sesuaikan hari agar Senin (1) menjadi awal minggu (indeks 0)
-            const adjustedDay = day === 0 ? 6 : day - 1; // Jika Minggu (0), jadi 6 (hari ke-6 dari Senin). Jika Senin (1), jadi 0.
+            const day = d.getDay(); 
+            const adjustedDay = day === 0 ? 6 : day - 1; 
             const diff = d.getDate() - adjustedDay;
-            return new Date(d.getFullYear(), d.getMonth(), diff); // Pastikan waktu diatur ke tengah malam
+            return new Date(d.getFullYear(), d.getMonth(), diff);
           }
 
           function updatePiketInfo() {
@@ -534,16 +518,12 @@
             const diffTime =
               startOfCurrentWeek.getTime() -
               getStartOfWeek(startDatePiketSeptian).getTime();
-            // Gunakan Math.floor() untuk memastikan penghitungan minggu penuh yang telah berlalu
             const diffWeeks = Math.floor(diffTime / oneWeekInMs);
 
-            // Tentukan piket minggu ini
-            // Septian adalah indeks 0 di array 'names' yang baru
             const currentPiketIndex =
               (names.indexOf("Septian") + diffWeeks) % names.length;
             const currentPiket = names[currentPiketIndex];
 
-            // Tentukan piket selanjutnya (cukup orang berikutnya dalam rotasi)
             const nextPiketIndex = (currentPiketIndex + 1) % names.length;
             const nextPiket = names[nextPiketIndex];
 
@@ -551,11 +531,9 @@
             piketInfoElement.innerHTML = `<strong class="text-blue-600">(Piket Minggu ini: ${currentPiket})</strong> | (Selanjutnya: ${nextPiket})`;
           }
 
-          // Panggil fungsi updatePiketInfo saat halaman dimuat
           updatePiketInfo();
         }
 
-        // --- JavaScript untuk tahun hak cipta dinamis ---
         const copyrightElement = document.getElementById("copyright-info");
         if (copyrightElement) {
           const currentYear = new Date().getFullYear();
