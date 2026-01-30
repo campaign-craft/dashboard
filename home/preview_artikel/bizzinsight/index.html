@@ -61,7 +61,7 @@
 
     <div class="bg-white rounded-xl shadow-2xl p-8 w-full flex flex-col gap-8" style="max-width: 1400px;">
         <div class="space-y-6">
-            <h1 class="text-3xl font-bold text-gray-800">Preview Artikel Tribunnews.com</h1>
+            <h1 class="text-3xl font-bold text-gray-800">Preview Artikel Bizzinsight Tribunnews.com</h1>
             <p class="text-xs text-blue-500">
                 <a href="https://campaign-craft.github.io/dashboard/home/resize-image-adv/" target="_blank" class="hover:underline">Resize Image Artikel</a>
             </p>
@@ -94,12 +94,29 @@
             
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="w-full md:w-1/2">
-                    <label for="photoInput" class="block text-sm font-medium text-gray-700">Unggah Foto</label>
+                    <label for="photoInput" class="block text-sm font-medium text-gray-700">Unggah Foto Utama</label>
                     <input type="file" id="photoInput" accept="image/*" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                 </div>
                 <div class="w-full md:w-1/2">
-                    <label for="captionInput" class="block text-sm font-medium text-gray-700">Caption Foto</label>
+                    <label for="captionInput" class="block text-sm font-medium text-gray-700">Caption Foto Utama</label>
                     <input type="text" id="captionInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
+                </div>
+            </div>
+
+            <!-- Fitur Unggah Banner -->
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-4">
+                <h2 class="text-lg font-semibold text-gray-700">Banner Iklan (Ad Slot)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Banner Desktop (970x250)</label>
+                        <input type="file" id="bannerDesktopInput" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <input type="text" id="linkDesktopInput" placeholder="Link Banner Desktop" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 text-sm">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Banner Mobile (320x150)</label>
+                        <input type="file" id="bannerMobileInput" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
+                        <input type="text" id="linkMobileInput" placeholder="Link Banner Mobile" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 text-sm">
+                    </div>
                 </div>
             </div>
 
@@ -144,6 +161,12 @@
             const photoInput = document.getElementById('photoInput');
             const captionInput = document.getElementById('captionInput');
             
+            // Banner Inputs
+            const bannerDesktopInput = document.getElementById('bannerDesktopInput');
+            const linkDesktopInput = document.getElementById('linkDesktopInput');
+            const bannerMobileInput = document.getElementById('bannerMobileInput');
+            const linkMobileInput = document.getElementById('linkMobileInput');
+
             // New tag elements
             const tagsContainer = document.getElementById('tags-container');
             const tagInput = document.getElementById('tagInput');
@@ -156,6 +179,8 @@
             const downloadMobileButton = document.getElementById('downloadMobileButton');
 
             let photoDataUrl = 'https://placehold.co/800x450/e5e7eb/767676?text=Foto+Artikel';
+            let bannerDesktopData = '';
+            let bannerMobileData = '';
             let desktopTemplate = '';
             let mobileTemplate = '';
             let tags = [];
@@ -206,18 +231,19 @@
                     mobileTemplate = await mobileResponse.text();
                 } catch (error) {
                     console.error('Error loading templates:', error);
-                    document.body.innerHTML = `<p class="text-red-500">Gagal memuat template. Mohon pastikan file 'read-desktop.html' dan 'read-mobile.html' berada di folder yang sama.</p>`;
                 }
             };
             
             // Fungsi untuk mengganti placeholder di template
-            const generateFinalHtml = (template) => {
+            const generateFinalHtml = (template, isMobileVersion = false) => {
                 let title = titleInput.value || 'Judul Artikel';
                 let content = quill.root.innerHTML || 'Tulis isi artikel Anda di sini.';
                 let date = dateInput.value;
                 let author = authorInput.value || 'Content Writer';
                 let editor = editorInput.value || 'Content Writer';
                 let caption = captionInput.value || 'Istimewa';
+                let linkDesktop = linkDesktopInput.value || '#';
+                let linkMobile = linkMobileInput.value || '#';
                 
                 const tagSpan = (tagText) => {
                     return tagText ? `<span style="display: inline-block; background-color: #e2e8f0; color: #4a5568; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem;">${tagText.trim()}</span>` : '';
@@ -225,6 +251,36 @@
                 
                 let tagsHtml = tags.map(tag => tagSpan(tag)).join('');
                 
+                // Script Iklan yang diperbaiki logic pemilihannya
+                const adScript = `
+<script>
+(function() {
+  // Gunakan flag isMobileVersion jika diset, jika tidak gunakan lebar layar
+  const isMobile = ${isMobileVersion} || window.innerWidth <= 768;
+  const bannerMobile = { url: \`${bannerMobileData}\`, link: \`${linkMobile}\`, w: 320 };
+  const bannerDesktop = { url: \`${bannerDesktopData}\`, link: \`${linkDesktop}\`, w: 970 };
+  
+  // Pilih banner utama berdasarkan mode
+  let banner = isMobile ? bannerMobile : bannerDesktop;
+  
+  // Fallback: Jika banner yang dipilih kosong, coba gunakan banner versi lainnya
+  if (!banner.url) {
+    banner = isMobile ? bannerDesktop : bannerMobile;
+  }
+  
+  const inject = () => {
+    document.querySelectorAll('.ad-slot').forEach(slot => {
+      if (banner.url) {
+        slot.innerHTML = '<a href="' + banner.link + '" target="_blank" style="display:block; width:100%; max-width:' + banner.w + 'px; margin:0 auto; text-decoration:none;"><img src="' + banner.url + '" style="width:100%; height:auto; display:block;" alt="Iklan"></a>';
+        slot.style.display = 'block';
+      }
+    });
+  };
+  window.addEventListener('DOMContentLoaded', inject);
+  if (document.readyState !== 'loading') inject();
+})();
+<\/script>`;
+
                 let finalHtml = template
                     .replace(/{{judul}}/g, title)
                     .replace(/{{isi_artikel}}/g, content)
@@ -233,12 +289,18 @@
                     .replace(/{{editor}}/g, editor)
                     .replace(/{{foto}}/g, photoDataUrl)
                     .replace(/{{caption}}/g, caption)
-                    .replace(/{{tag1}}/g, tagsHtml) // Menggunakan tag1 untuk semua tag
-                    .replace(/{{tag2}}/g, '') // Menghapus tag2 dan tag3
+                    .replace(/{{tag1}}/g, tagsHtml) 
+                    .replace(/{{tag2}}/g, '') 
                     .replace(/{{tag3}}/g, '');
 
-                // Menghapus referensi {{sumber}} dari template
                 finalHtml = finalHtml.replace(/{{sumber}}/g, '');
+                
+                // Menyisipkan script iklan sebelum penutup body
+                if (finalHtml.includes('</body>')) {
+                    finalHtml = finalHtml.replace('</body>', adScript + '</body>');
+                } else {
+                    finalHtml += adScript;
+                }
                 
                 return `<!DOCTYPE html><html lang="id"><head><title>${title}</title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>${finalHtml}</body></html>`;
             };
@@ -300,13 +362,32 @@
                 }
             });
 
+            // Event listeners untuk unggahan banner
+            bannerDesktopInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => bannerDesktopData = e.target.result;
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            bannerMobileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => bannerMobileData = e.target.result;
+                    reader.readAsDataURL(file);
+                }
+            });
+
             // Event listener untuk tombol "Pratinjau Desktop"
             previewDesktopButton.addEventListener('click', () => {
                 if (!desktopTemplate) {
                     console.error('Template desktop belum dimuat. Mohon coba lagi.');
                     return;
                 }
-                const fullHtml = generateFinalHtml(desktopTemplate);
+                const fullHtml = generateFinalHtml(desktopTemplate, false);
                 const newWindow = window.open();
                 newWindow.document.write(fullHtml);
                 newWindow.document.close();
@@ -318,7 +399,7 @@
                     console.error('Template mobile belum dimuat. Mohon coba lagi.');
                     return;
                 }
-                const fullHtml = generateFinalHtml(mobileTemplate);
+                const fullHtml = generateFinalHtml(mobileTemplate, true);
                 const newWindow = window.open();
                 newWindow.document.write(fullHtml);
                 newWindow.document.close();
@@ -330,7 +411,7 @@
                     console.error('Template desktop belum dimuat. Mohon coba lagi.');
                     return;
                 }
-                const fullHtml = generateFinalHtml(desktopTemplate);
+                const fullHtml = generateFinalHtml(desktopTemplate, false);
                 const blob = new Blob([fullHtml], { type: 'text/html' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -348,7 +429,7 @@
                     console.error('Template mobile belum dimuat. Mohon coba lagi.');
                     return;
                 }
-                const fullHtml = generateFinalHtml(mobileTemplate);
+                const fullHtml = generateFinalHtml(mobileTemplate, true);
                 const blob = new Blob([fullHtml], { type: 'text/html' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
