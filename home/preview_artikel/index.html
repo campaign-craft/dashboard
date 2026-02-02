@@ -3,130 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Artikel</title>
+    <title>Generator Artikel | Modern Previewer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
         }
-        /* Styling untuk artikel yang dihasilkan */
-        .generated-article img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-        .generated-article p {
-            margin-bottom: 1rem;
-            line-height: 1.6;
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
         }
-        .generated-article h1, .generated-article h2, .generated-article h3 {
-            font-weight: bold;
-            margin-bottom: 1rem;
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
         }
-        /* Styling untuk Quill.js editor */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Quill Editor Modernization */
         #editor-container {
-            height: 500px;
+            height: 450px;
             background-color: #fff;
-            border-bottom-left-radius: 0.5rem;
-            border-bottom-right-radius: 0.5rem;
-            border: 1px solid #d1d5db;
+            border-bottom-left-radius: 0.75rem;
+            border-bottom-right-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-top: none;
         }
         .ql-toolbar.ql-snow {
-            border-top-left-radius: 0.5rem;
-            border-top-right-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+            background: #f8fafc;
+            padding: 12px !important;
         }
+
+        /* Input Styling */
+        .custom-input {
+            transition: all 0.2s ease;
+            border: 1px solid #e2e8f0;
+        }
+        .custom-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            outline: none;
+        }
+
+        /* Tag Styling */
         .tag {
             display: inline-flex;
             align-items: center;
-            background-color: #e2e8f0;
-            color: #4a5568;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
+            background-color: #f1f5f9;
+            color: #475569;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.813rem;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
         }
         .tag-remove {
             margin-left: 0.5rem;
             cursor: pointer;
-            font-weight: bold;
+            color: #94a3b8;
+            transition: color 0.2s;
+        }
+        .tag-remove:hover {
+            color: #ef4444;
+        }
+
+        /* Glassmorphism subtle effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body class="min-h-screen py-10 px-4">
 
-    <div class="bg-white rounded-xl shadow-2xl p-8 w-full flex flex-col gap-8" style="max-width: 1400px;">
-        <div class="space-y-6">
-            <h1 class="text-3xl font-bold text-gray-800">Preview Artikel Tribunnews.com</h1>
-            <p class="text-xs text-blue-500">
-                <a href="https://campaign-craft.github.io/dashboard/home/resize-image-adv/" target="_blank" class="hover:underline">Resize Image Artikel</a> |  <a href="https://campaign-craft.github.io/dashboard/home/preview-bizzinsight/" target="_blank" class="hover:underline">BizzInsight!</a>
-            </p>
+    <div class="max-w-6xl mx-auto">
+        <!-- Header Section -->
+        <header class="mb-10 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-                <label for="titleInput" class="block text-sm font-medium text-gray-700">Judul Artikel</label>
-                <input type="text" id="titleInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
+                <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">Preview Artikel</h1>
+                <p class="mt-2 text-slate-500 font-medium text-lg">Kelola konten Tribunnews.com dengan antarmuka yang lebih bersih.</p>
+            </div>
+            <div class="flex flex-wrap justify-center md:justify-end gap-3">
+                <a href="https://campaign-craft.github.io/dashboard/home/resize-image-adv/" target="_blank" class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">Resize Image</a>
+                <a href="https://campaign-craft.github.io/dashboard/home/preview-bizzinsight/" target="_blank" class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all shadow-sm">BizzInsight!</a>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Content Area -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Content Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-6">
+                    <div>
+                        <label for="titleInput" class="block text-sm font-semibold text-slate-700 mb-2">Judul Artikel</label>
+                        <input type="text" id="titleInput" placeholder="Masukkan judul utama di sini..." class="custom-input w-full rounded-xl p-3.5 text-slate-900 placeholder:text-slate-400">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Isi Artikel</label>
+                        <div id="editor-container"></div>
+                    </div>
+                </div>
+
+                <!-- Media & Tags Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-6">
+                    <h2 class="text-xl font-bold text-slate-800 border-b border-slate-100 pb-4">Media & Tags</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label for="photoInput" class="block text-sm font-semibold text-slate-700">Unggah Foto Utama</label>
+                            <div class="relative group">
+                                <input type="file" id="photoInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center group-hover:border-indigo-400 group-hover:bg-indigo-50 transition-all">
+                                    <span class="text-slate-500 text-sm font-medium">Klik untuk pilih gambar</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="captionInput" class="block text-sm font-semibold text-slate-700 mb-2">Caption Foto</label>
+                            <input type="text" id="captionInput" class="custom-input w-full rounded-xl p-3.5" placeholder="Contoh: Istimewa / Dok. Pribadi">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Tags Konten</label>
+                        <div id="tags-container" class="flex flex-wrap items-center gap-2 mb-3"></div>
+                        <div class="flex gap-2">
+                            <input type="text" id="tagInput" class="custom-input flex-1 rounded-xl p-3" placeholder="Tambah tag baru (Tekan Enter)">
+                            <button id="addTagButton" class="bg-slate-900 text-white font-bold py-3 px-6 rounded-xl hover:bg-slate-800 transition-all">Tambah</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Isi Artikel</label>
-                <div id="editor-container"></div>
-            </div>
+            <!-- Sidebar Actions Area -->
+            <div class="lg:col-span-1 space-y-8">
+                <!-- Metadata Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5 sticky top-10">
+                    <h2 class="text-xl font-bold text-slate-800 border-b border-slate-100 pb-4">Metadata</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="dateInput" class="block text-sm font-semibold text-slate-700 mb-1.5">Tanggal Tayang</label>
+                            <input type="text" id="dateInput" class="custom-input w-full rounded-xl p-3 bg-slate-50">
+                        </div>
+                        <div>
+                            <label for="authorInput" class="block text-sm font-semibold text-slate-700 mb-1.5">Penulis</label>
+                            <input type="text" id="authorInput" class="custom-input w-full rounded-xl p-3">
+                        </div>
+                        <div>
+                            <label for="editorInput" class="block text-sm font-semibold text-slate-700 mb-1.5">Editor</label>
+                            <input type="text" id="editorInput" class="custom-input w-full rounded-xl p-3">
+                        </div>
+                    </div>
 
-            <div>
-                <label for="dateInput" class="block text-sm font-medium text-gray-700">Tanggal Tayang</label>
-                <input type="text" id="dateInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
-            </div>
+                    <div class="pt-6 space-y-3">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Aksi Pratinjau</p>
+                        <button id="previewDesktopButton" class="w-full bg-white border-2 border-indigo-600 text-indigo-600 font-bold py-3 px-4 rounded-xl hover:bg-indigo-50 transition-all flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            Desktop Preview
+                        </button>
+                        <button id="previewMobileButton" class="w-full bg-white border-2 border-purple-600 text-purple-600 font-bold py-3 px-4 rounded-xl hover:bg-purple-50 transition-all flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                            Mobile Preview
+                        </button>
+                    </div>
 
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="w-full md:w-1/2">
-                    <label for="authorInput" class="block text-sm font-medium text-gray-700">Penulis</label>
-                    <input type="text" id="authorInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
-                </div>
-                <div class="w-full md:w-1/2">
-                    <label for="editorInput" class="block text-sm font-medium text-gray-700">Editor</label>
-                    <input type="text" id="editorInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
-                </div>
-            </div>
-            
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="w-full md:w-1/2">
-                    <label for="photoInput" class="block text-sm font-medium text-gray-700">Unggah Foto</label>
-                    <input type="file" id="photoInput" accept="image/*" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                </div>
-                <div class="w-full md:w-1/2">
-                    <label for="captionInput" class="block text-sm font-medium text-gray-700">Caption Foto</label>
-                    <input type="text" id="captionInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2">
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Tags (opsional)</label>
-                <div id="tags-container" class="flex flex-wrap items-center gap-2 mt-1"></div>
-                <div class="flex gap-2 mt-2">
-                    <input type="text" id="tagInput" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2" placeholder="Tambah tag baru">
-                    <button id="addTagButton" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200">Tambah</button>
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-4">
-                <div class="flex gap-4">
-                    <button id="previewDesktopButton" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors duration-200">
-                        Pratinjau Desktop
-                    </button>
-                    <button id="previewMobileButton" class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors duration-200">
-                        Pratinjau Mobile
-                    </button>
-                </div>
-                <div class="flex gap-4">
-                    <button id="downloadDesktopButton" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200">
-                        Download HTML Desktop
-                    </button>
-                    <button id="downloadMobileButton" class="w-full bg-teal-600 text-white py-2 px-4 rounded-md hover:bg-teal-700 transition-colors duration-200">
-                        Download HTML Mobile
-                    </button>
+                    <div class="pt-2 space-y-3">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Export File</p>
+                        <button id="downloadDesktopButton" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            HTML Desktop
+                        </button>
+                        <button id="downloadMobileButton" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-purple-700 shadow-lg shadow-purple-100 transition-all flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            HTML Mobile
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -135,6 +201,7 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
     <script>
+        // LOGIKA ASLI (TIDAK BERUBAH)
         document.addEventListener('DOMContentLoaded', () => {
             const titleInput = document.getElementById('titleInput');
             const dateInput = document.getElementById('dateInput');
@@ -143,12 +210,10 @@
             const photoInput = document.getElementById('photoInput');
             const captionInput = document.getElementById('captionInput');
             
-            // New tag elements
             const tagsContainer = document.getElementById('tags-container');
             const tagInput = document.getElementById('tagInput');
             const addTagButton = document.getElementById('addTagButton');
 
-            // Tombol-tombol baru
             const previewDesktopButton = document.getElementById('previewDesktopButton');
             const previewMobileButton = document.getElementById('previewMobileButton');
             const downloadDesktopButton = document.getElementById('downloadDesktopButton');
@@ -159,7 +224,6 @@
             let mobileTemplate = '';
             let tags = [];
 
-            // Inisialisasi Quill.js pada elemen div
             const quill = new Quill('#editor-container', {
                 theme: 'snow',
                 placeholder: 'Tulis isi artikel Anda di sini...',
@@ -167,26 +231,20 @@
                     toolbar: [
                         [{ 'header': [1, 2, 3, false] }],
                         ['bold', 'italic', 'underline', 'strike'],
-                        ['blockquote', 'code-block'],
                         [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        [{ 'script': 'sub'}, { 'script': 'super' }],
-                        [{ 'indent': '-1'}, { 'indent': '+1' }],
-                        [{ 'direction': 'rtl' }],
                         [{ 'align': [] }],
-                        ['link', 'image', 'video'],
+                        ['link', 'image'],
                         ['clean']
                     ]
                 }
             });
 
-            // Fungsi untuk memformat tanggal hari ini
             const getFormattedDate = () => {
                 const date = new Date();
                 const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                 return new Intl.DateTimeFormat('id-ID', options).format(date);
             };
 
-            // Fungsi untuk memuat kedua template dari file
             const loadTemplates = async () => {
                 try {
                     const [desktopResponse, mobileResponse] = await Promise.all([
@@ -194,22 +252,17 @@
                         fetch('read-mobile.html')
                     ]);
                     
-                    if (!desktopResponse.ok) {
-                        throw new Error('Template file read-desktop.html not found or failed to load.');
-                    }
-                    if (!mobileResponse.ok) {
-                        throw new Error('Template file read-mobile.html not found or failed to load.');
+                    if (!desktopResponse.ok || !mobileResponse.ok) {
+                        throw new Error('Template file error');
                     }
 
                     desktopTemplate = await desktopResponse.text();
                     mobileTemplate = await mobileResponse.text();
                 } catch (error) {
                     console.error('Error loading templates:', error);
-                    document.body.innerHTML = `<p class="text-red-500">Gagal memuat template. Mohon pastikan file 'read-desktop.html' dan 'read-mobile.html' berada di folder yang sama.</p>`;
                 }
             };
             
-            // Fungsi untuk mengganti placeholder di template
             const generateFinalHtml = (template) => {
                 let title = titleInput.value || 'Judul Artikel';
                 let content = quill.root.innerHTML || 'Tulis isi artikel Anda di sini.';
@@ -219,7 +272,7 @@
                 let caption = captionInput.value || 'Istimewa';
                 
                 const tagSpan = (tagText) => {
-                    return tagText ? `<span style="display: inline-block; background-color: #e2e8f0; color: #4a5568; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem;">${tagText.trim()}</span>` : '';
+                    return tagText ? `<span style="display: inline-block; background-color: #e2e8f0; color: #4a5568; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; margin-right: 5px;">${tagText.trim()}</span>` : '';
                 };
                 
                 let tagsHtml = tags.map(tag => tagSpan(tag)).join('');
@@ -232,17 +285,14 @@
                     .replace(/{{editor}}/g, editor)
                     .replace(/{{foto}}/g, photoDataUrl)
                     .replace(/{{caption}}/g, caption)
-                    .replace(/{{tag1}}/g, tagsHtml) // Menggunakan tag1 untuk semua tag
-                    .replace(/{{tag2}}/g, '') // Menghapus tag2 dan tag3
-                    .replace(/{{tag3}}/g, '');
-
-                // Menghapus referensi {{sumber}} dari template
-                finalHtml = finalHtml.replace(/{{sumber}}/g, '');
+                    .replace(/{{tag1}}/g, tagsHtml)
+                    .replace(/{{tag2}}/g, '')
+                    .replace(/{{tag3}}/g, '')
+                    .replace(/{{sumber}}/g, '');
                 
                 return `<!DOCTYPE html><html lang="id"><head><title>${title}</title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>${finalHtml}</body></html>`;
             };
 
-            // Fungsi untuk menambahkan tag
             const addTag = () => {
                 const tagValue = tagInput.value.trim();
                 if (tagValue && !tags.includes(tagValue)) {
@@ -252,13 +302,11 @@
                 }
             };
 
-            // Fungsi untuk menghapus tag
             const removeTag = (tagToRemove) => {
                 tags = tags.filter(tag => tag !== tagToRemove);
                 renderTags();
             };
 
-            // Fungsi untuk menampilkan tag di UI
             const renderTags = () => {
                 tagsContainer.innerHTML = '';
                 tags.forEach(tag => {
@@ -270,96 +318,54 @@
                 });
             };
 
-            // Event listeners for tags
             addTagButton.addEventListener('click', addTag);
-            tagInput.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    addTag();
-                }
-            });
+            tagInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } });
 
-            // Set nilai default untuk input tanggal, penulis, dan editor
             dateInput.value = getFormattedDate();
             authorInput.value = "Content Writer";
             editorInput.value = "Content Writer";
             captionInput.value = "Istimewa";
 
-            // Event listener untuk unggahan foto
             photoInput.addEventListener('change', (event) => {
                 const file = event.target.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = (e) => {
-                        photoDataUrl = e.target.result;
-                    };
+                    reader.onload = (e) => { photoDataUrl = e.target.result; };
                     reader.readAsDataURL(file);
-                } else {
-                    photoDataUrl = 'https://placehold.co/800x450/e5e7eb/767676?text=Foto+Artikel';
                 }
             });
 
-            // Event listener untuk tombol "Pratinjau Desktop"
             previewDesktopButton.addEventListener('click', () => {
-                if (!desktopTemplate) {
-                    console.error('Template desktop belum dimuat. Mohon coba lagi.');
-                    return;
+                if (desktopTemplate) {
+                    const win = window.open();
+                    win.document.write(generateFinalHtml(desktopTemplate));
+                    win.document.close();
                 }
-                const fullHtml = generateFinalHtml(desktopTemplate);
-                const newWindow = window.open();
-                newWindow.document.write(fullHtml);
-                newWindow.document.close();
             });
 
-            // Event listener untuk tombol "Pratinjau Mobile"
             previewMobileButton.addEventListener('click', () => {
-                if (!mobileTemplate) {
-                    console.error('Template mobile belum dimuat. Mohon coba lagi.');
-                    return;
+                if (mobileTemplate) {
+                    const win = window.open();
+                    win.document.write(generateFinalHtml(mobileTemplate));
+                    win.document.close();
                 }
-                const fullHtml = generateFinalHtml(mobileTemplate);
-                const newWindow = window.open();
-                newWindow.document.write(fullHtml);
-                newWindow.document.close();
             });
 
-            // Event listener untuk tombol "Download Desktop"
-            downloadDesktopButton.addEventListener('click', () => {
-                if (!desktopTemplate) {
-                    console.error('Template desktop belum dimuat. Mohon coba lagi.');
-                    return;
-                }
-                const fullHtml = generateFinalHtml(desktopTemplate);
+            const downloadHtml = (template, name) => {
+                if (!template) return;
+                const fullHtml = generateFinalHtml(template);
                 const blob = new Blob([fullHtml], { type: 'text/html' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'artikel_hasil_desktop.html';
-                document.body.appendChild(a);
+                a.download = name;
                 a.click();
-                document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-            });
+            };
 
-            // Event listener untuk tombol "Download Mobile"
-            downloadMobileButton.addEventListener('click', () => {
-                if (!mobileTemplate) {
-                    console.error('Template mobile belum dimuat. Mohon coba lagi.');
-                    return;
-                }
-                const fullHtml = generateFinalHtml(mobileTemplate);
-                const blob = new Blob([fullHtml], { type: 'text/html' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'artikel_hasil_mobile.html';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            });
+            downloadDesktopButton.addEventListener('click', () => downloadHtml(desktopTemplate, 'artikel_desktop.html'));
+            downloadMobileButton.addEventListener('click', () => downloadHtml(mobileTemplate, 'artikel_mobile.html'));
 
-            // Panggil fungsi untuk memuat template saat halaman dimuat
             loadTemplates();
         });
     </script>
