@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Tim Produksi Iklan Tribun</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#3b82f6", secondary: "#10b981" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f9fafb;
+      }
+
+      .card-container {
+        transition: all 0.3s ease;
+      }
+      .card-container:hover {
+        transform: translateY(-5px);
+      }
+      .card-icon {
+        transition: all 0.3s ease;
+      }
+      .card-container:hover .card-icon {
+        transform: scale(1.1);
+      }
+
+      .group-title {
+        position: relative;
+      }
+      .group-title::after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background-color: #3b82f6;
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-4">
+          <h1 class="text-xl md:text-2xl font-semibold text-gray-800">
+            Dashboard Tim Produksi Iklan Tribun
+          </h1>
+          <div class="text-right">
+            <span id="current-date" class="block text-sm text-gray-500"></span>
+            <span id="piket-info" class="block text-sm text-gray-700"></span>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="mb-8">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-semibold text-gray-800 group-title">
+            Pengecekan Materi
+          </h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+          <a
+            href="https://campaign-craft.github.io/dashboard/home/preview_banner/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-green-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-image-2-line text-green-500 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">Cek Materi Banner</h3>
+              <p class="text-gray-500 text-sm">
+                Validasi Banner untuk iklan digital
+              </p>
+            </div>
+          </a>
+          <a
+            href="https://campaign-craft.github.io/dashboard/home/preview_script/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-file-text-line text-primary ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">Cek Materi Script</h3>
+              <p class="text-gray-500 text-sm">
+                Validasi Third-Party Script untuk iklan digital
+              </p>
+            </div>
+          </a>
+          <a
+            href="https://campaign-craft.github.io/dashboard/home/preview_html5/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-indigo-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-code-line text-indigo-500 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">Cek Materi HTML</h3>
+              <p class="text-gray-500 text-sm">
+                Validasi Kode HTML untuk iklan digital
+              </p>
+            </div>
+          </a>
+          <a
+            href="https://campaign-craft.github.io/dashboard/home/materi_cetak/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-purple-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-printer-line text-purple-500 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">
+                Cek Materi Koran
+              </h3>
+              <p class="text-gray-500 text-sm">
+                Validasi ukuran materi iklan koran
+              </p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="mt-12 mb-8">
+        <h2 class="text-lg font-semibold text-gray-800 group-title">
+          Builder
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+          <a
+            href="https://campaign-craft.github.io/dashboard/home/ad-builder/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-teal-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-computer-line text-teal-500 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">
+                Banner Ad Builder (Digital)
+              </h3>
+              <p class="text-gray-500 text-sm">Buat dummy banner iklan digital</p>
+            </div>
+          </a>
+          <a
+            href="https://campaign-craft.github.io/dashboard/home/preview_artikel/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-orange-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-file-edit-line text-orange-500 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">
+                Advertorial Builder (Digital)
+              </h3>
+              <p class="text-gray-500 text-sm">
+                Buat struktur konten advertorial
+              </p>
+            </div>
+          </a>
+          <a
+            href="https://campaign-craft.github.io/dashboard/home/koran/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-orange-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-newspaper-line text-orange-500 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">
+                Display Ad Builder (Koran)
+              </h3>
+              <p class="text-gray-500 text-sm">Buat dummy display iklan untuk koran</p>
+            </div>
+          </a>
+          <a
+            href="https://campaign-craft.github.io/dashboard/home/vob/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-red-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-video-line text-red-500 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">VOB Builder</h3>
+              <p class="text-gray-500 text-sm">Tools untuk membuat Video on Banner</p>
+            </div>
+          </a>
+          <a
+            href="https://campaign-craft.github.io/dashboard/home/bizzinsight-banner/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-yellow-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-lightbulb-line text-yellow-600 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">Bizzinsight Banner</h3>
+              <p class="text-gray-500 text-sm">
+                Tools untuk membuat Bizzinsight Banner
+              </p>
+            </div>
+          </a>
+          <a
+            href="https://campaign-craft.github.io/dashboard/home/kartu_nama/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-gray-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-id-card-line text-gray-600 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">Kartu Nama Tribun</h3>
+              <p class="text-gray-500 text-sm">
+                Tools untuk membuat Kartu Nama
+              </p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="mt-12 mb-8">
+        <h2 class="text-lg font-semibold text-gray-800 group-title">
+          Tools Lainnya
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+          <a
+            href="https://wordhtml.com/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-purple-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-file-word-line text-purple-500 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">Word to HTML</h3>
+              <p class="text-gray-500 text-sm">Konversi dokumen Word ke HTML</p>
+            </div>
+          </a>
+          <a
+            href="https://tinypng.com/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-green-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-image-line text-green-500 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">TinyPNG</h3>
+              <p class="text-gray-500 text-sm">Kompres ukuran gambar PNG/JPG</p>
+            </div>
+          </a>
+          <a
+            href="https://www.remove.bg/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-scissors-cut-line text-blue-500 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">Remove BG</h3>
+              <p class="text-gray-500 text-sm">Hapus latar belakang gambar</p>
+            </div>
+          </a>
+          <a
+            href="https://www.imageenlarger.com/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-red-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-zoom-in-line text-red-500 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">Image Enlarger</h3>
+              <p class="text-gray-500 text-sm">Meningkatkan resolusi gambar</p>
+            </div>
+          </a>
+          <a
+            href="https://campaign-craft.github.io/dashboard/home/color-picker/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-pink-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-palette-line text-pink-500 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">Image Color Picker</h3>
+              <p class="text-gray-500 text-sm">
+                Pilih warna dari sebuah gambar
+              </p>
+            </div>
+          </a>
+          <a
+            href="https://campaign-craft.github.io/dashboard/home/kalkulator_adv/"
+            target="_blank"
+            class="card-container bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md block"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div
+                class="w-16 h-16 flex items-center justify-center bg-yellow-100 rounded-full mb-4 card-icon"
+              >
+                <i class="ri-calculator-line text-yellow-600 ri-2x"></i>
+              </div>
+              <h3 class="text-gray-800 font-medium mb-2">
+                Kalkulator Adv Cetak
+              </h3>
+              <p class="text-gray-500 text-sm">
+                Hitung estimasi karakter advertorial iklan koran
+              </p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="mt-12">
+        <h2 class="text-lg font-semibold text-gray-800 group-title">
+          Quick Links
+        </h2>
+        <div
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 mt-6"
+        >
+          <a
+            href="https://docs.google.com/spreadsheets/d/1vFY3tJUxxTp2930d4Rj4jYa-ziaupgms_BDnyBiZzCI/edit?usp=sharing"
+            target="_blank"
+            class="flex items-center p-3 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all"
+          >
+            <div
+              class="w-8 h-8 flex items-center justify-center bg-teal-50 rounded-full mr-3"
+            >
+              <i class="ri-book-2-line text-teal-500"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Logbook</span>
+          </a>
+          <a
+            href="https://www.tribunfamilycard.com/epaper"
+            target="_blank"
+            class="flex items-center p-3 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all"
+          >
+            <div
+              class="w-8 h-8 flex items-center justify-center bg-indigo-50 rounded-full mr-3"
+            >
+              <i class="ri-newspaper-line text-indigo-500"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">TFC Koran</span>
+          </a>
+          <a
+            href="https://sumbing.tribunjakarta.com/"
+            target="_blank"
+            class="flex items-center p-3 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all"
+          >
+            <div
+              class="w-8 h-8 flex items-center justify-center bg-indigo-50 rounded-full mr-3"
+            >
+              <i class="ri-newspaper-line text-red-500"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Sumbing</span>
+          </a>
+          <a
+            href="https://drive.google.com/drive/u/6/folders/1gOF5dPO_dyITJMh14SYGuF3acr8vyR9Q"
+            target="_blank"
+            class="flex items-center p-3 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all"
+          >
+            <div
+              class="w-8 h-8 flex items-center justify-center bg-green-50 rounded-full mr-3"
+            >
+              <i class="ri-file-list-3-line text-green-500"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Bukti Tayang</span>
+          </a>
+          <a
+            href="https://docs.google.com/spreadsheets/d/1KGXUIdJgZhYaBbEN8BMGIGDKOm05YB8aWUpXgYM32Uw/edit#gid=0"
+            target="_blank"
+            class="flex items-center p-3 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all"
+          >
+            <div
+              class="w-8 h-8 flex items-center justify-center bg-blue-50 rounded-full mr-3"
+            >
+              <i class="ri-bank-line text-primary"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Bank Logo</span>
+          </a>
+          <a
+            href="https://iklan.tribunnews.com/"
+            target="_blank"
+            class="flex items-center p-3 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all"
+          >
+            <div
+              class="w-8 h-8 flex items-center justify-center bg-purple-50 rounded-full mr-3"
+            >
+              <i class="ri-advertisement-line text-purple-500"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700"
+              >Inventori Iklan</span
+            >
+          </a>
+          <a
+            href="https://hr.kompasgramedia.com/"
+            target="_blank"
+            class="flex items-center p-3 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all"
+          >
+            <div
+              class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full mr-3"
+            >
+              <i class="ri-user-line text-gray-600"></i>
+            </div>
+            <span class="text-sm font-medium text-gray-700">HR Portal</span>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-white shadow-sm mt-8 py-4">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
+        <p id="copyright-info"></p>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const dateElement = document.getElementById("current-date");
+        const piketInfoElement = document.getElementById("piket-info");
+
+        if (dateElement && piketInfoElement) {
+          const names = ["Septian", "Andy", "Fenty"];
+
+          // Tanggal mulai piket Septian (Senin, 23 Juni 2025)
+          const startDatePiketSeptian = new Date("2025-06-23T00:00:00");
+
+          // Fungsi untuk mendapatkan tanggal Senin di awal minggu
+          function getStartOfWeek(date) {
+            const d = new Date(date);
+            const day = d.getDay(); 
+            const adjustedDay = day === 0 ? 6 : day - 1; 
+            const diff = d.getDate() - adjustedDay;
+            return new Date(d.getFullYear(), d.getMonth(), diff);
+          }
+
+          function updatePiketInfo() {
+            const today = new Date();
+            const formattedDate = today.toLocaleDateString("id-ID", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+
+            const startOfCurrentWeek = getStartOfWeek(today);
+            const oneWeekInMs = 1000 * 60 * 60 * 24 * 7;
+
+            // Hitung berapa minggu telah berlalu sejak startDatePiketSeptian
+            const diffTime =
+              startOfCurrentWeek.getTime() -
+              getStartOfWeek(startDatePiketSeptian).getTime();
+            const diffWeeks = Math.floor(diffTime / oneWeekInMs);
+
+            const currentPiketIndex =
+              (names.indexOf("Septian") + diffWeeks) % names.length;
+            const currentPiket = names[currentPiketIndex];
+
+            const nextPiketIndex = (currentPiketIndex + 1) % names.length;
+            const nextPiket = names[nextPiketIndex];
+
+            dateElement.textContent = formattedDate;
+            piketInfoElement.innerHTML = `<strong class="text-blue-600">(Piket Minggu ini: ${currentPiket})</strong> | (Selanjutnya: ${nextPiket})`;
+          }
+
+          updatePiketInfo();
+        }
+
+        const copyrightElement = document.getElementById("copyright-info");
+        if (copyrightElement) {
+          const currentYear = new Date().getFullYear();
+          copyrightElement.textContent = `Copyright © ${currentYear} Tim Produksi Iklan Tribun. All rights reserved.`;
+        }
+      });
+    </script>
+  </body>
+</html>
