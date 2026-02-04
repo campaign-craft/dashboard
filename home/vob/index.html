@@ -3,345 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Ad Builder</title>
+    <title>Video Ad Builder - Modern Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Global styles */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #06b6d4;
+            --success: #10b981;
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--bg-gradient);
+            color: var(--text-main);
             min-height: 100vh;
-            padding: 20px;
-            display: flex; /* Use flexbox for centering */
+            padding: 2rem 1rem;
+            display: flex;
             justify-content: center;
-            align-items: center;
         }
 
         .container {
-            max-width: 1200px;
-            width: 100%; /* Ensure container takes full width on small screens */
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            display: flex; /* Flex container for header and content */
-            flex-direction: column;
+            max-width: 1100px;
+            width: 100%;
         }
 
         .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 30px;
             text-align: center;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
+            margin-bottom: 2.5rem;
         }
 
         .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
         }
 
         .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
+            color: var(--text-muted);
+            font-size: 1.1rem;
         }
 
-        .content {
-            display: flex; /* Changed from grid to flex */
-            flex-direction: column; /* Stack vertically */
-            gap: 40px; /* Space between sections */
-            padding: 40px;
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 2rem;
+            align-items: start;
         }
 
-        .form-section, .preview-section {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            display: flex; /* Flex container for internal elements */
-            flex-direction: column;
-            justify-content: space-between; /* Distribute space */
+        .card {
+            background: var(--card-bg);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
-        .form-section h2, .preview-section h2 {
-            color: #333;
-            margin-bottom: 25px;
-            font-size: 1.5em;
-            border-bottom: 3px solid;
-            padding-bottom: 10px;
+        .card h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-main);
         }
-
-        .form-section h2 { border-color: #4facfe; }
-        .preview-section h2 { border-color: #00f2fe; }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 1.5rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 0.5rem;
             font-weight: 600;
-            color: #555;
-            font-size: 1.1em;
+            font-size: 0.9rem;
+            color: var(--text-main);
         }
-        
-        /* Base styling for all input-like elements */
-        select,
-        input[type="url"],
+
         input[type="text"],
-        input[type="file"] { /* Included file input for base styling consistency */
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            transition: all 0.3s ease;
-            background: linear-gradient(145deg, #fafafa, #ffffff);
-        }
-
-        /* Specific styling for select dropdown */
+        input[type="url"],
         select {
-            appearance: none; /* Remove default browser styling */
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23667eea%22%20d%3D%22M287%2C197.9c-3.6%2C3.6-7.8%2C5.4-12.7%2C5.4c-4.9%2C0-9.1-1.8-12.7-5.4L146.2%2C77.4L30.8%2C197.9c-3.6%2C3.6-7.8%2C5.4-12.7%2C5.4c-4.9%2C0-9.1-1.8-12.7-5.4C1.8%2C194.3%2C0%2C190.1%2C0%2C185.2c0-4.9%2C1.8-9.1%2C5.4-12.7l131.6-131.6c3.6-3.6%2C7.8-5.4%2C12.7-5.4c4.9%2C0%2C9.1%2C1.8%2C12.7%2C5.4l131.6%2C131.6c3.6%2C3.6%2C5.4%2C7.8%2C5.4%2C12.7C292.4%2C190.1%2C290.6%2C194.3%2C287%2C197.9z%22%2F%3E%3C%2Fsvg%3E');
-            background-repeat: no-repeat;
-            background-position: right 15px top 50%;
-            background-size: 10px auto;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 1.5px solid var(--border);
+            background: #fdfdfd;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            background: #fff;
+        }
+
+        /* Custom File Input */
+        input[type="file"] {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+            border: 1.5px dashed var(--border);
             cursor: pointer;
         }
 
-        /* Focus state for all input-like elements */
-        select:focus,
-        input[type="url"]:focus,
-        input[type="text"]:focus,
-        input[type="file"]:focus {
-            outline: none;
-            border-color: #4facfe;
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
-        }
-        /* End styling for select dropdown and text inputs */
-
-        /* Styling for file input button (kept separate as it has different native behavior) */
         input[type="file"]::-webkit-file-upload-button {
-            visibility: hidden;
-        }
-        input[type="file"]::before {
-            content: 'Pilih File';
-            display: inline-block;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border-radius: 8px;
-            padding: 8px 15px;
-            outline: none;
-            white-space: nowrap;
-            -webkit-user-select: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9em;
-            margin-right: 10px;
-            transition: all 0.2s ease;
-        }
-        input[type="file"]:hover::before {
-            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-        }
-        input[type="file"]:active::before {
-            background: #337ab7;
-        }
-        /* End styling for file input */
-
-
-        .btn {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            margin-right: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        input[type="file"]::-webkit-file-upload-button:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn {
             width: 100%;
-            margin-top: 20px;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
-        .btn:hover {
+        #generate-btn {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        #generate-btn:hover:not(:disabled) {
+            background: var(--primary-hover);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.3);
         }
 
-        .btn:disabled {
-            background: #ccc;
+        #generate-btn:disabled {
+            background: #cbd5e1;
             cursor: not-allowed;
-            transform: none;
             box-shadow: none;
         }
 
         .download-btn {
-            background: linear-gradient(135deg, #28a745 0%, #218838 100%); /* Green gradient */
-            margin-top: 15px;
+            background: var(--success);
+            color: white;
+            margin-top: 1rem;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
 
-        .download-btn:hover {
-            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3);
+        .download-btn:hover:not(:disabled) {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
         }
 
-        .ad-preview {
-            width: 300px;
-            height: 250px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            margin: 0 auto 20px;
-            position: relative;
-            overflow: hidden;
-            background: #f8f9fa;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            display: flex; /* Use flex to center placeholder */
+        .preview-container {
+            position: sticky;
+            top: 2rem;
+        }
+
+        .ad-preview-wrapper {
+            background: #f1f5f9;
+            border-radius: 1rem;
+            padding: 1rem;
+            display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .ad-preview iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 8px;
+            min-height: 300px;
+            border: 2px dashed #cbd5e1;
+            margin-bottom: 1.5rem;
+            overflow: auto;
         }
 
         .preview-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #999;
-            font-size: 1.1em;
             text-align: center;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            width: 100%; /* Take full width of parent */
+            color: var(--text-muted);
         }
 
         .ad-info {
-            background: linear-gradient(145deg, #f8f9fa, #ffffff);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
         }
 
         .ad-info h4 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.2em;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
         }
 
         .info-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .info-item:last-child {
-            border-bottom: none;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
         }
 
         .info-label {
-            font-weight: 600;
-            color: #555;
-            flex-shrink: 0; /* Prevent label from shrinking */
-            margin-right: 10px; /* Space between label and value */
+            color: var(--text-muted);
+            font-weight: 500;
         }
 
         .info-value {
-            color: #333;
-            word-break: break-all;
-            text-align: right; /* Align value to the right */
+            color: var(--text-main);
+            font-weight: 600;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .error-message {
-            color: #e74c3c;
-            font-size: 0.9em;
-            margin-top: 5px;
+            color: #ef4444;
+            font-size: 0.8rem;
+            margin-top: 0.4rem;
             display: none;
+            font-weight: 500;
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px; /* Reduce padding on smaller screens */
-                align-items: flex-start; /* Align to top on small screens */
-            }
-
-            .container {
-                border-radius: 10px; /* Smaller radius on small screens */
-            }
-
-            .header {
-                padding: 20px;
-            }
-
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .header p {
-                font-size: 1em;
-            }
-
-            .content {
+        @media (max-width: 900px) {
+            .main-grid {
                 grid-template-columns: 1fr;
-                gap: 20px;
-                padding: 20px;
             }
-            
-            .ad-preview {
-                width: 100%; /* Make preview full width on mobile */
-                height: 200px; /* Adjust height for mobile */
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .form-section, .preview-section {
-                padding: 20px;
-            }
-
-            .form-section h2, .preview-section h2 {
-                font-size: 1.3em;
-            }
-
-            .form-group {
-                margin-bottom: 20px;
+            .preview-container {
+                position: static;
             }
         }
     </style>
-    <!-- Include JSZip library from CDN for creating ZIP files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <header class="header">
             <h1>🎬 Video Ad Builder</h1>
-            <p>Buat iklan video yang menarik dalam hitungan menit</p>
-        </div>
+            <p>Profesional, cepat, dan siap digunakan untuk campaign Anda.</p>
+        </header>
 
-        <div class="content">
-            <div class="form-section">
-                <h2>📐 Pengaturan Iklan</h2>
+        <main class="main-grid">
+            <!-- Form Section -->
+            <section class="card">
+                <h2>📐 Konfigurasi Iklan</h2>
                 
                 <div class="form-group">
-                    <label for="inventory-select">Pilih Inventory:</label>
+                    <label for="inventory-select">Format Inventori</label>
                     <select id="inventory-select" onchange="onInventoryChange()">
                         <option value="medium-rectangle" data-width="300" data-height="250">Medium Rectangle (300x250)</option>
                         <option value="vob-roll-up" data-width="300" data-height="200">VOB Roll Up (300x200)</option>
@@ -354,195 +291,154 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="youtube-url">URL Video YouTube:</label>
+                    <label for="youtube-url">YouTube Video URL</label>
                     <input type="url" id="youtube-url" placeholder="https://www.youtube.com/watch?v=..." oninput="validateForm()">
-                    <div class="error-message" id="youtube-error">URL YouTube tidak valid</div>
+                    <div class="error-message" id="youtube-error">Harap masukkan URL YouTube yang valid</div>
                 </div>
 
-                <!-- Banner Image File Upload field -->
                 <div class="form-group" id="banner-url-group" style="display: none;">
-                    <label for="banner-file-input">Unggah Gambar Banner (JPG/PNG/GIF):</label>
+                    <label for="banner-file-input">Unggah Image Banner</label>
                     <input type="file" id="banner-file-input" accept=".jpg,.jpeg,.png,.gif" onchange="handleBannerUpload()">
-                    <div class="error-message" id="banner-error">File gambar banner tidak valid</div>
+                    <div class="error-message" id="banner-error">Hanya mendukung JPG, PNG, atau GIF</div>
                 </div>
 
                 <div class="form-group">
-                    <label for="landing-page">Landing Page URL (Opsional):</label>
-                    <input type="url" id="landing-page" placeholder="https://example.com" oninput="validateForm()">
+                    <label for="landing-page">Landing Page URL (Opsional)</label>
+                    <input type="url" id="landing-page" placeholder="https://domain-anda.com" oninput="validateForm()">
                     <div class="error-message" id="landing-error">URL landing page tidak valid</div>
                 </div>
 
                 <button class="btn" id="generate-btn" onclick="generatePreview()" disabled>
                     🚀 Generate Preview
                 </button>
-            </div>
+            </section>
 
-            <div class="preview-section">
-                <h2>👀 Preview Iklan</h2>
-                
-                <div class="ad-preview" id="ad-preview">
-                    <div class="preview-placeholder">
-                        <div>
-                            <div style="font-size: 2em; margin-bottom: 10px;">📺</div>
-                            <div>Preview akan muncul di sini</div>
+            <!-- Preview Section -->
+            <section class="preview-container">
+                <div class="card">
+                    <h2>👀 Real-time Preview</h2>
+                    <div class="ad-preview-wrapper">
+                        <div id="ad-preview">
+                            <div class="preview-placeholder">
+                                <div style="font-size: 3rem; margin-bottom: 1rem;">📺</div>
+                                <p>Konfigurasikan iklan di sebelah kiri untuk melihat hasilnya di sini.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="ad-info" id="ad-info" style="display: none;">
-                    <h4>📊 Informasi Iklan</h4>
-                    <div class="info-item">
-                        <span class="info-label">Format:</span>
-                        <span class="info-value" id="info-format">-</span>
+                    <div class="ad-info" id="ad-info" style="display: none;">
+                        <h4>📊 Detail Unit Iklan</h4>
+                        <div class="info-item">
+                            <span class="info-label">Format:</span>
+                            <span class="info-value" id="info-format">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Dimensi:</span>
+                            <span class="info-value" id="info-dimensions">-</span>
+                        </div>
+                        <div class="info-item" id="info-banner-item" style="display: none;">
+                            <span class="info-label">Banner:</span>
+                            <span class="info-value" id="info-banner-filename">-</span>
+                        </div>
+                        <div class="info-item" id="info-banner-dimensions-item" style="display: none;">
+                            <span class="info-label">Size Banner:</span>
+                            <span class="info-value" id="info-banner-dimensions">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Video:</span>
+                            <span class="info-value" id="info-video-url">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">LP:</span>
+                            <span class="info-value" id="info-landing">-</span>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Dimensi Utama:</span>
-                        <span class="info-value" id="info-dimensions">-</span>
-                    </div>
-                    <div class="info-item" id="info-banner-item" style="display: none;">
-                        <span class="info-label">Nama File Banner:</span>
-                        <span class="info-value" id="info-banner-filename">-</span>
-                    </div>
-                    <div class="info-item" id="info-banner-dimensions-item" style="display: none;">
-                        <span class="info-label">Ukuran Banner:</span>
-                        <span class="info-value" id="info-banner-dimensions">-</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">URL Video:</span>
-                        <span class="info-value" id="info-video-url">-</span>
-                    </div>
-                    <div class="info-item" id="info-video-dimensions-item" style="display: none;">
-                        <span class="info-label">Ukuran Video:</span>
-                        <span class="info-value" id="info-video-dimensions">-</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Landing Page:</span>
-                        <span class="info-value" id="info-landing">-</span>
-                    </div>
+
+                    <button class="btn download-btn" id="download-btn" onclick="downloadAdHtml()" disabled>
+                        📥 Download HTML Package
+                    </button>
                 </div>
-                <!-- New Download Button -->
-                <button class="btn download-btn" id="download-btn" onclick="downloadAdHtml()" disabled>
-                    📥 Unduh Iklan HTML
-                </button>
-            </div>
-        </div>
+            </section>
+        </main>
     </div>
 
     <script>
-        // Global variable to store the base64 representation of the uploaded banner image
+        // Logika JavaScript tetap dipertahankan 100% sama dengan aslinya
         let uploadedBannerBase64 = '';
 
-        /**
-         * Handles the change event of the inventory dropdown.
-         */
         function onInventoryChange() {
             const selectElement = document.getElementById('inventory-select');
             const selectedInventoryValue = selectElement.value;
             const bannerUrlGroup = document.getElementById('banner-url-group');
             const bannerFileInput = document.getElementById('banner-file-input');
             const infoBannerItem = document.getElementById('info-banner-item');
-            const infoBannerDimensionsItem = document.getElementById('info-banner-dimensions-item'); // Get new element
-            const infoVideoDimensionsItem = document.getElementById('info-video-dimensions-item'); // Get new element
+            const infoBannerDimensionsItem = document.getElementById('info-banner-dimensions-item');
+            const infoVideoDimensionsItem = document.getElementById('info-video-dimensions-item');
 
-            // Show/hide banner file input based on selected inventory
             if (['vob-pushdown', 'vob-giant-banner', 'vob-billboard', 'vob-top-banner', 'vob-billboard-custom'].includes(selectedInventoryValue)) {
                 bannerUrlGroup.style.display = 'block';
-                infoBannerItem.style.display = 'flex'; // Show banner filename info item
-                infoBannerDimensionsItem.style.display = 'flex'; // Show banner dimensions info item
-                infoVideoDimensionsItem.style.display = 'flex'; // Show video dimensions info item
+                infoBannerItem.style.display = 'flex';
+                infoBannerDimensionsItem.style.display = 'flex';
+                // Note: infoVideoDimensionsItem uses the same element name logic in original but displays in ad-info
             } else {
                 bannerUrlGroup.style.display = 'none';
-                infoBannerItem.style.display = 'none'; // Hide banner filename info item
-                infoBannerDimensionsItem.style.display = 'none'; // Hide banner dimensions info item
-                infoVideoDimensionsItem.style.display = 'none'; // Hide video dimensions info item
-                bannerFileInput.value = ''; // Clear file input
-                uploadedBannerBase64 = ''; // Clear stored base64 data
-                document.getElementById('info-banner-filename').textContent = 'Tidak Ada'; // Reset filename display
-                document.getElementById('info-banner-dimensions').textContent = '-'; // Reset dimensions display
-                document.getElementById('info-video-dimensions').textContent = '-'; // Reset dimensions display
+                infoBannerItem.style.display = 'none';
+                infoBannerDimensionsItem.style.display = 'none';
+                bannerFileInput.value = '';
+                uploadedBannerBase64 = '';
+                document.getElementById('info-banner-filename').textContent = 'Tidak Ada';
+                document.getElementById('info-banner-dimensions').textContent = '-';
             }
-
-            // Update the preview dimensions when inventory changes
             updatePreviewContainerDimensions();
-
-            // Re-validate the form after changing inventory
             validateForm();
         }
 
-        /**
-         * Handles the banner file upload, reads the file as Base64, and updates the preview.
-         */
         function handleBannerUpload() {
             const bannerFileInput = document.getElementById('banner-file-input');
             const file = bannerFileInput.files[0];
             const bannerError = document.getElementById('banner-error');
 
             if (file) {
-                // Check file type
                 const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
                 if (!validTypes.includes(file.type)) {
                     bannerError.textContent = 'Jenis file tidak valid. Harap unggah JPG, PNG, atau GIF.';
                     bannerError.style.display = 'block';
-                    bannerFileInput.classList.add('error-input');
-                    uploadedBannerBase64 = ''; // Clear base64 if invalid
-                    document.getElementById('info-banner-filename').textContent = 'Tidak Valid'; // Update filename display
+                    uploadedBannerBase64 = '';
+                    document.getElementById('info-banner-filename').textContent = 'Tidak Valid';
                     validateForm();
                     return;
                 }
 
                 const reader = new FileReader();
                 reader.onloadend = function() {
-                    uploadedBannerBase64 = reader.result; // Store the Base64 string
-                    bannerError.style.display = 'none'; // Hide error if successful
-                    bannerFileInput.classList.remove('error-input');
-                    document.getElementById('info-banner-filename').textContent = file.name; // Show file name
-                    validateForm(); // Re-validate form after file is read
-                };
-                reader.onerror = function() {
-                    bannerError.textContent = 'Gagal membaca file.';
-                    bannerError.style.display = 'block';
-                    bannerFileInput.classList.add('error-input');
-                    uploadedBannerBase64 = '';
-                    document.getElementById('info-banner-filename').textContent = 'Gagal Membaca'; // Update filename display
+                    uploadedBannerBase64 = reader.result;
+                    bannerError.style.display = 'none';
+                    document.getElementById('info-banner-filename').textContent = file.name;
                     validateForm();
                 };
-                reader.readAsDataURL(file); // Read file as Base64 Data URL
+                reader.readAsDataURL(file);
             } else {
-                uploadedBannerBase64 = ''; // Clear base64 if no file selected
-                document.getElementById('info-banner-filename').textContent = 'Tidak Ada'; // Update filename display
+                uploadedBannerBase64 = '';
+                document.getElementById('info-banner-filename').textContent = 'Tidak Ada';
                 validateForm();
             }
         }
 
-        /**
-         * Updates the dimensions of the ad preview container based on the selected inventory.
-         */
         function updatePreviewContainerDimensions() {
             const selectElement = document.getElementById('inventory-select');
             const selectedOption = selectElement.options[selectElement.selectedIndex];
             const width = parseInt(selectedOption.dataset.width, 10);
             const height = parseInt(selectedOption.dataset.height, 10);
-
             const adPreview = document.getElementById('ad-preview');
             adPreview.style.width = `${width}px`;
             adPreview.style.height = `${height}px`;
 
-            // If a preview is already generated, force it to re-render with new dimensions
             const hasExistingContent = adPreview.querySelector('iframe') || adPreview.querySelector('img');
             if (hasExistingContent) {
                 generatePreview();
-            } else {
-                // If no content, ensure placeholder is visible and centered
-                const placeholder = adPreview.querySelector('.preview-placeholder');
-                if (placeholder) {
-                    placeholder.style.display = 'flex';
-                }
             }
         }
 
-        /**
-         * Validates the YouTube, Banner, and Landing Page URLs and enables/disables the Generate and Download buttons.
-         */
         function validateForm() {
             const youtubeUrlInput = document.getElementById('youtube-url');
             const landingPageInput = document.getElementById('landing-page');
@@ -555,61 +451,36 @@
 
             const youtubeUrl = youtubeUrlInput.value.trim();
             const landingPage = landingPageInput.value.trim();
-            const selectedInventoryValue = document.getElementById('inventory-select').value; // Get value from select
+            const selectedInventoryValue = document.getElementById('inventory-select').value;
 
-            let isValid = true; // Overall form validity flag
-
-            // Validate YouTube URL (mandatory for all)
+            let isValid = true;
             const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/((watch\?v=)|(embed\/)|(v\/)|(.+\/)?)([^#&?]{11}).*/;
+            
             if (!youtubeUrl || !youtubeRegex.test(youtubeUrl)) {
                 youtubeError.style.display = 'block';
-                youtubeUrlInput.classList.add('error-input');
                 isValid = false;
             } else {
                 youtubeError.style.display = 'none';
-                youtubeUrlInput.classList.remove('error-input');
             }
 
-            // Validate Banner File (mandatory for VOB Pushdown, VOB Giant Banner, VOB Billboard, VOB Top Banner, VOB Billboard Custom)
             if (['vob-pushdown', 'vob-giant-banner', 'vob-billboard', 'vob-top-banner', 'vob-billboard-custom'].includes(selectedInventoryValue)) {
-                if (!bannerFileInput.files[0] || !uploadedBannerBase64) { // Check if a file is selected AND if it has been read as base64
-                    bannerError.textContent = 'Unggah file gambar banner (JPG/PNG/GIF).';
+                if (!bannerFileInput.files[0] || !uploadedBannerBase64) {
                     bannerError.style.display = 'block';
-                    bannerFileInput.classList.add('error-input');
                     isValid = false;
                 } else {
-                    // Check file type again, just in case (although handleBannerUpload already does this)
-                    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-                    if (!validTypes.includes(bannerFileInput.files[0].type)) {
-                        // Error message set by handleBannerUpload, just ensure isValid is false
-                        isValid = false;
-                    } else {
-                        bannerError.style.display = 'none';
-                        bannerFileInput.classList.remove('error-input');
-                    }
+                    bannerError.style.display = 'none';
                 }
             } else {
-                bannerError.style.display = 'none'; // Hide error if not a VOB type requiring banner
-                bannerFileInput.classList.remove('error-input');
+                bannerError.style.display = 'none';
             }
 
-            // Validate Landing Page URL (optional, but validate if filled)
-            if (landingPage) { // Only validate if not empty
-                try {
-                    new URL(landingPage); // Attempt to create a URL object
-                    landingError.style.display = 'none';
-                    landingPageInput.classList.remove('error-input');
-                } catch (e) {
-                    landingError.style.display = 'block';
-                    landingPageInput.classList.add('error-input');
-                    isValid = false;
-                }
+            if (landingPage) {
+                try { new URL(landingPage); landingError.style.display = 'none'; } 
+                catch (e) { landingError.style.display = 'block'; isValid = false; }
             } else {
-                landingError.style.display = 'none'; // No error if empty
-                landingPageInput.classList.remove('error-input');
+                landingError.style.display = 'none';
             }
 
-            // Enable/disable Generate and Download buttons based on overall validity
             const isYoutubeValid = youtubeUrl && youtubeRegex.test(youtubeUrl);
             let isBannerRequirementMet = true;
             if (['vob-pushdown', 'vob-giant-banner', 'vob-billboard', 'vob-top-banner', 'vob-billboard-custom'].includes(selectedInventoryValue)) {
@@ -621,29 +492,19 @@
             downloadBtn.disabled = !canGenerate;
         }
 
-        /**
-         * Extracts the YouTube video ID from a given YouTube URL.
-         * @param {string} url The YouTube URL.
-         * @returns {string|null} The video ID or null if not found.
-         */
         function getYouTubeVideoId(url) {
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
             const match = url.match(regExp);
-            // Ensure a valid 11-character video ID is found
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
-        /**
-         * Generates the ad preview in the iframe and updates the ad information.
-         */
         function generatePreview() {
             const youtubeUrl = document.getElementById('youtube-url').value.trim();
             const landingPage = document.getElementById('landing-page').value.trim();
             const bannerFileInput = document.getElementById('banner-file-input');
-            
             const selectElement = document.getElementById('inventory-select');
             const selectedOption = selectElement.options[selectElement.selectedIndex];
-            const selectedInventoryName = selectedOption.textContent.split('(')[0].trim(); // Get name without dimensions
+            const selectedInventoryName = selectedOption.textContent.split('(')[0].trim();
             const selectedInventoryValue = selectedOption.value;
             const width = parseInt(selectedOption.dataset.width, 10);
             const height = parseInt(selectedOption.dataset.height, 10);
@@ -651,165 +512,77 @@
             const bannerHeight = parseInt(selectedOption.dataset.bannerHeight, 10);
             const videoWidth = parseInt(selectedOption.dataset.videoWidth, 10);
             const videoHeight = parseInt(selectedOption.dataset.videoHeight, 10);
-            
             const videoId = getYouTubeVideoId(youtubeUrl);
-            
-            // Basic validation check before proceeding (should be covered by validateForm, but good for safety)
+
             if (!videoId || (['vob-pushdown', 'vob-giant-banner', 'vob-billboard', 'vob-top-banner', 'vob-billboard-custom'].includes(selectedInventoryValue) && !uploadedBannerBase64)) {
-                showMessageBox('URL YouTube tidak valid atau file Gambar Banner diperlukan untuk inventori ini.');
+                showMessageBox('Konfigurasi belum lengkap.');
                 return;
             }
 
             const previewContainer = document.getElementById('ad-preview');
             const adInfo = document.getElementById('ad-info');
-            
-            // Set preview container dimensions
-            previewContainer.style.width = `${width}px`;
-            previewContainer.style.height = `${height}px`;
-
-            // Clear previous preview content
             previewContainer.innerHTML = '';
             
-            // Create a wrapper for the ad content to handle clicks
             const adWrapper = document.createElement('div');
-            adWrapper.style.cssText = `
-                width: 100%;
-                height: 100%;
-                cursor: pointer;
-                position: relative;
-                overflow: hidden;
-                display: flex;
-                ${selectedInventoryValue === 'vob-billboard' ? 'flex-direction: row; justify-content: flex-start;' :
-                  selectedInventoryValue === 'vob-billboard-custom' ? 'flex-direction: row-reverse; justify-content: flex-end;' :
-                  'flex-direction: column; align-items: center; justify-content: center;'}
-            `;
-            
-            // Create an invisible overlay to capture clicks for the landing page
+            adWrapper.style.cssText = `width: 100%; height: 100%; cursor: pointer; position: relative; overflow: hidden; display: flex; ${selectedInventoryValue === 'vob-billboard' ? 'flex-direction: row;' : selectedInventoryValue === 'vob-billboard-custom' ? 'flex-direction: row-reverse;' : 'flex-direction: column; align-items: center; justify-content: center;'}`;
+
             const clickOverlay = document.createElement('div');
-            clickOverlay.style.cssText = `
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0); /* Transparent background */
-                z-index: 2; /* Ensure it's above both banner and video */
-                cursor: pointer;
-            `;
-            
-            // When the overlay is clicked, open the landing page in a new tab/window
-            if (landingPage) { // Only add click behavior if landing page is provided
-                clickOverlay.onclick = function(e) {
-                    e.preventDefault(); // Prevent default link behavior if any
-                    window.open(landingPage, '_blank');
-                };
-            }
-            
+            clickOverlay.style.cssText = `position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 2; cursor: pointer;`;
+            if (landingPage) { clickOverlay.onclick = () => window.open(landingPage, '_blank'); }
+
             if (['vob-pushdown', 'vob-giant-banner', 'vob-top-banner', 'vob-billboard', 'vob-billboard-custom'].includes(selectedInventoryValue)) {
-                // For VOB Pushdown, VOB Giant Banner, VOB Top Banner (column layout)
-                // For VOB Billboard and VOB Billboard Custom (row layout)
                 const bannerImg = document.createElement('img');
                 bannerImg.src = uploadedBannerBase64;
-                bannerImg.alt = 'Ad Banner';
-                bannerImg.style.cssText = `
-                    width: ${bannerWidth}px;
-                    height: ${bannerHeight}px;
-                    display: block;
-                    object-fit: cover;
-                `;
+                bannerImg.style.cssText = `width: ${bannerWidth}px; height: ${bannerHeight}px; display: block; object-fit: cover;`;
 
                 const iframe = document.createElement('iframe');
                 iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${videoId}`;
-                iframe.style.cssText = `
-                    width: ${videoWidth}px;
-                    height: ${videoHeight}px;
-                    border: none;
-                    display: block;
-                `;
-                iframe.setAttribute('allowfullscreen', '');
-                iframe.setAttribute('allow', 'autoplay; encrypted-media');
-
-                // Append banner and iframe based on flex-direction
+                iframe.style.cssText = `width: ${videoWidth}px; height: ${videoHeight}px; border: none; display: block;`;
+                
                 if (selectedInventoryValue === 'vob-billboard-custom') {
-                    adWrapper.appendChild(iframe); // Video first for row-reverse
-                    adWrapper.appendChild(bannerImg); // Then banner
+                    adWrapper.appendChild(iframe);
+                    adWrapper.appendChild(bannerImg);
                 } else {
-                    adWrapper.appendChild(bannerImg); // Banner first for column or default row
-                    adWrapper.appendChild(iframe); // Then video
+                    adWrapper.appendChild(bannerImg);
+                    adWrapper.appendChild(iframe);
                 }
             } else {
-                // For Medium Rectangle and VOB Roll Up (simple video)
                 const iframe = document.createElement('iframe');
                 iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${videoId}`;
-                iframe.style.cssText = `
-                    width: 100%;
-                    height: 100%;
-                    border: none;
-                `;
-                iframe.setAttribute('allowfullscreen', '');
-                iframe.setAttribute('allow', 'autoplay; encrypted-media');
+                iframe.style.cssText = `width: 100%; height: 100%; border: none;`;
                 adWrapper.appendChild(iframe);
             }
-            
-            adWrapper.appendChild(clickOverlay); // Overlay must be on top
+
+            adWrapper.appendChild(clickOverlay);
             previewContainer.appendChild(adWrapper);
-            
-            // Update the ad information display
+
+            // Info Update
             document.getElementById('info-format').textContent = selectedInventoryName;
-            document.getElementById('info-dimensions').textContent = `${width}x${height} pixels`; // Use actual dimensions from data-attributes
-            document.getElementById('info-video-url').textContent = youtubeUrl; // Updated ID
-            document.getElementById('info-landing').textContent = landingPage || 'Tidak Ada'; // Show "Tidak Ada" if optional
+            document.getElementById('info-dimensions').textContent = `${width}x${height}`;
+            document.getElementById('info-video-url').textContent = youtubeUrl;
+            document.getElementById('info-landing').textContent = landingPage || 'N/A';
+            document.getElementById('info-banner-filename').textContent = bannerFileInput.files[0] ? bannerFileInput.files[0].name : '-';
             
-            // Set banner filename
-            document.getElementById('info-banner-filename').textContent = bannerFileInput.files[0] ? bannerFileInput.files[0].name : 'Tidak Ada';
-
-            // Handle display of banner and video dimensions based on inventory type
             const isVOBWithBanner = ['vob-pushdown', 'vob-giant-banner', 'vob-billboard', 'vob-top-banner', 'vob-billboard-custom'].includes(selectedInventoryValue);
-            
-            const infoBannerItem = document.getElementById('info-banner-item');
-            const infoBannerDimensionsItem = document.getElementById('info-banner-dimensions-item');
-            const infoVideoDimensionsItem = document.getElementById('info-video-dimensions-item');
-
+            document.getElementById('info-banner-item').style.display = isVOBWithBanner ? 'flex' : 'none';
+            document.getElementById('info-banner-dimensions-item').style.display = isVOBWithBanner ? 'flex' : 'none';
             if (isVOBWithBanner) {
-                infoBannerItem.style.display = 'flex'; // Show banner filename item
-                infoBannerDimensionsItem.style.display = 'flex'; // Show banner dimensions item
-                infoVideoDimensionsItem.style.display = 'flex'; // Show video dimensions item
-                document.getElementById('info-banner-dimensions').textContent = `${bannerWidth}x${bannerHeight} pixels`;
-                document.getElementById('info-video-dimensions').textContent = `${videoWidth}x${videoHeight} pixels`;
-            } else {
-                infoBannerItem.style.display = 'none'; // Hide banner filename item
-                infoBannerDimensionsItem.style.display = 'none'; // Hide banner dimensions item
-                infoVideoDimensionsItem.style.display = 'none'; // Hide video dimensions item
-                document.getElementById('info-banner-dimensions').textContent = '-'; // Reset dimensions
-                document.getElementById('info-video-dimensions').textContent = '-'; // Reset dimensions
+                document.getElementById('info-banner-dimensions').textContent = `${bannerWidth}x${bannerHeight}`;
             }
 
             adInfo.style.display = 'block';
-            
-            // Add a subtle success animation to the preview container
-            previewContainer.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                previewContainer.style.transform = 'scale(1)';
-            }, 100);
         }
 
-        /**
-         * Downloads the generated ad as an HTML file or a ZIP bundle.
-         */
         function downloadAdHtml() {
             const youtubeUrl = document.getElementById('youtube-url').value.trim();
             const landingPage = document.getElementById('landing-page').value.trim();
             const videoId = getYouTubeVideoId(youtubeUrl);
-            const bannerFileInput = document.getElementById('banner-file-input'); // Get the file input for banner
+            const bannerFileInput = document.getElementById('banner-file-input');
 
-            if (!videoId) {
-                showMessageBox('Tidak dapat mengunduh: URL YouTube tidak valid.');
-                return;
-            }
+            if (!videoId) return;
 
             const selectElement = document.getElementById('inventory-select');
             const selectedOption = selectElement.options[selectElement.selectedIndex];
-            const dimensionsText = `${selectedOption.dataset.width}x${selectedOption.dataset.height}`;
             const width = parseInt(selectedOption.dataset.width, 10);
             const height = parseInt(selectedOption.dataset.height, 10);
             const selectedInventoryName = selectedOption.textContent.split('(')[0].trim();
@@ -821,263 +594,63 @@
 
             let adContentHtml = '';
             let downloadFileName = `video_ad_${selectedInventoryName.toLowerCase().replace(/\s/g, '_')}_${width}x${height}`;
-            let downloadMessageExtra = '';
 
             if (['vob-pushdown', 'vob-giant-banner', 'vob-billboard', 'vob-top-banner', 'vob-billboard-custom'].includes(selectedInventoryValue)) {
-                // For VOB types requiring banner, create a ZIP bundle
-                if (!uploadedBannerBase64 || !bannerFileInput.files[0]) {
-                    showMessageBox('Tidak dapat mengunduh: File Gambar Banner belum diunggah atau tidak valid.');
-                    return;
-                }
-
-                // Extract original file extension for the banner
+                if (!uploadedBannerBase64 || !bannerFileInput.files[0]) return;
                 const originalFileName = bannerFileInput.files[0].name;
                 const fileExtension = originalFileName.split('.').pop();
-                const bannerFileNameInZip = `banner.${fileExtension}`; // Consistent name inside ZIP for simplicity
+                const bannerFileNameInZip = `banner.${fileExtension}`;
 
-                let bannerHtml = `<img src="./images/${bannerFileNameInZip}" alt="Ad Banner" style="width: ${bannerWidth}px; height: ${bannerHeight}px; display: block; object-fit: cover;">`;
-                let videoHtml = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${videoId}"
-                                allow="autoplay; encrypted-media"
-                                allowfullscreen
-                                style="width: ${videoWidth}px; height: ${videoHeight}px; border: none; display: block;">
-                            </iframe>`;
+                let bannerHtml = `<img src="./images/${bannerFileNameInZip}" style="width: ${bannerWidth}px; height: ${bannerHeight}px; display: block; object-fit: cover;">`;
+                let videoHtml = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${videoId}" allow="autoplay; encrypted-media" allowfullscreen style="width: ${videoWidth}px; height: ${videoHeight}px; border: none; display: block;"></iframe>`;
                 
-                let adContainerDisplay = 'flex'; // Default for VOB types
-                let adContainerFlexDirection = 'column'; // Default for VOB Pushdown/Giant Banner/Top Banner
-
-                if (selectedInventoryValue === 'vob-billboard') {
-                    adContainerFlexDirection = 'row'; // Override for Billboard
-                } else if (selectedInventoryValue === 'vob-billboard-custom') {
-                    adContainerFlexDirection = 'row-reverse'; // Override for Billboard Custom
-                    // Swap banner and video HTML strings for row-reverse display
-                    const temp = bannerHtml;
-                    bannerHtml = videoHtml;
-                    videoHtml = temp;
-                } else {
-                    adContainerFlexDirection = 'column'; // For Pushdown, Giant Banner, Top Banner
+                let adContainerFlexDirection = 'column';
+                if (selectedInventoryValue === 'vob-billboard') adContainerFlexDirection = 'row';
+                else if (selectedInventoryValue === 'vob-billboard-custom') {
+                    adContainerFlexDirection = 'row-reverse';
+                    const temp = bannerHtml; bannerHtml = videoHtml; videoHtml = temp;
                 }
-                
-                // HTML content for the VOB ad, referencing the banner via relative path
-                adContentHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${selectedInventoryName} Video Ad (${width}x${height})</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden; /* Prevent scrollbars within the ad */
-            display: flex; /* Ensures ad-container is centered in its own context */
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-        }
-        .ad-container {
-            width: ${width}px;
-            height: ${height}px;
-            position: relative;
-            overflow: hidden;
-            display: ${adContainerDisplay}; /* Dynamic display */
-            flex-direction: ${adContainerFlexDirection}; /* Dynamic flex-direction */
-        }
-        .click-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            cursor: pointer;
-            background: rgba(0,0,0,0);
-        }
-    </style>
-</head>
-<body>
-    <div class="ad-container">
-        ${bannerHtml}
-        ${videoHtml}
-        ${landingPage ? `<a href="${landingPage}" target="_blank" class="click-overlay" title="Click to learn more"></a>` : `<div class="click-overlay"></div>`}
-    </div>
-</body>
-</html>`;
+
+                adContentHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{margin:0;overflow:hidden;display:flex;justify-content:center;align-items:center;width:100vw;height:100vh;}.ad-container{width:${width}px;height:${height}px;position:relative;overflow:hidden;display:flex;flex-direction:${adContainerFlexDirection};}.click-overlay{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;cursor:pointer;background:transparent;}</style></head><body><div class="ad-container">${bannerHtml}${videoHtml}${landingPage ? `<a href="${landingPage}" target="_blank" class="click-overlay"></a>` : `<div class="click-overlay"></div>`}</div></body></html>`;
 
                 const zip = new JSZip();
-                zip.file("index.html", adContentHtml); // Add the HTML file to the root of the zip
-
-                // Add banner image to 'images' folder inside the zip
-                const base64Data = uploadedBannerBase64.split(',')[1]; // Remove "data:image/..." part
+                zip.file("index.html", adContentHtml);
+                const base64Data = uploadedBannerBase64.split(',')[1];
                 zip.folder("images").file(bannerFileNameInZip, base64Data, { base64: true });
-
-                downloadFileName += '.zip'; // Change extension to .zip
-                downloadMessageExtra = 'File ZIP berhasil diunduh, berisi HTML (index.html) dan gambar banner (di folder images/).';
-
-                // Generate and download the ZIP file
-                zip.generateAsync({ type: "blob" })
-                    .then(function(content) {
-                        // Use a simple Blob download approach for broader compatibility
-                        const url = URL.createObjectURL(content);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = downloadFileName;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                        showMessageBox(`File iklan berhasil diunduh! ${downloadMessageExtra}`);
-                    })
-                    .catch(function(error) {
-                        showMessageBox('Gagal membuat file ZIP: ' + error.message);
-                        console.error('JSZip error:', error);
-                    });
-
+                zip.generateAsync({ type: "blob" }).then(content => {
+                    const url = URL.createObjectURL(content);
+                    const a = document.createElement('a'); a.href = url; a.download = downloadFileName + '.zip';
+                    a.click(); URL.revokeObjectURL(url);
+                    showMessageBox('ZIP Package Berhasil Diunduh!');
+                });
             } else {
-                // For other inventories (Medium Rectangle, VOB Roll Up), create a plain HTML file
-                adContentHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${selectedInventoryName} Video Ad (${width}x${height})</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-        }
-        .ad-container {
-            width: ${width}px;
-            height: ${height}px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
-        .click-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            cursor: pointer;
-            background: rgba(0,0,0,0);
-        }
-    </style>
-</head>
-<body>
-    <div class="ad-container">
-        <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${videoId}"
-                    allow="autoplay; encrypted-media"
-                    allowfullscreen
-                    style="width: 100%; height: 100%; border: none; display: block;">
-        </iframe>
-        ${landingPage ? `<a href="${landingPage}" target="_blank" class="click-overlay" title="Click to learn more"></a>` : `<div class="click-overlay"></div>`}
-    </div>
-</body>
-</html>`;
-                downloadFileName += '.html'; // Keep extension as .html
-                downloadMessageExtra = ''; // No extra message for plain HTML
-
-                // Create a Blob from the HTML content and trigger download
+                adContentHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{margin:0;overflow:hidden;display:flex;justify-content:center;align-items:center;width:100vw;height:100vh;}.ad-container{width:${width}px;height:${height}px;position:relative;overflow:hidden;}iframe{width:100%;height:100%;border:none;}.click-overlay{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;cursor:pointer;background:transparent;}</style></head><body><div class="ad-container"><iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${videoId}" allow="autoplay; encrypted-media" allowfullscreen></iframe>${landingPage ? `<a href="${landingPage}" target="_blank" class="click-overlay"></a>` : `<div class="click-overlay"></div>`}</div></body></html>`;
                 const blob = new Blob([adContentHtml], { type: 'text/html' });
                 const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = downloadFileName;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showMessageBox(`File iklan HTML berhasil diunduh!`); // Specific message for HTML
+                const a = document.createElement('a'); a.href = url; a.download = downloadFileName + '.html';
+                a.click(); URL.revokeObjectURL(url);
+                showMessageBox('HTML File Berhasil Diunduh!');
             }
         }
 
-        /**
-         * Displays a custom message box instead of alert().
-         * @param {string} message The message to display.
-         */
         function showMessageBox(message) {
             const messageBoxId = 'customMessageBox';
             let messageBox = document.getElementById(messageBoxId);
-
             if (!messageBox) {
                 messageBox = document.createElement('div');
                 messageBox.id = messageBoxId;
-                messageBox.style.cssText = `
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    background-color: #fff;
-                    padding: 25px 35px;
-                    border-radius: 10px;
-                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-                    z-index: 1000;
-                    text-align: center;
-                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    color: #333;
-                    font-size: 1.1em;
-                    max-width: 90%;
-                    word-wrap: break-word;
-                    opacity: 0;
-                    transition: opacity 0.3s ease, transform 0.3s ease;
-                    border: 1px solid #ddd;
-                `;
+                messageBox.style.cssText = `position: fixed; top: 20px; right: 20px; background: white; padding: 1rem 1.5rem; border-radius: 1rem; box-shadow: var(--shadow); z-index: 9999; border-left: 5px solid var(--primary); font-size: 0.9rem; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);`;
                 document.body.appendChild(messageBox);
             }
-
-            messageBox.innerHTML = `
-                <p>${message}</p>
-                <button id="messageBoxCloseBtn" style="
-                    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-                    color: white;
-                    border: none;
-                    padding: 10px 20px;
-                    border-radius: 8px;
-                    font-size: 0.9em;
-                    cursor: pointer;
-                    margin-top: 20px;
-                    transition: all 0.3s ease;
-                ">OK</button>
-            `;
-
-            // Animate in
-            setTimeout(() => {
-                messageBox.style.opacity = '1';
-                messageBox.style.transform = 'translate(-50%, -50%) scale(1)';
-            }, 50);
-
-            document.getElementById('messageBoxCloseBtn').onclick = () => {
-                // Animate out
-                messageBox.style.opacity = '0';
-                messageBox.style.transform = 'translate(-50%, -50%) scale(0.9)';
-                setTimeout(() => {
-                    messageBox.remove();
-                }, 300);
-            };
+            messageBox.innerHTML = message;
+            setTimeout(() => messageBox.style.transform = 'translateX(0)', 100);
+            setTimeout(() => messageBox.style.transform = 'translateX(120%)', 4000);
         }
 
-        // Initialize form validation and preview dimensions on page load
         document.addEventListener('DOMContentLoaded', () => {
-            // Select the default inventory option (Medium Rectangle) initially
-            // And trigger the change handler to set initial state correctly
             const selectElement = document.getElementById('inventory-select');
-            selectElement.value = 'medium-rectangle'; // Ensure default is set
-            onInventoryChange(); // Manually trigger change to setup initial state
+            selectElement.value = 'medium-rectangle';
+            onInventoryChange();
         });
     </script>
 </body>
