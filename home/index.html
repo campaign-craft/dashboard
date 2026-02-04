@@ -9,21 +9,21 @@
       tailwind.config = {
         theme: {
           extend: {
-            colors: { 
-              primary: "#2563eb", 
+            colors: {
+              primary: "#2563eb",
               secondary: "#10b981",
               accent: "#f43f5e",
               surface: "#ffffff",
-              background: "#f8fafc"
+              background: "#f8fafc",
             },
             borderRadius: {
-              'card': '1.25rem',
-              'button': '0.75rem',
+              card: "1.25rem",
+              button: "0.75rem",
             },
             boxShadow: {
-              'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-              'hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-            }
+              soft: "0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+              hover: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+            },
           },
         },
       };
@@ -38,30 +38,23 @@
         background-color: #f8fafc;
         color: #1e293b;
       }
-
       .glass-card {
         background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.3);
       }
-
       .card-transition {
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       }
-
       .card-transition:hover {
         transform: translateY(-8px);
       }
-
       .icon-container {
         transition: all 0.3s ease;
       }
-
       .card-transition:hover .icon-container {
         transform: scale(1.15) rotate(5deg);
       }
-
-      /* Custom Scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
       }
@@ -97,7 +90,6 @@
             <span id="current-date" class="text-xs font-semibold text-slate-500"></span>
             <div id="piket-info" class="text-sm"></div>
           </div>
-          <!-- Mobile Piket Info Trigger (Optional - just for layout) -->
           <div class="md:hidden">
             <i class="ri-calendar-check-line text-2xl text-primary"></i>
           </div>
@@ -106,62 +98,11 @@
     </header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
-      
-      <!-- Mobile Info (Visible only on small screens) -->
+      <!-- Mobile Info -->
       <div class="md:hidden mb-8 p-4 bg-blue-50 rounded-2xl border border-blue-100">
-          <span id="current-date-mobile" class="block text-xs font-bold text-blue-400 mb-1 uppercase tracking-tight"></span>
-          <div id="piket-info-mobile" class="text-sm text-slate-700"></div>
+        <span id="current-date-mobile" class="block text-xs font-bold text-blue-400 mb-1 uppercase tracking-tight"></span>
+        <div id="piket-info-mobile" class="text-sm text-slate-700"></div>
       </div>
-
-      <!-- Section: Pengecekan Materi -->
-      <section class="mb-14">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="h-8 w-1.5 bg-green-500 rounded-full"></div>
-          <h2 class="text-xl font-bold text-slate-800 tracking-tight">Pengecekan Materi</h2>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <!-- Card 1 -->
-          <a href="https://campaign-craft.github.io/dashboard/home/preview_banner/" target="_blank" class="card-transition group bg-white p-6 rounded-card shadow-soft hover:shadow-hover border border-slate-100 block">
-            <div class="flex flex-col items-center text-center">
-              <div class="w-14 h-14 flex items-center justify-center bg-green-50 text-green-600 rounded-2xl mb-5 icon-container">
-                <i class="ri-image-2-fill text-3xl"></i>
-              </div>
-              <h3 class="text-slate-800 font-bold mb-2 group-hover:text-green-600 transition-colors">Cek Materi Banner</h3>
-              <p class="text-slate-500 text-xs leading-relaxed">Validasi Banner untuk iklan digital campaign</p>
-            </div>
-          </a>
-          <!-- Card 2 -->
-          <a href="https://campaign-craft.github.io/dashboard/home/preview_script/" target="_blank" class="card-transition group bg-white p-6 rounded-card shadow-soft hover:shadow-hover border border-slate-100 block">
-            <div class="flex flex-col items-center text-center">
-              <div class="w-14 h-14 flex items-center justify-center bg-blue-50 text-primary rounded-2xl mb-5 icon-container">
-                <i class="ri-terminal-box-fill text-3xl"></i>
-              </div>
-              <h3 class="text-slate-800 font-bold mb-2 group-hover:text-primary transition-colors">Cek Materi Script</h3>
-              <p class="text-slate-500 text-xs leading-relaxed">Validasi Third-Party Script digital</p>
-            </div>
-          </a>
-          <!-- Card 3 -->
-          <a href="https://campaign-craft.github.io/dashboard/home/preview_html5/" target="_blank" class="card-transition group bg-white p-6 rounded-card shadow-soft hover:shadow-hover border border-slate-100 block">
-            <div class="flex flex-col items-center text-center">
-              <div class="w-14 h-14 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-2xl mb-5 icon-container">
-                <i class="ri-code-s-slash-fill text-3xl"></i>
-              </div>
-              <h3 class="text-slate-800 font-bold mb-2 group-hover:text-indigo-600 transition-colors">Cek Materi HTML</h3>
-              <p class="text-slate-500 text-xs leading-relaxed">Validasi kode interaktif HTML5</p>
-            </div>
-          </a>
-          <!-- Card 4 -->
-          <a href="https://campaign-craft.github.io/dashboard/home/materi_cetak/" target="_blank" class="card-transition group bg-white p-6 rounded-card shadow-soft hover:shadow-hover border border-slate-100 block">
-            <div class="flex flex-col items-center text-center">
-              <div class="w-14 h-14 flex items-center justify-center bg-purple-50 text-purple-600 rounded-2xl mb-5 icon-container">
-                <i class="ri-printer-fill text-3xl"></i>
-              </div>
-              <h3 class="text-slate-800 font-bold mb-2 group-hover:text-purple-600 transition-colors">Cek Materi Koran</h3>
-              <p class="text-slate-500 text-xs leading-relaxed">Validasi teknis ukuran iklan cetak</p>
-            </div>
-          </a>
-        </div>
-      </section>
 
       <!-- Section: Builder -->
       <section class="mb-14">
@@ -170,17 +111,37 @@
           <h2 class="text-xl font-bold text-slate-800 tracking-tight">Production Builders</h2>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Item 1 -->
-          <a href="https://campaign-craft.github.io/dashboard/home/ad-builder/" target="_blank" class="card-transition group bg-white p-6 rounded-card shadow-soft hover:shadow-hover border border-slate-100 flex items-start gap-5 block">
+          <!-- Ad Builder Banner -->
+          <a href="https://campaign-craft.github.io/dashboard/home/ad-builder/banner.html" target="_blank" class="card-transition group bg-white p-6 rounded-card shadow-soft hover:shadow-hover border border-slate-100 flex items-start gap-5 block">
             <div class="shrink-0 w-12 h-12 flex items-center justify-center bg-teal-50 text-teal-600 rounded-xl icon-container">
-              <i class="ri-layout-masonry-fill text-2xl"></i>
+              <i class="ri-image-add-fill text-2xl"></i>
             </div>
             <div>
-              <h3 class="text-slate-800 font-bold mb-1 group-hover:text-teal-600">Banner Ad Builder</h3>
-              <p class="text-slate-500 text-xs">Buat dummy banner digital secara instan.</p>
+              <h3 class="text-slate-800 font-bold mb-1 group-hover:text-teal-600">Ad Builder Banner</h3>
+              <p class="text-slate-500 text-xs">Generator aset banner iklan digital.</p>
             </div>
           </a>
-          <!-- Item 2 -->
+          <!-- Ad Builder Script -->
+          <a href="https://campaign-craft.github.io/dashboard/home/ad-builder/script.html" target="_blank" class="card-transition group bg-white p-6 rounded-card shadow-soft hover:shadow-hover border border-slate-100 flex items-start gap-5 block">
+            <div class="shrink-0 w-12 h-12 flex items-center justify-center bg-blue-50 text-primary rounded-xl icon-container">
+              <i class="ri-terminal-window-line text-2xl"></i>
+            </div>
+            <div>
+              <h3 class="text-slate-800 font-bold mb-1 group-hover:text-primary">Ad Builder Script</h3>
+              <p class="text-slate-500 text-xs">Penyusunan kode script third-party.</p>
+            </div>
+          </a>
+          <!-- Ad Builder HTML5 -->
+          <a href="https://campaign-craft.github.io/dashboard/home/ad-builder/html5.html" target="_blank" class="card-transition group bg-white p-6 rounded-card shadow-soft hover:shadow-hover border border-slate-100 flex items-start gap-5 block">
+            <div class="shrink-0 w-12 h-12 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-xl icon-container">
+              <i class="ri-html5-fill text-2xl"></i>
+            </div>
+            <div>
+              <h3 class="text-slate-800 font-bold mb-1 group-hover:text-indigo-600">Ad Builder HTML5</h3>
+              <p class="text-slate-500 text-xs">Pembuatan materi interaktif HTML5.</p>
+            </div>
+          </a>
+          <!-- Advertorial Builder -->
           <a href="https://campaign-craft.github.io/dashboard/home/preview_artikel/" target="_blank" class="card-transition group bg-white p-6 rounded-card shadow-soft hover:shadow-hover border border-slate-100 flex items-start gap-5 block">
             <div class="shrink-0 w-12 h-12 flex items-center justify-center bg-orange-50 text-orange-600 rounded-xl icon-container">
               <i class="ri-article-fill text-2xl"></i>
@@ -190,7 +151,7 @@
               <p class="text-slate-500 text-xs">Struktur konten artikel advertorial digital.</p>
             </div>
           </a>
-          <!-- Item 3 -->
+          <!-- Display Ad Builder -->
           <a href="https://campaign-craft.github.io/dashboard/home/koran/" target="_blank" class="card-transition group bg-white p-6 rounded-card shadow-soft hover:shadow-hover border border-slate-100 flex items-start gap-5 block">
             <div class="shrink-0 w-12 h-12 flex items-center justify-center bg-rose-50 text-rose-600 rounded-xl icon-container">
               <i class="ri-newspaper-fill text-2xl"></i>
@@ -200,7 +161,7 @@
               <p class="text-slate-500 text-xs">Simulasi tata letak iklan koran.</p>
             </div>
           </a>
-          <!-- Item 4 -->
+          <!-- VOB Builder -->
           <a href="https://campaign-craft.github.io/dashboard/home/vob/" target="_blank" class="card-transition group bg-white p-6 rounded-card shadow-soft hover:shadow-hover border border-slate-100 flex items-start gap-5 block">
             <div class="shrink-0 w-12 h-12 flex items-center justify-center bg-red-50 text-red-600 rounded-xl icon-container">
               <i class="ri-video-chat-fill text-2xl"></i>
@@ -210,7 +171,7 @@
               <p class="text-slate-500 text-xs">Tools Video on Banner khusus.</p>
             </div>
           </a>
-          <!-- Item 5 -->
+          <!-- Bizzinsight Banner -->
           <a href="https://campaign-craft.github.io/dashboard/home/bizzinsight-banner/" target="_blank" class="card-transition group bg-white p-6 rounded-card shadow-soft hover:shadow-hover border border-slate-100 flex items-start gap-5 block">
             <div class="shrink-0 w-12 h-12 flex items-center justify-center bg-yellow-50 text-yellow-600 rounded-xl icon-container">
               <i class="ri-lightbulb-flash-fill text-2xl"></i>
@@ -220,7 +181,7 @@
               <p class="text-slate-500 text-xs">Tools khusus aset Bizzinsight.</p>
             </div>
           </a>
-          <!-- Item 6 -->
+          <!-- Kartu Nama -->
           <a href="https://campaign-craft.github.io/dashboard/home/kartu_nama/" target="_blank" class="card-transition group bg-white p-6 rounded-card shadow-soft hover:shadow-hover border border-slate-100 flex items-start gap-5 block">
             <div class="shrink-0 w-12 h-12 flex items-center justify-center bg-slate-50 text-slate-600 rounded-xl icon-container">
               <i class="ri-contacts-book-2-fill text-2xl"></i>
@@ -324,31 +285,32 @@
       <div class="max-w-7xl mx-auto px-4 text-center">
         <p id="copyright-info" class="text-slate-400 text-xs font-medium"></p>
         <div class="mt-2 flex justify-center gap-4 text-[10px] text-slate-300 uppercase tracking-widest font-bold">
-            <span>Production</span>
-            <span>•</span>
-            <span>Technology</span>
-            <span>•</span>
-            <span>Design</span>
+          <span>Production</span>
+          <span>•</span>
+          <span>Technology</span>
+          <span>•</span>
+          <span>Design</span>
         </div>
       </div>
     </footer>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // IDs to handle
         const dateElement = document.getElementById("current-date");
         const dateElementMobile = document.getElementById("current-date-mobile");
         const piketInfoElement = document.getElementById("piket-info");
         const piketInfoElementMobile = document.getElementById("piket-info-mobile");
 
         if (dateElement && piketInfoElement) {
+          // Rotasi: Septian -> Andy -> Fenty
           const names = ["Septian", "Andy", "Fenty"];
-          const startDatePiketSeptian = new Date("2025-06-23T00:00:00");
+          // Set start date ke awal minggu ini (Senin, 2 Feb 2026) agar Septian dimulai minggu ini
+          const startDatePiketSeptian = new Date("2026-02-02T00:00:00");
 
           function getStartOfWeek(date) {
             const d = new Date(date);
-            const day = d.getDay(); 
-            const adjustedDay = day === 0 ? 6 : day - 1; 
+            const day = d.getDay();
+            const adjustedDay = day === 0 ? 6 : day - 1;
             const diff = d.getDate() - adjustedDay;
             return new Date(d.getFullYear(), d.getMonth(), diff);
           }
@@ -373,13 +335,10 @@
             const nextPiketIndex = (currentPiketIndex + 1) % names.length;
             const nextPiket = names[nextPiketIndex];
 
-            // Update Desktop View
             dateElement.textContent = formattedDate;
             piketInfoElement.innerHTML = `<span class="font-bold text-primary">Piket: ${currentPiket}</span> <span class="text-slate-300 mx-2">|</span> <span class="text-slate-400">Next: ${nextPiket}</span>`;
-            
-            // Update Mobile View (if elements exist)
-            if(dateElementMobile) dateElementMobile.textContent = formattedDate;
-            if(piketInfoElementMobile) piketInfoElementMobile.innerHTML = `<strong>Minggu ini: ${currentPiket}</strong> • Selanjutnya: ${nextPiket}`;
+            if (dateElementMobile) dateElementMobile.textContent = formattedDate;
+            if (piketInfoElementMobile) piketInfoElementMobile.innerHTML = `<strong>Minggu ini: ${currentPiket}</strong> • Selanjutnya: ${nextPiket}`;
           }
 
           updatePiketInfo();
