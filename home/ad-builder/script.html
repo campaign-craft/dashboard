@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Ad Inspector & Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border-left-color: #3b82f6;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        iframe.preview-standalone {
+            background: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .placeholder-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 text-slate-800">
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-900">🛡️ Script Ad Inspector</h1>
+            <p class="text-slate-500 mt-2 text-sm">Uji tag iklan pihak ketiga, petakan macro, dan simulasikan penayangan.</p>
+        </header>
+
+        <!-- TOP: CONFIG & INSPECTOR -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            
+            <!-- LEFT: SCRIPT INPUT & CONFIG -->
+            <div class="space-y-6">
+                
+                <!-- Section 1: Script Input -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <span class="p-2 bg-blue-100 text-blue-600 rounded-lg text-xs font-bold">1</span>
+                        Paste Ad Script
+                    </h2>
+                    <div class="relative">
+                        <textarea id="scriptInput" 
+                                  class="w-full h-48 p-4 bg-slate-900 text-blue-300 code-font text-xs rounded-xl focus:ring-2 focus:ring-blue-500 outline-none resize-none border-none"
+                                  placeholder="<ins class='dcmads' ...></ins> <script ...></script>"
+                                  oninput="onScriptInput()"></textarea>
+                    </div>
+                    
+                    <!-- Macro/Placeholder Detector -->
+                    <div id="macroContainer" class="mt-4 space-y-3 hidden">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Detected Macros/Placeholders</p>
+                        <div id="macroFields" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <!-- Macro inputs will appear here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Format & Branding -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <span class="p-2 bg-purple-100 text-purple-600 rounded-lg text-xs font-bold">2</span>
+                        Template Settings
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Pilih Format Iklan</label>
+                                <select id="adSlotSelect" onchange="updateStandaloneSize()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">-- Pilih Format --</option>
+                                    <optgroup label="Desktop">
+                                        <option value="728x90">Leaderboard (728x90)</option>
+                                        <option value="970x250">Billboard (970x250)</option>
+                                        <option value="300x600">Giant Banner (300x600)</option>
+                                        <option value="300x250_mr1">MR 1 (300x250)</option>
+                                        <option value="300x250_mr2">MR 2 (300x250)</option>
+                                        <option value="300x250_mr3">MR 3 (300x250)</option>
+                                        <option value="1100x50">Horizontal Ad (1100x50)</option>
+                                        <option value="120x600">Skin Ad (120x600)</option>
+                                        <option value="160x600">Skyscraper (160x600)</option>
+                                    </optgroup>
+                                    <optgroup label="Mobile">
+                                        <option value="320x150_top">Top Banner (320x150)</option>
+                                        <option value="300x250_top">Top Banner (300x250)</option>
+                                        <option value="320x480">Pushdown (320x480)</option>
+                                        <option value="300x250_middle">Middle Banner (300x250)</option>
+                                        <option value="320x50">Horizontal Ad (320x50)</option>
+                                        <option value="300x600_mobile">Giant Banner (300x600)</option>
+                                        <option value="300x200">Roll Up (300x200)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Ganti Logo Daerah</label>
+                                <select id="logoSelect" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none">
+                                    <option value="default">Default (Tribunnews)</option>
+                                    <option value="jabar">Tribun Jabar</option>
+                                    <option value="bali">Tribun Bali</option>
+                                    <option value="jateng">Tribun Jateng</option>
+                                    <option value="serambi">Serambi Indonesia</option>
+                                    <option value="banten">Tribun Banten</option>
+                                    <option value="surya">Surya</option>
+                                    <option value="suryamalang">Surya Malang</option>
+                                    <option value="timur">Tribun Timur</option>
+                                    <option value="medan">Tribun Medan</option>
+                                    <option value="sripo">Sriwijaya Post</option>
+                                    <option value="lampung">Tribun Lampung</option>
+                                    <option value="banjarmasin">Banjarmasin Post</option>
+                                    <option value="papua">Tribun Papua</option>
+                                    <option value="jogja">Tribun Jogja</option>
+                                    <option value="solo">Tribun Solo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button id="generateBtn" disabled onclick="generateTemplate()" class="flex-[2] bg-blue-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 disabled:bg-slate-300 disabled:shadow-none transition-all">
+                                🚀 Preview di Website
+                            </button>
+                            <button id="downloadBtn" disabled onclick="downloadHtml()" class="flex-1 bg-slate-800 text-white font-bold py-3 rounded-xl hover:bg-slate-900 disabled:bg-slate-200 transition-all">
+                                💾 Download HTML
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT: MATERI INSPECTOR -->
+            <div id="inspectorPanel" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-lg font-semibold flex items-center gap-2">
+                             🔍 Script Standalone Preview
+                        </h2>
+                        <p class="text-xs text-slate-400">Hasil eksekusi script murni</p>
+                    </div>
+                    <button onclick="reloadStandalone()" class="p-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-500 border border-slate-200" title="Refresh Script">🔄</button>
+                </div>
+                
+                <div id="standaloneContainer" class="flex-1 bg-slate-50 rounded-2xl overflow-auto flex items-center justify-center min-h-[400px] border-4 border-dashed border-slate-200 p-8">
+                    <div class="text-center text-slate-400">
+                        <div class="text-5xl mb-4">📜</div>
+                        <p class="text-sm italic">Tempel script untuk melihat hasil</p>
+                    </div>
+                </div>
+
+                <div id="standaloneSizeBadge" class="mt-4 text-center hidden">
+                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-bold uppercase tracking-widest" id="activeSizeBadge">300 x 250</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM: FULL WIDTH TEMPLATE PREVIEW -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                📋 Website Context Preview
+            </h2>
+            <div id="iframeWrapper" class="relative bg-slate-100 rounded-xl overflow-hidden min-h-[600px] border border-slate-100 flex justify-center p-4">
+                <iframe id="mainPreview" class="bg-white shadow-2xl hidden transition-all duration-500 origin-top"></iframe>
+                
+                <div id="placeholderPreview" class="flex flex-col items-center justify-center p-20 text-center opacity-40">
+                    <div class="text-7xl mb-6">🌐</div>
+                    <p class="text-slate-500 max-w-md">Klik "Preview di Website" untuk simulasi tampilan pada artikel berita.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // -- DATA & CONFIG --
+        const adSlots = {
+            "728x90": { name: "Leaderboard", width: 728, height: 90, template: "template_leaderboard.html" },
+            "970x250": { name: "Billboard", width: 970, height: 250, template: "template_billboard.html" },
+            "300x600": { name: "Giant Banner", width: 300, height: 600, template: "template_giant_banner_desktop.html" },
+            "300x250_mr1": { name: "MR 1", width: 300, height: 250, template: "template_medium_rectangle.html" },
+            "300x250_mr2": { name: "MR 2", width: 300, height: 250, template: "template_mr2.html" },
+            "300x250_mr3": { name: "MR 3", width: 300, height: 250, template: "template_mr3.html" },
+            "1100x50": { name: "Horizontal Ad", width: 1100, height: 50, template: "template_horizontal_ad_desktop.html" },
+            "120x600": { name: "Skin Ad", width: 120, height: 600, template: "template_skin_ad.html" },
+            "160x600": { name: "Skyscraper", width: 160, height: 600, template: "template_skyscraper.html" },
+            "320x150_top": { name: "Top Banner Mobile", width: 320, height: 150, template: "template_top_banner_mobile.html" },
+            "300x250_top": { name: "Top Banner Mobile 2", width: 300, height: 250, template: "template_top_banner2_mobile.html" },
+            "320x480": { name: "Pushdown", width: 320, height: 480, template: "template_pushdown.html" },
+            "300x250_middle": { name: "Middle Banner", width: 300, height: 250, template: "template_middle_banner_mobile.html" },
+            "320x50": { name: "Horizontal Mobile", width: 320, height: 50, template: "template_horizontal_ad_mobile.html" },
+            "300x600_mobile": { name: "Giant Mobile", width: 300, height: 600, template: "template_giant_banner_mobile.html" },
+            "300x200": { name: "Roll Up", width: 300, height: 200, template: "template_roll_up.html" }
+        };
+
+        const logoUrls = {
+            "default": "https://asset-1.tstatic.net/img/logo/tribun/svg/tribunnews.svg",
+            "jabar": "https://asset-1.tstatic.net/img/logo/daerah/svg3/tribunjabar5.svg",
+            "bali": "https://asset-1.tstatic.net/img/logo/daerah/svg3/tribunbali.svg",
+            "jateng": "https://asset-1.tstatic.net/img/logo/daerah/svg3/tribunjateng.svg",
+            "serambi": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/serambiindonesia.svg',
+            "banten": 'https://asset-1.tribunnews.com/img/logo/tribun/svg/tribunbanten2.svg',
+            "surya": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/suryamalang.svg',
+            "suryamalang": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/suryamalang.svg',
+            "timur": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribuntimur.svg',
+            "medan": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunmedan.svg',
+            "sripo": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/sriwijayapost.svg',
+            "lampung": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunlampung.svg',
+            "banjarmasin": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/banjarmasinpost.svg',
+            "papua": 'https://asset-1.tribunnews.com/img/logo/tribun/svg/tribunpapua2.svg',
+            "jogja": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunjogja.svg',
+            "solo": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunsolo.svg'
+        };
+
+        // -- STATE --
+        let currentScript = '';
+        let macroList = [];
+
+        // -- LOGIC: SCRIPT PROCESSING --
+        function onScriptInput() {
+            const input = document.getElementById('scriptInput').value;
+            detectMacros(input);
+            detectDimensions(input);
+            renderStandalone();
+            checkGenerateState();
+        }
+
+        function detectMacros(text) {
+            // Regex for common macros like [MACRO], ${MACRO}, %%MACRO%%
+            const regex = /\[([A-Z0-9_]+)\]|\$\{([A-Z0-9_]+)\}|%%([A-Z0-9_]+)%%/g;
+            let match;
+            const foundMacros = new Set();
+            
+            while ((match = regex.exec(text)) !== null) {
+                foundMacros.add(match[1] || match[2] || match[3]);
+            }
+
+            const container = document.getElementById('macroContainer');
+            const fields = document.getElementById('macroFields');
+            
+            if (foundMacros.size > 0) {
+                container.classList.remove('hidden');
+                // Only redraw if list changed
+                const newList = Array.from(foundMacros);
+                if (JSON.stringify(newList) !== JSON.stringify(macroList)) {
+                    macroList = newList;
+                    fields.innerHTML = '';
+                    macroList.forEach(macro => {
+                        const div = document.createElement('div');
+                        div.innerHTML = `
+                            <label class="block text-[9px] font-bold text-slate-400 uppercase mb-1">${macro}</label>
+                            <input type="text" data-macro="${macro}" 
+                                   oninput="renderStandalone()" 
+                                   class="placeholder-input w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none transition-all"
+                                   placeholder="Value for ${macro}">
+                        `;
+                        fields.appendChild(div);
+                    });
+                }
+            } else {
+                container.classList.add('hidden');
+                macroList = [];
+            }
+        }
+
+        function detectDimensions(text) {
+            // Try to find width:320px;height:480px or width='320'
+            const wMatch = text.match(/width[:='"]\s*(\d+)/i);
+            const hMatch = text.match(/height[:='"]\s*(\d+)/i);
+            
+            if (wMatch && hMatch) {
+                const w = wMatch[1];
+                const h = hMatch[2];
+                const sizeStr = `${w}x${h}`;
+                
+                // Try to auto-select the slot if it matches
+                const select = document.getElementById('adSlotSelect');
+                for (let option of select.options) {
+                    if (option.value.includes(sizeStr)) {
+                        select.value = option.value;
+                        updateStandaloneSize();
+                        break;
+                    }
+                }
+            }
+        }
+
+        function getProcessedScript() {
+            let script = document.getElementById('scriptInput').value;
+            const inputs = document.querySelectorAll('#macroFields input');
+            inputs.forEach(input => {
+                const macro = input.getAttribute('data-macro');
+                const val = input.value || `[${macro}]`;
+                // Replace all occurrences
+                script = script.split(`[${macro}]`).join(val);
+                script = script.split(`\${${macro}}`).join(val);
+                script = script.split(`%%${macro}%%`).join(val);
+            });
+            return script;
+        }
+
+        function renderStandalone() {
+            const script = getProcessedScript();
+            if (!script.trim()) return;
+
+            const container = document.getElementById('standaloneContainer');
+            
+            // Create the preview content
+            const content = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+                    </style>
+                </head>
+                <body>
+                    ${script}
+                </body>
+                </html>
+            `;
+
+            container.innerHTML = `
+                <iframe id="standaloneIframe" class="preview-standalone border-none bg-white" 
+                        style="width: 320px; height: 50px;"></iframe>
+            `;
+            
+            const ifr = document.getElementById('standaloneIframe');
+            ifr.srcdoc = content;
+            
+            updateStandaloneSize();
+        }
+
+        function updateStandaloneSize() {
+            const slotId = document.getElementById('adSlotSelect').value;
+            const ifr = document.getElementById('standaloneIframe');
+            const badge = document.getElementById('activeSizeBadge');
+            const info = document.getElementById('standaloneSizeBadge');
+
+            if (!ifr) return;
+
+            if (slotId && adSlots[slotId]) {
+                const slot = adSlots[slotId];
+                ifr.style.width = slot.width + 'px';
+                ifr.style.height = slot.height + 'px';
+                badge.textContent = `${slot.width} x ${slot.height}`;
+                info.classList.remove('hidden');
+            } else {
+                info.classList.add('hidden');
+            }
+            checkGenerateState();
+        }
+
+        function checkGenerateState() {
+            const script = document.getElementById('scriptInput').value;
+            const slot = document.getElementById('adSlotSelect').value;
+            generateBtn.disabled = !(script.trim() && slot);
+        }
+
+        function reloadStandalone() {
+            renderStandalone();
+        }
+
+        // -- LOGIC: TEMPLATE PREVIEW --
+        async function generateTemplate() {
+            const slotId = document.getElementById('adSlotSelect').value;
+            const slot = adSlots[slotId];
+            const logoKey = document.getElementById('logoSelect').value;
+            const script = getProcessedScript();
+
+            mainPreview.classList.add('hidden');
+            document.getElementById('placeholderPreview').innerHTML = `<div class="spinner"></div><p class="mt-4 text-slate-500 font-medium text-sm">Executing script tags...</p>`;
+            document.getElementById('placeholderPreview').classList.remove('hidden');
+
+            try {
+                const response = await fetch(slot.template);
+                let html = await response.text();
+
+                // Branding
+                html = html.replace(new RegExp("https://asset-1.tstatic.net/img/logo/tribun/svg/tribunnews.svg", 'g'), logoUrls[logoKey]);
+
+                // Create Script Execution Wrapper
+                const scriptWrapper = `
+                    <div style="display:flex; justify-content:center; align-items:center; width:100%; height:100%;">
+                        ${script}
+                    </div>
+                `;
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                doc.querySelectorAll('.ad-slot').forEach(div => div.innerHTML = scriptWrapper);
+
+                mainPreview.contentDocument.open();
+                mainPreview.contentDocument.write(doc.documentElement.outerHTML);
+                mainPreview.contentDocument.close();
+
+                // Responsive adjustment
+                const isMobile = ['320', '300x250_top', '300x250_middle', '300x200'].some(key => slotId.includes(key));
+                mainPreview.style.width = isMobile ? '400px' : '100%';
+
+                mainPreview.classList.remove('hidden');
+                document.getElementById('placeholderPreview').classList.add('hidden');
+                downloadBtn.disabled = false;
+
+            } catch (err) {
+                console.error(err);
+                alert("Gagal memuat template: " + err.message);
+            }
+        }
+
+        function downloadHtml() {
+            const slotId = document.getElementById('adSlotSelect').value;
+            const slotName = adSlots[slotId].name;
+            const html = mainPreview.contentDocument.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `script_ad_${slotName.toLowerCase().replace(/\s/g, '_')}.html`;
+            a.click();
+        }
+    </script>
+</body>
+</html>
