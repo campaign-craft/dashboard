@@ -35,8 +35,12 @@
         /* Top Navigation Link */
         .top-nav {
             background: #1e293b;
-            padding: 10px 20px;
+            padding: 12px 20px;
             text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
         }
 
         .top-nav a {
@@ -47,12 +51,14 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: opacity 0.2s;
+            transition: all 0.2s;
+            padding: 4px 8px;
+            border-radius: 6px;
         }
 
         .top-nav a:hover {
-            opacity: 0.8;
-            text-decoration: underline;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
         }
 
         .container {
@@ -346,10 +352,13 @@
     </style>
 </head>
 <body>
-    <!-- New Top Link -->
+    <!-- Top Navigation with Multiple Links -->
     <nav class="top-nav">
         <a href="https://campaign-craft.github.io/dashboard/home/materi_cetak/" target="_blank">
             📑 Cek Materi Cetak Klik Disini
+        </a>
+        <a href="https://campaign-craft.github.io/dashboard/home/kalkulator_adv/" target="_blank">
+            🧮 Kalkulator Advertorial Klik Disini
         </a>
     </nav>
 
@@ -440,12 +449,11 @@
     </div>
 
     <script>
-        // LOGIKA KODINGAN TETAP SAMA PERSIS SEPERTI SEBELUMNYA
         class SimpleOverlayTool {
             constructor() {
                 this.canvas = null;
                 this.dpi = 300;
-                this.mmToPixel = this.dpi / 25.4; 
+                this.mmToPixel = this.dpi / 25.4;
                 this.backgroundImg = null;
                 this.overlayImg = null;
                 this.zoomLevel = 1;
@@ -457,7 +465,7 @@
                         "Bali", "Bangka", "Banjarmasin", "Batam", "Belitung", "Jabar",
                         "Jambi", "Jateng", "Jogja", "Kaltim", "Kupang", "Lampung",
                         "Manado", "Medan", "Pekanbaru", "Pontianak", "Serambi",
-                        "Sripo", "Sumsel", "SuperBall", "Surya", "Wartakota", "Timur" 
+                        "Sripo", "Sumsel", "SuperBall", "Surya", "Wartakota", "Timur"
                     ],
                     sizeOptions: [
                         "2x100", "3x200", "3x270", "4x270", "Setengah_Halaman", "Full_Page_Dalam", "Full_Page_Cover"
@@ -465,10 +473,11 @@
                     defaultMedia: "Bali",
                     defaultSize: "2x100"
                 };
+                
                 this.initializeEventListeners();
+                this.populateDropdowns();
                 this.initializeCanvas();
-                this.populateDropdowns(); 
-                this.loadDefaultBackgroundImage(); 
+                this.loadDefaultBackgroundImage();
             }
 
             initializeEventListeners() {
@@ -676,7 +685,6 @@
                 document.getElementById('zoomSlider').value = pct;
             }
         }
-
         document.addEventListener('DOMContentLoaded', () => new SimpleOverlayTool());
     </script>
 </body>
