@@ -3,561 +3,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Advertorial Tribun</title>
+    <title>Kalkulator Advertorial Tribun | Modern & Responsive</title>
+    <!-- Tailwind CSS for Modern UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Modern Font: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
-            min-height: 100vh;
-            color: #333;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f1f5f9;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 102, 177, 0.1);
-        }
-        
-        .header h1 {
-            color: #0066B1;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            color: #666;
-            font-size: 1.1em;
-        }
-        
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .calculator-section, .reverse-section {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 102, 177, 0.1);
-        }
-        
-        .section-title {
-            color: #0066B1;
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #0066B1;
-            padding-bottom: 10px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .form-group select, .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-        
-        .form-group select:focus, .form-group input:focus, .form-group textarea:focus {
+        .tribun-blue { color: #0066B1; }
+        .bg-tribun-blue { background-color: #0066B1; }
+        .border-tribun-blue { border-color: #0066B1; }
+        .focus-ring:focus {
             outline: none;
             border-color: #0066B1;
-            box-shadow: 0 0 0 3px rgba(0, 102, 177, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 102, 177, 0.15);
         }
-        
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-            font-family: 'Courier New', monospace;
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
         }
-        
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .btn {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-calculate {
-            background: #db1f25;
-            color: white;
-        }
-        
-        .btn-calculate:hover {
-            background: #c11821;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(219, 31, 37, 0.3);
-        }
-        
-        .btn-clear {
-            background: #6c757d;
-            color: white;
-        }
-        
-        .btn-clear:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
-        }
-        
-        .result-section {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 102, 177, 0.1);
-            margin-top: 20px;
-        }
-        
-        .result-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .result-card {
-            background: linear-gradient(135deg, #0066B1 0%, #0052a3 100%);
-            color: white;
-            padding: 20px;
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
             border-radius: 10px;
-            text-align: center;
         }
-        
-        .result-card h3 {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-            opacity: 0.9;
-        }
-        
-        .result-card .value {
-            font-size: 2em;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .result-card .unit {
-            font-size: 0.9em;
-            opacity: 0.8;
-        }
-        
-        .recommendations {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            border-left: 4px solid #db1f25;
-        }
-        
-        .recommendations h4 {
-            color: #db1f25;
-            margin-bottom: 15px;
-        }
-        
-        .recommendation-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-        }
-        
-        .recommendation-item strong {
-            color: #0066B1;
-        }
-        
-        .info-box {
-            background: #e8f4fd;
-            border: 1px solid #0066B1;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-        
-        .info-box h4 {
-            color: #0066B1;
-            margin-bottom: 10px;
-        }
-        
-        .info-box ul {
-            margin-left: 20px;
-        }
-        
-        .info-box li {
-            margin-bottom: 5px;
-            color: #555;
-        }
-        
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .result-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .hidden {
-            display: none;
+        /* Glassmorphism subtle effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>📰 Kalkulator Advertorial Tribun</h1>
-            <p>Tools untuk menghitung estimasi karakter dan ukuran advertorial iklan cetak dengan akurat</p>
-        </div>
-        
-        <div class="main-content">
-            <div class="calculator-section">
-                <h2 class="section-title">🔢 Hitung Kapasitas Karakter</h2>
-                <form id="calculatorForm">
-                    <div class="form-group">
-                        <label for="paperType">Jenis Koran:</label>
-                        <select id="paperType" onchange="updateColumnOptions()" required>
-                            <option value="">Pilih jenis koran</option>
-                            <option value="tribun">Tribun (Umum)</option>
-                            <option value="tribun_jabar">Tribun Jabar</option>
-                        </select>
+<body class="text-slate-800 antialiased selection:bg-blue-100 selection:text-blue-900">
+
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="w-full bg-white border-b border-slate-200 py-6 px-4 md:px-8">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="p-2.5 bg-blue-50 rounded-2xl border border-blue-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 tribun-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="columnSize">Ukuran Kolom:</label>
-                        <select id="columnSize" required disabled>
-                            <option value="">Pilih jenis koran terlebih dahulu</option>
-                        </select>
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-extrabold tribun-blue tracking-tight">Kalkulator Advertorial</h1>
+                        <p class="text-xs md:text-sm text-slate-500 font-medium">Tribun Network • Tools Iklan Cetak</p>
                     </div>
+                </div>
+                <div class="hidden sm:flex items-center gap-2 text-xs font-semibold text-slate-400 bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                    Versi 2.1 • Desain Responsif Aktif
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Left Side: Inputs (Lg takes 7/12) -->
+                <div class="lg:col-span-7 space-y-6">
                     
-                    <div class="form-group">
-                        <label for="height">Tinggi Advertorial (mm):</label>
-                        <input type="number" id="height" min="10" max="540" placeholder="Masukkan tinggi (10-540mm)" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="fontSizePt">Ukuran Font:</label>
-                        <select id="fontSizePt">
-                            <option value="10">Palatino 10pt</option>
-                            <option value="11">Palatino 11pt</option>
-                            <option value="12">Palatino 12pt</option>
-                        </select>
+                    <!-- Calculator Form Card -->
+                    <div class="glass-card rounded-[2rem] p-6 md:p-8 shadow-xl shadow-slate-200/50 border border-white">
+                        <div class="flex items-center gap-3 mb-8">
+                            <h2 class="text-lg font-bold flex items-center gap-2">
+                                <span class="w-1.5 h-6 bg-rose-500 rounded-full"></span>
+                                Hitung Kapasitas Halaman
+                            </h2>
+                        </div>
+
+                        <form id="calculatorForm" class="space-y-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Jenis Koran</label>
+                                    <select id="paperType" onchange="updateColumnOptions()" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus-ring transition-all appearance-none cursor-pointer" required>
+                                        <option value="">Pilih Jenis Koran</option>
+                                        <option value="tribun">Tribun (Umum)</option>
+                                        <option value="tribun_jabar">Tribun Jabar</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Ukuran Kolom</label>
+                                    <select id="columnSize" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus-ring transition-all disabled:opacity-50 appearance-none cursor-pointer" required disabled>
+                                        <option value="">Pilih koran dulu</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Tinggi Advertorial (mm)</label>
+                                    <div class="relative">
+                                        <input type="number" id="height" min="10" max="540" placeholder="Maks. 540" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus-ring transition-all" required>
+                                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">mm</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Ukuran Font Basis</label>
+                                    <select id="fontSizePt" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus-ring transition-all appearance-none cursor-pointer">
+                                        <option value="10">Palatino 10pt (Standard)</option>
+                                        <option value="11">Palatino 11pt</option>
+                                        <option value="12">Palatino 12pt (Besar)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 border-t border-slate-100 pt-6">
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Elemen Judul</label>
+                                    <select id="titleLines" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus-ring transition-all appearance-none cursor-pointer">
+                                        <option value="0">Tanpa Judul</option>
+                                        <option value="1">1 Baris Judul (+8mm)</option>
+                                        <option value="2">2 Baris Judul (+16mm)</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Alokasi Foto</label>
+                                    <select id="photoSize" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus-ring transition-all appearance-none cursor-pointer">
+                                        <option value="0">Tanpa Foto</option>
+                                        <option value="15">Foto Sedang (15% Area)</option>
+                                        <option value="30">Foto Besar (30% Area)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row gap-3 pt-4">
+                                <button type="submit" class="flex-[2] bg-rose-600 hover:bg-rose-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-rose-200 active:scale-[0.98] flex items-center justify-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                    Hitung Sekarang
+                                </button>
+                                <button type="button" onclick="clearCalculator()" class="flex-1 px-5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-2xl transition-all flex items-center justify-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    Reset
+                                </button>
+                            </div>
+                        </form>
                     </div>
 
-                    <div class="form-group">
-                        <label for="titleLines">Judul (baris):</label>
-                        <select id="titleLines">
-                            <option value="0">Tanpa Judul</option>
-                            <option value="1">1 Baris Judul</option>
-                            <option value="2">2 Baris Judul</option>
-                        </select>
+                    <!-- Article Check Card -->
+                    <div class="glass-card rounded-[2rem] p-6 md:p-8 shadow-xl shadow-slate-200/50 border border-white">
+                        <div class="flex items-center gap-3 mb-6">
+                            <h2 class="text-lg font-bold flex items-center gap-2">
+                                <span class="w-1.5 h-6 bg-emerald-500 rounded-full"></span>
+                                Cek Artikel & Analisis Ukuran
+                            </h2>
+                        </div>
+
+                        <form id="reverseForm" class="space-y-6">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Paste Teks Artikel</label>
+                                <textarea id="articleText" rows="6" placeholder="Masukkan artikel Anda untuk mendapatkan rekomendasi ukuran kolom dan tinggi..." class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus-ring transition-all resize-none custom-scrollbar text-sm leading-relaxed"></textarea>
+                            </div>
+                            
+                            <div class="relative py-2">
+                                <div class="absolute inset-0 flex items-center"><span class="w-full border-t border-slate-100"></span></div>
+                                <div class="relative flex justify-center"><span class="bg-white px-3 text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Opsi Manual</span></div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">Jumlah Karakter (Jika sudah tahu)</label>
+                                <input type="number" id="manualCharCount" placeholder="0" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus-ring transition-all">
+                            </div>
+
+                            <button type="submit" class="w-full bg-tribun-blue hover:bg-blue-800 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-200 active:scale-[0.98] flex items-center justify-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                Analisis Rekomendasi
+                            </button>
+                        </form>
                     </div>
+                </div>
+
+                <!-- Right Side: Results (Lg takes 5/12, Sticky) -->
+                <div class="lg:col-span-5 lg:sticky lg:top-8 space-y-6">
                     
-                    <div class="form-group">
-                        <label for="photoSize">Ukuran Foto:</label>
-                        <select id="photoSize">
-                            <option value="0">Tanpa Foto</option>
-                            <option value="15">Foto Sedang (mengurangi 15% ruang)</option>
-                            <option value="30">Foto Besar (mengurangi 30% ruang)</option>
-                        </select>
+                    <!-- Placeholder -->
+                    <div id="resultPlaceholder" class="h-full min-h-[300px] flex flex-col items-center justify-center bg-white/50 border-4 border-dashed border-slate-200 rounded-[2rem] p-10 text-center text-slate-400">
+                        <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 opacity-30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-500 mb-2">Belum Ada Perhitungan</h3>
+                        <p class="text-sm leading-relaxed">Hasil perhitungan kapasitas atau rekomendasi ukuran akan muncul di panel ini setelah Anda mengisi form.</p>
                     </div>
-                    
-                    <div class="button-group">
-                        <button type="submit" class="btn btn-calculate">🔍 Hitung Kapasitas</button>
-                        <button type="button" class="btn btn-clear" onclick="clearCalculator()">🗑️ Reset</button>
+
+                    <!-- Results Content -->
+                    <div id="resultSection" class="hidden space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-extrabold flex items-center gap-2">
+                                <span class="w-8 h-1 bg-tribun-blue rounded-full"></span>
+                                Panel Hasil
+                            </h2>
+                            <button onclick="resetView()" class="text-xs font-bold text-slate-400 hover:text-rose-500 transition-colors uppercase tracking-widest">Tutup</button>
+                        </div>
+                        
+                        <div id="resultGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                            <!-- Dynamic Result Cards -->
+                        </div>
+
+                        <div id="recommendationsSection" class="bg-white rounded-[2rem] p-6 shadow-xl shadow-slate-200/40 border border-slate-100 hidden">
+                            <!-- Dynamic Recommendations -->
+                        </div>
                     </div>
-                </form>
+
+                    <!-- Guidelines -->
+                    <div class="bg-slate-900 rounded-[2rem] p-6 md:p-8 shadow-2xl text-white relative overflow-hidden">
+                        <!-- Decorative SVG -->
+                        <svg class="absolute right-0 bottom-0 opacity-10 w-32 h-32 -mb-8 -mr-8" fill="currentColor" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"/></svg>
+                        
+                        <h3 class="text-lg font-bold mb-5 flex items-center gap-2 relative z-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                            Ringkasan Pedoman
+                        </h3>
+                        <div class="space-y-4 text-xs md:text-sm text-slate-300 relative z-10 leading-relaxed">
+                            <div class="flex items-start gap-3">
+                                <span class="w-1 h-1 bg-blue-400 rounded-full mt-2 shrink-0"></span>
+                                <p><strong class="text-white">Lebar Kolom:</strong> Max 7 Kolom (Tribun Umum/304mm) atau 8 Kolom (Tribun Jabar/304mm).</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="w-1 h-1 bg-blue-400 rounded-full mt-2 shrink-0"></span>
+                                <p><strong class="text-white">Tinggi Maksimal:</strong> Satu halaman koran adalah 540mm.</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="w-1 h-1 bg-blue-400 rounded-full mt-2 shrink-0"></span>
+                                <p><strong class="text-white">Estimasi:</strong> Hasil ini adalah perkiraan teknis. Finalisasi layout mungkin sedikit berbeda.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="reverse-section">
-                <h2 class="section-title">📝 Cek Artikel & Rekomendasi Ukuran</h2>
-                <form id="reverseForm">
-                    <div class="form-group">
-                        <label for="articleText">Paste Artikel Anda:</label>
-                        <textarea id="articleText" placeholder="Paste artikel atau teks advertorial Anda di sini untuk menghitung jumlah karakter dan mendapat rekomendasi ukuran..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="manualCharCount">Atau Masukkan Jumlah Karakter Manual:</label>
-                        <input type="number" id="manualCharCount" min="1" placeholder="Masukkan jumlah karakter">
-                    </div>
-                    
-                    <div class="button-group">
-                        <button type="submit" class="btn btn-calculate">📏 Analisis & Rekomendasi</button>
-                        <button type="button" class="btn btn-clear" onclick="clearReverse()">🗑️ Reset</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <div class="result-section hidden" id="resultSection">
-            <h2 class="section-title">📊 Hasil Perhitungan</h2>
-            <div class="result-grid" id="resultGrid">
-                <!-- Results will be populated here -->
-            </div>
-            <div class="recommendations hidden" id="recommendationsSection">
-                <!-- Recommendations will be populated here -->
-            </div>
-        </div>
-        
-        <div class="info-box">
-            <h4>📚 Informasi Penting:</h4>
-            <ul>
-                <li><strong>Tribun Umum:</strong> 1-7 kolom (40-304mm lebar)</li>
-                <li><strong>Tribun Jabar:</strong> 1-8 kolom (34-304mm lebar)</li>
-                <li><strong>Font Basis:</strong> Palatino dengan pilihan ukuran 10pt, 11pt, 12pt</li>
-                <li><strong>Konstanta per Font:</strong> 10pt (0.3326), 11pt (0.2820), 12pt (0.2317) karakter per mm²</li>
-                <li><strong>Judul:</strong> Mengurangi 8-16mm tinggi tergantung baris judul</li>
-                <li><strong>Maksimum Tinggi:</strong> 540mm per halaman</li>
-                <li><strong>Foto:</strong> Sedang (15% ruang), Besar (30% ruang)</li>
-                <li><strong>Catatan:</strong> Judul, subjudul, dan spasi antar paragraf akan mengurangi kapasitas karakter</li>
-            </ul>
-        </div>
+        </main>
+
+        <footer class="w-full py-10 px-4 text-center border-t border-slate-200 bg-white">
+            <p class="text-slate-400 text-xs font-bold uppercase tracking-[0.3em]">&copy; 2024 Advertorial Tribun Network</p>
+        </footer>
     </div>
 
     <script>
-        // Font size constants (characters per mm²)
-        const FONT_CONSTANTS = {
-            10: 0.3326, // Palatino 10pt
-            11: 0.2820, // Palatino 11pt (approximately 85% of 10pt)
-            12: 0.2317  // Palatino 12pt (approximately 70% of 10pt)
-        };
-        
-        // Title height constants (mm per line)
-        const TITLE_HEIGHT_PER_LINE = 8; // 8mm per title line
-        
-        // Column sizes for different paper types
+        const FONT_CONSTANTS = { 10: 0.3326, 11: 0.2820, 12: 0.2317 };
+        const TITLE_HEIGHT_PER_LINE = 8;
         const COLUMN_SIZES = {
-            tribun: {
-                40: "1 Kolom",
-                84: "2 Kolom", 
-                128: "3 Kolom",
-                172: "4 Kolom",
-                216: "5 Kolom",
-                260: "6 Kolom",
-                304: "7 Kolom"
-            },
-            tribun_jabar: {
-                34: "1 Kolom",
-                73: "2 Kolom",
-                112: "3 Kolom", 
-                150: "4 Kolom",
-                188: "5 Kolom",
-                227: "6 Kolom",
-                265: "7 Kolom",
-                304: "8 Kolom"
-            }
+            tribun: { 40: "1 Kol", 84: "2 Kol", 128: "3 Kol", 172: "4 Kol", 216: "5 Kol", 260: "6 Kol", 304: "7 Kol" },
+            tribun_jabar: { 34: "1 Kol", 73: "2 Kol", 112: "3 Kol", 150: "4 Kol", 188: "5 Kol", 227: "6 Kol", 265: "7 Kol", 304: "8 Kol" }
         };
-        
-        let currentColumnSizes = {};
-        
-        // Update column options based on paper type
+
         function updateColumnOptions() {
             const paperType = document.getElementById('paperType').value;
             const columnSelect = document.getElementById('columnSize');
-            
-            // Clear existing options
             columnSelect.innerHTML = '<option value="">Pilih ukuran kolom</option>';
             
             if (paperType && COLUMN_SIZES[paperType]) {
-                currentColumnSizes = COLUMN_SIZES[paperType];
                 columnSelect.disabled = false;
-                
-                // Add new options
-                Object.keys(currentColumnSizes).forEach(width => {
-                    const option = document.createElement('option');
-                    option.value = width;
-                    option.textContent = `${currentColumnSizes[width]} (${width}mm)`;
-                    columnSelect.appendChild(option);
+                Object.entries(COLUMN_SIZES[paperType]).forEach(([width, label]) => {
+                    const opt = document.createElement('option');
+                    opt.value = width;
+                    opt.textContent = `${label} (${width}mm)`;
+                    columnSelect.appendChild(opt);
                 });
             } else {
-                currentColumnSizes = {};
                 columnSelect.disabled = true;
             }
         }
-        document.getElementById('calculatorForm').addEventListener('submit', function(e) {
+
+        document.getElementById('calculatorForm').onsubmit = (e) => {
             e.preventDefault();
-            calculateCapacity();
-        });
-        
-        // Reverse Form Handler  
-        document.getElementById('reverseForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            analyzeArticle();
-        });
-        
-        // Auto character count when typing
-        document.getElementById('articleText').addEventListener('input', function() {
-            const charCount = this.value.length;
-            document.getElementById('manualCharCount').value = charCount > 0 ? charCount : '';
-        });
-        
-        // Auto update article text when manual count changes
-        document.getElementById('manualCharCount').addEventListener('input', function() {
-            if (this.value && this.value > 0) {
-                document.getElementById('articleText').value = '';
-            }
-        });
-        
-        function calculateCapacity() {
-            const paperType = document.getElementById('paperType').value;
             const width = parseInt(document.getElementById('columnSize').value);
             const height = parseInt(document.getElementById('height').value);
-            const photoReduction = parseInt(document.getElementById('photoSize').value);
-            const fontSizePt = parseInt(document.getElementById('fontSizePt').value);
-            const titleLines = parseInt(document.getElementById('titleLines').value);
-            
-            if (!paperType || !width || !height) {
-                alert('Mohon lengkapi semua field yang diperlukan!');
-                return;
-            }
-            
-            // Get font constant
-            const charPerMm2 = FONT_CONSTANTS[fontSizePt];
-            
-            // Calculate effective height (subtract title space)
-            const titleHeight = titleLines * TITLE_HEIGHT_PER_LINE;
-            const effectiveHeight = height - titleHeight;
-            
-            if (effectiveHeight <= 0) {
-                alert('Tinggi terlalu kecil untuk judul yang dipilih!');
-                return;
-            }
-            
-            // Calculate base capacity
-            const baseArea = width * effectiveHeight;
-            const baseCapacity = Math.round(baseArea * charPerMm2);
-            
-            // Apply photo reduction
-            const photoReductionFactor = (100 - photoReduction) / 100;
-            const finalCapacity = Math.round(baseCapacity * photoReductionFactor);
-            
-            // Show results
-            showResults({
-                type: 'capacity',
-                paperType: paperType,
-                width: width,
-                height: height,
-                effectiveHeight: effectiveHeight,
-                titleHeight: titleHeight,
-                titleLines: titleLines,
-                columnName: currentColumnSizes[width],
-                baseArea: baseArea,
-                baseCapacity: baseCapacity,
-                finalCapacity: finalCapacity,
-                photoReduction: photoReduction,
-                fontSizePt: fontSizePt
+            const photoRed = parseInt(document.getElementById('photoSize').value);
+            const fontSize = parseInt(document.getElementById('fontSizePt').value);
+            const titles = parseInt(document.getElementById('titleLines').value);
+            const paper = document.getElementById('paperType').value;
+
+            const titleH = titles * TITLE_HEIGHT_PER_LINE;
+            const effH = height - titleH;
+            if (effH <= 0) return alert("Tinggi terlalu rendah untuk judul!");
+
+            const baseCap = Math.round((width * effH) * FONT_CONSTANTS[fontSize]);
+            const finalCap = Math.round(baseCap * ((100 - photoRed) / 100));
+
+            renderCapacityResults({
+                finalCap, baseCap, width, height, effH, titles, paper, 
+                colLabel: COLUMN_SIZES[paper][width], fontSize
             });
-        }
-        
-        function analyzeArticle() {
-            let charCount = 0;
-            const articleText = document.getElementById('articleText').value.trim();
-            const manualCount = parseInt(document.getElementById('manualCharCount').value);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        document.getElementById('articleText').oninput = function() {
+            document.getElementById('manualCharCount').value = this.value.length || '';
+        };
+
+        document.getElementById('reverseForm').onsubmit = (e) => {
+            e.preventDefault();
+            const charCount = parseInt(document.getElementById('manualCharCount').value);
+            if (!charCount) return alert("Mohon masukkan teks atau jumlah karakter!");
             
-            if (articleText) {
-                charCount = articleText.length;
-            } else if (manualCount) {
-                charCount = manualCount;
-            } else {
-                alert('Mohon masukkan artikel atau jumlah karakter!');
-                return;
-            }
-            
-            // Generate recommendations
-            const recommendations = generateRecommendations(charCount);
-            
-            showResults({
-                type: 'analysis',
-                charCount: charCount,
-                wordCount: articleText ? articleText.split(/\s+/).length : Math.round(charCount / 5),
-                recommendations: recommendations
-            });
-        }
-        
-        function generateRecommendations(charCount) {
-            const recommendations = [];
-            
-            // Test different scenarios
-            const scenarios = [
-                { photo: 0, label: "Tanpa Foto" },
-                { photo: 15, label: "Dengan Foto Sedang" },
-                { photo: 30, label: "Dengan Foto Besar" }
-            ];
-            
-            const fontSizes = [10, 11, 12];
-            const titleOptions = [0, 1, 2];
-            const paperTypes = ['tribun', 'tribun_jabar'];
-            
-            scenarios.forEach(scenario => {
-                fontSizes.forEach(fontSize => {
-                    titleOptions.forEach(titleLines => {
-                        paperTypes.forEach(paperType => {
-                            Object.keys(COLUMN_SIZES[paperType]).forEach(width => {
-                                const widthNum = parseInt(width);
-                                const charPerMm2 = FONT_CONSTANTS[fontSize];
-                                const titleHeight = titleLines * TITLE_HEIGHT_PER_LINE;
-                                
-                                // Calculate required height for this character count
-                                const photoFactor = (100 - scenario.photo) / 100;
-                                const requiredArea = charCount / (charPerMm2 * photoFactor);
-                                const requiredContentHeight = Math.ceil(requiredArea / widthNum);
-                                const totalRequiredHeight = requiredContentHeight + titleHeight;
-                                
-                                if (totalRequiredHeight <= 540 && requiredContentHeight > 0) { // Maximum height constraint
-                                    recommendations.push({
-                                        paperType: paperType,
-                                        paperLabel: paperType === 'tribun' ? 'Tribun Umum' : 'Tribun Jabar',
-                                        width: widthNum,
-                                        height: totalRequiredHeight,
-                                        contentHeight: requiredContentHeight,
-                                        titleHeight: titleHeight,
-                                        titleLines: titleLines,
-                                        columnName: COLUMN_SIZES[paperType][width],
-                                        photoLabel: scenario.label,
-                                        photoReduction: scenario.photo,
-                                        fontSize: fontSize,
-                                        charPerMm2: charPerMm2,
-                                        efficiency: Math.round((charCount / (widthNum * requiredContentHeight * charPerMm2 * photoFactor)) * 100)
+            const recommendations = generateRecs(charCount);
+            renderAnalysisResults(charCount, recommendations);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        function generateRecs(charCount) {
+            const recs = [];
+            const scenarios = [{p:0, l:"No Foto"}, {p:15, l:"Foto Sedang"}, {p:30, l:"Foto Besar"}];
+            ['tribun', 'tribun_jabar'].forEach(type => {
+                Object.entries(COLUMN_SIZES[type]).forEach(([w, label]) => {
+                    scenarios.forEach(scen => {
+                        [10, 11, 12].forEach(fs => {
+                            [0, 1, 2].forEach(tl => {
+                                const areaReq = charCount / (FONT_CONSTANTS[fs] * ((100 - scen.p) / 100));
+                                const hCont = Math.ceil(areaReq / w);
+                                const totalH = hCont + (tl * TITLE_HEIGHT_PER_LINE);
+                                if (totalH <= 540 && totalH > 20) {
+                                    recs.push({ 
+                                        type, w, totalH, label, fs, tl, 
+                                        scen: scen.l, pType: type === 'tribun' ? 'Tribun Umum' : 'Tribun Jabar'
                                     });
                                 }
                             });
@@ -565,144 +322,76 @@
                     });
                 });
             });
-            
-            // Sort by efficiency and height
-            recommendations.sort((a, b) => {
-                if (Math.abs(a.efficiency - b.efficiency) < 5) {
-                    return a.height - b.height; // Prefer shorter height if efficiency is similar
-                }
-                return b.efficiency - a.efficiency; // Higher efficiency first
-            });
-            
-            return recommendations.slice(0, 15); // Top 15 recommendations
+            // Sort by efficiency (shorter height for same width is usually preferred)
+            return recs.sort((a,b) => a.totalH - b.totalH).slice(0, 12);
         }
-        
-        function showResults(data) {
-            const resultSection = document.getElementById('resultSection');
-            const resultGrid = document.getElementById('resultGrid');
-            const recommendationsSection = document.getElementById('recommendationsSection');
-            
-            resultGrid.innerHTML = '';
-            recommendationsSection.innerHTML = '';
-            
-            if (data.type === 'capacity') {
-                // Show capacity results
-                const titleInfo = data.titleLines > 0 ? `(${data.titleLines} baris judul: -${data.titleHeight}mm)` : '';
-                const paperLabel = data.paperType === 'tribun' ? 'Tribun Umum' : 'Tribun Jabar';
-                resultGrid.innerHTML = `
-                    <div class="result-card">
-                        <h3>Koran & Ukuran</h3>
-                        <div class="value">${data.columnName}</div>
-                        <div class="unit">${paperLabel}<br>${data.width}mm × ${data.height}mm</div>
-                    </div>
-                    <div class="result-card">
-                        <h3>Area Konten Efektif</h3>
-                        <div class="value">${data.baseArea.toLocaleString()}</div>
-                        <div class="unit">mm² ${titleInfo}</div>
-                    </div>
-                    <div class="result-card">
-                        <h3>Font & Kapasitas Dasar</h3>
-                        <div class="value">${data.baseCapacity.toLocaleString()}</div>
-                        <div class="unit">karakter (Palatino ${data.fontSizePt}pt)</div>
-                    </div>
-                    <div class="result-card">
-                        <h3>Kapasitas Final</h3>
-                        <div class="value">${data.finalCapacity.toLocaleString()}</div>
-                        <div class="unit">karakter ${data.photoReduction > 0 ? '(setelah foto)' : ''}</div>
-                    </div>
-                `;
-                
-                let infoHTML = '';
-                if (data.titleLines > 0 || data.photoReduction > 0) {
-                    infoHTML = '<h4>💡 Detail Pengurangan Ruang:</h4>';
-                    
-                    if (data.titleLines > 0) {
-                        infoHTML += `
-                            <div class="recommendation-item">
-                                <strong>Judul:</strong> ${data.titleLines} baris (${data.titleHeight}mm)<br>
-                                <strong>Tinggi Efektif:</strong> ${data.height}mm - ${data.titleHeight}mm = ${data.effectiveHeight}mm
-                            </div>
-                        `;
-                    }
-                    
-                    if (data.photoReduction > 0) {
-                        infoHTML += `
-                            <div class="recommendation-item">
-                                <strong>Pengurangan Foto:</strong> ${data.photoReduction}% ruang<br>
-                                <strong>Karakter Berkurang:</strong> ${(data.baseCapacity - data.finalCapacity).toLocaleString()} karakter<br>
-                                <strong>Sisa Kapasitas:</strong> ${data.finalCapacity.toLocaleString()} karakter
-                            </div>
-                        `;
-                    }
-                    
-                    recommendationsSection.innerHTML = infoHTML;
-                    recommendationsSection.classList.remove('hidden');
-                }
-                
-            } else if (data.type === 'analysis') {
-                // Show analysis results
-                resultGrid.innerHTML = `
-                    <div class="result-card">
-                        <h3>Total Karakter</h3>
-                        <div class="value">${data.charCount.toLocaleString()}</div>
-                        <div class="unit">karakter</div>
-                    </div>
-                    <div class="result-card">
-                        <h3>Estimasi Kata</h3>
-                        <div class="value">${data.wordCount.toLocaleString()}</div>
-                        <div class="unit">kata</div>
-                    </div>
-                    <div class="result-card">
-                        <h3>Rekomendasi</h3>
-                        <div class="value">${data.recommendations.length}</div>
-                        <div class="unit">opsi ukuran</div>
-                    </div>
-                    <div class="result-card">
-                        <h3>Ukuran Terbaik</h3>
-                        <div class="value">${data.recommendations[0].columnName}</div>
-                        <div class="unit">${data.recommendations[0].paperLabel}<br>${data.recommendations[0].width}×${data.recommendations[0].height}mm (${data.recommendations[0].fontSize}pt)</div>
-                    </div>
-                `;
-                
-                // Show recommendations
-                let recommendationsHTML = '<h4>🎯 Rekomendasi Ukuran Advertorial:</h4>';
-                data.recommendations.forEach((rec, index) => {
-                    const badge = index === 0 ? '🏆 TERBAIK' : `#${index + 1}`;
-                    const titleInfo = rec.titleLines > 0 ? ` | Judul: ${rec.titleLines} baris` : '';
-                    const estimatedCapacity = Math.round(rec.width * rec.contentHeight * rec.charPerMm2 * (100 - rec.photoReduction) / 100);
-                    
-                    recommendationsHTML += `
-                        <div class="recommendation-item">
-                            <strong>${badge} - ${rec.paperLabel}: ${rec.columnName} (${rec.width}×${rec.height}mm)</strong><br>
-                            <strong>Font:</strong> Palatino ${rec.fontSize}pt | <strong>Kondisi:</strong> ${rec.photoLabel}${titleInfo}<br>
-                            <strong>Efisiensi:</strong> ${rec.efficiency}% | <strong>Kapasitas:</strong> ~${estimatedCapacity.toLocaleString()} karakter<br>
-                            <strong>Detail:</strong> Konten ${rec.contentHeight}mm + Judul ${rec.titleHeight}mm = Total ${rec.height}mm
+
+        function renderCapacityResults(d) {
+            hidePlaceholder();
+            const grid = document.getElementById('resultGrid');
+            grid.innerHTML = `
+                ${createCard("Kapasitas Final", d.finalCap.toLocaleString(), "Karakter Tersedia", "bg-tribun-blue text-white shadow-blue-200")}
+                ${createCard("Ukuran Fisik", d.colLabel, `${d.width} x ${d.height} mm`, "bg-white border border-slate-100")}
+                ${createCard("Tinggi Konten", d.effH + "mm", `Efektif setelah judul (-${d.titles * 8}mm)`, "bg-white border border-slate-100")}
+                ${createCard("Font Basis", "Palatino " + d.fontSize + "pt", "Settingan Standar", "bg-white border border-slate-100")}
+            `;
+            document.getElementById('recommendationsSection').classList.add('hidden');
+        }
+
+        function renderAnalysisResults(count, recs) {
+            hidePlaceholder();
+            const grid = document.getElementById('resultGrid');
+            grid.innerHTML = `
+                ${createCard("Total Karakter", count.toLocaleString(), "Karakter Terdeteksi", "bg-tribun-blue text-white shadow-blue-200")}
+                ${createCard("Opsi Ukuran", recs.length + " Pilihan", "Ditemukan dari analisis", "bg-white border border-slate-100")}
+            `;
+
+            const recSec = document.getElementById('recommendationsSection');
+            recSec.classList.remove('hidden');
+            recSec.innerHTML = `<h3 class="font-bold text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Rekomendasi Ukuran:</h3><div class="grid grid-cols-1 gap-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">` + 
+                recs.map((r, i) => `
+                    <div class="p-4 rounded-2xl border ${i === 0 ? 'border-emerald-200 bg-emerald-50/50' : 'border-slate-100 hover:bg-slate-50'} transition-all flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 group">
+                        <div>
+                            <p class="font-extrabold text-sm ${i === 0 ? 'text-emerald-700' : 'text-slate-700'}">${r.pType}: ${r.label} (${r.w}x${r.totalH}mm)</p>
+                            <p class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-wider">${r.scen} • Font ${r.fs}pt • ${r.tl} Baris Judul</p>
                         </div>
-                    `;
-                });
-                
-                recommendationsSection.innerHTML = recommendationsHTML;
-                recommendationsSection.classList.remove('hidden');
-            }
-            
-            resultSection.classList.remove('hidden');
-            resultSection.scrollIntoView({ behavior: 'smooth' });
+                        <div class="flex items-center justify-between sm:justify-end gap-2 shrink-0">
+                            <span class="text-[9px] font-black px-3 py-1.5 rounded-full ${i === 0 ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-500'}">
+                                ${i === 0 ? 'PALING EFISIEN' : '#' + (i+1)}
+                            </span>
+                        </div>
+                    </div>
+                `).join('') + `</div>`;
         }
-        
+
+        function createCard(title, val, sub, cls) {
+            return `
+                <div class="${cls} p-6 rounded-[1.8rem] transition-all hover:scale-[1.03] hover:shadow-xl duration-300">
+                    <p class="text-[10px] font-black uppercase tracking-[0.15em] opacity-70 mb-2">${title}</p>
+                    <p class="text-2xl font-black tracking-tight">${val}</p>
+                    <p class="text-xs opacity-60 mt-2 font-medium leading-relaxed">${sub}</p>
+                </div>
+            `;
+        }
+
+        function hidePlaceholder() {
+            document.getElementById('resultPlaceholder').classList.add('hidden');
+            document.getElementById('resultSection').classList.remove('hidden');
+        }
+
         function clearCalculator() {
             document.getElementById('calculatorForm').reset();
-            document.getElementById('columnSize').disabled = true;
-            document.getElementById('columnSize').innerHTML = '<option value="">Pilih jenis koran terlebih dahulu</option>';
-            currentColumnSizes = {};
-            hideResults();
+            updateColumnOptions();
+            resetView();
         }
-        
+
         function clearReverse() {
             document.getElementById('reverseForm').reset();
-            hideResults();
+            resetView();
         }
-        
-        function hideResults() {
+
+        function resetView() {
+            document.getElementById('resultPlaceholder').classList.remove('hidden');
             document.getElementById('resultSection').classList.add('hidden');
             document.getElementById('recommendationsSection').classList.add('hidden');
         }
