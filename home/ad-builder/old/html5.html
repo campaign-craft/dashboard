@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML5 Ad Inspector & Builder</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .drop-zone--over {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+
+        .spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border-left-color: #3b82f6;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        iframe.preview-standalone {
+            background: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .show-border {
+            outline: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-800">🎯 HTML5 Ad Inspector</h1>
+            <p class="text-slate-500 mt-2">Periksa aset, audit ukuran, dan simulasikan iklan HTML5 dalam template.</p>
+        </header>
+
+        <!-- TOP SECTION: CONFIG & INSPECTOR -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- LEFT: CONFIGURATION -->
+            <div class="space-y-6">
+                <!-- Section 1: Upload -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <span class="p-2 bg-blue-100 text-blue-600 rounded-lg text-sm">1</span>
+                        Upload HTML5 ZIP
+                    </h2>
+                    <div id="dropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-blue-500 transition-colors cursor-pointer relative">
+                        <input type="file" id="zipInput" class="absolute inset-0 opacity-0 cursor-pointer" accept=".zip">
+                        <div class="text-slate-400 text-3xl mb-2">📦</div>
+                        <p class="text-sm font-medium text-slate-600">Klik atau drag file ZIP di sini</p>
+                    </div>
+                    <div id="zipStatus" class="mt-4 hidden">
+                        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                            <div id="zipIcon" class="text-xl">📄</div>
+                            <div class="flex-1 overflow-hidden">
+                                <p id="zipName" class="text-sm font-bold truncate text-slate-700"></p>
+                                <p id="zipSize" class="text-xs text-slate-500"></p>
+                            </div>
+                            <div id="zipBadge" class="px-2 py-1 rounded text-[10px] font-bold uppercase"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Template Config -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <span class="p-2 bg-purple-100 text-purple-600 rounded-lg text-sm">2</span>
+                        Template & Branding
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Pilih Format Iklan</label>
+                                <select id="adSlotSelect" onchange="onSlotChange()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">-- Pilih Format --</option>
+                                    <optgroup label="Desktop">
+                                        <option value="728x90">Leaderboard (728x90)</option>
+                                        <option value="970x250">Billboard (970x250)</option>
+                                        <option value="300x600">Giant Banner (300x600)</option>
+                                        <option value="300x250_mr1">MR 1 (300x250)</option>
+                                        <option value="300x250_mr2">MR 2 (300x250)</option>
+                                        <option value="300x250_mr3">MR 3 (300x250)</option>
+                                        <option value="1100x50">Horizontal Ad (1100x50)</option>
+                                        <option value="120x600">Skin Ad (120x600)</option>
+                                        <option value="160x600">Skyscraper (160x600)</option>
+                                    </optgroup>
+                                    <optgroup label="Mobile">
+                                        <option value="320x150_top">Top Banner (320x150)</option>
+                                        <option value="300x250_top">Top Banner (300x250)</option>
+                                        <option value="320x480">Pushdown (320x480)</option>
+                                        <option value="300x250_middle">Middle Banner (300x250)</option>
+                                        <option value="320x50">Horizontal Ad (320x50)</option>
+                                        <option value="300x600_mobile">Giant Banner (300x600)</option>
+                                        <option value="300x200">Roll Up (300x200)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Ganti Logo Daerah</label>
+                                <select id="logoSelect" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none">
+                                    <option value="default">Default (Tribunnews)</option>
+                                    <option value="jabar">Tribun Jabar</option>
+                                    <option value="bali">Tribun Bali</option>
+                                    <option value="jateng">Tribun Jateng</option>
+                                    <option value="serambi">Serambi Indonesia</option>
+                                    <option value="banten">Tribun Banten</option>
+                                    <option value="surya">Surya</option>
+                                    <option value="suryamalang">Surya Malang</option>
+                                    <option value="timur">Tribun Timur</option>
+                                    <option value="medan">Tribun Medan</option>
+                                    <option value="sripo">Sriwijaya Post</option>
+                                    <option value="lampung">Tribun Lampung</option>
+                                    <option value="banjarmasin">Banjarmasin Post</option>
+                                    <option value="papua">Tribun Papua</option>
+                                    <option value="jogja">Tribun Jogja</option>
+                                    <option value="solo">Tribun Solo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Landing Page URL</label>
+                            <input type="text" id="lpInput" placeholder="https://example.com" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none">
+                        </div>
+                        <div class="flex gap-3">
+                            <button id="generateBtn" disabled onclick="generateTemplate()" class="flex-[2] bg-blue-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 disabled:bg-slate-300 disabled:shadow-none transition-all">
+                                🚀 Preview di Website
+                            </button>
+                            <button id="downloadBtn" disabled onclick="downloadBundle()" class="flex-1 bg-slate-800 text-white font-bold py-3 rounded-xl hover:bg-slate-900 disabled:bg-slate-200 transition-all" title="Download Bundel">
+                                💾 Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Asset Audit -->
+                <div id="auditSection" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 opacity-50 pointer-events-none transition-opacity">
+                    <h2 class="text-sm font-semibold mb-4 text-slate-500 uppercase tracking-wider">📦 File Audit</h2>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 text-center">
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">Files</p>
+                            <p id="totalFiles" class="text-lg font-bold text-slate-700">-</p>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 text-center">
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">Main Load</p>
+                            <p id="mainLoadSize" class="text-lg font-bold text-slate-700">-</p>
+                        </div>
+                    </div>
+                    <div class="max-h-32 overflow-y-auto custom-scrollbar border border-slate-100 rounded-lg">
+                        <table class="w-full text-left text-[11px]">
+                            <tbody id="fileListTable" class="divide-y divide-slate-100">
+                                <!-- List file -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: MATERI INSPECTOR (STANDALONE) -->
+            <div id="inspectorPanel" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-lg font-semibold flex items-center gap-2">
+                             🔍 Materi Inspector
+                        </h2>
+                        <p class="text-xs text-slate-400">Standalone preview materi asli</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="reloadStandalone()" class="p-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-500 border border-slate-200" title="Replay Animation">🔄</button>
+                        <button onclick="togglePreviewBorder()" class="p-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-500 border border-slate-200" title="Toggle Border">🔲</button>
+                    </div>
+                </div>
+                
+                <div id="standaloneContainer" class="flex-1 bg-slate-100 rounded-2xl overflow-auto flex items-center justify-center min-h-[400px] border-4 border-dashed border-slate-200 p-8">
+                    <div class="text-center text-slate-400">
+                        <div class="text-5xl mb-4">✨</div>
+                        <p class="text-sm italic">Unggah ZIP untuk melihat materi</p>
+                    </div>
+                </div>
+                
+                <div id="standaloneDimensionsInfo" class="mt-4 text-center hidden">
+                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-bold uppercase tracking-widest" id="activeSizeBadge">300 x 250</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM SECTION: WEBSITE CONTEXT PREVIEW (FULL WIDTH) -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    📋 Website Context Preview
+                </h2>
+                <div id="responsiveBadge" class="hidden px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-medium">
+                    Mode: <span id="modeName">Desktop</span>
+                </div>
+            </div>
+
+            <div id="iframeWrapper" class="relative bg-slate-50 rounded-xl overflow-hidden min-h-[600px] border border-slate-100 flex justify-center p-4">
+                <iframe id="mainPreview" class="bg-white shadow-2xl hidden transition-all duration-500 origin-top"></iframe>
+                
+                <div id="placeholderPreview" class="flex flex-col items-center justify-center p-20 text-center opacity-40">
+                    <div class="text-7xl mb-6">🌐</div>
+                    <h3 class="text-xl font-semibold text-slate-700 mb-2">Simulasi Konteks Website</h3>
+                    <p class="text-slate-500 max-w-md">Setelah mengunggah materi, pilih format iklan dan klik tombol "Preview di Website" untuk melihat tampilan iklan di antara konten artikel.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // -- DATA & CONFIG --
+        const adSlots = {
+            // Desktop
+            "728x90": { name: "Leaderboard", width: 728, height: 90, template: "template_leaderboard.html" },
+            "970x250": { name: "Billboard", width: 970, height: 250, template: "template_billboard.html" },
+            "300x600": { name: "Giant Banner", width: 300, height: 600, template: "template_giant_banner_desktop.html" },
+            "300x250_mr1": { name: "MR 1", width: 300, height: 250, template: "template_medium_rectangle.html" },
+            "300x250_mr2": { name: "MR 2", width: 300, height: 250, template: "template_mr2.html" },
+            "300x250_mr3": { name: "MR 3", width: 300, height: 250, template: "template_mr3.html" },
+            "1100x50": { name: "Horizontal Ad (Desktop)", width: 1100, height: 50, template: "template_horizontal_ad_desktop.html" },
+            "120x600": { name: "Skin Ad", width: 120, height: 600, template: "template_skin_ad.html" },
+            "160x600": { name: "Skyscraper", width: 160, height: 600, template: "template_skyscraper.html" },
+            // Mobile
+            "320x150_top": { name: "Top Banner (320x150)", width: 320, height: 150, template: "template_top_banner_mobile.html" },
+            "300x250_top": { name: "Top Banner (300x250)", width: 300, height: 250, template: "template_top_banner2_mobile.html" },
+            "320x480": { name: "Pushdown", width: 320, height: 480, template: "template_pushdown.html" },
+            "300x250_middle": { name: "Middle Banner Mobile", width: 300, height: 250, template: "template_middle_banner_mobile.html" },
+            "320x50": { name: "Horizontal Ad Mobile", width: 320, height: 50, template: "template_horizontal_ad_mobile.html" },
+            "300x600_mobile": { name: "Giant Banner (Mobile)", width: 300, height: 600, template: "template_giant_banner_mobile.html" },
+            "300x200": { name: "Roll Up", width: 300, height: 200, template: "template_roll_up.html" }
+        };
+
+        const logoUrls = {
+            "default": "https://asset-1.tstatic.net/img/logo/tribun/svg/tribunnews.svg",
+            "jabar": "https://asset-1.tstatic.net/img/logo/daerah/svg3/tribunjabar5.svg",
+            "bali": "https://asset-1.tstatic.net/img/logo/daerah/svg3/tribunbali.svg",
+            "jateng": "https://asset-1.tstatic.net/img/logo/daerah/svg3/tribunjateng.svg",
+            "serambi": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/serambiindonesia.svg',
+            "banten": 'https://asset-1.tribunnews.com/img/logo/tribun/svg/tribunbanten2.svg',
+            "surya": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/suryamalang.svg',
+            "suryamalang": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/suryamalang.svg',
+            "timur": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribuntimur.svg',
+            "medan": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunmedan.svg',
+            "sripo": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/sriwijayapost.svg',
+            "lampung": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunlampung.svg',
+            "banjarmasin": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/banjarmasinpost.svg',
+            "papua": 'https://asset-1.tribunnews.com/img/logo/tribun/svg/tribunpapua2.svg',
+            "jogja": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunjogja.svg',
+            "solo": 'https://asset-1.tribunnews.com/img/logo/daerah/svg3/tribunsolo.svg'
+        };
+
+        // -- STATE --
+        let processedFiles = {}; 
+        let originalIndexHtml = '';
+        let standaloneBlobUrl = '';
+
+        // -- DOM ELEMENTS --
+        const zipInput = document.getElementById('zipInput');
+        const dropZone = document.getElementById('dropZone');
+        const zipStatus = document.getElementById('zipStatus');
+        const auditSection = document.getElementById('auditSection');
+        const fileListTable = document.getElementById('fileListTable');
+        const standaloneContainer = document.getElementById('standaloneContainer');
+        const mainPreview = document.getElementById('mainPreview');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        // -- INITIALIZATION --
+        window.onload = () => {
+            zipInput.addEventListener('change', handleZipUpload);
+            setupDropZone();
+        };
+
+        function setupDropZone() {
+            ['dragover', 'dragleave', 'drop'].forEach(evt => {
+                dropZone.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    if (evt === 'dragover') dropZone.classList.add('drop-zone--over');
+                    else dropZone.classList.remove('drop-zone--over');
+                    
+                    if (evt === 'drop') {
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                            zipInput.files = files;
+                            handleZipUpload();
+                        }
+                    }
+                });
+            });
+        }
+
+        // -- LOGIC: ZIP PROCESSING --
+        async function handleZipUpload() {
+            const file = zipInput.files[0];
+            if (!file || !file.name.endsWith('.zip')) return;
+
+            zipStatus.classList.remove('hidden');
+            auditSection.classList.remove('opacity-50', 'pointer-events-none');
+            document.getElementById('zipName').textContent = file.name;
+            const sizeKB = (file.size / 1024).toFixed(1);
+            document.getElementById('zipSize').textContent = `${sizeKB} KB`;
+            
+            const badge = document.getElementById('zipBadge');
+            if (file.size > 200 * 1024) {
+                badge.textContent = "HEAVY";
+                badge.className = "px-2 py-1 rounded text-[10px] font-bold bg-red-100 text-red-600";
+            } else {
+                badge.textContent = "LIGHT";
+                badge.className = "px-2 py-1 rounded text-[10px] font-bold bg-green-100 text-green-600";
+            }
+
+            try {
+                const zip = new JSZip();
+                const loadedZip = await zip.loadAsync(file);
+                
+                processedFiles = {};
+                fileListTable.innerHTML = '';
+                let count = 0;
+
+                const filePromises = [];
+                loadedZip.forEach((path, entry) => {
+                    if (!entry.dir) {
+                        count++;
+                        filePromises.push(processEntry(entry, path));
+                    }
+                });
+
+                await Promise.all(filePromises);
+
+                document.getElementById('totalFiles').textContent = count;
+                document.getElementById('mainLoadSize').textContent = `${sizeKB} KB`;
+
+                if (processedFiles['index.html']) {
+                    createStandalonePreview();
+                    checkGenerateState();
+                } else {
+                    alert('Error: index.html tidak ditemukan di folder root ZIP.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Gagal membaca file ZIP.');
+            }
+        }
+
+        async function processEntry(entry, path) {
+            const blob = await entry.async('blob');
+            processedFiles[path] = blob;
+
+            if (path === 'index.html') {
+                originalIndexHtml = await entry.async('string');
+            }
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="p-2 truncate max-w-[120px] text-slate-600 font-medium">${path}</td>
+                <td class="p-2 text-right text-slate-400 font-mono italic">${(blob.size / 1024).toFixed(1)}K</td>
+            `;
+            fileListTable.appendChild(row);
+        }
+
+        // -- LOGIC: STANDALONE PREVIEW (INSPECTOR) --
+        function createStandalonePreview() {
+            if (standaloneBlobUrl) URL.revokeObjectURL(standaloneBlobUrl);
+
+            const blobMapping = {};
+            for (const path in processedFiles) {
+                blobMapping[path] = URL.createObjectURL(processedFiles[path]);
+            }
+
+            let injectedHtml = originalIndexHtml;
+            for (const path in blobMapping) {
+                const filename = path.split('/').pop();
+                const escapedName = filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(`(["'])(?!data:|http|https)(?:\\.\\.\\/)*${escapedName}(["'])`, 'g');
+                injectedHtml = injectedHtml.replace(regex, `$1${blobMapping[path]}$2`);
+            }
+
+            const finalBlob = new Blob([injectedHtml], { type: 'text/html' });
+            standaloneBlobUrl = URL.createObjectURL(finalBlob);
+
+            standaloneContainer.innerHTML = `
+                <iframe id="standaloneIframe" src="${standaloneBlobUrl}" 
+                        class="preview-standalone border-none bg-white rounded shadow-2xl"
+                        style="width: 300px; height: 250px;"></iframe>
+            `;
+            
+            updateStandaloneSize();
+        }
+
+        function updateStandaloneSize() {
+            const slotId = document.getElementById('adSlotSelect').value;
+            const ifr = document.getElementById('standaloneIframe');
+            const info = document.getElementById('standaloneDimensionsInfo');
+            const badge = document.getElementById('activeSizeBadge');
+
+            if (!ifr) return;
+
+            if (slotId && adSlots[slotId]) {
+                const slot = adSlots[slotId];
+                ifr.style.width = slot.width + 'px';
+                ifr.style.height = slot.height + 'px';
+                badge.textContent = `${slot.width} x ${slot.height}`;
+                info.classList.remove('hidden');
+            } else {
+                // Auto-detect from meta ad.size if available
+                const sizeMatch = originalIndexHtml.match(/content="width=(\d+),height=(\d+)"/);
+                if (sizeMatch) {
+                    ifr.style.width = sizeMatch[1] + 'px';
+                    ifr.style.height = sizeMatch[2] + 'px';
+                    badge.textContent = `${sizeMatch[1]} x ${sizeMatch[2]}`;
+                    info.classList.remove('hidden');
+                } else {
+                    ifr.style.width = '300px';
+                    ifr.style.height = '250px';
+                    info.classList.add('hidden');
+                }
+            }
+        }
+
+        function onSlotChange() {
+            updateStandaloneSize();
+            checkGenerateState();
+        }
+
+        function reloadStandalone() {
+            const ifr = document.getElementById('standaloneIframe');
+            if (ifr) ifr.src = ifr.src;
+        }
+
+        function togglePreviewBorder() {
+            const ifr = document.getElementById('standaloneIframe');
+            if (ifr) ifr.classList.toggle('show-border');
+        }
+
+        // -- LOGIC: TEMPLATE GENERATION --
+        function checkGenerateState() {
+            const slot = document.getElementById('adSlotSelect').value;
+            generateBtn.disabled = !(slot && processedFiles['index.html']);
+        }
+
+        async function generateTemplate() {
+            const slotId = document.getElementById('adSlotSelect').value;
+            const slot = adSlots[slotId];
+            const logoKey = document.getElementById('logoSelect').value;
+            const lpUrl = document.getElementById('lpInput').value || '#';
+
+            if (!slot) return;
+
+            mainPreview.classList.add('hidden');
+            document.getElementById('placeholderPreview').innerHTML = `
+                <div class="flex flex-col items-center">
+                    <div class="spinner mb-4"></div>
+                    <p class="text-slate-500 font-medium">Menyusun konteks website...</p>
+                </div>
+            `;
+            document.getElementById('placeholderPreview').classList.remove('hidden');
+
+            try {
+                const response = await fetch(slot.template);
+                if (!response.ok) throw new Error("Template tidak ditemukan");
+                let html = await response.text();
+
+                // Replace Logo
+                const defaultLogo = "https://asset-1.tstatic.net/img/logo/tribun/svg/tribunnews.svg";
+                html = html.replace(new RegExp(defaultLogo, 'g'), logoUrls[logoKey]);
+
+                // Prepare Content with Overlay
+                const adContent = `
+                    <div style="position:relative; width:100%; height:100%; overflow:hidden;">
+                        <iframe src="${standaloneBlobUrl}" style="width:100%; height:100%; border:none; display:block;" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+                        <a href="${lpUrl}" target="_blank" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:10; background:transparent; cursor:pointer;"></a>
+                    </div>
+                `;
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const containers = doc.querySelectorAll('.ad-slot');
+                containers.forEach(div => div.innerHTML = adContent);
+
+                // Inject into Preview
+                mainPreview.contentDocument.open();
+                mainPreview.contentDocument.write(doc.documentElement.outerHTML);
+                mainPreview.contentDocument.close();
+
+                // Layout Adjustments (Desktop vs Mobile)
+                const mobileFormats = ['320x150_top', '300x250_top', '320x480', '300x250_middle', '320x50', '300x600_mobile', '300x200'];
+                const isMobile = mobileFormats.includes(slotId);
+                mainPreview.style.width = isMobile ? '400px' : '100%';
+                
+                document.getElementById('modeName').textContent = isMobile ? 'Mobile View' : 'Desktop View';
+                document.getElementById('responsiveBadge').classList.remove('hidden');
+
+                mainPreview.classList.remove('hidden');
+                document.getElementById('placeholderPreview').classList.add('hidden');
+                downloadBtn.disabled = false;
+
+            } catch (err) {
+                console.error(err);
+                alert('Gagal generate template: ' + err.message);
+            }
+        }
+
+        // -- LOGIC: DOWNLOAD --
+        async function downloadBundle() {
+            const zip = new JSZip();
+            const slotId = document.getElementById('adSlotSelect').value;
+            const slot = adSlots[slotId];
+            const logoKey = document.getElementById('logoSelect').value;
+            const lpUrl = document.getElementById('lpInput').value || 'https://www.tribunnews.com';
+
+            let adIndex = originalIndexHtml;
+            const overlay = `
+                <a href="${lpUrl}" target="_blank" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:9999; background:transparent;"></a>
+            `;
+            adIndex = adIndex.includes('</body>') ? adIndex.replace('</body>', `${overlay}</body>`) : adIndex + overlay;
+
+            for (const path in processedFiles) {
+                if (path === 'index.html') zip.file(`ad_content/${path}`, adIndex);
+                else zip.file(`ad_content/${path}`, processedFiles[path]);
+            }
+
+            const response = await fetch(slot.template);
+            let tempHtml = await response.text();
+            tempHtml = tempHtml.replace(new RegExp("https://asset-1.tstatic.net/img/logo/tribun/svg/tribunnews.svg", 'g'), logoUrls[logoKey]);
+
+            const doc = new DOMParser().parseFromString(tempHtml, 'text/html');
+            doc.querySelectorAll('.ad-slot').forEach(div => {
+                div.innerHTML = `<iframe src="ad_content/index.html" style="width:100%; height:100%; border:none; display:block;"></iframe>`;
+            });
+
+            zip.file('index.html', doc.documentElement.outerHTML);
+            const content = await zip.generateAsync({type: "blob"});
+            const a = document.createElement('a');
+            a.href = window.URL.createObjectURL(content);
+            a.download = `bundle_html5_${slotId}_${Date.now()}.zip`;
+            a.click();
+        }
+    </script>
+</body>
+</html>
