@@ -1,0 +1,297 @@
+html,
+body {
+	font-family: 'roboto', sans-serif;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	background: #f5f5f5;
+}
+
+#container {
+	position: relative;
+	max-width: 1366px;
+	min-height: 100%;
+	margin: 0 auto;
+	overflow: visible;
+	padding: 0
+}
+
+#content {
+	position: relative;
+	width: 1100px;
+	background: #fff;
+	margin: 0 auto;
+	padding: 20px
+}
+
+.header {
+	position: relative;
+	width: 100%;
+	height: 80px;
+	background: #fff;
+}
+
+.infobanner {
+	position: absolute;
+	right: 10px;
+	top: 20px;
+	font-size: 12px;
+	text-align: right;
+}
+
+.logo {
+	position: absolute;
+	top: 20px;
+	left: 10px;
+}
+
+.left {
+	width: 730px;
+	padding: 10px;
+	float: left;
+}
+
+.landscape {
+	width: 336px;
+	padding: 5px;
+	float: left;
+}
+
+.mid {
+	width: 1050px;
+	padding: 10px;
+	float: left;
+}
+
+.right {
+	float: left;
+	width: 320px;
+	padding: 10px;
+}
+
+.potrait {
+	width: 160px;
+	padding: 5px;
+	float: left;
+}
+
+.clearfix {
+	float: none;
+	clear: both;
+}
+
+.banner300250px {
+	border: 1px solid #ccc;
+	width: 300px;
+	height: 250px;
+}
+
+.banner320100px {
+	border: 1px solid #ccc;
+	width: 320px;
+	height: 100px;
+}
+
+.banner30100px {
+	border: 1px solid #ccc;
+	width: 300px;
+	height: 100px;
+}
+
+.banner30050px {
+	border: 1px solid #ccc;
+	width: 300px;
+	height: 50px;
+}
+
+.banner32150px {
+	border: 1px solid #ccc;
+	width: 320px;
+	height: 150px;
+}
+
+.banner32050px {
+	border: 1px solid #ccc;
+	width: 320px;
+	height: 50px;
+}
+
+.banner336280px {
+	border: 1px solid #ccc;
+	width: 336px;
+	height: 280px;
+}
+
+.banner250250px {
+	border: 1px solid #ccc;
+	width: 250px;
+	height: 250px;
+}
+
+.banner200200px {
+	border: 1px solid #ccc;
+	width: 200px;
+	height: 200px;
+}
+
+.banner250250px {
+	border: 1px solid #ccc;
+	width: 250px;
+	height: 250px;
+}
+
+.banner120600px {
+	border: 1px solid #ccc;
+	width: 120px;
+	height: 600px;
+}
+
+.banner160600px {
+	border: 1px solid #ccc;
+	width: 160px;
+	height: 600px;
+}
+
+.banner46860px {
+	border: 1px solid #ccc;
+	width: 468px;
+	height: 60px;
+}
+
+.banner72890px {
+	border: 1px solid #ccc;
+	width: 728px;
+	height: 90px;
+}
+
+.banner97090px {
+	border: 1px solid #ccc;
+	width: 970px;
+	height: 90px;
+}
+
+.banner970250px {
+	border: 1px solid #ccc;
+	width: 970px;
+	height: 250px;
+}
+
+.banner300600px {
+	border: 1px solid #ccc;
+	width: 300px;
+	height: 600px;
+}
+
+.banner320480px {
+	border: 1px solid #ccc;
+	width: 320px;
+	height: 480px;
+}
+
+.banner320568px {
+	border: 1px solid #ccc;
+	width: 320px;
+	height: 568px;
+}
+
+.banner360640px {
+	border: 1px solid #ccc;
+	width: 360px;
+	height: 640px;
+}
+
+.banner480320px {
+	border: 1px solid #ccc;
+	width: 480px;
+	height: 320px;
+}
+
+.banner640360px {
+	border: 1px solid #ccc;
+	width: 640px;
+	height: 360px;
+}
+
+.banner240400px {
+	border: 1px solid #ccc;
+	width: 240px;
+	height: 400px;
+}
+
+.banner250360px {
+	border: 1px solid #ccc;
+	width: 250px;
+	height: 360px;
+}
+
+.banner580400px {
+	border: 1px solid #ccc;
+	width: 580px;
+	height: 400px;
+}
+
+.banner930180px {
+	border: 1px solid #ccc;
+	width: 930px;
+	height: 180px;
+}
+
+.banner980120px {
+	border: 1px solid #ccc;
+	width: 980px;
+	height: 120px;
+}
+
+.banner3001050px {
+	border: 1px solid #ccc;
+	width: 300px;
+	height: 1050px;
+}
+
+.banner180150px {
+	border: 1px solid #ccc;
+	width: 180px;
+	height: 150px;
+}
+
+.banner125125px {
+	border: 1px solid #ccc;
+	width: 125px;
+	height: 125px;
+}
+
+.banner234x60px {
+	border: 1px solid #ccc;
+	width: 234px;
+	height: 60px;
+}
+
+.banner970x66px {
+	border: 1px solid #ccc;
+	width: 970px;
+	height: 66px;
+}
+
+h2 {
+	font-weight: 500;
+	padding: 10px 0;
+	font-size: 18px;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #CCC;
+}
+
+footer {
+	position: relative;
+	background: #614cab;
+}
+
+.copyright {
+	line-height: 100px;
+	width: 1000px;
+	margin: 0 auto;
+	color: #fff;
+	font-size: 12px;
+	text-align: center;
+}
