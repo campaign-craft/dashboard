@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Invoice Generator</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: calc(100% - 16px);
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #invoice-items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        #invoice-items th, #invoice-items td {
+            border: 1px solid #eee;
+            padding: 10px;
+            text-align: left;
+        }
+        #invoice-items th {
+            background-color: #f8f8f8;
+            font-weight: bold;
+            color: #333;
+        }
+        #total-section {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #333;
+        }
+        #generate-button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+        }
+        #invoice-output {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            font-family: sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+            white-space: normal; /* Important for displaying HTML */
+        }
+    
+        /* Styles for the generated invoice */
+        .invoice-container {
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    
+        .invoice-header {
+            display: flex; /* Enable Flexbox for the header */
+            justify-content: space-between; /* Put space between the items */
+            align-items: flex-start; /* Align items to the start (top) */
+            margin-bottom: 20px; /* Reduced margin */
+        }
+    
+        .invoice-header h1 {
+            color: #007bff;
+            margin-bottom: 20px; /* Remove default margin below h1 */
+            font-size: 2.5em; /* Slightly larger invoice title */
+        }
+    
+        .invoice-header-details {
+            text-align: right; /* Align the details to the right */
+        }
+    
+        .invoice-header-details p {
+            color: #777;
+            margin: 2px 0;
+            font-size: 14px;
+        }
+    
+        .invoice-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+    
+        .invoice-details h3 {
+            margin-top: 0;
+            color: #555;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+    
+        .invoice-details p {
+            margin: 3px 0;
+            color: #666;
+        }
+    
+        .invoice-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+    
+        .invoice-items-table th, .invoice-items-table td {
+            border-bottom: 1px solid #eee;
+            padding: 10px;
+            text-align: left;
+        }
+    
+        .invoice-items-table th {
+            background-color: #f8f8f8;
+            font-weight: bold;
+            color: #333;
+        }
+    
+        .invoice-items-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+    
+        .invoice-totals {
+            text-align: right;
+            margin-top: 20px;
+        }
+    
+        .invoice-totals p {
+            font-size: 16px;
+            margin: 5px 0;
+            color: #333;
+        }
+    
+        .invoice-totals p span {
+            font-weight: bold;
+            color: #555;
+        }
+    
+        .invoice-totals .total {
+            font-size: 20px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #ddd;
+        }
+    
+        .invoice-totals .total span {
+            color: #007bff;
+        }
+
+        /* Print styles for page break */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #invoice-output, #invoice-output * {
+                visibility: visible;
+            }
+            #invoice-output {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                border: none;
+            }
+            .invoice-container {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                width: 100%;
+            }
+            /* Tambahkan margin cetak yang sesuai */
+            @page {
+                margin: 1cm;
+            }
+            /* Sembunyikan tombol print saat mencetak */
+            .print-button {
+                display: none;
+            }
+        }
+
+        /* Tombol cetak */
+        .print-button {
+            display: block;
+            width: 300px;
+            margin: 10px auto;
+            background-color: #28a745;
+        }
+        .print-button:hover {
+            background-color: #218838;
+        }
+
+        .invoice-payment {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .invoice-payment h3 {
+            margin-top: 0;
+            color: #007bff;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .invoice-payment p {
+            margin: 5px 0;
+        }
+
+        .invoice-payment p strong {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Invoice Generator</h1>
+
+        <!-- <div class="section">
+            <h2>Seller Information</h2>
+            <label for="seller-name">Name:</label>
+            <input type="text" id="seller-name" value="Andy">
+
+            <label for="seller-company">Company:</label>
+            <input type="text" id="seller-company" value="Oak and Pine Creative">
+
+            <label for="seller-address">Address:</label>
+            <input type="text" id="seller-address" value="Centennial Tower lvl 29, South Jakarta, Indonesia">
+
+            <label for="seller-phone">Phone:</label>
+            <input type="text" id="seller-phone" value="+62 856 4677 5968">
+        </div>
+
+        <div class="section">
+            <h2>Buyer Information</h2>
+            <label for="buyer-name">Name:</label>
+            <input type="text" id="buyer-name" value="Mike Yan">
+
+            <label for="buyer-company">Company:</label>
+            <input type="text" id="buyer-company" value="Bet Technology">
+
+            <label for="buyer-address">Address:</label>
+            <input type="text" id="buyer-address" value="278 Palmer St, Darlinghurst, NSW, 2010, Australia">
+        </div> -->
+
+        <div class="section">
+            <h2>Invoice Details</h2>
+            <label for="invoice-number">Invoice Number:</label>
+            <input type="text" id="invoice-number">
+
+            <label for="invoice-date">Date:</label>
+            <input type="date" id="invoice-date">
+
+            <label for="due-date">Due Date:</label>
+            <input type="date" id="due-date">
+        </div>
+
+        <div class="section">
+            <h2>Items</h2>
+            <table id="invoice-items">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Subtotal</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="items-body">
+                </tbody>
+            </table>
+            <button type="button" onclick="addItem()">Add Item</button>
+        </div>
+
+        <div id="total-section">
+            <strong>Subtotal:</strong> <span id="subtotal">0.00</span><br>
+            <strong>Tax (%):</strong> <input type="number" id="tax-rate" value="0" min="0"><br>
+            <strong>Tax Amount:</strong> <span id="tax-amount">0.00</span><br>
+            <strong>Discount (%):</strong> <input type="number" id="discount-rate" value="0" min="0"><br>
+            <strong>Discount Amount:</strong> <span id="discount-amount">0.00</span><br>
+            <strong>Total:</strong> <span id="total">0.00</span>
+        </div>
+
+      
+        <div class="invoice-payment">
+            <h3>Payment via USDT (Arbitrum One)</h3>
+            <p><strong>Address:</strong> <span id="usdt-address">0x4b66d9d3bacdc538fc8f23d5b5ed08a6811694cf</span></p>
+            <p><strong>Network:</strong> <span id="usdt-network">Arbitrum One</span></p>
+        </div>
+
+        <button id="generate-button" onclick="generateInvoice()">Generate Invoice</button>
+        <div id="invoice-output">
+        </div>
+    </div>
+
+    <script>
+        let itemCount = 0;
+        
+        // Set default values when page loads
+        window.onload = function() {
+            const today = new Date();
+            
+            // Set today's date
+            const formattedDate = today.toISOString().slice(0, 10);
+            document.getElementById('invoice-date').value = formattedDate;
+            
+            // Calculate due date (10 days from today)
+            const dueDate = calculateDueDate(formattedDate);
+            document.getElementById('due-date').value = dueDate;
+            
+            // Generate default invoice number
+            document.getElementById('invoice-number').value = 'INV-' + today.getFullYear() + 
+                          String(today.getMonth() + 1).padStart(2, '0') + 
+                          String(today.getDate()).padStart(2, '0') + 
+                          '-' + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+        }
+
+        function addItem() {
+            itemCount++;
+            const itemsBody = document.getElementById('items-body');
+            const newRow = itemsBody.insertRow();
+
+            const descriptionCell = newRow.insertCell();
+            descriptionCell.innerHTML = `<input type="text" class="item-description" placeholder="Description">`;
+
+            const quantityCell = newRow.insertCell();
+            quantityCell.innerHTML = `<input type="number" class="item-quantity" value="1" min="1">`;
+
+            const unitPriceCell = newRow.insertCell();
+            unitPriceCell.innerHTML = `<input type="number" class="item-price" value="0.00" min="0" step="0.01">`;
+
+            const subtotalCell = newRow.insertCell();
+            subtotalCell.classList.add('item-subtotal');
+            subtotalCell.textContent = '0.00';
+
+            const actionCell = newRow.insertCell();
+            actionCell.innerHTML = `<button type="button" onclick="removeItem(this)">Remove</button>`;
+
+            // Add event listeners for quantity and price changes
+            const quantityInput = newRow.querySelector('.item-quantity');
+            const priceInput = newRow.querySelector('.item-price');
+            quantityInput.addEventListener('input', updateSubtotal);
+            priceInput.addEventListener('input', updateSubtotal);
+
+            updateTotal();
+        }
+
+        function removeItem(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            updateTotal();
+        }
+
+        function updateSubtotal(event) {
+            const row = event.target.parentNode.parentNode;
+            const quantityInput = row.querySelector('.item-quantity');
+            const priceInput = row.querySelector('.item-price');
+            const subtotalCell = row.querySelector('.item-subtotal');
+
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const subtotal = quantity * price;
+            subtotalCell.textContent = subtotal.toFixed(2);
+
+            updateTotal();
+        }
+
+        function updateTotal() {
+            const itemSubtotals = document.querySelectorAll('#items-body .item-subtotal');
+            let subtotal = 0;
+            itemSubtotals.forEach(cell => {
+                subtotal += parseFloat(cell.textContent) || 0;
+            });
+
+            const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
+            const discountRate = parseFloat(document.getElementById('discount-rate').value) || 0;
+
+            const taxAmount = (subtotal * (taxRate / 100));
+            const discountAmount = (subtotal * (discountRate / 100));
+            const total = subtotal + taxAmount - discountAmount;
+
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+            document.getElementById('tax-amount').textContent = taxAmount.toFixed(2);
+            document.getElementById('discount-amount').textContent = discountAmount.toFixed(2);
+            document.getElementById('total').textContent = total.toFixed(2);
+        }
+
+        function calculateDueDate(dateString) {
+            const date = new Date(dateString);
+            date.setDate(date.getDate() + 10);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        document.getElementById('invoice-date').addEventListener('change', function() {
+            const selectedDate = this.value;
+            if (selectedDate) {
+                const dueDate = calculateDueDate(selectedDate);
+                document.getElementById('due-date').value = dueDate;
+            } else {
+                document.getElementById('due-date').value = ''; // Clear due date if date is cleared
+            }
+        });
+
+        // Input listener for tax rate and discount rate
+        document.getElementById('tax-rate').addEventListener('input', updateTotal);
+        document.getElementById('discount-rate').addEventListener('input', updateTotal);
+
+        function generateInvoice() {
+           /*  const sellerName = document.getElementById('seller-name').value;
+            const sellerCompany = document.getElementById('seller-company').value;
+            const sellerAddress = document.getElementById('seller-address').value;
+            const sellerPhone = document.getElementById('seller-phone').value;
+            const buyerName = document.getElementById('buyer-name').value;
+            const buyerCompany = document.getElementById('buyer-company').value;
+            const buyerAddress = document.getElementById('buyer-address').value; */
+            const invoiceNumber = document.getElementById('invoice-number').value;
+            const invoiceDate = document.getElementById('invoice-date').value;
+            const dueDate = document.getElementById('due-date').value;
+            const taxRate = document.getElementById('tax-rate').value;
+            const discountRate = document.getElementById('discount-rate').value;
+            const subtotal = document.getElementById('subtotal').textContent;
+            const taxAmount = document.getElementById('tax-amount').textContent;
+            const discountAmount = document.getElementById('discount-amount').textContent;
+            const total = document.getElementById('total').textContent;
+
+            // Format dates for display
+            const formattedInvoiceDate = formatDate(invoiceDate);
+            const formattedDueDate = formatDate(dueDate);
+
+            let invoiceHTML = `
+                <div class="invoice-container">
+                    <div class="invoice-header">
+                        <h1>INVOICE</h1>
+                        <div class="invoice-header-details">
+                            <p>Invoice Number: ${invoiceNumber}</p>
+                            <p>Date: ${formattedInvoiceDate}</p>
+                            <p>Due Date: ${formattedDueDate}</p>
+                        </div>
+                    </div>
+
+                    <div class="invoice-details">
+                        <div class="seller-info">
+                            <h3>From:</h3>
+                            <p>Andy</p>
+                            <p>Oak and Pine Creative</p>
+                            <p>Centennial Tower lvl 29, South Jakarta, Indonesia</p>
+                            <p>+62 856 4677 5968</p>
+                        </div>
+                        <div class="buyer-info">
+                            <h3>To:</h3>
+                            <p>Mike Yan</p>
+                            <p>Bet Technology</p>
+                            <p>278 Palmer St, Darlinghurst, NSW, 2010, Australia</p>
+                        </div>
+                    </div>
+
+                    <table class="invoice-items-table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            const itemsBody = document.getElementById('items-body');
+            const rows = itemsBody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const description = row.querySelector('.item-description').value;
+                const quantity = row.querySelector('.item-quantity').value;
+                const unitPrice = parseFloat(row.querySelector('.item-price').value).toFixed(2);
+                const sub = row.querySelector('.item-subtotal').textContent;
+                invoiceHTML += `
+                            <tr>
+                                <td>${description}</td>
+                                <td>${quantity}</td>
+                                <td>${unitPrice}</td>
+                                <td>${sub}</td>
+                            </tr>
+                `;
+            });
+
+            invoiceHTML += `
+                        </tbody>
+                    </table>
+
+                    <div class="invoice-totals">
+                        <p>Subtotal: <span>${subtotal} </span></p>
+                        <p>Tax (${taxRate}%): <span>${taxAmount}</span></p>
+                        <p>Discount (${discountRate}%): <span>${discountAmount}</span></p>
+                        <p class="total">Total: <span>${total} USDT</span></p>
+                    </div>
+                </div>
+                 <div class="invoice-payment" style="display: flex; align-items: flex-start;">
+                        <div style="flex: 1; margin-right: 20px;">
+                            <h3>Payment via USDT (Arbitrum One)</h3>
+                            <p><strong>Address:</strong> <span id="usdt-address">0x4b66d9d3bacdc538fc8f23d5b5ed08a6811694cf</span></p>
+                            <p><strong>Network:</strong> <span id="usdt-network">Arbitrum One</span></p>
+                        </div>
+                        <div>
+                            <img src="img/qrcode.png" alt="USDT QR Code" style="width: 114px; height: 114px;">
+                        </div>
+                    </div>
+                </div>
+                <button class="print-button" onclick="printInvoice()">Printed on ${formattedInvoiceDate}</button>
+            `;
+
+          
+
+            document.getElementById('invoice-output').innerHTML = invoiceHTML;
+            // Scroll to the invoice output
+            document.getElementById('invoice-output').scrollIntoView({behavior: 'smooth'});
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function printInvoice() {
+            window.print();
+        }
+
+        // Initial item row
+        addItem();
+    </script>
+</body>
+</html>
