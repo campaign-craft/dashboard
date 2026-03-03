@@ -2154,6 +2154,29 @@
                                                 (12/9/2024).&nbsp;</div>
                                         </div>
                                     </div>
+
+                                    
+                                    <div id="div-BelowImage" class='ads-placeholder mb20'>                                            
+                                            <div style='text-align:center; display: flex; justify-content: center; align-items: center;'>
+                                                  <div
+                                                    style="
+                                                    width: 320px;
+                                                    height: 100px;
+                                                    background-color: #f1f1f1;
+                                                    display: flex;
+                                                    justify-content: center;
+                                                    align-items: center;
+                                                    text-align: center;          
+                                                    color: #d5d5d5;                                        
+                                                    "
+                                                >
+                                                    <p style="font-size: 12px;">
+                                                        Advertisement
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     <div class="cl2 mr20 fl cright w160 mb20" id="articleright">
                                         <script type="text/javascript">
                                             function moveScroller3() {
@@ -2229,30 +2252,7 @@
                                             (12/9/2024).
                                         </p>
 
-                                        <div id="target" class='ads-placeholder'>
-
-                                            
-                                            <div style='text-align:center; display: flex; justify-content: center; align-items: center;'>
-                                                  <div
-                                                    class="ad-slot"
-                                                    style="
-                                                    width: 300px;
-                                                    height: 250px;
-                                                    background-color: #f1f1f1;                                                    
-                                                    display: flex;
-                                                    justify-content: center;
-                                                    align-items: center;
-                                                    text-align: center;          
-                                                    color: #666;                                                    
-                                                    font-style: italic;                                           
-                                                    "
-                                                >
-                                                    <p style="font-size: 12px;">
-                                                        Iklan akan muncul disini
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        
 
 
                                         <p>Hal itu bermula ketika Jaksa Penuntut Umum (JPU) mendalami soal bantuan dari PT
@@ -2287,6 +2287,11 @@
                                                     di Sidang, Presiden Disebut Perintahkan PT Timah Akomodir Penambang
                                                     Ilegal</a></strong></p>
                                         <p>"600 jutaan," kata Adam.</p>
+
+                                          <div id="div-BelowArticle" class='ads-placeholder'>                                            
+                                            <div style='text-align:center; display: flex; justify-content: center; align-items: center;'>
+                                            </div>
+                                         </div>
 
                                     </div>
                                     <div class="side-article mb5">
@@ -4403,6 +4408,185 @@
         
         
         </div>
+
+
+        <!-- s:scrollHeadline -->
+        <link rel="stylesheet" href="https://iklan.tribunnews.com/home/preview/2025/desktop/scroll-headline--article-only/css/scrollHeadline.css">
+        <script>
+            window.addEventListener("load", function() {
+                var photoAdsUrl = 'https://iklan.tribunnews.com/home/preview/2025/desktop/scroll-headline--article-only/images/700x393.jpg';
+                var urlLanding = 'https://www.tribunnews.com/';
+                var headline = document.querySelector('.headline');
+                var photo__oriWP = document.querySelector('.headline__big');
+                var headline__thumb = document.querySelector('.headline__thumb');
+                var headline__thumb__item  = document.querySelector('.headline__thumb__item ');
+                var photo__wrap = document.querySelector('.imgfull_div');
+                var photo__ori = document.querySelector('.imgfull_div img');
+                var photoAds = document.createElement('img');
+                var closebanner = document.createElement('span');
+
+                //money desktop
+                var headline__big  = document.querySelector('.headline__big');
+                var divmoney = document.createElement("div");
+                divmoney.setAttribute("class", "divmoney");  
+                
+
+                //--
+                var trigger = document.createElement("span");
+                var textTrigger= document.createTextNode("CLICK TO EXPAND");
+                trigger.setAttribute("class", "trigger");  
+                trigger.appendChild(textTrigger);
+                
+                // condition 
+                function setDomain() {
+                    var sitename = document.location.href;
+                    switch (sitename) {           
+                        case "https://news.kompas.com/":
+                            console.log("kanal");  
+                            forWpKanal();
+                            break;
+                        default :                        
+                        forArticle();        
+                        break;
+                    }
+                }
+
+                setDomain();
+
+                function postElement(){
+                    closebanner.setAttribute("class", "closebanner");
+                    closebanner.innerHTML = "X";
+                    photoAds.setAttribute("class", "photoAds");
+                    photoAds.classList.add("photoOri");   
+                    photoAds.classList.add("not_change");   
+                    closebanner.classList.add("not_textblock");   
+                    photoAds.src = photoAdsUrl;
+                }
+
+                function forWpKanal(){
+                    //append element
+                    postElement();
+                    photo__oriWP.classList.add("photoOri");
+                    headline.appendChild(photoAds);
+                    headline.insertBefore(photoAds, null);
+                    headline.appendChild(closebanner);
+                    headline.appendChild(trigger);
+
+                    function closeAd(){
+                    closebanner.style.display = "none";
+                    photo__oriWP.classList.add("CloseAds");
+                    photoAds.classList.add("CloseAds");
+                    trigger.classList.add("CloseAds");
+                    trigger.classList.add("not_textblock");
+                    }
+                    //close
+                    closebanner.addEventListener("click", function(){
+                    closeAd();
+                    });
+
+                    //timeout
+                    setTimeout(function () {
+                    trigger.style.display = "block";
+                    }, 2000);
+                    setTimeout(function () {
+                    closeAd();
+                    }, 10000);
+
+                    trigger.addEventListener("click", function () {
+                    closebanner.style.display = "flex";
+                    photo__oriWP.classList.remove("CloseAds");
+                    photoAds.classList.remove("CloseAds");
+                    trigger.classList.remove("CloseAds");
+                    });
+
+                }
+
+                function forMoneyKanal(){
+                    //append element
+                    postElement();
+                    headline.appendChild(divmoney);
+                    headline.classList.add("photoMoney");
+                    photo__oriWP.classList.add("photoOri");
+                    divmoney.appendChild(photoAds);
+                    divmoney.insertBefore(photoAds, null);
+                    divmoney.appendChild(closebanner);
+                    divmoney.appendChild(trigger);
+
+                    function closeAd(){
+                    closebanner.style.display = "none";
+                    photo__oriWP.classList.add("CloseAds");
+                    photoAds.classList.add("CloseAds");
+                    trigger.classList.add("CloseAds");
+                    trigger.classList.add("not_textblock");
+                    }
+                    //close
+                    closebanner.addEventListener("click", function(){
+                    closeAd();
+                    });
+
+                    //timeout
+                    setTimeout(function () {
+                    trigger.style.display = "block";
+                    }, 2000);
+                    setTimeout(function () {
+                    closeAd();
+                    }, 10000);
+
+                    trigger.addEventListener("click", function () {
+                    closebanner.style.display = "flex";
+                    photo__oriWP.classList.remove("CloseAds");
+                    photoAds.classList.remove("CloseAds");
+                    trigger.classList.remove("CloseAds");
+                    });
+
+                }
+
+                function forArticle(){
+                    //append element
+                    postElement();        
+                    photo__ori.classList.add("photoOri");
+                    photo__wrap.appendChild(photoAds);
+                    photo__wrap.insertBefore(photoAds, null);
+                    photo__wrap.appendChild(closebanner);
+                    photo__wrap.appendChild(trigger);
+
+                    function closeAd(){
+                    closebanner.style.display = "none";
+                    photo__ori.classList.add("CloseAds");
+                    photoAds.classList.add("CloseAds");
+                    trigger.classList.add("CloseAds");
+                    trigger.classList.add("not_textblock");
+                    }
+
+                    //close
+                    closebanner.addEventListener("click", function(){
+                    closeAd();
+                    });
+                    //timeout
+                    setTimeout(function () {
+                    trigger.style.display = "block";
+                    }, 2000);
+                    setTimeout(function () {
+                    closeAd();
+                    }, 10000);
+
+                    trigger.addEventListener("click", function () {
+                    closebanner.style.display = "flex";
+                    photo__ori.classList.remove("CloseAds");
+                    photoAds.classList.remove("CloseAds");
+                    trigger.classList.remove("CloseAds");
+                    trigger.classList.add("not_textblock");
+                    });
+
+                }  
+
+                photoAds.addEventListener("click", function(){
+                    window.open(urlLanding);
+                });
+
+                });
+        </script>
+        <!-- e:scrollHeadline -->
     </body>
 
     </html>

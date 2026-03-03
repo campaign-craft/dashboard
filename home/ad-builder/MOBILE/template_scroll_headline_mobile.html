@@ -1264,7 +1264,7 @@
             </div>
             <!--photofeat start here-->
 
-            <div class="pos_rel photofeat">
+            <div class="pos_rel photofeat" id="scrollheadline">
               <span class="icon_zoom">
                 <img
                   src="https://asset-1.tribunnews.com/img/zoom-in.svg"
@@ -1309,21 +1309,20 @@
                   "
                 >
                   <div
-                    class="ad-slot"
+                    class=""
                     style="
                       background-color: #f1f1f1;
                       width: 320px;
-                      height: 50px;
+                      height: 100px;
                       display: flex;
                       justify-content: center;
                       align-items: center;
                       align-content: center;
-                      font-style: italic;
                       font-size: x-small;
                       color: #d5d5d5;
                     "
                   >
-                    <p>Iklan akan muncul disini</p>
+                    <p>ADVERTISEMENT</p>
                   </div>
                 </div>
 
@@ -1354,21 +1353,7 @@
                 <p>
                   <strong>TRIBUNNEWS.COM, JAKARTA</strong> – Komisi
                   Pemberantasan Korupsi (KPK) terus memanggil saksi-saksi profil
-                  tinggi dalam penyidikan kasus dugaan tindak pidana
-                  <span
-                    ><a
-                      id="pickwords_link"
-                      target="_blank"
-                      href=""
-                      style="
-                        background-color: rgb(193, 2, 2);
-                        border-radius: 5px;
-                        padding: 0 5px;
-                        color: white;
-                      "
-                      >korupsi</a
-                    ></span
-                  >
+                  tinggi dalam penyidikan kasus dugaan tindak pidana korupsi
                   terkait kerja sama jual beli gas antara PT Perusahaan Gas
                   Negara (PGN) dan PT Inti Alasindo Energi (IAE).
                 </p>
@@ -1902,6 +1887,17 @@
                       </svg>
                     </button>
                   </div>
+                </div>
+
+                <div
+                  class="mb20 mt20"
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    align-content: center;
+                  "
+                >                  
                 </div>
 
                 <div class="f16 ln24 tag-container">
@@ -2822,5 +2818,207 @@
     </div>
 
     <div id="sso_g_signin"></div>
+
+    <link rel="stylesheet" href="https://iklan.tribunnews.com/home/preview/2025/mobile/scroll-headline--article-only/css/scrollHeadline.css">
+    <script>
+      window.addEventListener("load", function () {
+    var headline = document.querySelector('#scrollheadline');
+    var headline__big = document.querySelector('.headline__big');
+    var headline_tekno = document.querySelector('.headline-tekno');
+    var imgHL = document.querySelector('#scrollheadline');
+
+    var photoAdsUrl = 'https://iklan.tribunnews.com/home/preview/2025/desktop/scroll-headline--article-only/images/700x393.jpg';
+    var urlLanding = 'https://instagram.com';
+
+
+
+
+
+    //create element
+    //--
+    var scrollHeadline = document.createElement("div");
+    scrollHeadline.setAttribute("class", "scrollHeadline");
+    //--
+    var divtekno = document.createElement("div");
+    divtekno.setAttribute("class", "scrollHeadline");
+    //--
+    
+    var imgBanner = document.createElement("img");
+    imgBanner.setAttribute("src", photoAdsUrl);
+    //--
+    var linkBanner = document.createElement("a");
+    linkBanner.setAttribute("href", urlLanding);
+    linkBanner.setAttribute("target", "_blank");
+    //--
+    var closeBanner = document.createElement("span");
+    var textcloseBanner = document.createTextNode("X");
+    closeBanner.setAttribute("class", "closebanner");
+    //--
+    var trigger = document.createElement("span");
+    var textTrigger = document.createTextNode("CLICK TO EXPAND");
+    trigger.setAttribute("class", "trigger");
+
+    function postElement() {
+        scrollHeadline.appendChild(linkBanner);
+        scrollHeadline.appendChild(closeBanner);
+        closeBanner.appendChild(textcloseBanner);
+    }
+
+    
+    // condition 
+    function setDomain() {
+        var sitename = document.location.href;
+        switch (sitename) {          
+            case "https://news.kompas.com/":
+                console.log("kanal");
+                forWpKanal();
+                break;
+            default:
+                console.log("selain wp");
+                var photo_390 = document.querySelector("#scrollheadline img");
+                var photo_390_height = photo_390.naturalHeight;
+
+                function cekHeight() {
+                    if (photo_390_height == 390) {
+                        trigger.style.width = "52%";
+                        console.log("52");
+                    } else {
+                        trigger.style.width = "56%";
+                        console.log("69");
+                    }
+                }
+                cekHeight();
+                forArticle();
+                break;
+        }
+    }
+
+
+
+    setDomain();
+
+    function forWpKanal() {
+        headline.appendChild(scrollHeadline);
+        scrollHeadline.appendChild(imgBannerWp);
+        postElement();
+        scrollHeadline.classList.add("scrollHeadline_wp");
+        headline.appendChild(trigger);
+        trigger.appendChild(textTrigger);
+        headline.classList.add("onAds");
+
+        function closeAd() {
+            headline.classList.add("offAds");
+            scrollHeadline.classList.add("offAds");
+            trigger.classList.add("offAds");
+        }
+
+        var closebanner = document.querySelector('.closebanner');
+
+        closebanner.addEventListener("click", function () {
+            closeAd();
+        });
+
+        trigger.addEventListener("click", function () {
+            headline.classList.remove("offAds");
+            scrollHeadline.classList.remove("offAds");
+            trigger.classList.remove("offAds");
+        });
+
+        function autocloseAds() {
+            setTimeout(function () {
+                trigger.style.display = "block";
+            }, 2000);
+            setTimeout(function () {
+                closeAd();
+            }, 10000);
+        }
+        autocloseAds();
+
+    }
+
+    function forTeknoKanal() {
+        headline_tekno.appendChild(scrollHeadline);
+        scrollHeadline.appendChild(imgBannerWp);
+        postElement();
+        scrollHeadline.classList.add("scrollHeadline_wp");
+        headline__big.appendChild(trigger);
+        trigger.appendChild(textTrigger);
+        headline__big.classList.add("onAds");
+
+        function closeAd() {
+            headline__big.classList.add("offAds");
+            scrollHeadline.classList.add("offAds");
+            trigger.classList.add("offAds");
+        }
+
+        var closebanner = document.querySelector('.closebanner');
+
+        closebanner.addEventListener("click", function () {
+            closeAd();
+        });
+
+        trigger.addEventListener("click", function () {
+            headline__big.classList.remove("offAds");
+            scrollHeadline.classList.remove("offAds");
+            trigger.classList.remove("offAds");
+        });
+
+        function autocloseAds() {
+            setTimeout(function () {
+                trigger.style.display = "block";
+            }, 2000);
+            setTimeout(function () {
+                closeAd();
+            }, 10000);
+        }
+        autocloseAds();
+    }
+
+    function forArticle() {
+        //append element        
+        imgHL.appendChild(scrollHeadline);
+        scrollHeadline.appendChild(imgBanner);
+        postElement();
+        imgHL.appendChild(trigger);
+        trigger.appendChild(textTrigger);
+        headline.classList.add("onAds");
+
+        function closeAd() {
+            headline.classList.add("offAds");
+            scrollHeadline.classList.add("offAds");
+            trigger.classList.add("offAds");
+        }
+
+        var closebanner = document.querySelector('.closebanner');
+
+        closebanner.addEventListener("click", function () {
+            closeAd();
+        });
+
+        trigger.addEventListener("click", function () {
+            headline.classList.remove("offAds");
+            scrollHeadline.classList.remove("offAds");
+            trigger.classList.remove("offAds");
+        });
+
+        function autocloseAds() {
+            setTimeout(function () {
+                trigger.style.display = "block";
+            }, 2000);
+            setTimeout(function () {
+                closeAd();
+            }, 10000);
+        }
+        autocloseAds();
+    }
+
+
+
+    
+
+
+});
+    </script>
+
   </body>
 </html>
