@@ -271,31 +271,7 @@ jQuery(document).ready(function($) {
 </script>
 </div><div class="theader" style="position: sticky;">
 		
-	<script type="text/javascript">
-	$(document).ready(function(){
-		$(".menubar").click(function(){
-			if ($('.theader-side').css('display') == 'none') {
-				$(".theader-side").css({"display":"block","visibility":"visible","height":$( window ).height()-50});
-				$(".header-right").css({"display":"flex"});
-				$(".menubar").addClass("active");
-				$(".tagpop-fixed").css({"display":"none"});
-			} else {
-				$(".theader-side").css({"display":"none"});
-				$(".theader-side").css({"visibility":"hidden"});
-				$(".menubar").removeClass("active");
-				$(".tagpop-fixed").css({"display":"block"});
-			}
-		});
-		var wh = $(".header").width()+110;
-		var w = $(window).width();
-		if(wh > w) {
-			$(".header img").css({"width":w-100,"height":"auto"});
-			var hi = $(".header img").height();
-			var pt = ((50 - hi) / 2 ) - 5;
-			$(".header img").css({"padding-top":pt});
-		}
-	});
-	</script>
+	
 	<div class="header_wrapper">
 		<div class="header">
 								<a href="https://m.tribunnews.com/" title="Tribun"><img id="logotribun" src="https://asset-1.tribunnews.com/img/logo/tribun/svg/tribunnews.svg" alt="Tribun" width="144" height="35" loading="eager" fetchpriority="high" /></a>
@@ -314,15 +290,6 @@ jQuery(document).ready(function($) {
 						<div class="menubar"><i id="menu_mobile" class="fa fa-bars blue"></i></div>
 					</div>
 	</div>
-	<style>
-.tagpop-fixed {display: flex;gap: 20px;overflow: hidden;align-items: center;background: #004c7f;padding-left: 40px;height:40px;-ms-overflow-style: none;}.tagpop-fixed::-webkit-scrollbar {display: none;}.tagpop-icon {position: absolute;left: 0;width: 30px;text-align: center;}.tagpop-list {display: flex;scroll-snap-type: x;flex-wrap: nowrap;overflow-x: scroll;white-space: nowrap;overflow-y: hidden;gap: 15px;text-transform: capitalize;align-items: flex-start;padding: 10px 0;max-width: 85vw;}.tagpop-list a {color:#fff;white-space: nowrap;}
-</style>
-<div class="tagpop-fixed">
-    <div class="tagpop-icon">
-        <img src="https://asset-1.tribunnews.com/img/icon/mobile2024/ico-fire.png" width="13" height="17" alt="tag populer"/>
-    </div>
-    <div class="tagpop-list"></div>
-</div>
 
 	<div class="theader-side">
 	<div class="search-box">

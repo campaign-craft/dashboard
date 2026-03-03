@@ -575,7 +575,7 @@
             logoUrls[logoKey],
           );
 
-          if (slotId === '700x393_scroll_headline_desktop') {
+          if (slotId === '700x393_scroll_headline_desktop' || slotId === '700x393_scroll_headline_mobile' ) {
             html = html.replace(/var\s+photoAdsUrl\s*=\s*'[^']*';/, `var photoAdsUrl = '${uploadedImgData}';`);
             html = html.replace(/var\s+urlLanding\s*=\s*'[^']*';/, `var urlLanding = '${lpUrl}';`);
           }
