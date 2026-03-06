@@ -337,8 +337,9 @@
     </div>
 
  <script>
+    
     // adSlots and logoUrls are now loaded from shared-config.js
-   
+  
       let processedFiles = {};
       let originalIndexHtml = "";
       let standaloneBlobUrl = "";
@@ -468,7 +469,7 @@
         originalIndexHtml = rewritePaths(mainHtmlContent, processedFiles);
         updateAuditUI(fileEntries, totalSize);
 
-        const autoSize = detectSizeFromHtml(originalIndexHtml);
+        const autoSize = detectSizeFromHtml(originalIndexHtml, file.name);
         if (autoSize) {
           detectedSize = autoSize;
           autoSelectDropdown(autoSize.width, autoSize.height);
@@ -480,6 +481,15 @@
         standaloneBlobUrl = URL.createObjectURL(blob);
 
         renderStandalone();
+
+        if (!autoSize) {
+          const rendered = await detectFromRendering(standaloneBlobUrl);
+          if (rendered) {
+            detectedSize = rendered;
+            autoSelectDropdown(rendered.width, rendered.height);
+            updateStandaloneSize();
+          }
+        }
       }
 
       async function generateTemplate() {
@@ -487,6 +497,7 @@
 
         const slotId = adSlotSelect.value;
         const logoKey = document.getElementById("logoSelect").value;
+        const lpUrl = document.getElementById("lpInput").value.trim();
         const slot = adSlots[slotId];
 
         mainPreview.classList.add("hidden");
@@ -509,15 +520,7 @@
             logoUrls[logoKey],
           );
 
-          
-          const adIframeString = `
-                <iframe src="${standaloneBlobUrl}" 
-                        width="${slot.width}" 
-                        height="${slot.height}" 
-                        frameborder="0" 
-                        scrolling="no" 
-                        style="border:none; overflow:hidden;">
-                </iframe>`;
+          const adIframeString = buildAdIframeString(standaloneBlobUrl, slot.width, slot.height, lpUrl);
 
           const parser = new DOMParser();
           const doc = parser.parseFromString(html, "text/html");
@@ -546,14 +549,160 @@
         }
       }
 
-      function detectSizeFromHtml(html) {
-        const regex =
-          /<meta\s+name=["']ad.size["']\s+content=["']width=(\d+)[^0-9]*height=(\d+)["']/i;
+      function buildAdIframeString(src, width, height, lpUrl) {
+        const iframe = `<iframe src="${src}" 
+                width="${width}" 
+                height="${height}" 
+                frameborder="0" 
+                scrolling="no" 
+                style="border:none; overflow:hidden;"></iframe>`;
+        if (lpUrl) {
+          return `<div style="position:relative;display:inline-block;width:${width}px;height:${height}px;">
+            ${iframe}
+            <a href="${lpUrl}" target="_blank" style="position:absolute;inset:0;z-index:9999;cursor:pointer;"></a>
+          </div>`;
+        }
+        return iframe;
+      }
+
+      function detectSizeFromHtml(html, zipFilename) {
+        const fromMeta = detectFromAdSizeMeta(html);
+        if (fromMeta) { console.log('📐 Size detected via ad.size meta:', fromMeta); return fromMeta; }
+
+        const fromInline = detectFromInlineStyle(html);
+        if (fromInline) { console.log('📐 Size detected via inline style:', fromInline); return fromInline; }
+
+        
+        const fromViewport = detectFromViewport(html);
+        if (fromViewport) { console.log('📐 Size detected via viewport meta:', fromViewport); return fromViewport; }
+
+        const fromCSS = detectFromCSS(html);
+        if (fromCSS) { console.log('📐 Size detected via CSS:', fromCSS); return fromCSS; }
+
+        const fromFile = detectFromFilename(zipFilename);
+        if (fromFile) { console.log('📐 Size detected via filename:', fromFile); return fromFile; }
+
+        console.log('📐 No static size detected, will try rendering fallback...');
+        return null;
+      }
+
+      function detectFromAdSizeMeta(html) {
+        const regex = /<meta\s+name=["']ad\.size["']\s+content=["']width=(\d+)[^0-9]*height=(\d+)["']/i;
         const match = html.match(regex);
-        if (match) {
-          return { width: parseInt(match[1]), height: parseInt(match[2]) };
+        if (match) return { width: parseInt(match[1]), height: parseInt(match[2]) };
+        return null;
+      }
+
+      function detectFromInlineStyle(html) {
+        const bodyMatch = html.match(/<body[^>]*style=["']([^"']*)["']/i);
+        if (bodyMatch) {
+          const dims = parseWidthHeightFromStyle(bodyMatch[1]);
+          if (dims) return dims;
+        }
+        const divRegex = /<(?:div|section)[^>]*style=["']([^"']*)["']/gi;
+        let divMatch;
+        while ((divMatch = divRegex.exec(html)) !== null) {
+          const dims = parseWidthHeightFromStyle(divMatch[1]);
+          if (dims && dims.width >= 50 && dims.height >= 50) return dims;
         }
         return null;
+      }
+
+      function parseWidthHeightFromStyle(styleStr) {
+        const wMatch = styleStr.match(/(?:^|;|\s)width\s*:\s*(\d+)\s*px/i);
+        const hMatch = styleStr.match(/(?:^|;|\s)height\s*:\s*(\d+)\s*px/i);
+        if (wMatch && hMatch) {
+          return { width: parseInt(wMatch[1]), height: parseInt(hMatch[1]) };
+        }
+        return null;
+      }
+
+      function detectFromViewport(html) {
+        const regex = /<meta[^>]*name=["']viewport["'][^>]*content=["']([^"']*)["']/i;
+        const match = html.match(regex);
+        if (!match) return null;
+        const content = match[1];
+        const wMatch = content.match(/width\s*=\s*(\d+)/i);
+        const hMatch = content.match(/height\s*=\s*(\d+)/i);
+
+        if (wMatch && hMatch) {
+          const w = parseInt(wMatch[1]);
+          const h = parseInt(hMatch[1]);
+          if (w >= 50 && w <= 2000 && h >= 50 && h <= 2000) {
+            return { width: w, height: h };
+          }
+        }
+        return null;
+      }
+
+      function detectFromCSS(html) {
+        const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
+        let styleMatch;
+        while ((styleMatch = styleRegex.exec(html)) !== null) {
+          const css = styleMatch[1];
+          const selectorRegex = /(?:body|html|\*|#mainContainer|#ad-container|#container|#banner|#wrapper|#clickTag|#main|#content|#ad|#clicktag|#click_area|#stage|#animation_container|\.banner|\.ad|\.container|\.wrapper|\.stage)\s*\{([^}]*)\}/gi;
+          let selMatch;
+          while ((selMatch = selectorRegex.exec(css)) !== null) {
+            const dims = parseWidthHeightFromStyle(selMatch[1]);
+            if (dims && dims.width >= 50 && dims.height >= 50) return dims;
+          }
+        }
+        return null;
+      }
+
+      function detectFromFilename(filename) {
+        if (!filename) return null;
+        const match = filename.match(/(\d{2,4})\s*[xX×]\s*(\d{2,4})/);
+        if (match) {
+          const w = parseInt(match[1]);
+          const h = parseInt(match[2]);
+          if (w >= 50 && w <= 2000 && h >= 50 && h <= 2000) {
+            return { width: w, height: h };
+          }
+        }
+        return null;
+      }
+
+      function detectFromRendering(blobUrl) {
+        return new Promise((resolve) => {
+          const iframe = document.createElement('iframe');
+          iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0;pointer-events:none;width:2000px;height:2000px;border:none;';
+          iframe.src = blobUrl;
+          document.body.appendChild(iframe);
+
+          const timeout = setTimeout(() => {
+            cleanup();
+            resolve(null);
+          }, 3000);
+
+          iframe.onload = () => {
+            try {
+              const doc = iframe.contentDocument || iframe.contentWindow.document;
+              const body = doc.body;
+              if (!body) { cleanup(); resolve(null); return; }
+
+              setTimeout(() => {
+                const w = body.scrollWidth;
+                const h = body.scrollHeight;
+                cleanup();
+                if (w > 10 && h > 10 && w < 2000 && h < 2000) {
+                  console.log('📐 Size detected via rendering:', { width: w, height: h });
+                  resolve({ width: w, height: h });
+                } else {
+                  resolve(null);
+                }
+              }, 200);
+            } catch (e) {
+              cleanup();
+              resolve(null);
+            }
+          };
+
+          function cleanup() {
+            clearTimeout(timeout);
+            if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+          }
+        });
       }
 
       function autoSelectDropdown(w, h) {
@@ -710,6 +859,7 @@
         try {
             const slot = adSlots[slotId];
             const logoKey = document.getElementById("logoSelect").value;
+            const lpUrl = document.getElementById("lpInput").value.trim();
             const newZip = new JSZip();
 
             
@@ -751,15 +901,7 @@
             );
 
             
-            
-            const adIframeString = `
-                <iframe src="ad-content/${adEntryPoint}" 
-                        width="${slot.width}" 
-                        height="${slot.height}" 
-                        frameborder="0" 
-                        scrolling="no" 
-                        style="border:none; overflow:hidden;">
-                </iframe>`;
+            const adIframeString = buildAdIframeString(`ad-content/${adEntryPoint}`, slot.width, slot.height, lpUrl);
 
             
             const parser = new DOMParser();

@@ -140,6 +140,18 @@
                     </select>
                   </div>
                 </div>
+                <div>
+                  <label
+                    class="block text-[10px] font-bold text-slate-500 uppercase mb-2"
+                    >Landing Page URL</label
+                  >
+                  <input
+                    type="text"
+                    id="lpInput"
+                    placeholder="https://www.example.com"
+                    class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none"
+                  />
+                </div>
                 <div class="flex gap-3">
                   <button
                     id="generateBtn"
@@ -385,10 +397,21 @@ ${htmlClose}`;
         a.click();
       }
 
+      function buildAdSlotContent(script, lpUrl) {
+        if (lpUrl) {
+          return `<div style="position:relative;display:flex;justify-content:center;align-items:center;width:100%;height:100%;">
+            ${script}
+            <a href="${lpUrl}" target="_blank" style="position:absolute;inset:0;z-index:9999;cursor:pointer;"></a>
+          </div>`;
+        }
+        return `<div style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;">${script}</div>`;
+      }
+
       async function generateTemplate() {
         const slotId = document.getElementById("adSlotSelect").value;
         const slot = adSlots[slotId];
         const logoKey = document.getElementById("logoSelect").value;
+        const lpUrl = document.getElementById("lpInput").value.trim();
         const script = getProcessedScript();
         const mainPreview = document.getElementById("mainPreview");
         const placeholder = document.getElementById("placeholderPreview");
@@ -410,11 +433,11 @@ ${htmlClose}`;
           const parser = new DOMParser();
           
           const doc = parser.parseFromString(html, "text/html");
+          const adContent = buildAdSlotContent(script, lpUrl);
           doc
             .querySelectorAll(".ad-slot, .ad-slot-left, .ad-slot-right")
             .forEach(
-              (div) =>
-                (div.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;width:100%;height:100%;">${script}</div>`),
+              (div) => (div.innerHTML = adContent),
             );
 
           window.currentGeneratedHtml = "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
