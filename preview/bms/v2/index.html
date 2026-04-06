@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Briden Mechanical Services - Ad Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        
+        body {
+            background-color: #0f172a;
+            font-family: 'Inter', sans-serif;
+            color: #f1f5f9;
+        }
+
+        .banner-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            height: fit-content;
+            transition: all 0.3s ease;
+        }
+
+        .banner-card:hover {
+            border-color: #6366f1;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .iframe-wrapper {
+            background: #000;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        iframe {
+            border: none;
+            display: block;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+    <div class="max-w-[1400px] mx-auto">
+        <!-- Header -->
+        <header class="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-800 pb-10">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-8 h-8 bg-orange-500 rounded flex items-center justify-center font-black text-white">B</div>
+                    <h1 class="text-3xl font-bold text-white tracking-tight uppercase">Briden Mechanical Services</h1>
+                </div>
+                <!-- <p class="text-slate-400 text-sm">Ad Creative Inventory & Responsive Preview</p> -->
+            </div>
+            
+            <button onclick="refreshAllAds()" class="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-xl transition-all shadow-lg shadow-indigo-500/20 text-sm font-bold group">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-active:rotate-180 transition-transform">
+                    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+                    <path d="M21 3v5h-5"></path>
+                </svg>
+                Replay All Animations
+            </button>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            
+            <!-- Kolom Kiri: Format Vertikal -->
+            <div class="xl:col-span-4 flex flex-col md:flex-row xl:flex-col gap-8 justify-center xl:justify-start">
+                <!-- 300x600 Half Page -->
+                <div class="banner-card">
+                    <div class="w-full border-b border-slate-700/50 pb-2 mb-1">
+                        <span class="text-white font-bold text-xs block">300x600</span>
+                        <span class="text-[9px] text-slate-500 uppercase font-medium">Half Page</span>
+                    </div>
+                    <div class="iframe-wrapper" style="width: 300px; height: 600px;">
+                        <iframe src="300x600/index.html" width="300" height="600" scrolling="no" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <!-- 160x600 Wide Skyscraper -->
+                <div class="banner-card">
+                    <div class="w-full border-b border-slate-700/50 pb-2 mb-1">
+                        <span class="text-white font-bold text-xs block">160x600</span>
+                        <span class="text-[9px] text-slate-500 uppercase font-medium">Wide Skyscraper</span>
+                    </div>
+                    <div class="iframe-wrapper" style="width: 160px; height: 600px;">
+                        <iframe src="160x600/index.html" width="160" height="600" scrolling="no" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kolom Kanan: Format Horizontal dan Square -->
+            <div class="xl:col-span-8 space-y-8">
+                
+                <!-- 728x90 Leaderboard -->
+                <div class="banner-card w-full">
+                    <div class="w-full border-b border-slate-700/50 pb-2 mb-1">
+                        <span class="text-white font-bold text-xs block">728x90</span>
+                        <span class="text-[9px] text-slate-500 uppercase font-medium">Leaderboard</span>
+                    </div>
+                    <div class="iframe-wrapper max-w-full overflow-x-auto" style="width: 728px; height: 90px;">
+                        <iframe src="728x90/index.html" width="728" height="90" scrolling="no" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                    <!-- 300x250 Medium Rectangle -->
+                    <div class="banner-card">
+                        <div class="w-full border-b border-slate-700/50 pb-2 mb-1">
+                            <span class="text-white font-bold text-xs block">300x250</span>
+                            <span class="text-[9px] text-slate-500 uppercase font-medium">Medium Rectangle</span>
+                        </div>
+                        <div class="iframe-wrapper" style="width: 300px; height: 250px;">
+                            <iframe src="300x250/index.html" width="300" height="250" scrolling="no" loading="lazy"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- 320x50 Mobile Leaderboard -->
+                    <div class="banner-card">
+                        <div class="w-full border-b border-slate-700/50 pb-2 mb-1">
+                            <span class="text-white font-bold text-xs block">320x50</span>
+                            <span class="text-[9px] text-slate-500 uppercase font-medium">Mobile Leaderboard</span>
+                        </div>
+                        <div class="iframe-wrapper" style="width: 320px; height: 50px;">
+                            <iframe src="320x50/index.html" width="320" height="50" scrolling="no" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function refreshAllAds() {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                const currentSrc = iframe.src;
+                iframe.src = '';
+                iframe.src = currentSrc;
+            });
+        }
+    </script>
+</body>
+</html>
