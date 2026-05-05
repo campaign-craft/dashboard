@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAF | Digital Ads Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+        
+        :root {
+            /* Light Mode Defaults */
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-color: #be123c; /* CAF Red */
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        .banner-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            height: fit-content;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .banner-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .iframe-container {
+            background: #f1f5f9; /* Neutral light background for images */
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+
+        img {
+            display: block;
+            object-fit: contain;
+        }
+
+        .status-pill {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .section-title {
+            width: 100%;
+            padding: 40px 0 20px 0;
+            margin-top: 40px;
+            border-top: 2px solid var(--accent-color);
+            color: var(--text-main);
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .size-row {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            padding-bottom: 4rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .size-row:last-child {
+            border-bottom: none;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+    <div class="max-w-[1600px] mx-auto">
+        
+        <!-- Brand Header -->
+        <header class="mb-16 flex flex-col lg:flex-row lg:items-end justify-between gap-10 border-b border-slate-200 pb-16">
+            <div class="flex-1">
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <span class="status-pill bg-rose-100 text-rose-700 border border-rose-200">CAF</span>
+                    <span class="status-pill bg-emerald-100 text-emerald-700 border border-emerald-200">Charities Aid Foundation</span>
+                    <span class="status-pill bg-slate-100 text-slate-500 border border-slate-200">Static JPG Scenes</span>
+                </div>
+                <h1 class="text-5xl font-black tracking-tight mb-4" style="color: var(--text-main);">
+                    CAF <span class="text-rose-600 font-light">— Campaign Preview</span>
+                </h1>
+                <p style="color: var(--text-muted);" class="max-w-3xl text-xl leading-relaxed">
+                    Visual preview for Charities Aid Foundation (CAF). Each row displays the 3 scenes for a specific banner size.
+                </p>
+            </div>
+            
+            <div class="flex flex-col items-center lg:items-end">
+                <button onclick="refreshAllAds()" class="flex items-center gap-3 px-10 py-5 bg-rose-600 hover:bg-rose-500 active:scale-95 text-white rounded-2xl transition-all shadow-xl shadow-rose-200 text-lg font-black group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="group-active:rotate-180 transition-transform duration-500">
+                        <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+                        <path d="M21 3v5h-5"></path>
+                    </svg>
+                    RELOAD IMAGES
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div id="preview-container" class="flex flex-col items-center">
+            <!-- Rows will be injected here -->
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-24 p-12 rounded-[32px] border text-center transition-all duration-500" style="background: var(--bg-card); border-color: var(--border-color);">
+            <p style="color: var(--text-muted);" class="text-sm font-medium">
+                &copy; <span id="currentYear"></span> Charities Aid Foundation (CAF) Preview Tool.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('currentYear').innerText = new Date().getFullYear();
+
+        const banners = [
+            { variant: 'AstraZeneca', size: '300x250', w: 300, h: 250, label: 'Medium Rectangle', scenes: ['CAF_BGSH_AstraZeneca_300x250_Static_Lark_V1-_1_scene1-100.jpg', 'CAF_BGSH_AstraZeneca_300x250_Static_Lark_V1-_1_scene2-100.jpg', 'CAF_BGSH_AstraZeneca_300x250_Static_Lark_V1-_1_scene3-100.jpg'] },
+            { variant: 'AstraZeneca', size: '300x600', w: 300, h: 600, label: 'Half Page', scenes: ['CAF_BGSH_AstraZeneca_300x600_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_AstraZeneca_300x600_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_AstraZeneca_300x600_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'AstraZeneca', size: '320x50', w: 320, h: 50, label: 'Mobile Leaderboard', scenes: ['CAF_BGSH_AstraZeneca_320x50_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_AstraZeneca_320x50_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_AstraZeneca_320x50_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'AstraZeneca', size: '460x1500Left', w: 460, h: 1500, label: 'Portrait Left', scenes: ['CAF_BGSH_AstraZeneca_460x1500Left_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_AstraZeneca_460x1500Left_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_AstraZeneca_460x1500Left_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'AstraZeneca', size: '460x1500Right', w: 460, h: 1500, label: 'Portrait Right', scenes: ['CAF_BGSH_AstraZeneca_460x1500Right_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_AstraZeneca_460x1500Right_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_AstraZeneca_460x1500Right_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'AstraZeneca', size: '728x90', w: 728, h: 90, label: 'Leaderboard', scenes: ['CAF_BGSH_AstraZeneca_728x90_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_AstraZeneca_728x90_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_AstraZeneca_728x90_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'AstraZeneca', size: '970x250', w: 970, h: 250, label: 'Billboard', scenes: ['CAF_BGSH_AstraZeneca_970x250_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_AstraZeneca_970x250_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_AstraZeneca_970x250_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'Barbara', size: '300x250', w: 300, h: 250, label: 'Medium Rectangle', scenes: ['CAF_BGSH_Barbara_300x250_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_Barbara_300x250_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_Barbara_300x250_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'Barbara', size: '300x600', w: 300, h: 600, label: 'Half Page', scenes: ['CAF_BGSH_Barbara_300x600_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_Barbara_300x600_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_Barbara_300x600_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'Barbara', size: '320x50', w: 320, h: 50, label: 'Mobile Leaderboard', scenes: ['CAF_BGSH_Barbara_320x50_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_Barbara_320x50_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_Barbara_320x50_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'Barbara', size: '320x480', w: 320, h: 480, label: 'Mobile Interstitial', scenes: ['CAF_BGSH_Barbara_320x480_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_Barbara_320x480_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_Barbara_320x480_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'Barbara', size: '460x500Left', w: 460, h: 500, label: 'Square Left', scenes: ['CAF_BGSH_Barbara_460x500Left_Static_Lark_V1-_1-100.jpg', 'CAF_BGSH_Barbara_460x500Left_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_Barbara_460x500Left_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'Barbara', size: '460x500Right', w: 460, h: 500, label: 'Square Right', scenes: ['CAF_BGSH_Barbara_460x500Right_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_Barbara_460x500Right_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_Barbara_460x500Right_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'Barbara', size: '728x90', w: 728, h: 90, label: 'Leaderboard', scenes: ['CAF_BGSH_Barbara_728x90_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_Barbara_728x90_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_Barbara_728x90_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'Barbara', size: '970x250', w: 970, h: 250, label: 'Billboard', scenes: ['CAF_BGSH_Barbara_970x250_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_Barbara_970x250_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_Barbara_970x250_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'Landsec', size: '320x480', w: 320, h: 480, label: 'Mobile Interstitial', scenes: ['CAF_BGSH_Landsec_320x480_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_Landsec_320x480_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_Landsec_320x480_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'Landsec', size: '120x600', w: 120, h: 600, label: 'Skyscraper', scenes: ['CAF_BGSH_Landsec_120x600_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_Landsec_120x600_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_Landsec_120x600_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'Landsec', size: '300x50', w: 300, h: 50, label: 'Smartphone Banner', scenes: ['CAF_BGSH_Landsec_300x50_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_Landsec_300x50_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_Landsec_300x50_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'Rosie+Marie', size: '120x600', w: 120, h: 600, label: 'Skyscraper', scenes: ['CAF_BGSH_Rosie+Marie_120x600_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_Rosie+Marie_120x600_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_Rosie+Marie_120x600_Static_Lark_V1-_scene3-100.jpg'] },
+            { variant: 'Rosie+Marie', size: '300x50', w: 300, h: 50, label: 'Smartphone Banner', scenes: ['CAF_BGSH_Rosie+Marie_300x50_Static_Lark_V1-_scene1-100.jpg', 'CAF_BGSH_Rosie+Marie_300x50_Static_Lark_V1-_scene2-100.jpg', 'CAF_BGSH_Rosie+Marie_300x50_Static_Lark_V1-_scene3-100.jpg'] }
+        ];
+
+        function initGrid() {
+            const container = document.getElementById('preview-container');
+            let lastVariant = "";
+
+            banners.forEach(item => {
+                if (item.variant !== lastVariant) {
+                    const header = document.createElement('div');
+                    header.className = 'section-title text-3xl mb-6';
+                    header.innerHTML = `<span class="opacity-40 font-light">Variant:</span> ${item.variant}`;
+                    container.appendChild(header);
+                    lastVariant = item.variant;
+                }
+
+                const row = document.createElement('div');
+                row.className = 'size-row';
+
+                item.scenes.forEach((sceneFile, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'banner-card';
+                    card.innerHTML = `
+                        <div class="w-full flex justify-between items-center opacity-70 mb-2 px-1">
+                            <span class="font-bold text-xs tracking-widest">${item.size}</span>
+                            <span class="text-[9px] font-black uppercase text-rose-500">${item.label}</span>
+                        </div>
+                        <div class="iframe-container" style="width: ${item.w}px; height: ${item.h}px;">
+                            <img src="${sceneFile}" width="${item.w}" height="${item.h}" alt="Scene ${index+1}" loading="lazy">
+                        </div>
+                        <p class="text-[11px] mt-2 opacity-50 italic">Scene ${index + 1} — ${item.size}</p>
+                    `;
+                    row.appendChild(card);
+                });
+
+                container.appendChild(row);
+            });
+        }
+
+        function refreshAllAds() {
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                const currentSrc = img.src.split('?')[0];
+                img.src = currentSrc + '?t=' + new Date().getTime();
+            });
+        }
+
+        window.onload = initGrid;
+    </script>
+</body>
+</html>
