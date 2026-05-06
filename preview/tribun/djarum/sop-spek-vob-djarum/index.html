@@ -705,7 +705,237 @@
             background: var(--rule);
             margin: 72px 0;
         }
+
+        /* ── RESPONSIVE ── */
+
+        /* Tablet: 768px and below */
+        @media (max-width: 768px) {
+            .page {
+                padding: 40px 24px 72px;
+            }
+
+            /* Header */
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding-bottom: 24px;
+                margin-bottom: 48px;
+            }
+
+            .header-left h1 {
+                font-size: 2rem;
+            }
+
+            .header-badges {
+                flex-wrap: wrap;
+            }
+
+            /* Section spacing */
+            .section {
+                margin-bottom: 52px;
+            }
+
+            /* Spec grid: stack vertically */
+            .spec-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Production steps: 2x2 grid */
+            .prod-steps {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px 0;
+            }
+
+            .prod-steps::before {
+                display: none;
+            }
+
+            .prod-step {
+                padding: 0 16px;
+            }
+
+            /* Tag grid: stack */
+            .tag-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Actor legend: wrap tightly */
+            .actor-legend {
+                gap: 10px 16px;
+            }
+
+            .actor-legend .legend-item:last-child {
+                margin-left: 0;
+                width: 100%;
+                padding-top: 4px;
+                border-top: 1px solid var(--rule);
+            }
+
+            /* Scenarios: stack vertically */
+            .scenarios {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            /* Chain step actor column narrower */
+            .chain-step {
+                grid-template-columns: 110px 1fr;
+            }
+
+            .actor-chip {
+                font-size: 0.6rem;
+                padding: 3px 6px;
+            }
+
+            .chain-action p {
+                font-size: 0.82rem;
+            }
+
+            /* Time strip */
+            .time-strip {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            /* Risk grid: stack */
+            .risk-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Rec block */
+            .rec-block {
+                padding: 28px 24px;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            /* Comparison table: allow horizontal scroll */
+            .cmp-table-wrap {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 10px;
+                border: 1px solid var(--rule);
+            }
+
+            .cmp-table {
+                min-width: 480px;
+                border: none;
+                border-radius: 0;
+            }
+        }
+
+        /* Mobile: 480px and below */
+        @media (max-width: 480px) {
+            .page {
+                padding: 28px 16px 60px;
+            }
+
+            .header-left h1 {
+                font-size: 1.65rem;
+            }
+
+            .header-left p {
+                font-size: 0.85rem;
+            }
+
+            /* Section label */
+            .section-label {
+                margin-bottom: 20px;
+            }
+
+            .section-title {
+                font-size: 1rem;
+            }
+
+            /* Production steps: single column */
+            .prod-steps {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .prod-step {
+                flex-direction: row;
+                text-align: left;
+                align-items: center;
+                gap: 16px;
+                padding: 0;
+            }
+
+            .prod-dot {
+                width: 44px;
+                height: 44px;
+                flex-shrink: 0;
+                margin-bottom: 0;
+            }
+
+            /* Spec cards */
+            .spec-card {
+                padding: 20px 20px;
+            }
+
+            /* Tag cards */
+            .tag-card {
+                padding: 20px 20px;
+            }
+
+            /* Chain steps */
+            .chain-step {
+                grid-template-columns: 90px 1fr;
+            }
+
+            .chain-actor {
+                padding: 12px 10px;
+            }
+
+            .chain-action {
+                padding: 12px 14px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .chain-action p {
+                font-size: 0.8rem;
+            }
+
+            .bottleneck-tag,
+            .warning-tag {
+                font-size: 0.55rem;
+            }
+
+            /* Time strip */
+            .time-val {
+                font-size: 1rem;
+            }
+
+            /* Comparison table */
+            .cmp-table th,
+            .cmp-table td {
+                padding: 10px 12px;
+                font-size: 0.8rem;
+            }
+
+            /* Risk cards */
+            .risk-card {
+                padding: 20px 20px;
+            }
+
+            .risk-body {
+                font-size: 0.8rem;
+            }
+
+            /* Recommendation */
+            .rec-block {
+                padding: 24px 20px;
+            }
+
+            .rec-text {
+                font-size: 0.9rem;
+            }
+        }
     </style>
+
 </head>
 
 <body>
@@ -949,37 +1179,39 @@
                 <span class="section-num">05</span>
                 <span class="section-title">Perbandingan Teknis Fitur</span>
             </div>
-            <table class="cmp-table">
-                <thead>
-                    <tr>
-                        <th>Fitur</th>
-                        <th>Tracking Only</th>
-                        <th>Full Script (JS Tag)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Kontrol Materi</td>
-                        <td><span class="chip-g">Publisher (Tribunnews)</span></td>
-                        <td>Advertiser (Tim Djarum)</td>
-                    </tr>
-                    <tr>
-                        <td>Beban Loading</td>
-                        <td><span class="chip-g">Sangat ringan</span></td>
-                        <td><span class="chip-a">Tergantung script klien (Redirect)</span></td>
-                    </tr>
-                    <tr>
-                        <td>Kemudahan Revisi</td>
-                        <td><span class="chip-g">Sangat mudah (internal update)</span></td>
-                        <td><span class="chip-a">Prosedur re-tagging (email loop)</span></td>
-                    </tr>
-                    <tr>
-                        <td>Kompatibilitas</td>
-                        <td><span class="chip-g">Hampir di semua slot</span></td>
-                        <td><span class="chip-a">Butuh slot yang mendukung JS</span></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="cmp-table-wrap">
+                <table class="cmp-table">
+                    <thead>
+                        <tr>
+                            <th>Fitur</th>
+                            <th>Tracking Only</th>
+                            <th>Full Script (JS Tag)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Kontrol Materi</td>
+                            <td><span class="chip-g">Publisher (Tribunnews)</span></td>
+                            <td>Advertiser (Tim Djarum)</td>
+                        </tr>
+                        <tr>
+                            <td>Beban Loading</td>
+                            <td><span class="chip-g">Sangat ringan</span></td>
+                            <td><span class="chip-a">Tergantung script klien (Redirect)</span></td>
+                        </tr>
+                        <tr>
+                            <td>Kemudahan Revisi</td>
+                            <td><span class="chip-g">Sangat mudah (internal update)</span></td>
+                            <td><span class="chip-a">Prosedur re-tagging (email loop)</span></td>
+                        </tr>
+                        <tr>
+                            <td>Kompatibilitas</td>
+                            <td><span class="chip-g">Hampir di semua slot</span></td>
+                            <td><span class="chip-a">Butuh slot yang mendukung JS</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- SECTION 6 -->
