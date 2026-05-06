@@ -1,0 +1,3262 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribun Studio — Brand Identity Guidelines</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --blue: #005EB8;
+            --blue-light: #E6F1FB;
+            --black: #0F172A;
+            --silver: #94A3B8;
+            --silver-light: #F1F5F9;
+            --white: #FFFFFF;
+            --gray: #64748B;
+            --border: #E2E8F0;
+            --serif: 'Playfair Display', Georgia, serif;
+            --sans: 'Montserrat', sans-serif;
+        }
+
+        body {
+            font-family: var(--sans);
+            background: #F8FAFC;
+            color: var(--black);
+            line-height: 1.6;
+        }
+
+        img,
+        svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* NAV */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 3rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            height: 60px;
+        }
+
+        nav .nav-logo {
+            margin-right: auto;
+            display: flex;
+            align-items: center;
+        }
+
+        nav a {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--gray);
+            text-decoration: none;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+            white-space: nowrap;
+        }
+
+        nav a:hover {
+            color: var(--blue);
+        }
+
+        /* HERO */
+        .hero {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 7rem 3rem 5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--blue);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-eyebrow::before {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 1px;
+            background: var(--blue);
+        }
+
+        .hero h1 {
+            font-family: var(--serif);
+            font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+            font-weight: 600;
+            line-height: 1.15;
+            color: var(--black);
+            margin-bottom: 1.25rem;
+        }
+
+        .hero h1 em {
+            color: var(--blue);
+            font-style: italic;
+        }
+
+        .hero p {
+            font-size: 15px;
+            color: var(--gray);
+            line-height: 1.8;
+            max-width: 460px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 1.5rem;
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--blue);
+        }
+
+        .hero-right {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .logo-showcase {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 140px;
+        }
+
+        .hero-tagline {
+            font-family: var(--serif);
+            font-style: italic;
+            font-size: 1.05rem;
+            color: var(--silver);
+            text-align: right;
+            line-height: 1.5;
+        }
+
+        /* PAGE WRAPPER */
+        .page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 3rem;
+            overflow-x: hidden;
+        }
+
+        /* SECTIONS */
+        section {
+            padding: 5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        section:last-child {
+            border-bottom: none;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .section-num {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--silver);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            font-family: var(--serif);
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--black);
+        }
+
+        .section-sub {
+            font-size: 14px;
+            color: var(--gray);
+            margin-top: 0.5rem;
+            line-height: 1.7;
+            max-width: 680px;
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+        }
+
+        .card-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .card-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .card-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        /* PHILOSOPHY */
+        .philosophy-item {
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+        }
+
+        .philosophy-icon {
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+            background: var(--blue-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .philosophy-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--blue);
+            stroke-width: 1.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .philosophy-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--blue);
+            margin-bottom: 4px;
+        }
+
+        .philosophy-text {
+            font-size: 13px;
+            color: var(--gray);
+            line-height: 1.7;
+        }
+
+        /* COLOR PALETTE */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .color-swatch {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .swatch-block {
+            height: 90px;
+        }
+
+        .swatch-info {
+            background: var(--white);
+            padding: 1rem;
+        }
+
+        .swatch-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 2px;
+        }
+
+        .swatch-role {
+            font-size: 11px;
+            color: var(--gray);
+            margin-bottom: 6px;
+        }
+
+        .swatch-hex {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: var(--silver);
+        }
+
+        /* TYPOGRAPHY */
+        .type-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .type-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--silver);
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .type-sample-display {
+            font-family: var(--serif);
+            font-style: italic;
+            font-size: 2.2rem;
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--black);
+            margin: 1rem 0;
+        }
+
+        .type-sample-body {
+            font-family: var(--sans);
+            font-size: 14px;
+            color: var(--gray);
+            line-height: 1.8;
+        }
+
+        .type-sample-heading {
+            font-family: var(--sans);
+            font-weight: 700;
+            font-style: italic;
+            font-size: 1.05rem;
+            color: var(--black);
+            margin-bottom: 0.5rem;
+        }
+
+        .type-meta {
+            font-size: 11px;
+            color: var(--silver);
+            margin-top: 0.75rem;
+        }
+
+        /* LOGO ARCHITECTURE */
+        .logo-arch {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .logo-variant {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .logo-variant-display {
+            padding: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 140px;
+        }
+
+        .logo-variant-display.dark {
+            background: var(--black);
+        }
+
+        .logo-variant-display.light {
+            background: var(--white);
+        }
+
+        .logo-variant-info {
+            padding: 1rem 1.25rem;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+        }
+
+        .logo-variant-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 2px;
+        }
+
+        .logo-variant-use {
+            font-size: 11px;
+            color: var(--gray);
+        }
+
+        /* SPEC TABLE */
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .spec-table th {
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--silver);
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .spec-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--gray);
+            vertical-align: top;
+        }
+
+        .spec-table td:first-child {
+            font-weight: 600;
+            color: var(--black);
+            white-space: nowrap;
+        }
+
+        .spec-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* USAGE RULES */
+        .rules {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .rule-block {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .rule-header {
+            padding: 0.75rem 1.25rem;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rule-header.do {
+            background: #F0FDF4;
+            color: #166534;
+            border-bottom: 1px solid #BBF7D0;
+        }
+
+        .rule-header.dont {
+            background: #FEF2F2;
+            color: #991B1B;
+            border-bottom: 1px solid #FECACA;
+        }
+
+        .rule-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .rule-dot.do {
+            background: #22C55E;
+        }
+
+        .rule-dot.dont {
+            background: #EF4444;
+        }
+
+        .rule-body {
+            padding: 1.25rem;
+            background: var(--white);
+        }
+
+        .rule-item {
+            font-size: 13px;
+            color: var(--gray);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 0.65rem;
+            line-height: 1.55;
+        }
+
+        .rule-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .rule-item::before {
+            content: '—';
+            color: var(--silver);
+            flex-shrink: 0;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background: var(--blue-light);
+            border: 1px solid #B5D4F4;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .info-box-icon {
+            width: 22px;
+            height: 22px;
+            background: var(--blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            font-family: var(--sans);
+        }
+
+        .info-box-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0C447C;
+            margin-bottom: 4px;
+        }
+
+        .info-box-text {
+            font-size: 13px;
+            color: #185FA5;
+            line-height: 1.7;
+        }
+
+        /* MOCKUP VISUAL CARD */
+        .mockup-visual {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .mockup-preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .mockup-caption {
+            padding: 1rem 1.25rem;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+        }
+
+        .mockup-caption-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 2px;
+        }
+
+        .mockup-caption-desc {
+            font-size: 11px;
+            color: var(--gray);
+        }
+
+        /* TAG */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border-radius: 20px;
+            padding: 3px 10px;
+        }
+
+        .tag-ok {
+            background: #F0FDF4;
+            color: #166534;
+            border: 1px solid #BBF7D0;
+        }
+
+        .tag-warn {
+            background: #FFFBEB;
+            color: #92400E;
+            border: 1px solid #FDE68A;
+        }
+
+        .tag-no {
+            background: #FEF2F2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
+        }
+
+        .tag-blue {
+            background: #EFF6FF;
+            color: #1D4ED8;
+            border: 1px solid #BFDBFE;
+        }
+
+        /* STEP FLOW */
+        .step-flow {
+            display: flex;
+            gap: 0;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .step {
+            flex: 1;
+            padding: 1.5rem;
+            border-right: 1px solid var(--border);
+        }
+
+        .step:last-child {
+            border-right: none;
+        }
+
+        .step-num {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--blue);
+            margin-bottom: 6px;
+        }
+
+        .step-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            font-size: 12px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--black);
+            color: rgba(255, 255, 255, 0.4);
+            padding: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        footer .footer-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        footer strong {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        /* RESPONSIVE UTILITIES */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 900px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 4rem 1.5rem 3rem;
+                text-align: center;
+            }
+
+            .hero p {
+                margin: 0 auto;
+            }
+
+            .hero-right {
+                align-items: center;
+                margin-top: 2rem;
+            }
+
+            .hero-tagline {
+                text-align: center;
+            }
+
+            .page {
+                padding: 0 1rem;
+            }
+
+            /* Force vertical stacking for ALMOST ALL grids on mobile */
+            .card-grid-2,
+            .card-grid-3,
+            .card-grid-4,
+            .type-grid,
+            .logo-arch,
+            .rules,
+            .diagram-grid,
+            [style*="display: grid"],
+            [style*="display:grid"] {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem !important;
+            }
+
+            .hierarchy-showcase {
+                display: flex !important;
+                flex-direction: column !important;
+            }
+
+            .hierarchy-showcase>div:nth-child(2) {
+                transform: rotate(90deg);
+                margin: 1rem 0;
+            }
+
+            .color-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            nav {
+                padding: 0 1rem;
+                gap: 0.75rem;
+                overflow-x: auto;
+                justify-content: flex-start;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            nav::-webkit-scrollbar {
+                display: none;
+            }
+
+            nav a {
+                font-size: 10px;
+                padding: 0 0.25rem;
+                white-space: nowrap;
+            }
+
+            .step-flow {
+                flex-direction: column;
+            }
+
+            .step {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .step:last-child {
+                border-bottom: none;
+            }
+
+            /* Ensure mockups don't overflow - use horizontal slider for complex ones */
+            .mockup-preview,
+            .mockup-visual {
+                max-width: 100% !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Keep the actual diagram size to avoid breaking absolute positioning */
+            .mockup-preview>div {
+                min-width: 320px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .section-title {
+                font-size: 1.6rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .color-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .step {
+                padding: 1rem;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+                padding: 2rem 1rem;
+            }
+        }
+
+        /* REUSABLE LOGO SVG — defined once as a symbol */
+    </style>
+</head>
+
+<body>
+
+    <!-- INLINE SVG DEFS — logo paths reused via <use> -->
+    <svg width="0" height="0" style="position:absolute" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <g id="logo-full">
+                <g>
+                    <path fill="#024cb7"
+                        d="M72.59,7.55h-.99c-1.19-3.24-2.91-4.86-5.16-4.86-.67,0-1.27.11-1.79.34-.53.23-.94.53-1.25.91-.3.38-.46.8-.46,1.26,0,.54.18,1,.53,1.37.36.37.82.68,1.38.92.56.24,1.16.44,1.78.58.62.14,1.2.27,1.74.38.93.18,1.78.46,2.55.85.77.39,1.4.91,1.86,1.56.47.65.7,1.46.7,2.43,0,1.04-.26,1.96-.77,2.78-.51.81-1.21,1.45-2.08,1.91-.88.46-1.86.7-2.96.7-.84,0-1.72-.13-2.65-.4s-1.76-.72-2.49-1.37l-1.29,1.58h-.83l-.09-6.06h1.06c.55,1.7,1.3,2.98,2.25,3.84s2.26,1.29,3.93,1.29c.62,0,1.2-.12,1.72-.35s.95-.56,1.27-.99.48-.93.48-1.51c0-.76-.23-1.35-.68-1.75-.46-.4-1.05-.7-1.79-.9s-1.53-.37-2.36-.52c-1.77-.3-3.14-.84-4.12-1.61s-1.47-1.84-1.47-3.22c0-1.57.52-2.81,1.55-3.7s2.48-1.34,4.33-1.34c.76,0,1.49.15,2.18.44s1.36.67,2,1.13l.93-1.39h.78l.19,5.71h.02Z" />
+                    <path fill="#024cb7"
+                        d="M76.44,18.66c-.74,0-1.33-.15-1.77-.46-.44-.31-.76-.72-.95-1.22-.19-.51-.28-1.06-.28-1.65v-6.14h-1.83v-.98c1.08-.13,1.92-.56,2.54-1.29s1.02-1.81,1.21-3.23h.98v4.33h3.38v1.17h-3.38v6.35c0,.59.14,1,.42,1.24s.58.36.91.36c.49,0,.88-.28,1.16-.84.28-.56.42-1.26.42-2.09h.99c0,.82-.12,1.56-.37,2.24s-.64,1.21-1.2,1.61-1.3.6-2.23.6Z" />
+                    <path fill="#024cb7"
+                        d="M98.62,18.66c-.96,0-1.8-.23-2.54-.68s-1.31-1.09-1.73-1.9c-.42-.81-.62-1.75-.62-2.82s.23-2.06.68-2.92c.45-.86,1.07-1.55,1.85-2.05s1.66-.76,2.64-.76c.72,0,1.34.18,1.87.54.53.36,1,.82,1.41,1.37v-4.06c0-.63-.04-1.09-.11-1.39-.07-.29-.21-.48-.41-.56s-.51-.12-.93-.12h-.73v-.97l5.08-.33v13.78c0,.58.08.93.24,1.07.16.13.52.2,1.1.2h.6v1.02l-4.53.26c-.05-.27-.1-.57-.14-.91s-.08-.67-.11-.98c-.45.64-.98,1.17-1.57,1.59s-1.28.63-2.06.63h.01ZM99.71,9.02c-.78,0-1.4.35-1.85,1.05-.46.7-.68,1.75-.68,3.13s.22,2.3.66,2.92c.44.62,1.05.93,1.83.93.39,0,.79-.16,1.19-.47s.73-.76.99-1.36c.26-.59.4-1.31.4-2.15,0-1.25-.23-2.23-.7-2.97-.46-.73-1.07-1.1-1.83-1.1v.02Z" />
+                    <path fill="#024cb7"
+                        d="M105.4,18.33v-1.02c.53,0,.91-.02,1.16-.07s.41-.12.47-.22c.09-.13.13-.33.13-.58v-5.37c0-.88-.1-1.44-.29-1.7s-.58-.38-1.16-.38h-.32v-.97l4.67-.17v8.49c0,.27.04.47.12.61.08.14.24.23.49.28s.63.08,1.14.08v1.02h-6.42.01ZM108.27,5.72c-.5,0-.92-.18-1.28-.53-.36-.35-.53-.78-.53-1.27s.18-.93.53-1.28.78-.52,1.28-.52.92.17,1.27.52.53.78.53,1.28-.18.92-.53,1.27-.78.53-1.27.53Z" />
+                    <path fill="#024cb7"
+                        d="M116.08,7.52c1.14,0,2.16.23,3.05.69s1.6,1.11,2.11,1.95c.52.84.77,1.84.77,2.99s-.26,2.12-.77,2.95c-.52.82-1.22,1.46-2.11,1.9-.89.44-1.91.66-3.05.66s-2.16-.22-3.07-.67c-.9-.44-1.61-1.08-2.13-1.91s-.77-1.81-.77-2.95.26-2.14.77-2.98,1.22-1.49,2.13-1.94c.9-.46,1.92-.68,3.07-.68h0ZM116.08,8.56c-.83,0-1.46.36-1.88,1.07s-.63,1.87-.63,3.48.21,2.76.63,3.46c.42.7,1.04,1.06,1.88,1.06s1.46-.35,1.88-1.05c.42-.7.63-1.85.63-3.45s-.21-2.77-.63-3.49-1.05-1.08-1.88-1.08Z" />
+                </g>
+                <path fill="#016fba"
+                    d="M26.37.37v.86c0,1.07-.21,1.9-.64,2.5s-1.02,1.06-1.8,1.38c-.6.25-1.36.45-2.29.6s-1.82.22-2.67.22v18.12c1.65-.58,3.03-1.36,4.13-2.36.8-.75,1.63-1.82,2.51-3.19l.26.11c-.42,2.68-1.61,4.92-3.54,6.71-1.94,1.8-4.27,2.7-6.99,2.7-3.8,0-6.96-1.07-9.47-3.21s-3.77-4.82-3.77-8.02c0-2.25.65-4.52,1.95-6.8,1.43-2.5,3.26-4.37,5.51-5.6-.48-.08-.86-.13-1.17-.15s-.75-.03-1.35-.03h-.49c-.8,0-1.85.37-3.15,1.11-1.3.74-2.26,1.58-2.89,2.53h-.21c-.15-.72.11-1.71.79-2.96C2.78,1.77,5.53.23,9.36.23c1.08,0,3.44.36,7.08,1.08,3.64.72,5.67,1.08,6.07,1.08.9,0,1.59-.13,2.06-.38.58-.32,1.06-.92,1.47-1.8l.33.15h0ZM11.18,17.81V4.73l-.56-.15c-1.5.9-2.64,2.26-3.42,4.09-.68,1.57-1.01,3.23-1.01,4.95,0,2.42.56,4.49,1.69,6.19.38.55.94,1.17,1.69,1.84.17-.15.31-.27.42-.38.3-.32.51-.64.62-.94.11-.3.19-.55.24-.75.23-.7.33-1.29.33-1.76h0ZM17.93,24.16V5.93l-2.55-.56v8.02c0,1.35-.13,2.49-.38,3.43-.25.94-.7,1.75-1.35,2.46-.52.58-1.15,1.17-1.88,1.76-.52.42-1.04.85-1.54,1.27.55.38,1.13.7,1.73.98s1.24.49,1.92.64c.25.05.61.1,1.07.15s.97.07,1.52.07h1.47,0Z" />
+                <g>
+                    <path fill="#016fba"
+                        d="M21.48,7.86h-.65v-.56l3.66-.27v2.26c.49-1.45,1.15-2.17,2-2.17h.15c.58,0,1,.36,1.28,1.09.19.5.29,1.06.29,1.69,0,.52-.1,1-.29,1.43-.27.58-.66.87-1.18.87-.97-.16-1.46-1-1.46-2.53l.1-1s-.06-.07-.07-.09l-.05-.05c-.19,0-.36.45-.52,1.35-.07.37-.1.99-.1,1.87v5.61h.9v.52h-4.7v-.52h.65V7.86h-.01Z" />
+                    <path fill="#016fba"
+                        d="M29.41,7.86h-.65v-.57c.6,0,1.3-.04,2.1-.11l1.7-.15v10.32h.7v.52h-4.5v-.52h.65V7.87h0ZM29.28,3.84c0-1.35.58-2.02,1.73-2.02s1.65.73,1.65,2.19c0,.56-.11,1.03-.32,1.43-.28.53-.71.79-1.28.79-1.2,0-1.8-.73-1.8-2.18l.03-.21h-.01Z" />
+                    <path fill="#016fba"
+                        d="M37.4,8.62c.51-1.07,1.11-1.61,1.77-1.61.13,0,.22,0,.27.02.87.1,1.51.88,1.94,2.34.29.99.44,2.04.44,3.15,0,2.71-.54,4.49-1.61,5.32-.15.12-.29.2-.44.25-.19.07-.41.11-.67.11-.9,0-1.52-.68-1.86-2.06v2.06c-.56-.08-1.41-.18-2.56-.3-.31-.01-.64-.02-.98-.02v-.52h.68V2.91h-.68v-.5c.78,0,2.01-.12,3.7-.37v6.58ZM38.58,10.01c0-1.09-.16-1.63-.48-1.63-.47,0-.7.73-.7,2.18v3.97c0,1.56.23,2.34.68,2.34.25,0,.41-.37.46-1.1.03-.33.04-.76.04-1.29v-4.47Z" />
+                    <path fill="#016fba"
+                        d="M43.08,7.86h-.64v-.57c.88,0,2.12-.09,3.73-.27v8.41c0,.61.04.96.11,1.06.05.12.17.18.35.18.25,0,.45-.23.58-.7.12-.44.18-.97.18-1.6v-6.52h-.69v-.57c.42,0,1.04-.04,1.87-.11s1.45-.11,1.87-.11v10.27h.72v.52c-.69,0-1.34.04-1.94.11l-1.7.21v-2.1c-.6,1.4-1.37,2.1-2.32,2.1-.15,0-.25,0-.32-.02-.65-.06-1.11-.46-1.38-1.22-.27-.75-.41-1.72-.41-2.89v-6.2h0v.02Z" />
+                    <path fill="#016fba"
+                        d="M52.41,17.35V7.87h-.64v-.57c.35,0,.78-.02,1.28-.07,1.15-.1,1.96-.15,2.46-.15v2.07c.53-1.41,1.26-2.11,2.2-2.11.19,0,.35,0,.45.02.13.04.27.09.45.18.78.39,1.18,1.65,1.18,3.78v6.34h.69v.52h-4.17v-.52h.44v-7.45c0-.85-.15-1.28-.44-1.28h-.05c-.23,0-.41.2-.52.6-.15.5-.21.96-.21,1.4v6.72h.48v.52h-4.21v-.52h.64-.03Z" />
+                </g>
+                <path fill="#016fba"
+                    d="M73.83,19.49h5.77c.36,0,.65.29.65.65h0c0,.36-.29.65-.65.65h-5.77c-.36,0-.65-.29-.65-.65h0c0-.36.29-.65.65-.65Z" />
+                <path fill="#016fba"
+                    d="M113.27,5.25h5.77c.36,0,.65.29.65.65h0c0,.36-.29.65-.65.65h-5.77c-.36,0-.65-.29-.65-.65h0c0-.36.29-.65.65-.65Z" />
+                <g>
+                    <path fill="#016fba"
+                        d="M81.24,6.74c1.8-.06,1.13.05,2.24,1.19l9.13-2.89-.49-1.6c-.07-.24-.36-.43-.65-.35l-10.64,3.33c-.31.1-.54.34-.43.68l.3.91c.16-.3-.15-1.24.53-1.27ZM90.39,3.73l1.71,1.17-1.28.4-1.7-1.17,1.27-.4ZM87.89,4.51l1.67,1.17c-.43.17-.8.29-1.23.42l-1.72-1.19,1.28-.4ZM85.38,5.29l1.72,1.18-1.23.43-1.74-1.2,1.25-.4Z" />
+                    <path fill="#016fba"
+                        d="M84.13,9.14l-1.69-2.19-1.16-.02c-.13,0-.32.14-.32.29v2.55c0,.18.15.33.33.33h2.54c.43,0,.33-.68.3-.95ZM81.61,9.76c-.17,0-.31-.14-.31-.31s.14-.31.31-.31.31.14.31.31-.14.31-.31.31ZM81.61,7.9c-.17,0-.31-.14-.31-.31s.14-.31.31-.31.31.14.31.31-.14.31-.31.31ZM83.49,9.76c-.17,0-.31-.14-.31-.31s.14-.31.31-.31.31.14.31.31-.14.31-.31.31Z" />
+                </g>
+                <path fill="#016fba"
+                    d="M92.96,8.43h-9.14c.41.57.62.61.49,1.44-.04.23-.28.41-.49.41h-2.57c-.14,0-.34-.18-.43-.27-.1.26,0,.51.27.6v.34s0,6.27,0,6.27c0,.63.51,1.15,1.15,1.15h9.41c.63,0,1.15-.51,1.15-1.15v-6.27c0-.38.14-.4.15-.57.03-.65.02-1.25.02-1.96ZM85.9,8.71l1.34.02-1.24,1.59c-.43,0-.83,0-1.33-.01l1.23-1.59ZM87.12,16.84c-1.42,0-2.56-1.15-2.56-2.56s1.15-2.56,2.56-2.56,2.56,1.15,2.56,2.56-1.15,2.56-2.56,2.56ZM88.63,10.31h-1.34s1.24-1.61,1.24-1.61h1.33s-1.23,1.61-1.23,1.61ZM91.25,10.31h-1.35s1.25-1.61,1.25-1.61h1.33s-1.23,1.61-1.23,1.61Z" />
+                <path fill="#0066b2"
+                    d="M88.22,15.5c-.15.12-.33.2-.52.24v-2.37s.04,0,.06,0h.09c.26,0,.46-.07.61-.2.15-.13.23-.32.25-.56h-.04c-.06.09-.12.17-.19.21-.07.04-.15.06-.25.06-.13,0-.34-.03-.62-.1-.15-.03-.26-.06-.34-.07-.17-.03-.31-.06-.42-.07-.11-.01-.2-.02-.28-.02-.39,0-.69.09-.92.26-.23.17-.37.43-.42.76h.05c.11-.17.24-.3.38-.38.14-.08.3-.12.49-.12.04,0,.09,0,.13,0,.05,0,.1.01.16.02-.32.21-.56.45-.72.72-.16.26-.24.54-.24.84,0,.21.04.41.11.58.07.18.18.33.33.47.17.15.35.27.56.35.21.08.44.12.69.12.39,0,.72-.11.98-.32.26-.21.44-.51.53-.9l-.06-.02c-.12.2-.26.36-.41.48ZM86.48,15.43c-.15-.13-.26-.27-.33-.44-.07-.16-.11-.35-.11-.55,0-.25.04-.47.13-.66.09-.2.23-.39.41-.57h.07v1.79c0,.11-.01.19-.04.25-.03.06-.07.12-.14.17ZM87.57,15.77s-.03,0-.05,0c-.02,0-.05,0-.09,0-.17,0-.33-.02-.47-.07-.14-.04-.26-.11-.36-.19.24-.19.4-.36.49-.52.09-.16.13-.35.13-.59v-1.1l.35.07v2.4Z" />
+            </g>
+            <!-- Tribun Network (holding) logo -->
+            <g id="logo-tn">
+                <path fill="#0066b3" fill-rule="evenodd"
+                    d="M178.85,1.26c.65.28,1.58.3,2.21.61-2.25,28.42-19.82,42.58-52,40.43v126c23.08-5.4,37.56-20.3,48.38-38.3.92.35,1.8.73,2.71,1.1-7.05,29.38-22.89,51.8-50.29,60.85-13.66,4.52-33.19,5.39-49.39,2a88,88,0,0,1-37.81-17.69c-15.21-12.34-26.16-29.74-28-55.43a86.9,86.9,0,0,1,2-25.34C20.12,80.74,27,68.66,35.22,58.38S53.53,39.45,64.08,31.73C50.8,29,36,30,26.06,35.15c-8.28,4.29-14.81,11.14-20,18.9-.64,1-1.73,3-2.41,3.12s-1.52-.13-2.22,0C4.17,38.3,12,24.53,24.66,15.32c12.42-9,30.43-13.89,52.2-12.46,24.8,1.64,45.53,9.15,68.79,12.57,4.95.74,10.13,1.22,14.9.5,9.41-1.43,13.91-7.38,18.1-14.37C178.73,1.47,178.71,1.27,178.85,1.26ZM43.55,90c-2.36,28.93,7.74,48.66,22.55,61.47a26.8,26.8,0,0,0,6.84-9c1.66-3.82,2.12-8.49,2.12-13.78V33.43a25.09,25.09,0,0,1-3.42-.5C57.64,46.66,45.69,64.15,43.55,90Zm60.57-51.49V75.68c0,12.54.75,25.15-1.21,36.12C99.12,133,85.59,144.26,72.44,155.94c11,9.74,28.29,15.19,49.78,13.58V41.88c-6-1.18-11.91-2.49-18-3.61C104.19,38.11,104.07,38.28,104.12,38.47Z" />
+                <path fill="#0066b3" fill-rule="evenodd"
+                    d="M207,9.6c5.49,0,8.73,2.46,10.35,6.73,3.16,8.29,1.09,21.57-5.82,24.55-4.92,2.12-11.3,0-13.89-3.72-1.9-2.76-2.72-6.61-2.71-10.87C195,17,197.38,9.64,207,9.6Z" />
+                <path fill="#0066b3" fill-rule="evenodd"
+                    d="M250.85,58.78c2.29-3.86,4.21-8.11,8.16-10.35,3.65-2.09,8.78-.87,11.36,1.11,2.8,2.14,4.69,5.32,6.14,8.52,5.77,13,7,35,3.12,51.43-1.85,7.78-5.62,15.14-11.27,18a11.76,11.76,0,0,1-12.88-1.81c-2.94-2.93-4.38-7.18-5.54-11.68-.22,4.68,0,9.78-.1,14.59-8.13-.87-15.7-2.33-24.73-2.31v-3.71h4.62c.25-34.85,0-70.11.1-105.11h-4.72V13.81a183.27,183.27,0,0,0,24.94-2.5c.87-.15.75-.07.8,1,.45,7.45,0,15.13,0,22.52ZM251,71.06c-.24,5.16-.12,11.09-.12,17.59,0,5.76-.09,11.81.12,17.51a42.47,42.47,0,0,0,.9,7.94c.52,2.23,1.7,5.13,3.91,4.93,2-.18,2.51-3.39,2.82-5.73,1.06-7.86.51-17.22.51-25.36V70.76a52.07,52.07,0,0,0-.41-8.13c-.43-3-1.09-5.71-3.52-5.25C251.27,58.14,251.16,66.53,251,71.06Z" />
+                <path fill="#0066b3" fill-rule="evenodd"
+                    d="M162.55,47.52V63.71c3-7.11,5.85-16.68,16-15.59a8.39,8.39,0,0,1,4.52,2.14c6.69,6.3,7.45,26,.8,32.57a7.47,7.47,0,0,1-5.73,2.2,9.68,9.68,0,0,1-6.45-3.82c-2.58-3.32-3.64-8.93-3.62-14.08,0-1.42.35-3.18.52-4.72s.65-3.25-.71-4c-1.85,1.08-2.31,3.58-2.82,5.74-1.59,6.74-1.5,15.49-1.5,24.13v34.2c1.91.23,4.24,0,6.34.11v3.71H137.11v-3.71h4.43c.22-22.85,0-46.1.09-69.11h-4.52v-4C145.56,48.78,154,48.09,162.55,47.52Z" />
+                <path fill="#0066b3" fill-rule="evenodd"
+                    d="M217.76,47.52c.47,24.56.08,50,.21,74.93,1.45.23,3.32,0,4.93.11v3.71H191.51v-3.71h4.43c.23-22.8.05-46,.1-69h-4.53V49.43C200.86,49.38,209.08,48.23,217.76,47.52Z" />
+                <path fill="#0066b3" fill-rule="evenodd"
+                    d="M319.75,53.56h-4.82V49.43c9.11-.1,16.86-1.57,26.06-1.6v74.73h5v3.71c-9.24,0-17.23,1.28-25.36,2.41-.22-4.86,0-10.16-.09-15.17-3.37,6.84-6.56,14.29-15.29,15.07-10.08.91-12.95-7.08-14.48-15.59-1.58-8.76-1.21-18.86-1.21-29.16V53.56h-4.41V49.43c8.19-.28,17.38-.74,25-1.81.65-.08.9-.53,1,.69.43,5.21,0,11.93,0,16.82v45.06c0,3.58-.16,8.25,3.93,7.44,3.42-.7,4.29-8.69,4.52-12.68.36-6.18.1-12.15.1-17.11Z" />
+                <path fill="#0066b3" fill-rule="evenodd"
+                    d="M405.14,122.56H410v3.71H380.91v-3.71h2.91c.17-15.69.12-33.11.1-49.6,0-2.43,0-5.47-.2-8S383,59.18,380.91,59c-2.53-.23-3.55,2.57-4.12,4.53-2,6.57-1.41,16.08-1.41,24.52v34.52h3.21v3.71H349.32v-3.71h4.43v-69h-4.43V49.43c9.08-.15,16.84-1.6,26.06-1.6v14.8C378.12,56,381.23,49,389,47.62a12.42,12.42,0,0,1,8.73,1.71c3.79,2.44,5.62,8.07,6.55,13.68,1,6,.9,12.69.9,19.2C405.16,96.31,405.14,110.19,405.14,122.56Z" />
+                <path fill="#0066b3"
+                    d="M463.79,125.78,428.27,35.91v71.94q0,13.26,5.83,14l2.29-.33v4.27H418.13v-4.27l1.68.33q5.37-.74,5.38-15.42v-80c-.45-1-1.1-2.63-2-4.77-1.11-2.52-2.57-3.79-4.38-3.79h-.7V13.94h33.43L475.2,73.76V25.84q0-4.82-1.5-6.23a6.21,6.21,0,0,0-4.41-1.41h-1.68V13.94h17.91V18.2h-1.59c-2.82,0-4.56,1.72-5.2,5.15a65.39,65.39,0,0,0-.27,8.2v94.23Z" />
+                <path fill="#0066b3"
+                    d="M509.34,92.65q0,11.66.35,15.12,1.06,10.85,5.12,13.74l4,1.29q9.53,0,16.23-17.12l1.67,2.17q-5.46,11.82-9.08,15.27a18.62,18.62,0,0,1-13.32,5.31q-13.23,0-20.11-11.09t-6.88-28.63q0-14.71,4.85-25.89,6.69-15.43,20.28-15.43,11,0,18,12.42t7.1,32.84Zm0-28.62V88.87h7.58V63.71a60.41,60.41,0,0,0-.35-8.6C516,52.37,514.78,51,513,51Q509.34,51,509.34,64Z" />
+                <path fill="#0066b3"
+                    d="M540,53.34V49.4q15.51,0,25-28.54h1.76V49.4h10v3.94h-10v56.92c0,5.52.8,8.28,2.38,8.28h.36q6.35-1.37,6.35-19.62h1.94q0,13.18-3.79,20.3t-11,8.57a14.14,14.14,0,0,1-2.65.32H558q-6.71,0-9-3.7-2-2.49-2.91-8.52a87.9,87.9,0,0,1-1-12.87V53.34Z" />
+                <path fill="#0066b3"
+                    d="M609,53.42h-2.93l11.08,51.2,4-19.21-6.59-32h-3.76v-4.1h29.9v4.1h-4.94l10.5,49.6,7.58-36.12a41.24,41.24,0,0,0,.88-8.59q0-4.89-2.82-4.89h-1.14v-4.1h13.58v4.1q-4.16,0-6.35,7c-.36,1.07-.94,3.63-1.77,7.68l-11.91,57.65H629.85L622.6,92l-7.25,33.83H600.19L584.4,53.42h-4.32v-4.1H609Z" />
+                <path fill="#0066b3"
+                    d="M696.16,47.39q13.59,0,20.64,13.18,5.75,10.79,5.74,26.86,0,14.86-5.21,26-7.05,15-21.34,15-15.62,0-22.67-14.15Q668.19,104,668.2,87.75q0-15.27,5.73-26.37,7.25-14,20.64-14Zm3.27,16.32c0-4.24-.06-6.78-.18-7.64-.47-3.38-1.8-5.06-4-5.06Q691,51,691,63.71V114q0,10,4.32,10c2.17,0,3.5-1.29,4-3.86a55.73,55.73,0,0,0,.18-6.19Z" />
+                <path fill="#0066b3"
+                    d="M730.74,53.34h-4.5v-4l25.23-1.93V63.71Q756.5,48,765.23,48h1.06q6,0,8.82,7.88a34.56,34.56,0,0,1,2,12.22,26.14,26.14,0,0,1-2,10.37q-2.82,6.27-8.12,6.27-10.05-1.77-10-18.33l.7-7.23a4.74,4.74,0,0,0-.53-.65l-.35-.32q-1.93,0-3.61,9.73a87.41,87.41,0,0,0-.71,13.51V122h6.26v3.78H726.24V122h4.5Z" />
+                <path fill="#0066b3"
+                    d="M803.34,88.07l7.23-11.95q1.5-2.27,4.14-6.79A21,21,0,0,0,817.45,60q0-6.78-6.35-6.78H810V49.32h24.35v3.86h-1.24q-4.06,0-10,7.88c-1.06,1.39-2.55,3.53-4.5,6.43L835.44,122h1.15v3.78h-26.9V122h3.5l-8.6-30.65L803.34,93v29h3.44v3.78h-27.7V122h4.14V17.56h-4.14V13.94q7.93,0,24.26-2.65Z" />
+            </g>
+        </defs>
+    </svg>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-logo">
+            <svg viewBox="0 0 122.37 29.04" width="88" xmlns="http://www.w3.org/2000/svg">
+                <use href="#logo-full" />
+            </svg>
+        </div>
+        <a href="#filosofi">Filosofi</a>
+        <a href="#logo">Logo</a>
+        <a href="#hierarki">Hierarki Logo</a>
+        <a href="#warna">Warna</a>
+        <a href="#tipografi">Tipografi</a>
+        <a href="#proposal">Deck, Stationary &amp; Email</a>
+        <a href="#donts">Do's &amp; Don'ts</a>
+        <a href="#download"
+            style="display:inline-flex;align-items:center;gap:5px;background:#016fba;color:white !important;padding:6px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.06em;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Download Aset
+        </a>
+    </nav>
+
+    <!-- HERO -->
+    <div style="background: var(--white); border-bottom: 1px solid var(--border);">
+        <div class="hero">
+            <div>
+                <div class="hero-eyebrow">Brand Identity Guidelines</div>
+                <h1>Tribun Studio —<br><em>Brand Identity.</em></h1>
+                <p>Panduan resmi penggunaan identitas visual Tribun Studio — mencakup penggunaan logo, tipografi, palet
+                    warna,
+                    dan penerapannya pada dokumen bisnis, korespondensi, dan materi presentasi.</p>
+            </div>
+            <div class="hero-right">
+                <div class="logo-showcase">
+                    <svg viewBox="0 0 122.37 29.04" width="280" xmlns="http://www.w3.org/2000/svg">
+                        <use href="#logo-full" />
+                    </svg>
+                </div>
+                <p class="hero-tagline">"Visual Powerhouse of<br>Tribun Network"</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="page">
+
+        <!-- ══════════════════════════════════════════════════════
+     SECTION 01 — FILOSOFI
+═══════════════════════════════════════════════════════ -->
+        <section id="filosofi">
+            <div class="section-header">
+                <div class="section-num">01 — Filosofi Identitas</div>
+                <h2 class="section-title">The Industry Icon</h2>
+                <p class="section-sub">Identitas Tribun Studio dibangun di atas sinergi antara warisan media terpercaya
+                    dan
+                    otoritas produksi sinematik modern.</p>
+            </div>
+            <div class="card-grid-3">
+                <div class="card">
+                    <div class="philosophy-item">
+                        <div class="philosophy-icon">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="2" y="6" width="20" height="14" rx="2" />
+                                <path d="M7 6V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1" />
+                                <line x1="12" y1="11" x2="12" y2="15" />
+                                <line x1="10" y1="13" x2="14" y2="13" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="philosophy-label">The Clapperboard</div>
+                            <div class="philosophy-text">Melambangkan otoritas produksi — setiap ide klien akan
+                                dieksekusi secara
+                                profesional dan sinematik.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="philosophy-item">
+                        <div class="philosophy-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                                <path d="M2 17l10 5 10-5" />
+                                <path d="M2 12l10 5 10-5" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="philosophy-label">The Heritage Serif</div>
+                            <div class="philosophy-text">Font serif Tribun membawa bobot "Trust" dan "Legacy" dari media
+                                nomor satu
+                                Indonesia ke ranah kreatif.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="philosophy-item">
+                        <div class="philosophy-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" />
+                                <path
+                                    d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="philosophy-label">Visual Synergy</div>
+                            <div class="philosophy-text">Elemen tradisional berpadu digital — mencerminkan kemampuan
+                                Studio untuk
+                                semua format, dari TV hingga media sosial.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+     SECTION 02 — LOGO ARCHITECTURE
+═══════════════════════════════════════════════════════ -->
+        <section id="logo">
+            <div class="section-header">
+                <div class="section-num">02 — Logo Architecture</div>
+                <h2 class="section-title">Komposisi, Clear Space &amp; Ukuran Minimum</h2>
+                <p class="section-sub">Aturan dasar penggunaan logo yang berlaku di semua media — proposal, surat,
+                    amplop, dan
+                    digital.</p>
+            </div>
+
+            <!-- Logo variants -->
+            <div class="logo-arch" style="margin-bottom:1.5rem;">
+                <div class="logo-variant">
+                    <div class="logo-variant-display light">
+                        <svg viewBox="0 0 122.37 29.04" width="220" xmlns="http://www.w3.org/2000/svg">
+                            <use href="#logo-full" />
+                        </svg>
+                    </div>
+                    <div class="logo-variant-info">
+                        <div class="logo-variant-name">Primary — Latar Terang</div>
+                        <div class="logo-variant-use">Digunakan di dokumen berbackground putih (proposal, surat,
+                            invoice)</div>
+                    </div>
+                </div>
+                <div class="logo-variant">
+                    <div class="logo-variant-display dark">
+                        <svg viewBox="0 0 122.37 29.04" width="220" style="filter:brightness(0) invert(1);"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <use href="#logo-full" />
+                        </svg>
+                    </div>
+                    <div class="logo-variant-info">
+                        <div class="logo-variant-name">Reversed — Latar Gelap</div>
+                        <div class="logo-variant-use">Untuk cover proposal berbackground Cinematic Black atau elemen
+                            promosi digital
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clear Space diagram -->
+            <div class="card" style="margin-bottom:1rem;">
+                <div
+                    style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:1.25rem;">
+                    Clear Space — Zona Bebas di Sekitar Logo</div>
+                <div class="diagram-grid"
+                    style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center;">
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;">
+                        <!-- Clear space diagram -->
+                        <div
+                            style="position:relative;padding:40px;border:2px dashed #005EB8;border-radius:4px;background:#EFF6FF;">
+                            <div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);">
+                                <div
+                                    style="background:#005EB8;color:white;font-size:9px;font-weight:700;padding:2px 8px;border-radius:0 0 6px 6px;white-space:nowrap;font-family:var(--sans);">
+                                    Min. 20% lebar logo</div>
+                            </div>
+                            <div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);">
+                                <div
+                                    style="background:#005EB8;color:white;font-size:9px;font-weight:700;padding:2px 8px;border-radius:6px 6px 0 0;white-space:nowrap;font-family:var(--sans);">
+                                    Min. 20% lebar logo</div>
+                            </div>
+                            <div style="position:absolute;left:-1px;top:50%;transform:translateY(-50%);">
+                                <div
+                                    style="background:#005EB8;color:white;font-size:9px;font-weight:700;padding:2px 8px;border-radius:0 6px 6px 0;white-space:nowrap;font-family:var(--sans);writing-mode:vertical-rl;text-orientation:mixed;">
+                                    20%</div>
+                            </div>
+                            <div style="position:absolute;right:-1px;top:50%;transform:translateY(-50%);">
+                                <div
+                                    style="background:#005EB8;color:white;font-size:9px;font-weight:700;padding:2px 8px;border-radius:6px 0 0 6px;white-space:nowrap;font-family:var(--sans);writing-mode:vertical-rl;text-orientation:mixed;">
+                                    20%</div>
+                            </div>
+                            <svg viewBox="0 0 122.37 29.04" width="180" xmlns="http://www.w3.org/2000/svg">
+                                <use href="#logo-full" />
+                            </svg>
+                        </div>
+                        <p style="font-size:12px;color:var(--gray);text-align:center;line-height:1.6;"><strong
+                                style="color:var(--blue);">Contoh praktis:</strong> Logo lebar 200px → jarak bebas
+                            minimal
+                            <strong>40px</strong> di setiap sisi. Tidak boleh ada teks, gambar, atau elemen lain di zona
+                            biru ini.
+                        </p>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:1rem;">
+                            <div style="font-size:12px;font-weight:700;color:#166534;margin-bottom:6px;">✓ Benar</div>
+                            <div style="font-size:13px;color:var(--gray);line-height:1.6;">Logo di pojok kanan atas
+                                proposal dengan
+                                margin 20px di kanan dan 20px di atas — jika lebar logo 100px, sudah terpenuhi (20% ×
+                                100 = 20px).</div>
+                        </div>
+                        <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:1rem;">
+                            <div style="font-size:12px;font-weight:700;color:#991B1B;margin-bottom:6px;">✗ Salah</div>
+                            <div style="font-size:13px;color:var(--gray);line-height:1.6;">Nama perusahaan klien ditulis
+                                tepat di
+                                sebelah logo tanpa jarak. Ini melanggar zona clear space.</div>
+                        </div>
+                        <div
+                            style="background:var(--silver-light);border:1px solid var(--border);border-radius:8px;padding:1rem;">
+                            <div style="font-size:12px;font-weight:700;color:var(--black);margin-bottom:6px;">💡 Tips
+                                Praktis</div>
+                            <div style="font-size:13px;color:var(--gray);line-height:1.6;">Di PowerPoint atau Word,
+                                tambahkan
+                                margin/padding pada kotak teks di sekitar logo. Gunakan fitur "Spacing" atau "Margins"
+                                agar logo punya
+                                ruang napas yang cukup.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Minimum size -->
+            <div class="card" style="margin-bottom:1rem;">
+                <div
+                    style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:1.25rem;">
+                    Ukuran Minimum Logo</div>
+                <div style="display:flex;gap:2rem;align-items:flex-end;flex-wrap:wrap;">
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;">
+                        <div
+                            style="background:white;border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;align-items:center;justify-content:center;min-height:60px;">
+                            <svg viewBox="0 0 122.37 29.04" width="120" xmlns="http://www.w3.org/2000/svg">
+                                <use href="#logo-full" />
+                            </svg>
+                        </div>
+                        <div style="text-align:center;">
+                            <div class="tag tag-ok">120px — Standar</div>
+                            <div style="font-size:11px;color:var(--gray);margin-top:4px;">Semua dokumen digital</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;">
+                        <div
+                            style="background:var(--silver-light);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;align-items:center;justify-content:center;min-height:60px;">
+                            <svg viewBox="0 0 122.37 29.04" width="100" style="opacity:0.7;"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <use href="#logo-full" />
+                            </svg>
+                        </div>
+                        <div style="text-align:center;">
+                            <div class="tag tag-warn">100px — Minimum</div>
+                            <div style="font-size:11px;color:var(--gray);margin-top:4px;">Hanya untuk header slide kecil
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;">
+                        <div
+                            style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:14px 18px;display:flex;align-items:center;justify-content:center;min-height:60px;position:relative;">
+                            <svg viewBox="0 0 122.37 29.04" width="80" style="opacity:0.35;"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <use href="#logo-full" />
+                            </svg>
+                            <div
+                                style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-15deg);width:60px;height:3px;background:#EF4444;border-radius:2px;">
+                            </div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div class="tag tag-no">80px — Dilarang</div>
+                            <div style="font-size:11px;color:var(--gray);margin-top:4px;">Logo tidak terbaca, hindari
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        style="flex:1;min-width:200px;background:var(--silver-light);border:1px solid var(--border);border-radius:8px;padding:1rem;align-self:center;">
+                        <div style="font-size:12px;font-weight:700;color:var(--black);margin-bottom:6px;">Untuk dokumen
+                            cetak
+                            (print):</div>
+                        <div style="font-size:13px;color:var(--gray);line-height:1.7;">Ukuran minimum <strong>25mm
+                                lebar</strong>
+                            pada kertas A4. Untuk penggunaan di ukuran yang lebih kecil (kartu nama, dll), gunakan file
+                            SVG vektor
+                            agar detail logo tetap tajam.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spec table -->
+            <div class="card">
+                <div
+                    style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:1.25rem;">
+                    Ringkasan Spesifikasi</div>
+                <div class="table-wrapper">
+                    <table class="spec-table">
+                        <thead>
+                            <tr>
+                                <th>Spesifikasi</th>
+                                <th>Digital</th>
+                                <th>Cetak (Print)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Ukuran minimum standar</td>
+                                <td>120px lebar</td>
+                                <td>25mm lebar</td>
+                            </tr>
+                            <tr>
+                                <td>Ukuran minimum absolut</td>
+                                <td>100px lebar</td>
+                                <td>20mm lebar</td>
+                            </tr>
+                            <tr>
+                                <td>Clear space semua sisi</td>
+                                <td>Minimal 20% dari lebar logo</td>
+                                <td>Minimal 20% dari lebar logo</td>
+                            </tr>
+                            <tr>
+                                <td>Format file yang digunakan</td>
+                                <td>SVG atau PNG @2x</td>
+                                <td>EPS atau PDF vektor</td>
+                            </tr>
+                            <tr>
+                                <td>Latar yang diperbolehkan</td>
+                                <td>Putih, abu terang, atau hitam Cinematic Black</td>
+                                <td>Putih atau hitam Cinematic Black</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+     SECTION 03 — HIERARKI LOGO: NETWORK + STUDIO
+═══════════════════════════════════════════════════════ -->
+        <section id="hierarki">
+            <div class="section-header">
+                <div class="section-num">03 — Hierarki Logo: Tribun Network &amp; Tribun Studio</div>
+                <h2 class="section-title">Dua Logo, Satu Aturan Urutan</h2>
+                <p class="section-sub">Tribun Studio adalah unit di bawah Tribun Network (holding). Dalam setiap dokumen
+                    resmi,
+                    kedua logo <strong>selalu berdampingan secara horizontal</strong> — Tribun Network di kiri, Tribun
+                    Studio di
+                    kanan — dengan <strong>tinggi yang sama persis</strong>.</p>
+            </div>
+
+            <!-- Logo showcase side by side -->
+            <div class="diagram-grid hierarchy-showcase"
+                style="display:grid;grid-template-columns:1fr auto 1fr;gap:1.5rem;align-items:center;margin-bottom:2rem;">
+                <div
+                    style="background:white;border:1px solid var(--border);border-radius:12px;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1rem;">
+                    <div
+                        style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--blue);">
+                        ① Induk — Tribun Network</div>
+                    <svg viewBox="0 0 836.59 196.01" height="50" xmlns="http://www.w3.org/2000/svg">
+                        <use href="#logo-tn" />
+                    </svg>
+                    <div style="font-size:11px;color:var(--gray);text-align:center;line-height:1.6;">Selalu di posisi
+                        <strong style="color:var(--black);">kiri</strong><br>Tinggi sama dengan Tribun Studio</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+                    <div style="width:1px;height:40px;background:var(--border);"></div>
+                    <div
+                        style="width:36px;height:36px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--silver-light);">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--silver)"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </div>
+                    <div style="width:1px;height:40px;background:var(--border);"></div>
+                    <div
+                        style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--silver);">
+                        diikuti</div>
+                </div>
+                <div
+                    style="background:white;border:1px solid var(--border);border-radius:12px;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1rem;">
+                    <div
+                        style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--blue);">
+                        ② Unit — Tribun Studio</div>
+                    <svg viewBox="0 0 122.37 29.04" height="50" xmlns="http://www.w3.org/2000/svg">
+                        <use href="#logo-full" />
+                    </svg>
+                    <div style="font-size:11px;color:var(--gray);text-align:center;line-height:1.6;">Selalu di posisi
+                        <strong style="color:var(--black);">kanan</strong><br>Tinggi sama dengan Tribun Network</div>
+                </div>
+            </div>
+
+            <!-- Hierarchy rule cards — all 3 use cases, all horizontal same height -->
+            <div class="card-grid-3" style="margin-bottom:1.5rem;">
+                <div class="card" style="border-top:3px solid var(--blue);">
+                    <div
+                        style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:0.75rem;">
+                        Kop Surat &amp; Dokumen Resmi</div>
+                    <div
+                        style="display:flex;gap:8px;align-items:center;background:var(--black);border-radius:8px;padding:10px 14px;margin-bottom:0.75rem;">
+                        <svg viewBox="0 0 836.59 196.01" height="14"
+                            style="filter:brightness(0) invert(1);flex-shrink:0;" xmlns="http://www.w3.org/2000/svg">
+                            <use href="#logo-tn" />
+                        </svg>
+                        <div style="width:1px;height:14px;background:rgba(255,255,255,0.2);flex-shrink:0;"></div>
+                        <svg viewBox="0 0 122.37 29.04" height="14"
+                            style="filter:brightness(0) invert(1);flex-shrink:0;" xmlns="http://www.w3.org/2000/svg">
+                            <use href="#logo-full" />
+                        </svg>
+                    </div>
+                    <div style="font-size:12px;color:var(--gray);line-height:1.7;"><strong
+                            style="color:var(--black);">Tribun
+                            Network kiri, Tribun Studio kanan</strong> — berdampingan horizontal, tinggi sama,
+                        dipisahkan garis
+                        vertikal tipis di header gelap.</div>
+                </div>
+                <div class="card" style="border-top:3px solid var(--blue);">
+                    <div
+                        style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:0.75rem;">
+                        Cover Deck Proposal</div>
+                    <div
+                        style="display:flex;gap:8px;align-items:center;background:#0F172A;border-radius:8px;padding:10px 14px;margin-bottom:0.75rem;">
+                        <svg viewBox="0 0 836.59 196.01" height="13"
+                            style="filter:brightness(0) invert(1);flex-shrink:0;" xmlns="http://www.w3.org/2000/svg">
+                            <use href="#logo-tn" />
+                        </svg>
+                        <div style="width:1px;height:13px;background:rgba(255,255,255,0.2);flex-shrink:0;"></div>
+                        <svg viewBox="0 0 122.37 29.04" height="13"
+                            style="filter:brightness(0) invert(1);flex-shrink:0;" xmlns="http://www.w3.org/2000/svg">
+                            <use href="#logo-full" />
+                        </svg>
+                    </div>
+                    <div style="font-size:12px;color:var(--gray);line-height:1.7;"><strong
+                            style="color:var(--black);">Tribun
+                            Network kiri, Tribun Studio kanan</strong> — berdampingan horizontal dengan tinggi sama,
+                        diletakkan di
+                        area bawah tengah cover.</div>
+                </div>
+                <div class="card" style="border-top:3px solid var(--blue);">
+                    <div
+                        style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:0.75rem;">
+                        Amplop &amp; Email Signature</div>
+                    <div
+                        style="display:flex;gap:8px;align-items:center;background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:0.75rem;">
+                        <svg viewBox="0 0 836.59 196.01" height="12" xmlns="http://www.w3.org/2000/svg">
+                            <use href="#logo-tn" />
+                        </svg>
+                        <div style="width:1px;height:12px;background:var(--border);flex-shrink:0;"></div>
+                        <svg viewBox="0 0 122.37 29.04" height="12" xmlns="http://www.w3.org/2000/svg">
+                            <use href="#logo-full" />
+                        </svg>
+                    </div>
+                    <div style="font-size:12px;color:var(--gray);line-height:1.7;"><strong
+                            style="color:var(--black);">Tribun
+                            Network kiri, Tribun Studio kanan</strong> — berdampingan horizontal, tinggi sama,
+                        dipisahkan garis
+                        vertikal tipis.</div>
+                </div>
+            </div>
+
+            <!-- Sizing rule — ONLY same height is correct -->
+            <div class="card" style="margin-bottom:1.5rem;">
+                <div
+                    style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:1.25rem;">
+                    Aturan Ukuran &amp; Susunan Kedua Logo</div>
+                <div class="diagram-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+
+                    <!-- CORRECT: same height, side by side -->
+                    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:1rem;">
+                        <div class="tag tag-ok" style="margin-bottom:0.75rem;">Benar ✓</div>
+                        <div
+                            style="display:flex;gap:10px;align-items:center;background:var(--black);border-radius:6px;padding:10px 14px;margin-bottom:0.75rem;">
+                            <svg viewBox="0 0 836.59 196.01" height="13" style="filter:brightness(0) invert(1);"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <use href="#logo-tn" />
+                            </svg>
+                            <div style="width:1px;height:13px;background:rgba(255,255,255,0.2);flex-shrink:0;"></div>
+                            <svg viewBox="0 0 122.37 29.04" height="13" style="filter:brightness(0) invert(1);"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <use href="#logo-full" />
+                            </svg>
+                        </div>
+                        <div style="font-size:11px;color:#166534;line-height:1.6;">Kedua logo <strong>sejajar
+                                horizontal, tinggi
+                                sama persis</strong> — Tribun Network kiri, Tribun Studio kanan, dipisah garis vertikal.
+                        </div>
+                    </div>
+
+                    <!-- WRONG: vertical stacking -->
+                    <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:1rem;">
+                        <div class="tag tag-no" style="margin-bottom:0.75rem;">Salah ✗</div>
+                        <div
+                            style="display:flex;flex-direction:column;gap:5px;align-items:center;background:var(--black);border-radius:6px;padding:10px 14px;margin-bottom:0.75rem;">
+                            <svg viewBox="0 0 836.59 196.01" height="12" style="filter:brightness(0) invert(1);"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <use href="#logo-tn" />
+                            </svg>
+                            <div style="width:28px;height:1px;background:rgba(255,255,255,0.15);"></div>
+                            <svg viewBox="0 0 122.37 29.04" height="10" style="filter:brightness(0) invert(1);"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <use href="#logo-full" />
+                            </svg>
+                        </div>
+                        <div style="font-size:11px;color:#991B1B;line-height:1.6;">Logo ditumpuk vertikal (atas-bawah) —
+                            <strong>tidak diperbolehkan</strong>. Kedua logo selalu berdampingan horizontal.
+                        </div>
+                    </div>
+
+                    <!-- WRONG: different heights -->
+                    <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:1rem;">
+                        <div class="tag tag-no" style="margin-bottom:0.75rem;">Salah ✗</div>
+                        <div
+                            style="display:flex;gap:10px;align-items:center;background:var(--black);border-radius:6px;padding:10px 14px;margin-bottom:0.75rem;">
+                            <svg viewBox="0 0 836.59 196.01" height="9" style="filter:brightness(0) invert(1);"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <use href="#logo-tn" />
+                            </svg>
+                            <div style="width:1px;height:13px;background:rgba(255,255,255,0.2);flex-shrink:0;"></div>
+                            <svg viewBox="0 0 122.37 29.04" height="16" style="filter:brightness(0) invert(1);"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <use href="#logo-full" />
+                            </svg>
+                        </div>
+                        <div style="font-size:11px;color:#991B1B;line-height:1.6;">Ukuran kedua logo berbeda —
+                            <strong>tidak
+                                diperbolehkan</strong>. Tinggi harus selalu sama persis, tidak lebih besar atau lebih
+                            kecil.</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Quick reference table -->
+            <div class="card">
+                <div
+                    style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:1.25rem;">
+                    Tabel Referensi Cepat — Posisi Kedua Logo</div>
+                <div class="table-wrapper">
+                    <table class="spec-table">
+                        <thead>
+                            <tr>
+                                <th>Dokumen</th>
+                                <th>Tribun Network</th>
+                                <th>Tribun Studio</th>
+                                <th>Susunan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Kop surat A4</td>
+                                <td>Kiri di header gelap</td>
+                                <td>Kanan di header gelap</td>
+                                <td>Horizontal, dipisah garis vertikal</td>
+                            </tr>
+                            <tr>
+                                <td>Cover deck proposal</td>
+                                <td>Atas (tengah bawah cover)</td>
+                                <td>Di bawah Tribun Network</td>
+                                <td>Vertikal, dengan garis pemisah tipis</td>
+                            </tr>
+                            <tr>
+                                <td>Slide isi presentasi</td>
+                                <td>Tidak wajib di setiap slide</td>
+                                <td>Pojok kanan atas (konsisten)</td>
+                                <td>Hanya Tribun Studio di slide isi</td>
+                            </tr>
+                            <tr>
+                                <td>Amplop (DL/C5)</td>
+                                <td>Kiri atas (return address)</td>
+                                <td>Kanan dari Tribun Network</td>
+                                <td>Horizontal berdampingan</td>
+                            </tr>
+                            <tr>
+                                <td>Email signature</td>
+                                <td>Kiri</td>
+                                <td>Kanan (dipisah garis vertikal)</td>
+                                <td>Horizontal berdampingan</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+     SECTION 04 — COLOR PALETTE (renumbered)
+═══════════════════════════════════════════════════════ -->
+        <section id="warna">
+            <div class="section-header">
+                <div class="section-num">04 — Color Palette</div>
+                <h2 class="section-title">Palet Warna Resmi</h2>
+                <p class="section-sub">Lima warna yang membentuk identitas visual Tribun Studio — termasuk dua varian
+                    biru yang
+                    masing-masing memiliki peran spesifik. Jangan menggunakan warna di luar daftar ini.</p>
+            </div>
+
+            <!-- 5-color grid -->
+            <div class="color-grid"
+                style="display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-bottom:1.5rem;">
+
+                <!-- Blue 1: Tribun Blue #016FBA -->
+                <div style="border-radius:12px;overflow:hidden;border:1px solid var(--border);">
+                    <div style="height:90px;background:#016fba;"></div>
+                    <div style="background:white;padding:1rem;">
+                        <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:2px;">Tribun Blue
+                        </div>
+                        <div style="font-size:11px;color:var(--gray);margin-bottom:6px;line-height:1.5;">Warna utama
+                            logo "Tribun"
+                            &amp; elemen brand primer</div>
+                        <div
+                            style="font-family:'Courier New',monospace;font-size:11px;color:var(--silver);margin-bottom:4px;">
+                            #016FBA</div>
+                        <div style="font-size:9px;color:var(--gray);">R 1 · G 111 · B 186</div>
+                    </div>
+                </div>
+
+                <!-- Blue 2: Studio Blue #024CB7 -->
+                <div style="border-radius:12px;overflow:hidden;border:1px solid var(--border);">
+                    <div style="height:90px;background:#024cb7;"></div>
+                    <div style="background:white;padding:1rem;">
+                        <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:2px;">Studio Blue
+                        </div>
+                        <div style="font-size:11px;color:var(--gray);margin-bottom:6px;line-height:1.5;">Warna utama
+                            logo "Studio"
+                            &amp; heading visual</div>
+                        <div
+                            style="font-family:'Courier New',monospace;font-size:11px;color:var(--silver);margin-bottom:4px;">
+                            #024CB7</div>
+                        <div style="font-size:9px;color:var(--gray);">R 2 · G 76 · B 183</div>
+                    </div>
+                </div>
+
+                <!-- Black -->
+                <div style="border-radius:12px;overflow:hidden;border:1px solid var(--border);">
+                    <div style="height:90px;background:#0F172A;"></div>
+                    <div style="background:white;padding:1rem;">
+                        <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:2px;">Cinematic
+                            Black</div>
+                        <div style="font-size:11px;color:var(--gray);margin-bottom:6px;line-height:1.5;">Background
+                            premium — header
+                            &amp; cover gelap</div>
+                        <div
+                            style="font-family:'Courier New',monospace;font-size:11px;color:var(--silver);margin-bottom:4px;">
+                            #0F172A</div>
+                        <div style="font-size:9px;color:var(--gray);">R 15 · G 23 · B 42</div>
+                    </div>
+                </div>
+
+                <!-- Silver -->
+                <div style="border-radius:12px;overflow:hidden;border:1px solid var(--border);">
+                    <div style="height:90px;background:#94A3B8;"></div>
+                    <div style="background:white;padding:1rem;">
+                        <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:2px;">Silver Motion
+                        </div>
+                        <div style="font-size:11px;color:var(--gray);margin-bottom:6px;line-height:1.5;">Aksen — garis,
+                            border
+                            tipis, teks sekunder</div>
+                        <div
+                            style="font-family:'Courier New',monospace;font-size:11px;color:var(--silver);margin-bottom:4px;">
+                            #94A3B8</div>
+                        <div style="font-size:9px;color:var(--gray);">R 148 · G 163 · B 184</div>
+                    </div>
+                </div>
+
+                <!-- White -->
+                <div style="border-radius:12px;overflow:hidden;border:1px solid var(--border);">
+                    <div style="height:90px;background:#FFFFFF;border-bottom:1px solid #E2E8F0;"></div>
+                    <div style="background:white;padding:1rem;">
+                        <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:2px;">Pure White
+                        </div>
+                        <div style="font-size:11px;color:var(--gray);margin-bottom:6px;line-height:1.5;">Background
+                            dokumen &amp;
+                            logo reversed</div>
+                        <div
+                            style="font-family:'Courier New',monospace;font-size:11px;color:var(--silver);margin-bottom:4px;">
+                            #FFFFFF</div>
+                        <div style="font-size:9px;color:var(--gray);">R 255 · G 255 · B 255</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Two blues explainer -->
+            <div class="card" style="margin-bottom:1rem;">
+                <div
+                    style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:1.25rem;">
+                    Perbedaan Dua Warna Biru</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+                    <div style="display:flex;gap:1rem;align-items:flex-start;">
+                        <div style="width:48px;height:48px;border-radius:10px;background:#016fba;flex-shrink:0;"></div>
+                        <div>
+                            <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:4px;">Tribun
+                                Blue — #016FBA
+                            </div>
+                            <div style="font-size:12px;color:var(--gray);line-height:1.7;">Digunakan pada elemen teks
+                                "Tribun" di
+                                dalam logo, heading utama dokumen, garis aksen, border, dan elemen brand primer pada
+                                materi komunikasi.
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:1rem;align-items:flex-start;">
+                        <div style="width:48px;height:48px;border-radius:10px;background:#024cb7;flex-shrink:0;"></div>
+                        <div>
+                            <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:4px;">Studio
+                                Blue — #024CB7
+                            </div>
+                            <div style="font-size:12px;color:var(--gray);line-height:1.7;">Digunakan pada elemen teks
+                                "Studio" di
+                                dalam logo, elemen visual yang membutuhkan bobot lebih kuat, highlight sekunder, dan
+                                aksen dekoratif
+                                tipis.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage guide per color -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+                <div style="background:#016fba;border-radius:12px;padding:1.5rem;">
+                    <div
+                        style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:0.5rem;">
+                        Tribun Blue #016FBA — Gunakan untuk</div>
+                    <div style="font-size:13px;color:#fff;line-height:1.7;">Elemen "Tribun" pada logo, heading primer,
+                        garis
+                        aksen, border tabel, kop surat</div>
+                </div>
+                <div style="background:#024cb7;border-radius:12px;padding:1.5rem;">
+                    <div
+                        style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:0.5rem;">
+                        Studio Blue #024CB7 — Gunakan untuk</div>
+                    <div style="font-size:13px;color:#fff;line-height:1.7;">Elemen "Studio" pada logo, highlight
+                        sekunder, aksen
+                        dekoratif, judul seksi proposal</div>
+                </div>
+                <div style="background:#0F172A;border-radius:12px;padding:1.5rem;">
+                    <div
+                        style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:0.5rem;">
+                        Cinematic Black — Gunakan untuk</div>
+                    <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7;">Header kop surat, cover
+                        proposal,
+                        background slide pertama, footer gelap</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+     SECTION 04 — TYPOGRAPHY
+═══════════════════════════════════════════════════════ -->
+        <section id="tipografi">
+            <div class="section-header">
+                <div class="section-num">05 — Typography</div>
+                <h2 class="section-title">Tipografi Dokumen Bisnis</h2>
+                <p class="section-sub">Dua font yang digunakan di seluruh materi Tribun Studio. Konsistensi font
+                    membangun kesan
+                    profesional di mata klien.</p>
+            </div>
+            <div class="type-grid">
+                <div class="card">
+                    <div class="type-label">Heading — Playfair Display Italic</div>
+                    <div class="type-sample-display">Sinematik.<br>Profesional.</div>
+                    <div
+                        style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);display:flex;gap:1rem;flex-wrap:wrap;">
+                        <span
+                            style="font-family:var(--serif);font-style:italic;font-size:1.4rem;font-weight:400;color:var(--gray);">Regular
+                            Italic</span>
+                        <span
+                            style="font-family:var(--serif);font-style:italic;font-size:1.4rem;font-weight:600;color:var(--black);">Semibold
+                            Italic</span>
+                    </div>
+                    <div class="type-meta">Untuk: Judul cover proposal, tagline, heading seksi utama</div>
+                </div>
+                <div class="card">
+                    <div class="type-label">Body & Sub-heading — Montserrat</div>
+                    <div style="margin:1rem 0;">
+                        <div class="type-sample-heading">Paket Video Iklan Premium</div>
+                        <div class="type-sample-body">Kami memproduksi konten video iklan berkualitas sinematik untuk
+                            berbagai
+                            platform. Tim kreatif kami siap mewujudkan visi brand Anda — dari brief hingga final cut.
+                        </div>
+                    </div>
+                    <div
+                        style="padding-top:1rem;border-top:1px solid var(--border);display:flex;gap:1rem;flex-wrap:wrap;">
+                        <span style="font-size:12px;font-weight:400;color:var(--gray);">Body 400</span>
+                        <span style="font-size:12px;font-weight:600;color:var(--black);">Sub-heading 600</span>
+                        <span style="font-size:12px;font-weight:700;font-style:italic;color:var(--blue);">CTA Bold
+                            Italic</span>
+                    </div>
+                    <div class="type-meta">Untuk: Body text, info kontak, tabel harga, CTA penawaran</div>
+                </div>
+            </div>
+            <div class="card" style="margin-top:1rem;">
+                <div
+                    style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:1.5rem;">
+                    Hierarki Tipografi Dokumen</div>
+                <div style="display:flex;flex-direction:column;gap:1rem;">
+                    <div
+                        style="display:flex;align-items:baseline;gap:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);">
+                        <span style="font-size:11px;color:var(--silver);min-width:130px;">Cover Title</span>
+                        <span
+                            style="font-family:var(--serif);font-style:italic;font-size:2rem;font-weight:600;color:var(--black);">Tribun
+                            Studio</span>
+                    </div>
+                    <div
+                        style="display:flex;align-items:baseline;gap:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);">
+                        <span style="font-size:11px;color:var(--silver);min-width:130px;">Heading Seksi</span>
+                        <span
+                            style="font-family:var(--sans);font-weight:700;font-style:italic;font-size:1.15rem;color:var(--blue);">Lingkup
+                            &amp; Rencana Produksi</span>
+                    </div>
+                    <div
+                        style="display:flex;align-items:baseline;gap:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);">
+                        <span style="font-size:11px;color:var(--silver);min-width:130px;">Body Text</span>
+                        <span style="font-family:var(--sans);font-weight:400;font-size:14px;color:var(--gray);">Teks isi
+                            proposal,
+                            keterangan layanan, syarat &amp; ketentuan penawaran untuk klien.</span>
+                    </div>
+                    <div style="display:flex;align-items:baseline;gap:1.5rem;">
+                        <span style="font-size:11px;color:var(--silver);min-width:130px;">Caption / Label</span>
+                        <span
+                            style="font-family:var(--sans);font-weight:500;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--silver);">Tribun
+                            Studio · Tribun Network · 2026</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+     SECTION 05 — DECK / SLIDE PROPOSAL
+═══════════════════════════════════════════════════════ -->
+        <section id="proposal">
+            <div class="section-header">
+                <div class="section-num">06 — Deck, Stationary &amp; Email Signature</div>
+                <h2 class="section-title">Penerapan Logo pada Dokumen &amp; Komunikasi</h2>
+                <p class="section-sub">Aturan penempatan logo pada seluruh materi bisnis — presentasi klien, kop surat,
+                    amplop,
+                    dan email signature.</p>
+            </div>
+
+            <!-- ─── A: Deck subsection label ─── -->
+            <div
+                style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:0.5rem;">
+                A — Deck &amp; Slide Proposal</div>
+            <h3
+                style="font-family:var(--serif);font-size:1.5rem;font-weight:600;color:var(--black);margin-bottom:0.5rem;">
+                Logo di Presentasi Klien</h3>
+            <p style="font-size:14px;color:var(--gray);margin-bottom:2rem;line-height:1.7;max-width:620px;">Aturan
+                penempatan
+                logo di PowerPoint, Google Slides, atau Canva — konsisten di setiap slide.</p>
+
+            <!-- Cover vs content slide rule -->
+            <div class="card-grid-2" style="margin-bottom:1.5rem;">
+                <!-- Cover slide mockup — CORRECTED: horizontal, same height -->
+                <div class="mockup-visual">
+                    <div class="mockup-preview" style="background:#0F172A;padding:0;height:220px;">
+                        <div
+                            style="width:100%;height:100%;position:relative;display:flex;flex-direction:column;justify-content:center;padding:28px 32px;">
+                            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#016fba;"></div>
+                            <div
+                                style="font-size:8px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px;font-family:var(--sans);">
+                                PROPOSAL PRODUKSI VIDEO</div>
+                            <div
+                                style="font-family:Georgia,serif;font-style:italic;font-size:20px;font-weight:600;color:white;line-height:1.3;margin-bottom:8px;">
+                                Campaign Ramadan<br>2026</div>
+                            <div
+                                style="font-size:8px;color:rgba(255,255,255,0.5);font-family:var(--sans);margin-bottom:20px;">
+                                Disiapkan untuk: PT Maju Bersama</div>
+                            <!-- Logo di tengah bawah cover — HORIZONTAL, tinggi sama -->
+                            <div
+                                style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;white-space:nowrap;">
+                                <svg viewBox="0 0 836.59 196.01" height="12"
+                                    style="filter:brightness(0) invert(1);opacity:0.9;flex-shrink:0;"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <use href="#logo-tn" />
+                                </svg>
+                                <div style="width:1px;height:12px;background:rgba(255,255,255,0.25);flex-shrink:0;">
+                                </div>
+                                <svg viewBox="0 0 122.37 29.04" height="12"
+                                    style="filter:brightness(0) invert(1);opacity:0.9;flex-shrink:0;"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <use href="#logo-full" />
+                                </svg>
+                            </div>
+                            <!-- Label -->
+                            <div
+                                style="position:absolute;bottom:8px;right:8px;font-size:7px;color:#22C55E;font-family:var(--sans);font-weight:700;white-space:nowrap;">
+                                Horizontal · Tinggi sama ✓</div>
+                        </div>
+                    </div>
+                    <div class="mockup-caption">
+                        <div class="mockup-caption-name">Slide Cover — Kedua Logo Horizontal, Tinggi Sama</div>
+                        <div class="mockup-caption-desc">Di halaman cover, kedua logo berdampingan <strong>horizontal di
+                                bagian
+                                bawah tengah</strong> — Tribun Network kiri, Tribun Studio kanan, tinggi sama persis,
+                            dipisah garis
+                            vertikal tipis.</div>
+                    </div>
+                </div>
+
+                <!-- Content slide mockup -->
+                <div class="mockup-visual">
+                    <div class="mockup-preview"
+                        style="background:white;padding:0;height:220px;border-bottom:1px solid var(--border);">
+                        <div style="width:100%;height:100%;position:relative;padding:22px 28px;">
+                            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#005EB8;"></div>
+                            <!-- Logo pojok kanan atas -->
+                            <div style="position:absolute;top:12px;right:16px;">
+                                <svg viewBox="0 0 122.37 29.04" width="70" xmlns="http://www.w3.org/2000/svg">
+                                    <use href="#logo-full" />
+                                </svg>
+                            </div>
+                            <!-- Content area -->
+                            <div style="margin-top:8px;max-width:70%;">
+                                <div
+                                    style="font-size:9px;font-weight:700;font-style:italic;color:#005EB8;font-family:Georgia,serif;margin-bottom:8px;">
+                                    Lingkup Produksi</div>
+                                <div style="font-size:8px;color:var(--gray);line-height:1.7;font-family:var(--sans);">
+                                    • Pre-production planning &amp; script<br>
+                                    • 2 hari shooting di lokasi<br>
+                                    • Color grading &amp; sound design<br>
+                                    • Revisi hingga 3 kali
+                                </div>
+                            </div>
+                            <div
+                                style="position:absolute;bottom:10px;right:10px;font-size:7px;color:#22C55E;font-family:var(--sans);font-weight:700;">
+                                Kanan atas ✓</div>
+                            <div
+                                style="position:absolute;bottom:22px;left:28px;font-size:7px;color:var(--silver);font-family:var(--sans);">
+                                Halaman 3 / 12</div>
+                        </div>
+                    </div>
+                    <div class="mockup-caption">
+                        <div class="mockup-caption-name">Slide Isi — Logo Pojok Kanan Atas</div>
+                        <div class="mockup-caption-desc">Di semua slide isi, logo diletakkan konsisten di <strong>pojok
+                                kanan
+                                atas</strong>. Lebar logo: 70–90px (lebih kecil, tidak mendominasi konten).</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rules for deck -->
+            <div class="card" style="margin-bottom:1rem;">
+                <div
+                    style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:1.25rem;">
+                    Aturan Lengkap Logo di Deck Proposal</div>
+                <div class="table-wrapper">
+                    <table class="spec-table">
+                        <thead>
+                            <tr>
+                                <th>Situasi</th>
+                                <th>Posisi Logo</th>
+                                <th>Ukuran</th>
+                                <th>Keterangan Tambahan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Slide cover / halaman pertama</td>
+                                <td>Tengah bawah</td>
+                                <td>Kedua logo tinggi setara ±14px</td>
+                                <td>Kedua logo horizontal berdampingan — Tribun Network kiri, Tribun Studio kanan,
+                                    tinggi sama</td>
+                            </tr>
+                            <tr>
+                                <td>Slide isi / konten</td>
+                                <td>Pojok kanan atas</td>
+                                <td>70–90px lebar</td>
+                                <td>Konsisten di setiap slide, jangan pindah-pindah posisi</td>
+                            </tr>
+                            <tr>
+                                <td>Slide penutup / thank you</td>
+                                <td>Tengah, di atas teks penutup</td>
+                                <td>Kedua logo tinggi setara ±16px</td>
+                                <td>Kedua logo horizontal berdampingan, boleh tampilkan info kontak di bawah pasangan
+                                    logo</td>
+                            </tr>
+                            <tr>
+                                <td>Latar slide gelap (Cinematic Black)</td>
+                                <td>Sama dengan di atas</td>
+                                <td>Sama</td>
+                                <td>Gunakan versi logo putih (reversed) untuk kedua logo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Companion text rule -->
+            <div class="info-box">
+                <div class="info-box-icon">i</div>
+                <div>
+                    <div class="info-box-title">Bolehkah Logo Ditemani Teks "Tribun Network" atau "Production House"?
+                    </div>
+                    <div class="info-box-text"><strong>Boleh, dengan syarat:</strong> Teks pendamping hanya
+                        diperbolehkan di bawah
+                        logo (bukan di samping), menggunakan font Montserrat, ukuran minimal 3pt lebih kecil dari body
+                        text, warna
+                        Silver (#94A3B8), dan tidak boleh lebih lebar dari logo itu sendiri. Teks yang diizinkan:
+                        "Tribun Network"
+                        atau "Tribun Network Production House". <strong>Tidak boleh</strong> menambahkan teks lain
+                        seperti nama tim,
+                        tagline personal, atau nama kota.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Kop Surat subsection ─── -->
+        <div style="padding-top:3rem;border-top:1px solid var(--border);margin-top:3rem;">
+            <div
+                style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:0.5rem;">
+                B — Kop Surat &amp; Dokumen Resmi</div>
+            <h3
+                style="font-family:var(--serif);font-size:1.5rem;font-weight:600;color:var(--black);margin-bottom:0.5rem;">
+                Logo di Surat Resmi</h3>
+            <p style="font-size:14px;color:var(--gray);margin-bottom:2rem;line-height:1.7;max-width:620px;">Header putih
+                dengan logo berwarna di kiri dan informasi kontak di kanan, dipisahkan garis dobel aksen Cinematic Black
+                +
+                Tribun Blue.</p>
+
+            <!-- Letterhead mockup — NEW DESIGN: white header, double accent line -->
+            <div class="diagram-grid"
+                style="display:grid;grid-template-columns:1fr 1.4fr;gap:2rem;margin-bottom:1.5rem;align-items:start;">
+                <div>
+                    <!-- A4 letterhead mockup -->
+                    <div
+                        style="background:white;border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+
+                        <!-- Header area — WHITE background -->
+                        <div
+                            style="background:#ffffff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:none;">
+                            <!-- Left: logos in full color, side by side -->
+                            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                                <svg viewBox="0 0 836.59 196.01" height="20" xmlns="http://www.w3.org/2000/svg">
+                                    <use href="#logo-tn" />
+                                </svg>
+                                <div style="width:1px;height:20px;background:#E2E8F0;flex-shrink:0;"></div>
+                                <svg viewBox="0 0 122.37 29.04" height="20" xmlns="http://www.w3.org/2000/svg">
+                                    <use href="#logo-full" />
+                                </svg>
+                            </div>
+                            <!-- Right: contact info -->
+                            <div style="text-align:right;flex-shrink:0;">
+                                <div
+                                    style="font-size:5.5px;font-weight:700;color:#0F172A;font-family:var(--sans);letter-spacing:0.04em;margin-bottom:2px;">
+                                    Tribun Studio</div>
+                                <div style="font-size:5px;color:#94A3B8;font-family:var(--sans);line-height:1.8;">
+                                    Jl. Palmerah Selatan No.3, Jakarta 10270<br>
+                                    studio@tribunnews.com · (021) XXXX-XXXX
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Double accent line: Cinematic Black 1pt (top) + Tribun Blue 2pt (bottom) -->
+                        <div style="height:1px;background:#0F172A;"></div>
+                        <div style="height:2px;background:#016fba;"></div>
+
+                        <!-- Body area -->
+                        <div style="padding:16px 20px 12px;">
+                            <div style="font-size:6.5px;color:var(--gray);line-height:1.9;font-family:var(--sans);">
+                                Jakarta, 1 Mei 2026<br><br>
+                                Kepada Yth.<br>
+                                Direktur Marketing<br>
+                                PT Maju Bersama<br>
+                                Jakarta Selatan<br><br>
+                                Dengan hormat,<br><br>
+                                Melalui surat ini kami menyampaikan penawaran jasa produksi video iklan untuk
+                                kampanye...<br><br>
+                                <span
+                                    style="display:inline-block;height:28px;background:var(--silver-light);width:90%;border-radius:2px;margin-bottom:4px;"></span><br>
+                                <span
+                                    style="display:inline-block;height:7px;background:var(--silver-light);width:65%;border-radius:2px;"></span>
+                            </div>
+                            <!-- Signature area -->
+                            <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
+                                <div style="font-size:6px;color:var(--gray);font-family:var(--sans);line-height:1.8;">
+                                    Hormat kami,<br><br>
+                                    <strong style="color:var(--black);">Nama Lengkap</strong><br>
+                                    Jabatan · Tribun Studio
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer: double accent line reversed — Tribun Blue 2pt (top) + Cinematic Black 1pt (bottom) -->
+                        <div style="height:2px;background:#016fba;"></div>
+                        <div style="height:1px;background:#0F172A;"></div>
+                        <div
+                            style="background:#F8FAFC;padding:6px 20px;border-top:none;display:flex;justify-content:space-between;align-items:center;">
+                            <div style="font-size:5px;color:var(--silver);font-family:var(--sans);">Jl. Palmerah Selatan
+                                No.3, Jakarta
+                                10270</div>
+                            <div style="font-size:5px;color:var(--silver);font-family:var(--sans);">
+                                studio@tribunnews.com ·
+                                tribun.studio</div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Rules column -->
+                <div style="display:flex;flex-direction:column;gap:1rem;">
+                    <div class="card">
+                        <div
+                            style="font-size:12px;font-weight:700;color:var(--black);margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);">
+                            Anatomi Kop Surat Standar</div>
+                        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+
+                            <div style="display:flex;gap:12px;align-items:flex-start;">
+                                <div
+                                    style="width:24px;height:24px;background:#016fba;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:white;font-family:var(--sans);">
+                                    1</div>
+                                <div>
+                                    <div style="font-size:13px;font-weight:600;color:var(--black);margin-bottom:2px;">
+                                        Header — Background
+                                        Putih</div>
+                                    <div style="font-size:12px;color:var(--gray);line-height:1.6;">Logo Tribun Network +
+                                        Tribun Studio
+                                        berwarna asli (biru) di <strong>sisi kiri</strong>, berdampingan dengan tinggi
+                                        sama. Info kontak
+                                        (alamat, email, telepon) di <strong>sisi kanan</strong>.</div>
+                                </div>
+                            </div>
+
+                            <div style="display:flex;gap:12px;align-items:flex-start;">
+                                <div
+                                    style="width:24px;height:24px;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;flex-direction:column;">
+                                    <div style="flex:0 0 8px;background:#0F172A;"></div>
+                                    <div style="flex:0 0 16px;background:#016fba;"></div>
+                                </div>
+                                <div>
+                                    <div style="font-size:13px;font-weight:600;color:var(--black);margin-bottom:2px;">
+                                        Garis Dobel Aksen
+                                    </div>
+                                    <div style="font-size:12px;color:var(--gray);line-height:1.6;">Dua garis di bawah
+                                        header:
+                                        <strong>Cinematic Black #0F172A (1pt)</strong> di atas, <strong>Tribun Blue
+                                            #016FBA (2pt)</strong>
+                                        di bawah. Diulang di atas footer dengan urutan terbalik.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display:flex;gap:12px;align-items:flex-start;">
+                                <div
+                                    style="width:24px;height:24px;background:var(--silver);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:white;font-family:var(--sans);">
+                                    3</div>
+                                <div>
+                                    <div style="font-size:13px;font-weight:600;color:var(--black);margin-bottom:2px;">
+                                        Body Surat</div>
+                                    <div style="font-size:12px;color:var(--gray);line-height:1.6;">Montserrat Regular,
+                                        10–11pt, warna
+                                        Cinematic Black. Margin kiri-kanan: 20mm.</div>
+                                </div>
+                            </div>
+
+                            <div style="display:flex;gap:12px;align-items:flex-start;">
+                                <div
+                                    style="width:24px;height:24px;background:var(--silver-light);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:var(--gray);font-family:var(--sans);">
+                                    4</div>
+                                <div>
+                                    <div style="font-size:13px;font-weight:600;color:var(--black);margin-bottom:2px;">
+                                        Footer — Garis Dobel
+                                        + Info</div>
+                                    <div style="font-size:12px;color:var(--gray);line-height:1.6;">Garis dobel diulang
+                                        (Tribun Blue atas,
+                                        Cinematic Black bawah), lalu area abu tipis dengan alamat lengkap, email, dan
+                                        website.</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="font-size:12px;font-weight:700;color:var(--black);margin-bottom:0.75rem;">
+                            Spesifikasi Font di
+                            Kop Surat</div>
+                        <div class="table-wrapper">
+                            <table class="spec-table">
+                                <thead>
+                                    <tr>
+                                        <th>Elemen</th>
+                                        <th>Font &amp; Ukuran</th>
+                                        <th>Warna</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Nama studio (header kanan)</td>
+                                        <td>Montserrat Bold, 7pt</td>
+                                        <td>#0F172A</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Info kontak (header kanan)</td>
+                                        <td>Montserrat Regular, 6pt</td>
+                                        <td>#94A3B8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tanggal &amp; tujuan surat</td>
+                                        <td>Montserrat Regular, 10–11pt</td>
+                                        <td>#0F172A</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Isi surat</td>
+                                        <td>Montserrat Regular, 10–11pt</td>
+                                        <td>#0F172A</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nama pengirim</td>
+                                        <td>Montserrat SemiBold, 10pt</td>
+                                        <td>#0F172A</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jabatan pengirim</td>
+                                        <td>Montserrat Regular, 9pt</td>
+                                        <td>#94A3B8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Info footer</td>
+                                        <td>Montserrat Regular, 6–7pt</td>
+                                        <td>#94A3B8</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Double line diagram callout -->
+            <div class="info-box">
+                <div class="info-box-icon">i</div>
+                <div>
+                    <div class="info-box-title">Tentang Garis Dobel Aksen</div>
+                    <div class="info-box-text">Garis dobel adalah elemen signature Tribun Studio di semua stationary.
+                        Urutan dari
+                        atas ke bawah: <strong>Cinematic Black (1pt) → Tribun Blue (2pt)</strong>. Di footer, urutan
+                        dibalik:
+                        <strong>Tribun Blue (2pt) → Cinematic Black (1pt)</strong>. Kedua garis tidak boleh digabung
+                        menjadi satu
+                        garis tebal, dan tidak boleh menggunakan warna lain.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── Amplop subsection ─── -->
+        <div style="padding-top:3rem;border-top:1px solid var(--border);margin-top:3rem;" id="amplop">
+            <div
+                style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:0.5rem;">
+                C — Amplop</div>
+            <h3
+                style="font-family:var(--serif);font-size:1.5rem;font-weight:600;color:var(--black);margin-bottom:0.5rem;">
+                Logo di Amplop Pengiriman</h3>
+            <p style="font-size:14px;color:var(--gray);margin-bottom:2rem;line-height:1.7;max-width:620px;">Amplop
+                pengiriman
+                proposal fisik, kontrak, dan dokumen resmi. Logo berwarna asli di pojok kiri atas sebagai return
+                address.</p>
+
+            <div class="diagram-grid"
+                style="display:grid;grid-template-columns:1.4fr 1fr;gap:2rem;margin-bottom:1.5rem;align-items:start;">
+                <!-- Envelope mockups -->
+                <div style="display:flex;flex-direction:column;gap:1rem;">
+                    <!-- DL envelope -->
+                    <div class="mockup-visual">
+                        <div class="mockup-preview" style="background:#F8FAFC;height:160px;">
+                            <div
+                                style="background:white;border:1px solid var(--border);border-radius:6px;width:320px;height:130px;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                                <!-- Double accent strip top -->
+                                <div
+                                    style="position:absolute;top:0;left:0;right:0;height:1px;background:#0F172A;border-radius:6px 6px 0 0;">
+                                </div>
+                                <div style="position:absolute;top:1px;left:0;right:0;height:2px;background:#016fba;">
+                                </div>
+                                <!-- Logo pojok kiri atas (return address) — Network kiri, Studio kanan -->
+                                <div
+                                    style="position:absolute;top:12px;left:14px;display:flex;flex-direction:column;gap:3px;">
+                                    <div style="display:flex;align-items:center;gap:6px;">
+                                        <svg viewBox="0 0 836.59 196.01" height="12" xmlns="http://www.w3.org/2000/svg">
+                                            <use href="#logo-tn" />
+                                        </svg>
+                                        <div style="width:1px;height:12px;background:var(--border);flex-shrink:0;">
+                                        </div>
+                                        <svg viewBox="0 0 122.37 29.04" height="12" xmlns="http://www.w3.org/2000/svg">
+                                            <use href="#logo-full" />
+                                        </svg>
+                                    </div>
+                                    <div
+                                        style="font-size:5.5px;color:var(--silver);font-family:var(--sans);line-height:1.6;">
+                                        Jl. Palmerah
+                                        Selatan 3, Jakarta 10270</div>
+                                </div>
+                                <!-- Stamp area -->
+                                <div
+                                    style="position:absolute;top:12px;right:14px;width:28px;height:36px;border:1px dashed var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;">
+                                    <span style="font-size:5px;color:var(--border);font-family:var(--sans);">POS</span>
+                                </div>
+                                <!-- Recipient -->
+                                <div
+                                    style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);text-align:center;">
+                                    <div
+                                        style="font-size:7px;font-weight:600;color:var(--black);font-family:var(--sans);">
+                                        PT Maju Bersama
+                                    </div>
+                                    <div
+                                        style="font-size:6px;color:var(--gray);font-family:var(--sans);margin-top:2px;">
+                                        Jl. Sudirman
+                                        No.10, Jakarta</div>
+                                </div>
+                                <div
+                                    style="position:absolute;top:12px;left:14px;font-size:6px;color:#22C55E;font-family:var(--sans);font-weight:700;transform:translateY(44px);">
+                                    Pojok kiri atas ✓</div>
+                            </div>
+                        </div>
+                        <div class="mockup-caption">
+                            <div class="mockup-caption-name">Amplop DL (220×110mm) — Standar</div>
+                            <div class="mockup-caption-desc"><strong>Tribun Network kiri, Tribun Studio kanan</strong> —
+                                berdampingan
+                                di pojok kiri atas sebagai return address. Di bawahnya, tuliskan alamat studio
+                                (Montserrat 7pt).</div>
+                        </div>
+                    </div>
+
+                    <!-- C5 envelope -->
+                    <div class="mockup-visual">
+                        <div class="mockup-preview" style="background:#F8FAFC;height:160px;">
+                            <div
+                                style="background:white;border:1px solid var(--border);border-radius:6px;width:320px;height:130px;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                                <div
+                                    style="position:absolute;top:0;left:0;right:0;height:1px;background:#0F172A;border-radius:6px 6px 0 0;">
+                                </div>
+                                <div style="position:absolute;top:1px;left:0;right:0;height:2px;background:#016fba;">
+                                </div>
+                                <!-- Larger logo for C5 — both logos -->
+                                <div
+                                    style="position:absolute;top:12px;left:14px;display:flex;flex-direction:column;gap:3px;">
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <svg viewBox="0 0 836.59 196.01" height="14" xmlns="http://www.w3.org/2000/svg">
+                                            <use href="#logo-tn" />
+                                        </svg>
+                                        <div style="width:1px;height:14px;background:var(--border);flex-shrink:0;">
+                                        </div>
+                                        <svg viewBox="0 0 122.37 29.04" height="14" xmlns="http://www.w3.org/2000/svg">
+                                            <use href="#logo-full" />
+                                        </svg>
+                                    </div>
+                                    <div
+                                        style="font-size:5.5px;color:var(--silver);font-family:var(--sans);line-height:1.6;">
+                                        Jl. Palmerah
+                                        Selatan No.3 · Jakarta 10270<br>studio@tribunnews.com</div>
+                                </div>
+                                <div
+                                    style="position:absolute;top:12px;right:14px;width:36px;height:44px;border:1px dashed var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;">
+                                    <span style="font-size:5px;color:var(--border);font-family:var(--sans);">POS</span>
+                                </div>
+                                <div
+                                    style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);text-align:center;">
+                                    <div
+                                        style="font-size:8px;font-weight:600;color:var(--black);font-family:var(--sans);">
+                                        PT Maju Bersama
+                                    </div>
+                                    <div
+                                        style="font-size:6.5px;color:var(--gray);font-family:var(--sans);margin-top:2px;">
+                                        Jl. Sudirman
+                                        No.10, Jakarta Pusat 10220</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mockup-caption">
+                            <div class="mockup-caption-name">Amplop C5 (229×162mm) — Untuk Proposal Fisik</div>
+                            <div class="mockup-caption-desc"><strong>Tribun Network kiri, Tribun Studio kanan</strong> —
+                                ukuran
+                                sedikit lebih besar dari DL. Sertakan email kantor di bawah pasangan logo.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Envelope rules -->
+                <div style="display:flex;flex-direction:column;gap:1rem;">
+                    <div class="card">
+                        <div
+                            style="font-size:12px;font-weight:700;color:var(--black);margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);">
+                            Aturan Penempatan Logo di Amplop</div>
+                        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                            <div
+                                style="padding:0.75rem;background:var(--silver-light);border-radius:8px;border:1px solid var(--border);">
+                                <div
+                                    style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--blue);margin-bottom:4px;">
+                                    Posisi</div>
+                                <div style="font-size:13px;color:var(--gray);line-height:1.6;">Selalu di <strong
+                                        style="color:var(--black);">pojok kiri atas</strong> — berfungsi sebagai
+                                    pengirim (return address).
+                                    Ini adalah standar internasional untuk amplop bisnis.</div>
+                            </div>
+                            <div
+                                style="padding:0.75rem;background:var(--silver-light);border-radius:8px;border:1px solid var(--border);">
+                                <div
+                                    style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--blue);margin-bottom:4px;">
+                                    Ukuran per Format Amplop</div>
+                                <div class="table-wrapper">
+                                    <table class="spec-table" style="font-size:12px;">
+                                        <thead>
+                                            <tr>
+                                                <th>Format Amplop</th>
+                                                <th>Ukuran Logo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>DL (220×110mm)</td>
+                                                <td>70–80mm lebar</td>
+                                            </tr>
+                                            <tr>
+                                                <td>C5 (229×162mm)</td>
+                                                <td>85–100mm lebar</td>
+                                            </tr>
+                                            <tr>
+                                                <td>C4 (324×229mm)</td>
+                                                <td>100–120mm lebar</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div
+                                style="padding:0.75rem;background:var(--silver-light);border-radius:8px;border:1px solid var(--border);">
+                                <div
+                                    style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--blue);margin-bottom:4px;">
+                                    Info Kontak di Bawah Logo</div>
+                                <div style="font-size:13px;color:var(--gray);line-height:1.6;">Tulis alamat lengkap
+                                    studio di bawah
+                                    logo. Font: Montserrat Regular, 7–8pt, warna #94A3B8. Urutan: Nama jalan, Kota, Kode
+                                    pos, Email.</div>
+                            </div>
+                            <div style="padding:0.75rem;background:#FEF2F2;border-radius:8px;border:1px solid #FECACA;">
+                                <div
+                                    style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#991B1B;margin-bottom:4px;">
+                                    Dilarang di Amplop</div>
+                                <div style="font-size:13px;color:var(--gray);line-height:1.6;">Jangan letakkan logo di
+                                    bagian belakang
+                                    amplop atau di tengah depan amplop — posisi ini mengganggu area alamat tujuan dan
+                                    area perangko.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-box-icon">i</div>
+                <div>
+                    <div class="info-box-title">Memesan Amplop Cetak Berlogo</div>
+                    <div class="info-box-text">Gunakan file siap cetak dalam format PDF atau EPS vektor untuk percetakan
+                        offset.
+                        Jangan mencetak logo langsung dari dokumen Word — kualitas cetak akan tidak optimal. Pemesanan
+                        disarankan
+                        minimal 200 lembar per ukuran untuk efisiensi biaya.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── Email Signature subsection ─── -->
+        <div style="padding-top:3rem;border-top:1px solid var(--border);margin-top:3rem;" id="email">
+            <div
+                style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:0.5rem;">
+                D — Email Signature</div>
+            <h3
+                style="font-family:var(--serif);font-size:1.5rem;font-weight:600;color:var(--black);margin-bottom:0.5rem;">
+                Tanda Tangan Email</h3>
+            <p style="font-size:14px;color:var(--gray);margin-bottom:2rem;line-height:1.7;max-width:620px;">Kedua logo
+                berdampingan horizontal di sisi kiri signature — Tribun Network kiri, Tribun Studio kanan, tinggi sama —
+                diikuti
+                garis pemisah vertikal, lalu informasi kontak.</p>
+
+            <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:2rem;margin-bottom:1.5rem;align-items:start;">
+                <!-- Email signature preview -->
+                <div>
+                    <div
+                        style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--silver);margin-bottom:0.75rem;">
+                        Contoh Signature yang Benar</div>
+                    <!-- Option A: With logo -->
+                    <div
+                        style="background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem;">
+                        <div
+                            style="padding:10px 16px;background:var(--silver-light);border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--gray);">
+                            Opsi A — Dengan Logo (Direkomendasikan)</div>
+                        <div style="padding:20px 24px;">
+                            <!-- Mock email body -->
+                            <div
+                                style="font-size:12px;color:var(--gray);line-height:1.7;margin-bottom:16px;padding-bottom:16px;border-bottom:2px solid var(--border);">
+                                Terima kasih atas kepercayaan Bapak/Ibu. Terlampir kami kirimkan proposal produksi video
+                                yang telah kami
+                                sesuaikan dengan kebutuhan kampanye Anda...
+                            </div>
+                            <!-- Signature — both logos -->
+                            <div style="display:flex;gap:16px;align-items:flex-start;">
+                                <div style="flex-shrink:0;display:flex;align-items:center;gap:8px;">
+                                    <svg viewBox="0 0 836.59 196.01" height="18" xmlns="http://www.w3.org/2000/svg">
+                                        <use href="#logo-tn" />
+                                    </svg>
+                                    <div style="width:1px;height:18px;background:var(--border);"></div>
+                                    <svg viewBox="0 0 122.37 29.04" height="18" xmlns="http://www.w3.org/2000/svg">
+                                        <use href="#logo-full" />
+                                    </svg>
+                                </div>
+                                <div style="width:1px;background:var(--border);align-self:stretch;"></div>
+                                <div style="font-size:12px;font-family:var(--sans);">
+                                    <div style="font-weight:700;color:var(--black);font-size:13px;">Nama Lengkap</div>
+                                    <div style="color:var(--blue);font-weight:600;font-size:11px;margin:2px 0;">Account
+                                        Manager · Tribun
+                                        Studio</div>
+                                    <div style="color:var(--gray);font-size:11px;line-height:1.8;">
+                                        📞 +62 21 XXXX XXXX<br>
+                                        ✉ nama@tribunnews.com<br>
+                                        🌐 tribun.studio
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Option B: Text only -->
+                    <div style="background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+                        <div
+                            style="padding:10px 16px;background:var(--silver-light);border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--gray);">
+                            Opsi B — Teks Saja (Alternatif jika email client tidak support gambar)</div>
+                        <div style="padding:20px 24px;">
+                            <div
+                                style="font-size:12px;color:var(--gray);line-height:1.7;margin-bottom:16px;padding-bottom:16px;border-bottom:2px solid var(--border);">
+                                Terima kasih atas kepercayaan Bapak/Ibu...
+                            </div>
+                            <div style="font-size:12px;font-family:var(--sans);">
+                                <div style="font-weight:700;color:var(--black);font-size:13px;">Nama Lengkap</div>
+                                <div
+                                    style="color:var(--blue);font-weight:700;font-size:12px;margin:2px 0;letter-spacing:0.02em;">
+                                    TRIBUN
+                                    STUDIO</div>
+                                <div style="color:var(--silver);font-size:11px;font-weight:500;margin-bottom:4px;">
+                                    Account Manager ·
+                                    Tribun Network</div>
+                                <div style="color:var(--gray);font-size:11px;line-height:1.8;">
+                                    📞 +62 21 XXXX XXXX<br>
+                                    ✉ nama@tribunnews.com
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rules -->
+                <div style="display:flex;flex-direction:column;gap:1rem;">
+                    <div class="card">
+                        <div
+                            style="font-size:12px;font-weight:700;color:var(--black);margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);">
+                            Aturan Signature dengan Logo (Opsi A)</div>
+                        <div style="display:flex;flex-direction:column;gap:0.65rem;">
+                            <div class="rule-item" style="font-size:12px;"><strong>Tribun Network di kiri, Tribun Studio
+                                    di
+                                    kanan</strong> — berdampingan, dipisah garis vertikal tipis. Setelah logo, garis
+                                vertikal lagi
+                                memisahkan dari area kontak.</div>
+                            <div class="rule-item" style="font-size:12px;">Tinggi logo Tribun Network: 18px. Tinggi logo
+                                Tribun
+                                Studio: 14px (sedikit lebih kecil, menjaga hierarki).</div>
+                            <div class="rule-item" style="font-size:12px;">Gunakan file logo PNG background transparan
+                                untuk keduanya.
+                                Minta ke tim kreatif file <code
+                                    style="background:var(--silver-light);padding:1px 5px;border-radius:3px;font-size:10px;">logo-tn-email.png</code>
+                                dan <code
+                                    style="background:var(--silver-light);padding:1px 5px;border-radius:3px;font-size:10px;">logo-studio-email.png</code>.
+                            </div>
+                            <div class="rule-item" style="font-size:12px;">Jangan sematkan logo sebagai attachment —
+                                embed langsung ke
+                                signature agar langsung terlihat tanpa perlu di-download.</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div
+                            style="font-size:12px;font-weight:700;color:var(--black);margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);">
+                            Aturan Signature Teks Saja (Opsi B)</div>
+                        <div style="display:flex;flex-direction:column;gap:0.65rem;">
+                            <div class="rule-item" style="font-size:12px;">Tulis "TRIBUN STUDIO" dalam huruf kapital
+                                semua, font
+                                Montserrat Bold, warna Tribun Blue (#005EB8)</div>
+                            <div class="rule-item" style="font-size:12px;">Di bawahnya: nama lengkap, jabatan, dan
+                                "Tribun Network" —
+                                font Montserrat Regular</div>
+                            <div class="rule-item" style="font-size:12px;">Opsi B digunakan jika Gmail / Outlook tidak
+                                menampilkan
+                                logo (sering terjadi di email korporat dengan kebijakan keamanan ketat)</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="font-size:12px;font-weight:700;color:var(--black);margin-bottom:0.75rem;">
+                            Spesifikasi Teknis
+                            Signature</div>
+                        <div class="table-wrapper">
+                            <table class="spec-table" style="font-size:12px;">
+                                <thead>
+                                    <tr>
+                                        <th>Elemen</th>
+                                        <th>Spesifikasi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Logo Tribun Network</td>
+                                        <td>18px tinggi</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Logo Tribun Studio</td>
+                                        <td>18px tinggi (sama dengan Tribun Network)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lebar total area logo</td>
+                                        <td>Maks. 160px kombinasi keduanya</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Font nama</td>
+                                        <td>Montserrat Bold, 13px</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Font jabatan</td>
+                                        <td>Montserrat SemiBold, 11px, warna Tribun Blue</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Font kontak</td>
+                                        <td>Montserrat Regular, 11px, warna #64748B</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lebar total signature</td>
+                                        <td>Maks. 500px</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Format logo</td>
+                                        <td>PNG transparan (bukan JPG)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-box-icon">i</div>
+                <div>
+                    <div class="info-box-title">Cara Memasang Signature di Gmail &amp; Outlook</div>
+                    <div class="info-box-text">Di Gmail: Settings → General → Signature → buat baru → embed logo sebagai
+                        gambar
+                        (Insert Image) → atur ukuran ke "Small". Di Outlook: File → Options → Mail → Signatures → New →
+                        insert
+                        gambar logo. Gunakan file PNG transparan agar background email tidak mengganggu tampilan logo.
+                    </div>
+                </div>
+            </div>
+        </div><!-- end email subsection -->
+        </section><!-- end combined Deck, Stationary & Email section -->
+
+        <!-- ══════════════════════════════════════════════════════
+     SECTION 09 — DO'S & DON'TS
+═══════════════════════════════════════════════════════ -->
+        <section id="donts">
+            <div class="section-header">
+                <div class="section-num">10 — Do's &amp; Don'ts</div>
+                <h2 class="section-title">Aturan Umum Penggunaan Logo</h2>
+                <p class="section-sub">Aturan penggunaan logo yang berlaku di semua media dan dokumen resmi Tribun
+                    Studio.</p>
+            </div>
+
+            <div class="rules">
+                <div class="rule-block">
+                    <div class="rule-header do">
+                        <div class="rule-dot do"></div>Wajib Dilakukan
+                    </div>
+                    <div class="rule-body">
+                        <div class="rule-item">Selalu gunakan file logo dari aset resmi — jangan screenshot atau ambil
+                            dari sumber
+                            tidak resmi</div>
+                        <div class="rule-item">Pertahankan clear space minimal <strong>20% dari lebar logo</strong> di
+                            semua sisi,
+                            di semua dokumen</div>
+                        <div class="rule-item">Gunakan logo berwarna (biru) di atas background putih atau terang</div>
+                        <div class="rule-item">Gunakan logo putih (reversed) di atas background Cinematic Black
+                            (#0F172A)</div>
+                        <div class="rule-item">Tampilkan kedua logo berdampingan horizontal — Tribun Network kiri,
+                            Tribun Studio
+                            kanan, tinggi sama</div>
+                        <div class="rule-item">Pastikan kedua logo selalu tampil bersama di semua dokumen resmi (kop
+                            surat, cover
+                            proposal, amplop)</div>
+                    </div>
+                </div>
+                <div class="rule-block">
+                    <div class="rule-header dont">
+                        <div class="rule-dot dont"></div>Dilarang — Tanpa Pengecualian
+                    </div>
+                    <div class="rule-body">
+                        <div class="rule-item">Jangan ubah warna logo — gunakan hanya #016FBA, #024CB7, hitam, atau
+                            putih dari palet
+                            resmi</div>
+                        <div class="rule-item">Jangan regangkan atau kompres logo — proporsi harus selalu terjaga (tahan
+                            Shift saat
+                            resize)</div>
+                        <div class="rule-item">Jangan pisahkan kata "Studio" dari "Tribun" atau elemen clapperboard dari
+                            teks logo
+                        </div>
+                        <div class="rule-item">Jangan tambahkan efek apapun pada logo — tidak ada drop shadow, outline,
+                            glow, atau
+                            bevel</div>
+                        <div class="rule-item">Jangan susun kedua logo secara vertikal (atas-bawah) — selalu horizontal
+                            berdampingan
+                        </div>
+                        <div class="rule-item">Jangan beda ukuran kedua logo — tinggi Tribun Network dan Tribun Studio
+                            harus sama
+                            persis</div>
+                        <div class="rule-item">Jangan gunakan logo lebih kecil dari 100px (digital) atau 20mm (cetak)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick ref table -->
+            <div class="card" style="margin-top:1.5rem;">
+                <div
+                    style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:1.25rem;">
+                    Panduan Cepat Per Jenis Dokumen</div>
+                <div class="table-wrapper">
+                    <table class="spec-table">
+                        <thead>
+                            <tr>
+                                <th>Dokumen</th>
+                                <th>Susunan Logo</th>
+                                <th>Posisi</th>
+                                <th>Versi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Cover deck proposal</td>
+                                <td>TN kiri · TS kanan · horizontal · tinggi sama</td>
+                                <td>Tengah bawah cover</td>
+                                <td>Putih (latar hitam) / Biru (latar putih)</td>
+                            </tr>
+                            <tr>
+                                <td>Slide isi presentasi</td>
+                                <td>Hanya logo Tribun Studio</td>
+                                <td>Pojok kanan atas</td>
+                                <td>Biru (latar terang) / Putih (latar gelap)</td>
+                            </tr>
+                            <tr>
+                                <td>Kop surat A4</td>
+                                <td>TN kiri · TS kanan · horizontal · tinggi sama</td>
+                                <td>Header putih, info kontak kanan</td>
+                                <td>Biru asli (logo berwarna)</td>
+                            </tr>
+                            <tr>
+                                <td>Amplop DL &amp; C5</td>
+                                <td>TN kiri · TS kanan · horizontal · tinggi sama</td>
+                                <td>Pojok kiri atas</td>
+                                <td>Biru (di atas putih)</td>
+                            </tr>
+                            <tr>
+                                <td>Email signature</td>
+                                <td>TN kiri · TS kanan · horizontal · tinggi sama</td>
+                                <td>Kiri, sebelum info kontak</td>
+                                <td>Biru (di atas putih)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+     SECTION 11 — ICON & FAVICON
+═══════════════════════════════════════════════════════ -->
+        <section id="icon">
+            <div class="section-header">
+                <div class="section-num">11 — Icon &amp; Favicon</div>
+                <h2 class="section-title">App Icon &amp; Favicon</h2>
+                <p class="section-sub">Ikon Tribun Studio adalah elemen clapperboard dari logo utama yang berdiri
+                    sendiri —
+                    digunakan pada favicon website, app icon, avatar media sosial, dan thumbnail channel.</p>
+            </div>
+
+            <!-- Icon showcase -->
+            <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:2rem;margin-bottom:1.5rem;align-items:start;">
+
+                <!-- Left: icon at various sizes -->
+                <div style="display:flex;flex-direction:column;gap:1rem;">
+
+                    <!-- Large preview -->
+                    <div class="card"
+                        style="display:flex;flex-direction:column;align-items:center;gap:1.25rem;padding:2rem;">
+                        <div
+                            style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);">
+                            Ikon Resmi</div>
+                        <img src="assets/fav/icon.svg" width="120" height="120" alt="Tribun Studio Icon">
+                        <div style="font-size:12px;color:var(--gray);text-align:center;line-height:1.6;">Elemen
+                            clapperboard dari
+                            logo utama<br>berdiri sendiri sebagai ikon</div>
+                    </div>
+
+                    <!-- Size comparison -->
+                    <div class="card" style="padding:1.5rem;">
+                        <div
+                            style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:1.25rem;">
+                            Skala Ukuran</div>
+                        <div style="display:flex;align-items:flex-end;gap:1.5rem;flex-wrap:wrap;">
+
+                            <!-- 512px -->
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+                                <div
+                                    style="width:64px;height:64px;border-radius:14px;background:white;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;">
+                                    <img src="assets/fav/icon.svg" width="48" height="48" alt="512px Icon">
+                                </div>
+                                <div style="text-align:center;">
+                                    <div style="font-size:10px;font-weight:700;color:var(--black);">512×512</div>
+                                    <div style="font-size:9px;color:var(--silver);">App Store / Play Store</div>
+                                </div>
+                            </div>
+
+                            <!-- 192px -->
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+                                <div
+                                    style="width:48px;height:48px;border-radius:10px;background:white;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;">
+                                    <img src="assets/fav/icon.svg" width="36" height="36" alt="192px Icon">
+                                </div>
+                                <div style="text-align:center;">
+                                    <div style="font-size:10px;font-weight:700;color:var(--black);">192×192</div>
+                                    <div style="font-size:9px;color:var(--silver);">PWA / Android</div>
+                                </div>
+                            </div>
+
+                            <!-- 32px favicon -->
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+                                <div
+                                    style="width:32px;height:32px;border-radius:6px;background:white;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;">
+                                    <img src="assets/fav/icon.svg" width="24" height="24" alt="32px Icon">
+                                </div>
+                                <div style="text-align:center;">
+                                    <div style="font-size:10px;font-weight:700;color:var(--black);">32×32</div>
+                                    <div style="font-size:9px;color:var(--silver);">Favicon browser</div>
+                                </div>
+                            </div>
+
+                            <!-- 16px favicon -->
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+                                <div
+                                    style="width:24px;height:24px;border-radius:4px;background:white;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;">
+                                    <img src="assets/fav/icon.svg" width="16" height="16" alt="16px Icon">
+                                </div>
+                                <div style="text-align:center;">
+                                    <div style="font-size:10px;font-weight:700;color:var(--black);">16×16</div>
+                                    <div style="font-size:9px;color:var(--silver);">Favicon tab</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right: usage rules + do/don't + backgrounds -->
+                <div style="display:flex;flex-direction:column;gap:1rem;">
+
+                    <!-- Usage contexts -->
+                    <div class="card">
+                        <div
+                            style="font-size:12px;font-weight:700;color:var(--black);margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);">
+                            Konteks Penggunaan Ikon</div>
+                        <div class="table-wrapper">
+                            <table class="spec-table">
+                                <thead>
+                                    <tr>
+                                        <th>Platform</th>
+                                        <th>Ukuran</th>
+                                        <th>Format</th>
+                                        <th>Background</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Favicon browser (tab)</td>
+                                        <td>16×16 · 32×32 px</td>
+                                        <td>ICO / PNG</td>
+                                        <td>Transparan</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Favicon website (modern)</td>
+                                        <td>180×180 px</td>
+                                        <td>PNG</td>
+                                        <td>Putih atau Cinematic Black</td>
+                                    </tr>
+                                    <tr>
+                                        <td>PWA / Android homescreen</td>
+                                        <td>192×192 px</td>
+                                        <td>PNG</td>
+                                        <td>Putih atau #016FBA</td>
+                                    </tr>
+                                    <tr>
+                                        <td>App Store / Play Store</td>
+                                        <td>512×512 px</td>
+                                        <td>PNG (no alpha)</td>
+                                        <td>Putih atau Cinematic Black</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Avatar media sosial</td>
+                                        <td>400×400 px min</td>
+                                        <td>PNG / JPG</td>
+                                        <td>Putih atau Cinematic Black</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Thumbnail YouTube / channel</td>
+                                        <td>800×800 px</td>
+                                        <td>PNG / JPG</td>
+                                        <td>Cinematic Black atau #016FBA</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Background variants -->
+                    <div class="card">
+                        <div
+                            style="font-size:12px;font-weight:700;color:var(--black);margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);">
+                            Varian Latar Ikon yang Diperbolehkan</div>
+                        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;">
+
+                            <!-- White bg -->
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                                <div
+                                    style="width:56px;height:56px;border-radius:12px;background:#FFFFFF;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;">
+                                    <img src="assets/fav/icon.svg" width="38" height="38" alt="Icon White BG">
+                                </div>
+                                <div style="font-size:10px;color:var(--gray);text-align:center;font-weight:600;">Putih
+                                </div>
+                                <div class="tag tag-ok" style="font-size:8px;padding:2px 6px;">OK</div>
+                            </div>
+
+                            <!-- Black bg -->
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                                <div
+                                    style="width:56px;height:56px;border-radius:12px;background:#0F172A;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;">
+                                    <img src="assets/fav/icon.svg" width="38" height="38" alt="Icon Black BG">
+                                </div>
+                                <div style="font-size:10px;color:var(--gray);text-align:center;font-weight:600;">Hitam
+                                </div>
+                                <div class="tag tag-ok" style="font-size:8px;padding:2px 6px;">OK</div>
+                            </div>
+
+                            <!-- Blue bg -->
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                                <div
+                                    style="width:56px;height:56px;border-radius:12px;background:#016fba;display:flex;align-items:center;justify-content:center;">
+                                    <img src="assets/fav/icon-white.svg" width="38" height="38"
+                                        alt="Icon Tribun Blue BG">
+                                </div>
+                                <div style="font-size:10px;color:var(--gray);text-align:center;font-weight:600;">Tribun
+                                    Blue</div>
+                                <div class="tag tag-ok" style="font-size:8px;padding:2px 6px;">OK</div>
+                            </div>
+
+                            <!-- Wrong: red bg -->
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                                <div
+                                    style="width:56px;height:56px;border-radius:12px;background:#E11D48;display:flex;align-items:center;justify-content:center;position:relative;">
+                                    <img src="assets/fav/icon.svg" width="38" height="38" alt="Icon Wrong BG">
+                                    <div
+                                        style="position:absolute;inset:0;border-radius:12px;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white"
+                                            stroke-width="3" stroke-linecap="round">
+                                            <line x1="4" y1="4" x2="20" y2="20" />
+                                            <line x1="20" y1="4" x2="4" y2="20" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div style="font-size:10px;color:var(--gray);text-align:center;font-weight:600;">Warna
+                                    lain</div>
+                                <div class="tag tag-no" style="font-size:8px;padding:2px 6px;">Salah</div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Do/don't rules -->
+                    <div class="rules" style="grid-template-columns:1fr 1fr;">
+                        <div class="rule-block">
+                            <div class="rule-header do">
+                                <div class="rule-dot do"></div>Boleh
+                            </div>
+                            <div class="rule-body">
+                                <div class="rule-item" style="font-size:12px;">Gunakan ikon berwarna asli (biru) di atas
+                                    latar putih
+                                    atau abu</div>
+                                <div class="rule-item" style="font-size:12px;">Gunakan ikon berwarna asli di atas latar
+                                    hitam Cinematic
+                                    Black</div>
+                                <div class="rule-item" style="font-size:12px;">Gunakan ikon versi putih di atas latar
+                                    Tribun Blue atau
+                                    Studio Blue</div>
+                                <div class="rule-item" style="font-size:12px;">Gunakan dengan rounded corner
+                                    (border-radius) untuk app
+                                    icon</div>
+                            </div>
+                        </div>
+                        <div class="rule-block">
+                            <div class="rule-header dont">
+                                <div class="rule-dot dont"></div>Dilarang
+                            </div>
+                            <div class="rule-body">
+                                <div class="rule-item" style="font-size:12px;">Jangan ubah warna ikon ke warna selain
+                                    palet resmi</div>
+                                <div class="rule-item" style="font-size:12px;">Jangan gunakan di atas latar berwarna
+                                    selain dari palet
+                                    brand</div>
+                                <div class="rule-item" style="font-size:12px;">Jangan tambahkan drop shadow, outline,
+                                    atau efek lain
+                                </div>
+                                <div class="rule-item" style="font-size:12px;">Jangan gunakan ikon di bawah 16×16px —
+                                    gunakan teks "TS"
+                                    jika terpaksa</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Download CTA for icon -->
+            <div
+                style="background:var(--silver-light);border:1px solid var(--border);border-radius:12px;padding:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:1rem;">
+                    <div
+                        style="width:52px;height:52px;border-radius:12px;background:white;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <img src="assets/fav/icon.svg" width="36" height="36" alt="Icon Pack Preview">
+                    </div>
+                    <div>
+                        <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:2px;">Tribun Studio
+                            Icon Pack
+                        </div>
+                        <div style="font-size:12px;color:var(--gray);">SVG · PNG 16/32/180/192/512px · ICO favicon ·
+                            Figma component
+                        </div>
+                    </div>
+                </div>
+                <a href="assets/fav/icon-pack.zip"
+                    style="display:inline-flex;align-items:center;gap:8px;background:#016fba;border-radius:8px;padding:10px 20px;text-decoration:none;color:white;font-size:13px;font-weight:700;flex-shrink:0;transition:opacity 0.15s;"
+                    onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Download Icon Pack
+                </a>
+            </div>
+
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════
+     SECTION 12 — DOWNLOAD ASET
+═══════════════════════════════════════════════════════ -->
+        <section id="download" style="background:var(--white);">
+            <div class="section-header">
+                <div class="section-num">12 — Unduh Aset Logo</div>
+                <h2 class="section-title">Download Logo &amp; Brand Assets</h2>
+                <p class="section-sub">File logo resmi tersedia dalam berbagai format untuk kebutuhan digital dan cetak.
+                    Gunakan
+                    selalu file dari sumber ini — jangan menggunakan logo dari screenshot atau sumber lain.</p>
+            </div>
+
+            <div class="card-grid-3"
+                style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;">
+
+                <!-- Tribun Studio logos -->
+                <div class="card" style="display:flex;flex-direction:column;gap:1rem;">
+                    <div
+                        style="background:var(--silver-light);border-radius:10px;padding:1.5rem;display:flex;align-items:center;justify-content:center;min-height:90px;">
+                        <svg viewBox="0 0 122.37 29.04" width="160" xmlns="http://www.w3.org/2000/svg">
+                            <use href="#logo-full" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:4px;">Tribun Studio
+                            — Primary
+                        </div>
+                        <div style="font-size:12px;color:var(--gray);margin-bottom:1rem;line-height:1.6;">Logo berwarna
+                            di atas
+                            latar terang. Untuk dokumen digital dan cetak.</div>
+                        <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                            <a href="assets/studio/Tribun-Studio.svg" onclick="return true;"
+                                style="display:flex;align-items:center;gap:8px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;text-decoration:none;color:var(--blue);font-size:12px;font-weight:600;transition:background 0.2s;"
+                                onmouseover="this.style.background='#DBEAFE'"
+                                onmouseout="this.style.background='#EFF6FF'">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                                SVG — Vektor (semua ukuran)
+                            </a>
+                            <a href="assets/studio/Tribun-Studio@2x.png" onclick="return true;"
+                                style="display:flex;align-items:center;gap:8px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;text-decoration:none;color:var(--blue);font-size:12px;font-weight:600;transition:background 0.2s;"
+                                onmouseover="this.style.background='#DBEAFE'"
+                                onmouseout="this.style.background='#EFF6FF'">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                                PNG @2x — Transparan
+                            </a>
+                            <a href="assets/studio/Tribun-Studio.eps" onclick="return true;"
+                                style="display:flex;align-items:center;gap:8px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;text-decoration:none;color:var(--blue);font-size:12px;font-weight:600;transition:background 0.2s;"
+                                onmouseover="this.style.background='#DBEAFE'"
+                                onmouseout="this.style.background='#EFF6FF'">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                                EPS — Cetak &amp; Offset
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tribun Studio reversed -->
+                <div class="card" style="display:flex;flex-direction:column;gap:1rem;">
+                    <div
+                        style="background:#0F172A;border-radius:10px;padding:1.5rem;display:flex;align-items:center;justify-content:center;min-height:90px;">
+                        <svg viewBox="0 0 122.37 29.04" width="160" style="filter:brightness(0) invert(1);"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <use href="#logo-full" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:4px;">Tribun Studio
+                            — Reversed
+                            (Putih)</div>
+                        <div style="font-size:12px;color:var(--gray);margin-bottom:1rem;line-height:1.6;">Logo putih
+                            untuk latar
+                            gelap — header, cover, email dark mode.</div>
+                        <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                            <a href="assets/studio/Tribun-Studio-White.png" onclick="return true;"
+                                style="display:flex;align-items:center;gap:8px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;text-decoration:none;color:var(--blue);font-size:12px;font-weight:600;transition:background 0.2s;"
+                                onmouseover="this.style.background='#DBEAFE'"
+                                onmouseout="this.style.background='#EFF6FF'">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                                SVG — Vektor Putih
+                            </a>
+                            <a href="assets/studio/Tribun-Studio-White@2x.png" onclick="return true;"
+                                style="display:flex;align-items:center;gap:8px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;text-decoration:none;color:var(--blue);font-size:12px;font-weight:600;transition:background 0.2s;"
+                                onmouseover="this.style.background='#DBEAFE'"
+                                onmouseout="this.style.background='#EFF6FF'">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                                PNG @2x — Transparan Putih
+                            </a>
+                            <a href="assets/studio/Tribun-Studio-White.eps" onclick="return true;"
+                                style="display:flex;align-items:center;gap:8px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;text-decoration:none;color:var(--blue);font-size:12px;font-weight:600;transition:background 0.2s;"
+                                onmouseover="this.style.background='#DBEAFE'"
+                                onmouseout="this.style.background='#EFF6FF'">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                                EPS — Cetak Putih
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tribun Network logos -->
+                <div class="card" style="display:flex;flex-direction:column;gap:1rem;">
+                    <div
+                        style="background:var(--silver-light);border-radius:10px;padding:1.5rem;display:flex;align-items:center;justify-content:center;min-height:90px;">
+                        <svg viewBox="0 0 836.59 196.01" width="180" xmlns="http://www.w3.org/2000/svg">
+                            <use href="#logo-tn" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:4px;">Tribun Network
+                            — Holding
+                        </div>
+                        <div style="font-size:12px;color:var(--gray);margin-bottom:1rem;line-height:1.6;">Logo induk
+                            perusahaan —
+                            selalu ditampilkan bersama logo Tribun Studio.</div>
+                        <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                            <a href="assets/tribun/Tribun Network.svg" onclick="return true;"
+                                style="display:flex;align-items:center;gap:8px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;text-decoration:none;color:var(--blue);font-size:12px;font-weight:600;transition:background 0.2s;"
+                                onmouseover="this.style.background='#DBEAFE'"
+                                onmouseout="this.style.background='#EFF6FF'">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                                SVG — Vektor
+                            </a>
+                            <a href="assets/tribun/Tribun Network@2x.png" onclick="return true;"
+                                style="display:flex;align-items:center;gap:8px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;text-decoration:none;color:var(--blue);font-size:12px;font-weight:600;transition:background 0.2s;"
+                                onmouseover="this.style.background='#DBEAFE'"
+                                onmouseout="this.style.background='#EFF6FF'">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                                PNG @2x — Transparan
+                            </a>
+                            <a href="assets/tribun/Tribun Network.eps" onclick="return true;"
+                                style="display:flex;align-items:center;gap:8px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;text-decoration:none;color:var(--blue);font-size:12px;font-weight:600;transition:background 0.2s;"
+                                onmouseover="this.style.background='#DBEAFE'"
+                                onmouseout="this.style.background='#EFF6FF'">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                                EPS — Cetak &amp; Offset
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Master CTA button -->
+            <div
+                style="background:linear-gradient(135deg,#016fba 0%,#024cb7 100%);border-radius:16px;padding:2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;">
+                <div>
+                    <div
+                        style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:0.5rem;">
+                        Brand Asset Pack Lengkap</div>
+                    <div
+                        style="font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:1.5rem;font-weight:600;color:white;margin-bottom:0.5rem;">
+                        Semua File dalam Satu Folder</div>
+                    <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;">SVG · PNG · EPS · PDF
+                    </div>
+                </div>
+                <a href="assets/tribun-studio-logo.zip" onclick="return true;"
+                    style="display:inline-flex;align-items:center;gap:10px;background:white;border-radius:10px;padding:14px 24px;text-decoration:none;color:#024cb7;font-size:14px;font-weight:700;white-space:nowrap;flex-shrink:0;box-shadow:0 4px 16px rgba(0,0,0,0.15);transition:transform 0.15s,box-shadow 0.15s;"
+                    onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,0.2)'"
+                    onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.15)'">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Download Brand Asset Pack
+                </a>
+            </div>
+
+            <!-- Format guide -->
+            <div class="card" style="margin-top:1rem;">
+                <div
+                    style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);margin-bottom:1.25rem;">
+                    Panduan Format File</div>
+                <table class="spec-table">
+                    <thead>
+                        <tr>
+                            <th>Format</th>
+                            <th>Kapan Digunakan</th>
+                            <th>Kompatibel dengan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>SVG</td>
+                            <td>Website, email, dokumen digital — skala bebas tanpa pecah</td>
+                            <td>Browser, Figma, Illustrator, Canva</td>
+                        </tr>
+                        <tr>
+                            <td>PNG @2x (transparan)</td>
+                            <td>PowerPoint, Word, Google Slides, Canva, email signature</td>
+                            <td>Semua aplikasi office &amp; desain</td>
+                        </tr>
+                        <tr>
+                            <td>EPS</td>
+                            <td>Cetak offset, spanduk, merchandise, stiker</td>
+                            <td>Adobe Illustrator, CorelDRAW</td>
+                        </tr>
+                        <tr>
+                            <td>PDF Vektor</td>
+                            <td>Kop surat, proposal cetak, amplop</td>
+                            <td>Acrobat, InDesign, percetakan</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div><!-- end .page -->
+
+    <footer>
+        <div class="footer-left">
+            <div><strong>Tribun Studio</strong> — Brand Identity Guidelines</div>
+            <div>Versi 2.3 — Mei 2026 · Tribun Network</div>
+        </div>
+        <div style="text-align:right;font-size:11px;">
+            <div style="color:rgba(255,255,255,0.5);margin-bottom:4px;">Pertanyaan tentang penggunaan brand?</div>
+            <div style="color:rgba(255,255,255,0.8);">Hubungi Tim Kreatif Tribun Studio</div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
