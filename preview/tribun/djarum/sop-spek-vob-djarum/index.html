@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOP Operasional VOB — Djarum × Tribunnews</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --ink: #0f0e0c;
+            --ink-2: #3d3b37;
+            --ink-3: #6b6760;
+            --ink-4: #a09d97;
+            --bg: #ffffff;
+            --bg-2: #f7f5f2;
+            --bg-3: #f0ede8;
+            --rule: #e2ddd7;
+            --red: #c0392b;
+            --red-bg: #fdf2f1;
+            --red-mid: #e8857a;
+            --blue: #1d4ed8;
+            --blue-bg: #eff4ff;
+            --blue-mid: #6b95e8;
+            --green: #166534;
+            --green-bg: #f0fdf4;
+            --green-mid: #5dab7a;
+            --amber: #92400e;
+            --amber-bg: #fffbeb;
+            --amber-mid: #d4a257;
+            --djarum: #c0392b;
+            --tribun: #1d4ed8;
+            --dcm: #5b3a9e;
+            --dcm-bg: #f5f0ff;
+            --dcm-mid: #9b78e0;
+            --live: #166534;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            line-height: 1.6;
+        }
+
+        .page {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 40px 100px;
+        }
+
+        /* ── HEADER ── */
+        .header {
+            border-bottom: 1.5px solid var(--ink);
+            padding-bottom: 32px;
+            margin-bottom: 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 24px;
+        }
+
+        .header-left h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: var(--ink);
+        }
+
+        .header-left p {
+            margin-top: 10px;
+            color: var(--ink-3);
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .header-badges {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 5px 12px;
+            border-radius: 2px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .badge-djarum {
+            background: var(--red-bg);
+            color: var(--red);
+            border: 1px solid var(--red-mid);
+        }
+
+        .badge-tribun {
+            background: var(--blue-bg);
+            color: var(--blue);
+            border: 1px solid var(--blue-mid);
+        }
+
+        /* ── SECTION LABEL ── */
+        .section {
+            margin-bottom: 72px;
+        }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .section-num {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--ink-4);
+            letter-spacing: 0.1em;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--ink);
+            letter-spacing: -0.01em;
+        }
+
+        .section-label::before {
+            content: '';
+            display: block;
+            width: 20px;
+            height: 1.5px;
+            background: var(--ink);
+        }
+
+        /* ── SPEC CARDS ── */
+        .spec-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--rule);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .spec-card {
+            background: var(--bg);
+            padding: 28px 32px;
+        }
+
+        .spec-card-title {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink-3);
+            margin-bottom: 18px;
+        }
+
+        .spec-card-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 20px;
+        }
+
+        .spec-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--bg-3);
+            font-size: 0.875rem;
+            gap: 16px;
+        }
+
+        .spec-row:last-child {
+            border-bottom: none;
+        }
+
+        .spec-key {
+            color: var(--ink-3);
+            font-weight: 400;
+        }
+
+        .spec-val {
+            color: var(--ink);
+            font-weight: 500;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        /* ── PRODUCTION STEPS ── */
+        .prod-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            position: relative;
+        }
+
+        .prod-steps::before {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: calc(12.5% + 16px);
+            right: calc(12.5% + 16px);
+            height: 1px;
+            background: var(--rule);
+            z-index: 0;
+        }
+
+        .prod-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .prod-dot {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 1.5px solid var(--rule);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .prod-dot span {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--ink-3);
+        }
+
+        .prod-step p {
+            font-size: 0.82rem;
+            color: var(--ink-2);
+            line-height: 1.5;
+        }
+
+        /* ── TAGGING SCENARIO ── */
+        .tag-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .tag-card {
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+            padding: 24px 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tag-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .tag-card.green::before {
+            background: var(--green-mid);
+        }
+
+        .tag-card.amber::before {
+            background: var(--amber-mid);
+        }
+
+        .tag-card-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .tag-pill {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 500;
+            padding: 3px 8px;
+            border-radius: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .tag-pill.green {
+            background: var(--green-bg);
+            color: var(--green);
+        }
+
+        .tag-pill.amber {
+            background: var(--amber-bg);
+            color: var(--amber);
+        }
+
+        .tag-card h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .tag-card p {
+            font-size: 0.85rem;
+            color: var(--ink-3);
+            margin-bottom: 10px;
+        }
+
+        .tag-badge {
+            display: inline-block;
+            font-size: 0.78rem;
+            font-weight: 500;
+            margin-top: 6px;
+        }
+
+        .tag-badge.green {
+            color: var(--green);
+        }
+
+        .tag-badge.amber {
+            color: var(--amber);
+        }
+
+        /* ── SWIMLANE WORKFLOW ── */
+        .workflow-block {
+            margin-top: 0;
+        }
+
+        .workflow-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 16px;
+            padding-left: 4px;
+        }
+
+        /* Actor Legend */
+        .actor-legend {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--ink-3);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Chain Visualization */
+        .chain {
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .chain-step {
+            display: grid;
+            grid-template-columns: 130px 1fr;
+            min-height: 52px;
+            border-bottom: 1px solid var(--bg-3);
+            position: relative;
+        }
+
+        .chain-step:last-child {
+            border-bottom: none;
+        }
+
+        .chain-step.bottleneck {
+            background: linear-gradient(90deg, #fffbf0 0%, #ffffff 100%);
+        }
+
+        .chain-step.bottleneck::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--amber-mid);
+        }
+
+        .chain-actor {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border-right: 1px solid var(--bg-3);
+        }
+
+        .actor-chip {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            padding: 4px 8px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .actor-chip.djarum {
+            background: var(--red-bg);
+            color: var(--red);
+        }
+
+        .actor-chip.tribun {
+            background: var(--blue-bg);
+            color: var(--blue);
+        }
+
+        .actor-chip.dcm {
+            background: var(--dcm-bg);
+            color: var(--dcm);
+        }
+
+        .actor-chip.live {
+            background: var(--green-bg);
+            color: var(--green);
+        }
+
+        .chain-action {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            gap: 12px;
+        }
+
+        .chain-action p {
+            font-size: 0.875rem;
+            color: var(--ink-2);
+            line-height: 1.4;
+        }
+
+        .bottleneck-tag {
+            flex-shrink: 0;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.6rem;
+            font-weight: 500;
+            padding: 3px 7px;
+            border-radius: 2px;
+            background: var(--amber-bg);
+            color: var(--amber);
+            border: 1px solid var(--amber-mid);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .warning-tag {
+            flex-shrink: 0;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.6rem;
+            font-weight: 500;
+            padding: 3px 7px;
+            border-radius: 2px;
+            background: var(--red-bg);
+            color: var(--red);
+            border: 1px solid var(--red-mid);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* Time Banner */
+        .time-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            margin-top: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .time-strip.fast {
+            background: var(--green-bg);
+        }
+
+        .time-strip.slow {
+            background: var(--amber-bg);
+        }
+
+        .time-label {
+            font-weight: 600;
+        }
+
+        .time-label.fast {
+            color: var(--green);
+        }
+
+        .time-label.slow {
+            color: var(--amber);
+        }
+
+        .time-val {
+            font-family: 'DM Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .time-val.fast {
+            color: var(--green);
+        }
+
+        .time-val.slow {
+            color: var(--amber);
+        }
+
+        /* Side by side scenarios */
+        .scenarios {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        /* ── COMPARISON TABLE ── */
+        .cmp-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .cmp-table th {
+            background: var(--bg-2);
+            padding: 13px 18px;
+            text-align: left;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--ink-2);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-family: 'DM Mono', monospace;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .cmp-table td {
+            padding: 13px 18px;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--bg-3);
+            color: var(--ink-2);
+        }
+
+        .cmp-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .cmp-table td:first-child {
+            font-weight: 500;
+            color: var(--ink);
+        }
+
+        .cmp-table tr:hover td {
+            background: var(--bg-2);
+        }
+
+        /* Advantage chips in table */
+        .chip-g {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.78rem;
+            color: var(--green);
+            font-weight: 500;
+        }
+
+        .chip-a {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.78rem;
+            color: var(--amber);
+            font-weight: 500;
+        }
+
+        .chip-g::before {
+            content: '●';
+            font-size: 0.5rem;
+        }
+
+        .chip-a::before {
+            content: '●';
+            font-size: 0.5rem;
+        }
+
+        /* ── DISCUSSION RISKS ── */
+        .risk-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .risk-card {
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+            padding: 24px 28px;
+        }
+
+        .risk-num {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--ink-4);
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+
+        .risk-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .risk-body {
+            font-size: 0.82rem;
+            color: var(--ink-3);
+            line-height: 1.65;
+            border-left: 2px solid var(--rule);
+            padding-left: 14px;
+            font-style: italic;
+        }
+
+        /* ── RECOMMENDATION ── */
+        .rec-block {
+            border: 1.5px solid var(--ink);
+            border-radius: 12px;
+            padding: 36px 40px;
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+        }
+
+        .rec-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1.5px solid var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--ink-3);
+        }
+
+        .rec-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-4);
+            margin-bottom: 8px;
+        }
+
+        .rec-text {
+            font-size: 1rem;
+            color: var(--ink-2);
+            line-height: 1.7;
+        }
+
+        .rec-text strong {
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        /* divider */
+        .divider {
+            height: 1px;
+            background: var(--rule);
+            margin: 72px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <h1>SOP & Spesifikasi<br>Unit VOB</h1>
+                <p>Panduan Operasional Kampanye Pushdown 320×480 — Tim Djarum × Tribunnews</p>
+            </div>
+            <div class="header-badges">
+                <span class="badge badge-djarum">Tim Djarum</span>
+                <span class="badge badge-tribun">Tribunnews</span>
+            </div>
+        </header>
+
+        <!-- SECTION 1 -->
+        <div class="section">
+            <div class="section-label">
+                <span class="section-num">01</span>
+                <span class="section-title">Spesifikasi Materi</span>
+            </div>
+            <div class="spec-grid">
+                <div class="spec-card">
+                    <div class="spec-card-title">Campaign A</div>
+                    <div class="spec-card-name">MP4 Host-Serve</div>
+                    <div class="spec-row"><span class="spec-key">Rasio Video</span><span class="spec-val">16:9</span>
+                    </div>
+                    <div class="spec-row"><span class="spec-key">Dimensi Video</span><span class="spec-val">320 × 180
+                            px</span></div>
+                    <div class="spec-row"><span class="spec-key">Dimensi Banner</span><span class="spec-val">320 × 300
+                            px</span></div>
+                    <div class="spec-row"><span class="spec-key">Total Canvas</span><span class="spec-val">320 × 480
+                            px</span></div>
+                    <div class="spec-row"><span class="spec-key">Format File</span><span class="spec-val">MP4
+                            (H.264)</span></div>
+                    <div class="spec-row"><span class="spec-key">Bitrate</span><span class="spec-val">Max 1.5
+                            Mbps</span></div>
+                </div>
+                <div class="spec-card">
+                    <div class="spec-card-title">Campaign B</div>
+                    <div class="spec-card-name">YouTube Livestream</div>
+                    <div class="spec-row"><span class="spec-key">Rasio Player</span><span class="spec-val">16:9</span>
+                    </div>
+                    <div class="spec-row"><span class="spec-key">Format Player</span><span class="spec-val">YouTube
+                            IFrame API</span></div>
+                    <div class="spec-row"><span class="spec-key">Data Source</span><span class="spec-val">Video
+                            ID</span></div>
+                    <div class="spec-row"><span class="spec-key">Embed Policy</span><span class="spec-val">Must be
+                            Enabled</span></div>
+                    <div class="spec-row"><span class="spec-key">Audio Policy</span><span class="spec-val">Start
+                            Muted</span></div>
+                    <div class="spec-row"><span class="spec-key">UI Elements</span><span class="spec-val">Modest
+                            Branding</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2 -->
+        <div class="section">
+            <div class="section-label">
+                <span class="section-num">02</span>
+                <span class="section-title">Alur Produksi Iklan</span>
+            </div>
+            <div class="prod-steps">
+                <div class="prod-step">
+                    <div class="prod-dot"><span>01</span></div>
+                    <p>Koleksi aset (video &amp; background) dari Tim Djarum</p>
+                </div>
+                <div class="prod-step">
+                    <div class="prod-dot"><span>02</span></div>
+                    <p>Proses "jahit" (coding HTML5 / GSAP) oleh Tim Kreatif Tribun</p>
+                </div>
+                <div class="prod-step">
+                    <div class="prod-dot"><span>03</span></div>
+                    <p>Internal QC (cross-browser &amp; mobile testing) di Publisher</p>
+                </div>
+                <div class="prod-step">
+                    <div class="prod-dot"><span>04</span></div>
+                    <p>Final aset siap didaftarkan (via host-serve atau DCM)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3 -->
+        <div class="section">
+            <div class="section-label">
+                <span class="section-num">03</span>
+                <span class="section-title">Skenario Tagging (DCM)</span>
+            </div>
+            <div class="tag-grid">
+                <div class="tag-card green">
+                    <div class="tag-card-head">
+                        <span class="tag-pill green">Opsi A</span>
+                        <h4>Tracker Only</h4>
+                    </div>
+                    <p>Materi di-host di server Tribun. Tim Djarum memberikan Impression Tracker &amp; Click URL.</p>
+                    <span class="tag-badge green">↗ Kecepatan update &amp; loading optimal</span>
+                </div>
+                <div class="tag-card amber">
+                    <div class="tag-card-head">
+                        <span class="tag-pill amber">Opsi B</span>
+                        <h4>Fullscript (JS Tag)</h4>
+                    </div>
+                    <p>Materi di-host di server DCM Google. Unit dikirim dalam bentuk script JavaScript utuh.</p>
+                    <span class="tag-badge amber">↗ Data interaksi video tercatat otomatis</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4 -->
+        <div class="section">
+            <div class="section-label">
+                <span class="section-num">04</span>
+                <span class="section-title">Studi Kasus Perubahan Materi / Link</span>
+            </div>
+
+            <!-- Legend -->
+            <div class="actor-legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:var(--red-mid)"></div> Tim Djarum
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:var(--blue-mid)"></div> Kreatif / AdOps Tribun
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:var(--dcm-mid)"></div> Sistem DCM / GAM
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:var(--green-mid)"></div> Live
+                </div>
+                <div class="legend-item"
+                    style="gap:6px; margin-left:auto; font-size:0.75rem; color:var(--amber); font-weight:500;">
+                    <span
+                        style="width:10px; height:3px; background:var(--amber-mid); border-radius:1px; display:inline-block; margin-right:2px;"></span>
+                    Titik bottleneck
+                </div>
+            </div>
+
+            <div class="scenarios">
+                <!-- Scenario 1 -->
+                <div class="workflow-block">
+                    <div class="workflow-title">Skenario 1 — Tracker Only <span
+                            style="font-weight:400;color:var(--green);font-size:0.8rem;">(Fast Track)</span></div>
+                    <div class="chain">
+                        <div class="chain-step">
+                            <div class="chain-actor"><span class="actor-chip djarum">Djarum</span></div>
+                            <div class="chain-action">
+                                <p>Kirim ID YouTube baru ke PIC Tribun</p>
+                            </div>
+                        </div>
+                        <div class="chain-step">
+                            <div class="chain-actor"><span class="actor-chip tribun">Kreatif</span></div>
+                            <div class="chain-action">
+                                <p>Ganti ID di source code server internal</p>
+                            </div>
+                        </div>
+                        <div class="chain-step">
+                            <div class="chain-actor"><span class="actor-chip tribun">AdOps</span></div>
+                            <div class="chain-action">
+                                <p>Force clear cache pada slot iklan</p>
+                            </div>
+                        </div>
+                        <div class="chain-step">
+                            <div class="chain-actor"><span class="actor-chip live">Live</span></div>
+                            <div class="chain-action">
+                                <p>Materi ter-update seketika di pembaca</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="time-strip fast">
+                        <span class="time-label fast">Estimasi proses</span>
+                        <span class="time-val fast">10 – 15 menit</span>
+                    </div>
+                </div>
+
+                <!-- Scenario 2 -->
+                <div class="workflow-block">
+                    <div class="workflow-title">Skenario 2 — Fullscript <span
+                            style="font-weight:400;color:var(--amber);font-size:0.8rem;">(Complex Loop)</span></div>
+                    <div class="chain">
+                        <div class="chain-step">
+                            <div class="chain-actor"><span class="actor-chip djarum">Djarum</span></div>
+                            <div class="chain-action">
+                                <p>Kirim email instruksi ke PIC Tribun</p>
+                            </div>
+                        </div>
+                        <div class="chain-step bottleneck">
+                            <div class="chain-actor"><span class="actor-chip tribun">Kreatif</span></div>
+                            <div class="chain-action">
+                                <p>Bongkar aset .zip &amp; ganti link secara lokal</p>
+                                <span class="bottleneck-tag">Bottleneck</span>
+                            </div>
+                        </div>
+                        <div class="chain-step bottleneck">
+                            <div class="chain-actor"><span class="actor-chip tribun">PIC</span></div>
+                            <div class="chain-action">
+                                <p>Kirim file revisi balik ke Tim Djarum</p>
+                                <span class="bottleneck-tag">Bottleneck</span>
+                            </div>
+                        </div>
+                        <div class="chain-step">
+                            <div class="chain-actor"><span class="actor-chip djarum">Djarum</span></div>
+                            <div class="chain-action">
+                                <p>Instruksi ke Agency untuk upload DCM</p>
+                            </div>
+                        </div>
+                        <div class="chain-step bottleneck">
+                            <div class="chain-actor"><span class="actor-chip dcm">DCM</span></div>
+                            <div class="chain-action">
+                                <p>Generating new script / refreshing tag</p>
+                                <span class="warning-tag">Server Delay</span>
+                            </div>
+                        </div>
+                        <div class="chain-step bottleneck">
+                            <div class="chain-actor"><span class="actor-chip tribun">AdOps</span></div>
+                            <div class="chain-action">
+                                <p>Update tag baru di Google Ad Manager (GAM)</p>
+                                <span class="bottleneck-tag">Bottleneck</span>
+                            </div>
+                        </div>
+                        <div class="chain-step">
+                            <div class="chain-actor"><span class="actor-chip live">Live</span></div>
+                            <div class="chain-action">
+                                <p>Materi baru tayang (setelah propagasi server)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="time-strip slow">
+                        <span class="time-label slow">Estimasi proses</span>
+                        <span class="time-val slow">1 – 2 jam</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5 -->
+        <div class="section">
+            <div class="section-label">
+                <span class="section-num">05</span>
+                <span class="section-title">Perbandingan Teknis Fitur</span>
+            </div>
+            <table class="cmp-table">
+                <thead>
+                    <tr>
+                        <th>Fitur</th>
+                        <th>Tracking Only</th>
+                        <th>Full Script (JS Tag)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Kontrol Materi</td>
+                        <td><span class="chip-g">Publisher (Tribunnews)</span></td>
+                        <td>Advertiser (Tim Djarum)</td>
+                    </tr>
+                    <tr>
+                        <td>Beban Loading</td>
+                        <td><span class="chip-g">Sangat ringan</span></td>
+                        <td><span class="chip-a">Tergantung script klien (Redirect)</span></td>
+                    </tr>
+                    <tr>
+                        <td>Kemudahan Revisi</td>
+                        <td><span class="chip-g">Sangat mudah (internal update)</span></td>
+                        <td><span class="chip-a">Prosedur re-tagging (email loop)</span></td>
+                    </tr>
+                    <tr>
+                        <td>Kompatibilitas</td>
+                        <td><span class="chip-g">Hampir di semua slot</span></td>
+                        <td><span class="chip-a">Butuh slot yang mendukung JS</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SECTION 6 -->
+        <div class="section">
+            <div class="section-label">
+                <span class="section-num">06</span>
+                <span class="section-title">Poin Diskusi Kritis (Live Event Risk)</span>
+            </div>
+            <div class="risk-grid">
+                <div class="risk-card">
+                    <div class="risk-num">RISIKO 01 · HUMAN FACTOR</div>
+                    <div class="risk-title">Kesiapan Ad Ops Agency</div>
+                    <div class="risk-body">
+                        "Kami dari sisi Publisher siap menyediakan tim dedicated untuk standby selama event jam 8–10
+                        malam. Namun, apakah dari sisi Agency/Klien juga ada personel Ad Ops yang memiliki akses
+                        langsung ke dashboard DCM yang standby di jam yang sama? Karena jika link harus diganti jam 9
+                        malam, prosesnya harus dimulai dari dashboard mereka."
+                    </div>
+                </div>
+                <div class="risk-card">
+                    <div class="risk-num">RISIKO 02 · SYSTEM FACTOR</div>
+                    <div class="risk-title">Sinkronisasi Server DCM</div>
+                    <div class="risk-body">
+                        "Meskipun tim kita berdua standby, sistem DCM memerlukan waktu untuk refresh aset. Jika
+                        menggunakan Fullscript, perubahan tidak terjadi secara instan. Ada risiko iklan yang muncul di
+                        user masih menggunakan link lama selama proses sinkronisasi server Google berlangsung. Apakah
+                        klien siap dengan risiko delay ini di tengah live event yang singkat?"
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECOMMENDATION -->
+        <div class="rec-block">
+            <div class="rec-icon">REC</div>
+            <div>
+                <div class="rec-label">Rekomendasi Strategis</div>
+                <p class="rec-text">
+                    Demi meminimalisir kendala teknis pada <strong>Live Event</strong>, kami sangat menyarankan
+                    <strong>Opsi 1 (Tracker Only)</strong> untuk Campaign B. Kelincahan update ID YouTube secara
+                    instan adalah kunci keberhasilan kampanye dengan durasi yang sangat terbatas —
+                    tanpa ketergantungan pada rantai komunikasi panjang yang rentan bottleneck.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
