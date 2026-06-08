@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome for clean layout icons -->
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
@@ -31,122 +31,100 @@
             background-color: #f8fafc;
             -webkit-tap-highlight-color: transparent;
         }
-
-        /* Optimized for Mobile Screens and PDF Print */
-        @media print {
-            body {
-                background-color: #ffffff;
-            }
-
-            .no-print {
-                display: none !important;
-            }
-
-            .print-card {
-                border: none !important;
-                box-shadow: none !important;
-                padding: 0 !important;
-            }
-        }
     </style>
 </head>
 
-<body class="text-slate-800 antialiased bg-slate-50">
+<body class="text-slate-800 antialiased bg-slate-50 text-sm md:text-base">
 
-    <!-- Simple Utility Bar (Sticky top for quick PDF saving on mobile/desktop) -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200/80 px-4 py-3 no-print">
-        <div class="max-w-md mx-auto flex items-center justify-between">
-            <span class="text-xs font-bold tracking-wider text-slate-500 uppercase flex items-center gap-1.5">
-                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-                Rekomendasi Internal
-            </span>
-            <button onclick="window.print()"
-                class="text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition flex items-center gap-1">
-                <i class="fa-solid fa-file-pdf"></i>
-                <span>Simpan PDF / Cetak</span>
-            </button>
-        </div>
-    </header>
-
-    <main class="max-w-md mx-auto px-4 py-6 space-y-6">
+    <main class="max-w-md mx-auto px-4 py-8 space-y-6">
 
         <!-- Document Card -->
-        <article class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden print-card">
-            <!-- Professional Top Accent Line -->
-            <div class="h-1.5 bg-emerald-600"></div>
+        <article class="bg-white rounded-2xl border border-slate-200 shadow-md overflow-hidden">
+            <!-- Top Accent Line -->
+            <div class="h-2 bg-emerald-600"></div>
 
-            <div class="p-5 space-y-6">
+            <div class="p-6 space-y-8">
+
                 <!-- SECTION A -->
-                <div class="space-y-3">
-                    <div class="flex items-center gap-2">
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2.5">
                         <span
-                            class="flex items-center justify-center w-6 h-6 rounded-md bg-amber-50 text-amber-700 font-bold text-xs">A</span>
-                        <h2 class="text-sm font-bold text-slate-900">KONDISI BEFORE (SEBELUM FAHRI)</h2>
+                            class="flex items-center justify-center w-7 h-7 rounded-lg bg-amber-50 text-amber-700 font-extrabold text-sm border border-amber-200">A</span>
+                        <h2 class="text-base md:text-lg font-extrabold text-slate-900 tracking-tight">KONDISI BEFORE
+                            (SEBELUM FAHRI)</h2>
                     </div>
 
-                    <p class="text-xs text-slate-600 leading-relaxed">
+                    <p class="text-sm md:text-base text-slate-600 leading-relaxed font-medium">
                         Tim memiliki beragam pekerjaan teknis yang selama ini hanya bisa saya kerjakan sendiri, antara
                         lain:
                     </p>
 
-                    <!-- Bullet points as clean mobile pills -->
-                    <ul class="space-y-2">
+                    <!-- Bullet points as clean mobile pills (Larger Text) -->
+                    <ul class="space-y-3">
                         <li
-                            class="flex items-start gap-2 bg-slate-50/50 p-2.5 rounded-lg border border-slate-100 text-xs text-slate-700">
-                            <i class="fa-solid fa-code text-amber-500 mt-0.5 shrink-0"></i>
-                            <span>Koding banner ads (HTML5, GIF, JPG) untuk berbagai ukuran dan properti online</span>
+                            class="flex items-start gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-sm md:text-base text-slate-700">
+                            <i class="fa-solid fa-code text-amber-500 mt-1 shrink-0 text-base"></i>
+                            <span class="font-medium">Koding banner ads (HTML5, GIF, JPG) untuk berbagai ukuran dan
+                                properti online</span>
                         </li>
                         <li
-                            class="flex items-start gap-2 bg-slate-50/50 p-2.5 rounded-lg border border-slate-100 text-xs text-slate-700">
-                            <i class="fa-solid fa-cube text-amber-500 mt-0.5 shrink-0"></i>
-                            <span>Widget interaktif untuk kebutuhan campaign tertentu</span>
+                            class="flex items-start gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-sm md:text-base text-slate-700">
+                            <i class="fa-solid fa-cube text-amber-500 mt-1 shrink-0 text-base"></i>
+                            <span class="font-medium">Widget interaktif untuk kebutuhan campaign tertentu</span>
                         </li>
                         <li
-                            class="flex items-start gap-2 bg-slate-50/50 p-2.5 rounded-lg border border-slate-100 text-xs text-slate-700">
-                            <i class="fa-solid fa-file-invoice text-amber-500 mt-0.5 shrink-0"></i>
-                            <span>Landing page yang butuh kustomisasi sesuai brief klien</span>
+                            class="flex items-start gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-sm md:text-base text-slate-700">
+                            <i class="fa-solid fa-file-invoice text-amber-500 mt-1 shrink-0 text-base"></i>
+                            <span class="font-medium">Landing page yang butuh kustomisasi sesuai brief klien</span>
                         </li>
                         <li
-                            class="flex items-start gap-2 bg-slate-50/50 p-2.5 rounded-lg border border-slate-100 text-xs text-slate-700">
-                            <i class="fa-solid fa-laptop-code text-amber-500 mt-0.5 shrink-0"></i>
-                            <span>Microsite kompleks yang membutuhkan front-end development</span>
+                            class="flex items-start gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-sm md:text-base text-slate-700">
+                            <i class="fa-solid fa-laptop-code text-amber-500 mt-1 shrink-0 text-base"></i>
+                            <span class="font-medium">Microsite kompleks yang membutuhkan front-end development</span>
                         </li>
                         <li
-                            class="flex items-start gap-2 bg-slate-50/50 p-2.5 rounded-lg border border-slate-100 text-xs text-slate-700">
-                            <i class="fa-solid fa-screwdriver-wrench text-amber-500 mt-0.5 shrink-0"></i>
-                            <span>Maintenance internal tools yang menjadi tulang punggung efisiensi tim</span>
+                            class="flex items-start gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-sm md:text-base text-slate-700">
+                            <i class="fa-solid fa-screwdriver-wrench text-amber-500 mt-1 shrink-0 text-base"></i>
+                            <span class="font-medium">Maintenance internal tools yang menjadi tulang punggung efisiensi
+                                tim</span>
                         </li>
                     </ul>
 
-                    <!-- Structural Problems Callout -->
-                    <div class="bg-red-50 border border-red-100 rounded-xl p-3.5 space-y-2 mt-3">
-                        <h4 class="text-xs font-bold text-red-800 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
+                    <!-- Structural Problems Callout (Larger Text) -->
+                    <div class="bg-red-50 border border-red-100 rounded-2xl p-4 space-y-3 mt-4">
+                        <h4
+                            class="text-xs md:text-sm font-extrabold text-red-800 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-base"></i>
                             Masalah Struktural:
                         </h4>
-                        <ul class="space-y-1.5 text-xs text-red-700">
-                            <li class="flex items-start gap-1.5">
-                                <span class="font-bold shrink-0">• SPoF:</span> Semua pekerjaan koding di atas hanya
-                                dikerjakan & dipelihara oleh saya sendiri.
+                        <ul class="space-y-2 text-sm md:text-base text-red-700 font-medium">
+                            <li class="flex items-start gap-2">
+                                <span class="font-extrabold shrink-0">•</span>
+                                <span><strong class="font-extrabold text-red-800">Single point of failure:</strong>
+                                    Semua pekerjaan koding di atas hanya dikerjakan & dipelihara oleh saya
+                                    sendiri.</span>
                             </li>
-                            <li class="flex items-start gap-1.5">
-                                <span class="font-bold shrink-0">• Utang Teknis:</span> Banyak kode ditulis terburu-buru
-                                demi deadline, tidak rapi & tidak terdokumentasi.
+                            <li class="flex items-start gap-2">
+                                <span class="font-extrabold shrink-0">•</span>
+                                <span><strong class="font-extrabold text-red-800">Utang teknis menumpuk:</strong> Banyak
+                                    kode ditulis terburu-buru demi deadline, tidak rapi & tidak terdokumentasi.</span>
                             </li>
-                            <li class="flex items-start gap-1.5">
-                                <span class="font-bold shrink-0">• No Dokumentasi:</span> Pengetahuan hanya di kepala
-                                saya, risiko besar jika berhalangan.
+                            <li class="flex items-start gap-2">
+                                <span class="font-extrabold shrink-0">•</span>
+                                <span><strong class="font-extrabold text-red-800">Tidak ada dokumentasi:</strong>
+                                    Pengetahuan hanya di kepala saya, risiko besar jika saya berhalangan.</span>
                             </li>
-                            <li class="flex items-start gap-1.5">
-                                <span class="font-bold shrink-0">• Bug/Revisi:</span> Waktu tersedot debugging,
-                                menghambat proyek baru masuk.
+                            <li class="flex items-start gap-2">
+                                <span class="font-extrabold shrink-0">•</span>
+                                <span><strong class="font-extrabold text-red-800">Bug & revisi menghambat:</strong>
+                                    Waktu saya tersedot debugging, menghambat proyek baru masuk.</span>
                             </li>
                         </ul>
                     </div>
 
-                    <!-- Highlight Conclusion Statement -->
-                    <div class="border-l-2 border-slate-400 pl-3 py-1 mt-3">
-                        <p class="text-xs text-slate-500 italic">
+                    <!-- Conclusion Statement -->
+                    <div class="border-l-4 border-slate-400 pl-4 py-2 mt-4">
+                        <p class="text-sm md:text-base text-slate-500 italic font-medium leading-relaxed">
                             "Intinya: tim ini punya kapasitas produksi yang baik, tetapi seluruh beban teknis (dari
                             koding ads sampai microsite) bergantung pada satu orang."
                         </p>
@@ -154,143 +132,153 @@
                 </div>
 
                 <!-- SECTION B -->
-                <div class="space-y-3 pt-4 border-t border-slate-100">
+                <div class="space-y-4 pt-6 border-t border-slate-100">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2.5">
                             <span
-                                class="flex items-center justify-center w-6 h-6 rounded-md bg-emerald-50 text-emerald-700 font-bold text-xs">B</span>
-                            <h2 class="text-sm font-bold text-slate-900">YANG SUDAH DIKERJAKAN FAHRI</h2>
+                                class="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 font-extrabold text-sm border border-emerald-200">B</span>
+                            <h2 class="text-base md:text-lg font-extrabold text-slate-900 tracking-tight">YANG SUDAH
+                                DIKERJAKAN FAHRI</h2>
                         </div>
                         <span
-                            class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">6
+                            class="bg-emerald-100 text-emerald-800 text-[11px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">6
                             Bulan</span>
                     </div>
 
-                    <p class="text-xs text-slate-600 leading-relaxed">
+                    <p class="text-sm md:text-base text-slate-600 leading-relaxed font-medium">
                         Fahri dipekerjakan untuk mengurangi beban teknis dan utang koding. Capaiannya:
                     </p>
 
-                    <!-- Dynamic list styled for mobile dashboard -->
-                    <div class="space-y-2">
-                        <!-- Row 1 -->
-                        <div class="border border-slate-200/80 rounded-xl p-3 bg-white space-y-1">
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs font-bold text-slate-800">Refactor kode</span>
+                    <!-- Mobile Cards List -->
+                    <div class="space-y-3">
+                        <!-- Card 1 -->
+                        <div class="border border-slate-200 rounded-xl p-4 bg-white space-y-1.5 shadow-sm">
+                            <div class="flex justify-between items-start gap-2">
+                                <span class="text-sm md:text-base font-extrabold text-slate-900">Refactor kode</span>
                                 <span
-                                    class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full uppercase">Selesai
+                                    class="text-[10px] md:text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full uppercase shrink-0">Selesai
                                     Sebagian</span>
                             </div>
-                            <p class="text-xs text-slate-500">Sebagian besar kode banner ads, widget, dan tools utama
-                                sudah lebih bersih & stabil.</p>
+                            <p class="text-sm text-slate-600 leading-relaxed">Sebagian besar kode banner ads, widget,
+                                dan tools utama sudah di-refactor (lebih bersih & stabil).</p>
                         </div>
-                        <!-- Row 2 -->
-                        <div class="border border-slate-200/80 rounded-xl p-3 bg-white space-y-1">
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs font-bold text-slate-800">Bug fixing</span>
+                        <!-- Card 2 -->
+                        <div class="border border-slate-200 rounded-xl p-4 bg-white space-y-1.5 shadow-sm">
+                            <div class="flex justify-between items-start gap-2">
+                                <span class="text-sm md:text-base font-extrabold text-slate-900">Bug fixing</span>
                                 <span
-                                    class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full uppercase">Penurunan
+                                    class="text-[10px] md:text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full uppercase shrink-0">Penurunan
                                     Drastis</span>
                             </div>
-                            <p class="text-xs text-slate-500">Frekuensi error turun drastis di sistem operasional
-                                harian.</p>
+                            <p class="text-sm text-slate-600 leading-relaxed">Frekuensi error turun drastis.</p>
                         </div>
-                        <!-- Row 3 -->
-                        <div class="border border-slate-200/80 rounded-xl p-3 bg-white space-y-1">
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs font-bold text-slate-800">Dokumentasi</span>
+                        <!-- Card 3 -->
+                        <div class="border border-slate-200 rounded-xl p-4 bg-white space-y-1.5 shadow-sm">
+                            <div class="flex justify-between items-start gap-2">
+                                <span class="text-sm md:text-base font-extrabold text-slate-900">Dokumentasi</span>
                                 <span
-                                    class="text-[9px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full uppercase">Mulai
+                                    class="text-[10px] md:text-xs font-bold text-amber-800 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full uppercase shrink-0">Mulai
                                     Dibuat</span>
                             </div>
-                            <p class="text-xs text-slate-500">Mulai disusun untuk aset koding yang sudah di-refactor.
-                            </p>
+                            <p class="text-sm text-slate-600 leading-relaxed">Mulai dibuat untuk aset koding yang sudah
+                                di-refactor.</p>
                         </div>
-                        <!-- Row 4 -->
-                        <div class="border border-slate-200/80 rounded-xl p-3 bg-white space-y-1">
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs font-bold text-slate-800">Transfer knowledge</span>
+                        <!-- Card 4 -->
+                        <div class="border border-slate-200 rounded-xl p-4 bg-white space-y-1.5 shadow-sm">
+                            <div class="flex justify-between items-start gap-2">
+                                <span class="text-sm md:text-base font-extrabold text-slate-900">Transfer
+                                    knowledge</span>
                                 <span
-                                    class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full uppercase">Mulai
-                                    Mandiri</span>
+                                    class="text-[10px] md:text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full uppercase shrink-0">Mandiri</span>
                             </div>
-                            <p class="text-xs text-slate-500">Mulai bisa mengerjakan perbaikan minor dan pembuatan
-                                landing page sederhana tanpa pendampingan penuh.</p>
+                            <p class="text-sm text-slate-600 leading-relaxed">Mulai bisa mengerjakan perbaikan minor dan
+                                pembuatan landing page sederhana tanpa saya.</p>
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 rounded-lg p-2.5 border border-slate-100 text-center">
-                        <p class="text-xs text-slate-500 italic">
+                    <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 text-center">
+                        <p class="text-xs md:text-sm text-slate-500 italic font-medium">
                             *Fahri bekerja paralel di belakang layar, tidak mengganggu operasional harian tim.
                         </p>
                     </div>
                 </div>
 
                 <!-- SECTION C -->
-                <div class="space-y-3 pt-4 border-t border-slate-100">
-                    <div class="flex items-center gap-2">
+                <div class="space-y-4 pt-6 border-t border-slate-100">
+                    <div class="flex items-center gap-2.5">
                         <span
-                            class="flex items-center justify-center w-6 h-6 rounded-md bg-emerald-50 text-emerald-700 font-bold text-xs">C</span>
-                        <h2 class="text-sm font-bold text-slate-900">DAMPAK POSITIF KE TIM</h2>
+                            class="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 font-extrabold text-sm border border-emerald-200">C</span>
+                        <h2 class="text-base md:text-lg font-extrabold text-slate-900 tracking-tight">DAMPAK KE TIM</h2>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-2">
+                    <div class="grid grid-cols-1 gap-3">
                         <div
-                            class="flex items-start gap-2 bg-emerald-50/20 border border-emerald-100 p-2.5 rounded-lg text-xs text-slate-700">
-                            <i class="fa-regular fa-circle-check text-emerald-600 mt-0.5 shrink-0"></i>
+                            class="flex items-start gap-3 bg-emerald-50/35 border border-emerald-100 p-4 rounded-xl text-sm md:text-base text-slate-700 font-medium">
+                            <i class="fa-regular fa-circle-check text-emerald-600 mt-1 shrink-0 text-lg"></i>
                             <span>Tim lebih produktif karena kode lebih stabil dan error berkurang.</span>
                         </div>
                         <div
-                            class="flex items-start gap-2 bg-emerald-50/20 border border-emerald-100 p-2.5 rounded-lg text-xs text-slate-700">
-                            <i class="fa-regular fa-circle-check text-emerald-600 mt-0.5 shrink-0"></i>
-                            <span>Risiko SPoF mulai berkurang (tidak bergantung penuh pada satu orang).</span>
+                            class="flex items-start gap-3 bg-emerald-50/35 border border-emerald-100 p-4 rounded-xl text-sm md:text-base text-slate-700 font-medium">
+                            <i class="fa-regular fa-circle-check text-emerald-600 mt-1 shrink-0 text-lg"></i>
+                            <span>Risiko SPoF mulai berkurang (tidak semua pekerjaan teknis bergantung pada
+                                saya).</span>
                         </div>
                         <div
-                            class="flex items-start gap-2 bg-emerald-50/20 border border-emerald-100 p-2.5 rounded-lg text-xs text-slate-700">
-                            <i class="fa-regular fa-circle-check text-emerald-600 mt-0.5 shrink-0"></i>
+                            class="flex items-start gap-3 bg-emerald-50/35 border border-emerald-100 p-4 rounded-xl text-sm md:text-base text-slate-700 font-medium">
+                            <i class="fa-regular fa-circle-check text-emerald-600 mt-1 shrink-0 text-lg"></i>
                             <span>Fondasi kode lebih kuat untuk pengembangan ke depan.</span>
                         </div>
                         <div
-                            class="flex items-start gap-2 bg-emerald-50/20 border border-emerald-100 p-2.5 rounded-lg text-xs text-slate-700">
-                            <i class="fa-regular fa-circle-check text-emerald-600 mt-0.5 shrink-0"></i>
+                            class="flex items-start gap-3 bg-emerald-50/35 border border-emerald-100 p-4 rounded-xl text-sm md:text-base text-slate-700 font-medium">
+                            <i class="fa-regular fa-circle-check text-emerald-600 mt-1 shrink-0 text-lg"></i>
                             <span>Pekerjaan microsite dan landing page bisa mulai didistribusikan.</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- SECTION D -->
-                <div class="space-y-3 pt-4 border-t border-slate-100">
-                    <div class="flex items-center gap-2">
+                <div class="space-y-4 pt-6 border-t border-slate-100">
+                    <div class="flex items-center gap-2.5">
                         <span
-                            class="flex items-center justify-center w-6 h-6 rounded-md bg-amber-50 text-amber-700 font-bold text-xs">D</span>
-                        <h2 class="text-sm font-bold text-slate-900">MENGAPA PERPANJANGAN DIPERLUKAN</h2>
+                            class="flex items-center justify-center w-7 h-7 rounded-lg bg-amber-50 text-amber-700 font-extrabold text-sm border border-amber-200">D</span>
+                        <h2 class="text-base md:text-lg font-extrabold text-slate-900 tracking-tight">MENGAPA
+                            PERPANJANGAN DIPERLUKAN</h2>
                     </div>
 
-                    <div class="space-y-2.5">
-                        <div class="bg-slate-50/50 p-3 rounded-lg border border-slate-100 text-xs">
-                            <span class="font-bold text-slate-800 block mb-0.5">1. Pekerjaan Belum Selesai</span>
-                            <span class="text-slate-600">Masih ada kode banner ads, widget, dan microsite yang perlu
-                                di-refactor + dokumentasi lengkap.</span>
+                    <div class="space-y-3">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-150 space-y-1">
+                            <span class="font-extrabold text-slate-900 text-sm md:text-base flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                                Pekerjaan belum selesai
+                            </span>
+                            <span class="text-slate-600 text-sm md:text-base font-medium leading-relaxed block pl-3.5">
+                                Masih ada kode banner ads, widget, dan microsite yang perlu di-refactor + dokumentasi
+                                lengkap.
+                            </span>
                         </div>
-                        <div class="bg-slate-50/50 p-3 rounded-lg border border-slate-100 text-xs">
-                            <span class="font-bold text-slate-800 block mb-0.5">2. Mengamankan Investasi</span>
-                            <span class="text-slate-600">Waktu training selama ini terbuang jika berhenti
-                                sekarang.</span>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-150 space-y-1">
+                            <span class="font-extrabold text-slate-900 text-sm md:text-base flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                                Mengamankan investasi
+                            </span>
+                            <span class="text-slate-600 text-sm md:text-base font-medium leading-relaxed block pl-3.5">
+                                Waktu training selama ini terbuang jika berhenti sekarang.
+                            </span>
                         </div>
-                        <div class="bg-slate-50/50 p-3 rounded-lg border border-slate-100 text-xs">
-                            <span class="font-bold text-slate-800 block mb-0.5">3. Menyelesaikan SPoF</span>
-                            <span class="text-slate-600">Target akhir: seluruh pekerjaan teknis bisa dikelola tanpa saya
-                                maupun Fahri.</span>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-150 space-y-1">
+                            <span class="font-extrabold text-slate-900 text-sm md:text-base flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                                Menyelesaikan SPoF
+                            </span>
+                            <span class="text-slate-600 text-sm md:text-base font-medium leading-relaxed block pl-3.5">
+                                Target akhir: seluruh pekerjaan teknis bisa dikelola tanpa saya maupun Fahri.
+                            </span>
                         </div>
                     </div>
                 </div>
 
             </div>
         </article>
-
-        <!-- Footer -->
-        <footer class="text-center text-[10px] text-slate-400 py-2 no-print">
-            <p>© 2026 Creative Operations Team - Memo PKWT</p>
-        </footer>
     </main>
 
 </body>
