@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pearle Vision | Digital Ads Layout Approval Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght=500;700&family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap');
+
+        :root {
+            --brand-green: #5e8133;
+            --brand-green-hover: #4d6a29;
+            --bg-body: #0d0f12;
+            --bg-card: #15191e;
+            --border-color: #242b35;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-glow: rgba(94, 129, 51, 0.2);
+        }
+
+        .light-mode {
+            --bg-body: #f7faf6;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-glow: rgba(94, 129, 51, 0.08);
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s ease;
+            scroll-behavior: smooth;
+        }
+
+        .serif-title {
+            font-family: 'Cinzel', serif;
+        }
+
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(16px);
+            background-color: rgba(13, 15, 18, 0.85);
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .sticky-nav {
+            background-color: rgba(247, 250, 246, 0.85);
+        }
+
+        .banner-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .banner-card:hover {
+            border-color: var(--brand-green);
+            box-shadow: 0 20px 30px -10px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        .img-container {
+            background: #e2e8f0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .light-mode .img-container {
+            background: #ffffff;
+        }
+
+        .status-pill {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .active-dot {
+            position: relative;
+        }
+
+        .active-dot::after {
+            content: '';
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--brand-green);
+        }
+
+        /* Diagnostic fallback block for missing assets */
+        .fallback-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 16px;
+            background: rgba(239, 68, 68, 0.04);
+            border: 2px dashed rgba(239, 68, 68, 0.25);
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .fallback-box code {
+            background: rgba(239, 68, 68, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-top: 8px;
+            word-break: break-all;
+            user-select: all;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between">
+
+    <div class="w-full">
+        <!-- Brand Header Top Bar -->
+        <div class="max-w-[1700px] mx-auto px-6 md:px-12 pt-8 pb-6 flex justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <span class="w-3 h-3 rounded-full"
+                    style="background-color: var(--brand-green); box-shadow: 0 0 12px var(--brand-green);"></span>
+                <div>
+                    <span class="text-[10px] font-black tracking-[0.25em] uppercase opacity-75">Pearle Vision
+                        Workspace</span>
+                    <h2 class="text-xs font-semibold opacity-50">Creative Review Engine</h2>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <!-- Theme switch handler -->
+                <button onclick="toggleTheme()"
+                    class="flex items-center gap-2 px-4 py-2 bg-neutral-800 text-white rounded-lg text-xs font-bold hover:opacity-90 transition-all border border-neutral-700 shadow-md"
+                    id="themeBtn">
+                    <span id="themeText">LIGHT MODE</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Hero Header section -->
+        <header
+            class="max-w-[1700px] mx-auto px-6 md:px-12 mb-8 flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-8 border-b"
+            style="border-color: var(--border-color);">
+            <div class="flex-1">
+                <div class="flex flex-wrap items-center gap-3 mb-4">
+                    <span class="status-pill bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Phase
+                        1</span>
+                    <span class="status-pill bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Layout
+                        Approval</span>
+                    <span class="status-pill bg-amber-500/10 text-amber-500 border border-amber-500/20">60
+                        Variations</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 serif-title"
+                    style="color: var(--text-main);">
+                    Pearle <span class="font-light italic" style="color: var(--brand-green);">Vision</span>
+                </h1>
+                <p style="color: var(--text-muted);" class="max-w-3xl text-base md:text-lg leading-relaxed font-light">
+                    Layout alignment check platform for Pearle Vision creative assets. Auditing core creative concepts
+                    designed across general market and localization pipelines.
+                </p>
+            </div>
+
+            <!-- Global Display Workspace Controls -->
+            <div class="flex flex-wrap items-center gap-4 bg-neutral-950/20 p-4 rounded-xl border"
+                style="border-color: var(--border-color);">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] font-bold uppercase tracking-wider opacity-60">Global Region
+                        Filter</label>
+                    <div class="inline-flex rounded-lg bg-neutral-900 p-0.5 border"
+                        style="border-color: var(--border-color);">
+                        <button onclick="filterRegion('all')" id="btn-all"
+                            class="px-3 py-1.5 rounded-md text-xs font-bold bg-neutral-800 text-white transition-all">All
+                            Placements</button>
+                        <button onclick="filterRegion('USGM')" id="btn-USGM"
+                            class="px-3 py-1.5 rounded-md text-xs font-medium text-neutral-400 hover:text-white transition-all">USGM
+                            Only</button>
+                        <button onclick="filterRegion('CA')" id="btn-CA"
+                            class="px-3 py-1.5 rounded-md text-xs font-medium text-neutral-400 hover:text-white transition-all">CA
+                            Only</button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] font-bold uppercase tracking-wider opacity-60">Layout Scale</label>
+                    <div class="flex items-center gap-3">
+                        <input type="range" min="0.5" max="1" step="0.05" value="1" id="scaleSlider"
+                            oninput="adjustScale(this.value)"
+                            class="w-24 h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-[#5e8133]">
+                        <span id="scaleLabel" class="text-xs font-mono font-bold w-10">100%</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sticky Navigation Bar -->
+        <nav class="sticky-nav">
+            <div
+                class="max-w-[1700px] mx-auto px-6 md:px-12 py-4 flex items-center justify-between gap-6 overflow-x-auto whitespace-nowrap">
+                <div class="flex gap-8" id="sticky-links">
+                    <!-- Nav items rendered dynamically -->
+                </div>
+                <div class="text-[10px] font-bold tracking-widest uppercase opacity-40 hidden md:block">
+                    Scroll To Concept
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Banner Display Board -->
+        <main class="max-w-[1700px] mx-auto px-6 md:px-12 py-12 space-y-24" id="main-content">
+            <!-- Concepts injected dynamically via JavaScript to ensure consistent template matching -->
+        </main>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="mt-24 py-12 border-t text-center w-full max-w-[1700px] mx-auto"
+        style="border-color: var(--border-color);">
+        <p style="color: var(--text-muted);" class="text-[10px] font-semibold tracking-[0.2em] uppercase">
+            &copy; <span id="currentYear"></span> Pearle Vision &bull; Phase 1 Layout Review Portal &bull; Verified
+            Local Assets Only
+        </p>
+    </footer>
+
+    <script>
+        // Set dynamic year in footer
+        document.getElementById('currentYear').innerText = new Date().getFullYear();
+
+        // 5 Core Creative concepts mirroring filenames verbatim from workspace sources
+        const concepts = [
+            {
+                id: "concept-3a",
+                num: "3a",
+                title: "Annual Exams",
+                format: "jpg",
+                campaign: "AnnualExams",
+                description: "Phase 1 layout highlighting routine eye health evaluations and checkups."
+            },
+            {
+                id: "concept-5",
+                num: "5",
+                title: "Complex Prescription",
+                format: "gif",
+                campaign: "ComplexPrespection", // Match typo 'ComplexPrespection' as shown in the file list
+                description: "High-contrast animated focus framing specialized and advanced prescriptions."
+            },
+            {
+                id: "concept-10",
+                num: "10",
+                title: "BTS Protection Plan (Young Kid Photo)",
+                format: "jpg",
+                campaign: "BTSProtectionPlan", // Uses image_55c5c4.png source specification
+                description: "Back-to-School lens and frame protection options focusing on pediatric and younger kid demographics."
+            },
+            {
+                id: "concept-12a",
+                num: "12a",
+                title: "Labor Day Promotion",
+                format: "jpg",
+                campaign: { "USGM": "PromoLaborDay", "CA": "PromoLabourDay" }, // Handle different spellings for USGM and CA
+                description: "Retail holiday campaign layout layouts showcasing exclusive promotions."
+            },
+            {
+                id: "concept-12",
+                num: "12",
+                title: "Back-To-School Protection Plan",
+                format: "jpg",
+                campaign: "BTSProtectionPlan",
+                description: "Promoting pediatric plans and durable lens options for the upcoming school year."
+            }
+        ];
+
+        // Core dimensions matching standard ad units requested
+        const dimensions = [
+            { name: "Billboard", w: 970, h: 250 },
+            { name: "Leaderboard", w: 728, h: 90 },
+            { name: "Half Page", w: 300, h: 600 },
+            { name: "Skyscraper", w: 160, h: 600 },
+            { name: "Medium Rectangle", w: 300, h: 250 },
+            { name: "Mobile Banner", w: 320, h: 50 }
+        ];
+
+        // Localized target markets
+        const markets = [
+            { code: "USGM", name: "United States General Market" },
+            { code: "CA", name: "Canada" }
+        ];
+
+        let globalScale = 1;
+        let activeRegion = 'all';
+
+        /**
+         * Gracefully handles broken images when running locally, creating a helpful path inspection block.
+         */
+        function handleImgError(img, expectedFilename, width, height) {
+            const container = img.parentNode;
+            if (!container) return;
+
+            // Construct a beautifully styled missing asset card
+            const fallbackHTML = `
+                <div class="fallback-box w-full h-full" style="width: ${width}px; height: ${height}px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500/70 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span class="text-[9px] uppercase tracking-wider text-red-500 opacity-80">Asset Not Found</span>
+                    <span class="text-[9px] text-neutral-500 mt-1">Expected filename:</span>
+                    <code>${expectedFilename}</code>
+                </div>
+            `;
+            container.innerHTML = fallbackHTML;
+        }
+
+        /**
+         * Injects navigation links and layout components dynamically
+         */
+        function renderPortal() {
+            const navContainer = document.getElementById('sticky-links');
+            const mainContent = document.getElementById('main-content');
+
+            navContainer.innerHTML = '';
+            mainContent.innerHTML = '';
+
+            concepts.forEach((concept, index) => {
+                // Render Sticky Navigation Item
+                const navLink = document.createElement('a');
+                navLink.href = `#${concept.id}`;
+                navLink.id = `nav-${concept.id}`;
+                navLink.className = `text-xs font-bold uppercase tracking-widest text-neutral-400 hover:text-white transition-all py-1 cursor-pointer block ${index === 0 ? 'active-dot text-white font-black' : ''}`;
+                navLink.innerHTML = `<span style="color: var(--brand-green)" class="mr-1">Concept ${concept.num}</span> ${concept.title}`;
+
+                // Add smooth scroll behavior to sticky anchors
+                navLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById(concept.id).scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                });
+                navContainer.appendChild(navLink);
+
+                // Render Main Section Block
+                const section = document.createElement('section');
+                section.id = concept.id;
+                section.className = "space-y-12 scroll-mt-28";
+
+                // Section header block
+                section.innerHTML = `
+                    <div class="border-b pb-6" style="border-color: var(--border-color)">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div>
+                                <span class="text-xs font-extrabold tracking-[0.25em] uppercase" style="color: var(--brand-green);">Concept ${concept.num}</span>
+                                <h2 class="text-2xl md:text-3xl font-black mt-1 serif-title">${concept.title}</h2>
+                                <p style="color: var(--text-muted);" class="text-sm mt-2 font-light max-w-2xl">${concept.description}</p>
+                            </div>
+                            <span class="status-pill border bg-neutral-900/40 text-neutral-400 px-4 py-1.5 rounded-lg" style="border-color: var(--border-color)">Format: .${concept.format.toUpperCase()}</span>
+                        </div>
+                    </div>
+                `;
+
+                // Layout grid holding regions
+                const regionsContainer = document.createElement('div');
+                regionsContainer.className = "grid grid-cols-1 gap-16";
+
+                markets.forEach(m => {
+                    const regionDiv = document.createElement('div');
+                    regionDiv.className = `region-wrapper space-y-6 transition-all duration-300 ${m.code === 'USGM' ? 'region-usgm' : 'region-ca'}`;
+                    regionDiv.setAttribute('data-region', m.code);
+
+                    regionDiv.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="w-1.5 h-6 rounded bg-[#5e8133]"></span>
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider">${m.name}</span>
+                                <span class="text-[9px] font-black uppercase text-neutral-500 ml-2 tracking-widest">${m.code} Variant</span>
+                            </div>
+                        </div>
+                    `;
+
+                    // Banner units flex container
+                    const flexBanners = document.createElement('div');
+                    flexBanners.className = "flex flex-wrap gap-8 items-start justify-start scale-wrapper origin-top-left transition-all duration-300";
+
+                    dimensions.forEach(dim => {
+                        // Assemble exact verbatim filename based on structural schema:
+                        // PV-Q3-SOC-Post-[num]-[region]-[campaign]-[size].[format]
+                        const campaignStr = typeof concept.campaign === 'object' ? concept.campaign[m.code] : concept.campaign;
+                        const filename = `PV-Q3-SOC-Post-${concept.num}-${m.code}-${campaignStr}-${dim.w}x${dim.h}.${concept.format}`;
+
+                        const bannerCard = document.createElement('div');
+                        bannerCard.className = "banner-card flex-shrink-0";
+                        bannerCard.innerHTML = `
+                            <div class="w-full flex justify-between items-center opacity-70 mb-3 text-xs border-b pb-2" style="border-color: var(--border-color)">
+                                <span class="font-bold tracking-widest text-[10px]">${dim.w} x ${dim.h}</span>
+                                <span class="text-[9px] font-black uppercase text-emerald-500 tracking-wider">${dim.name}</span>
+                            </div>
+                            <div class="img-container relative flex items-center justify-center" style="width: ${dim.w}px; height: ${dim.h}px;">
+                                <img src="${filename}" 
+                                     alt="${filename}" 
+                                     width="${dim.w}" 
+                                     height="${dim.h}" 
+                                     loading="lazy"
+                                     class="block w-full h-full"
+                                     onerror="handleImgError(this, '${filename}', ${dim.w}, ${dim.h})" />
+                            </div>
+                        `;
+                        flexBanners.appendChild(bannerCard);
+                    });
+
+                    regionDiv.appendChild(flexBanners);
+                    regionsContainer.appendChild(regionDiv);
+                });
+
+                section.appendChild(regionsContainer);
+                mainContent.appendChild(section);
+            });
+
+            // Re-apply current scaling and filtering states
+            adjustScale(globalScale);
+            filterRegion(activeRegion);
+            setupScrollSpy();
+        }
+
+        /**
+         * Modifies the scale multiplier for high-density layouts on small displays
+         */
+        function adjustScale(val) {
+            globalScale = parseFloat(val);
+            document.getElementById('scaleLabel').innerText = `${Math.round(globalScale * 100)}%`;
+
+            const wrappers = document.querySelectorAll('.scale-wrapper');
+            wrappers.forEach(wrap => {
+                wrap.style.transform = `scale(${globalScale})`;
+                // Maintain margin spacing offset based on scale shrinkage
+                const marginNeeded = (1 - globalScale) * -100;
+                wrap.style.marginBottom = `${marginNeeded}%`;
+                wrap.style.marginRight = `${marginNeeded}%`;
+            });
+        }
+
+        /**
+         * Toggle displays between USGM only, CA only, or All Placements
+         */
+        function filterRegion(region) {
+            activeRegion = region;
+
+            // Adjust active filter buttons styling
+            ['all', 'USGM', 'CA'].forEach(r => {
+                const btn = document.getElementById(`btn-${r}`);
+                if (r === region) {
+                    btn.classList.add('bg-neutral-800', 'text-white');
+                    btn.classList.remove('text-neutral-400');
+                } else {
+                    btn.classList.remove('bg-neutral-800', 'text-white');
+                    btn.classList.add('text-neutral-400');
+                }
+            });
+
+            // Perform DOM hide/show sweeps
+            const allRegionWrappers = document.querySelectorAll('.region-wrapper');
+            allRegionWrappers.forEach(el => {
+                const currentDataRegion = el.getAttribute('data-region');
+                if (region === 'all' || currentDataRegion === region) {
+                    el.style.display = 'block';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+        }
+
+        /**
+         * Tracks scrolling and updates active state in navigation headers
+         */
+        function setupScrollSpy() {
+            const sections = document.querySelectorAll('section');
+            const observerOptions = {
+                root: null,
+                rootMargin: '-30% 0px -60% 0px', // Precise middle-of-screen focus
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const activeId = entry.target.id;
+
+                        // Update anchor states
+                        concepts.forEach(concept => {
+                            const link = document.getElementById(`nav-${concept.id}`);
+                            if (link) {
+                                if (concept.id === activeId) {
+                                    link.classList.add('active-dot', 'text-white', 'font-black');
+                                    link.classList.remove('text-neutral-400');
+                                } else {
+                                    link.classList.remove('active-dot', 'text-white', 'font-black');
+                                    link.classList.add('text-neutral-400');
+                                }
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => observer.observe(section));
+        }
+
+        /**
+         * Switches workspace theme modes
+         */
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+            const text = document.getElementById('themeText');
+
+            body.classList.toggle('light-mode');
+
+            if (body.classList.contains('light-mode')) {
+                text.innerText = 'DARK MODE';
+                btn.classList.replace('bg-neutral-800', 'bg-white');
+                btn.classList.add('text-slate-900', 'border-slate-300');
+            } else {
+                text.innerText = 'LIGHT MODE';
+                btn.classList.replace('bg-white', 'bg-neutral-800');
+                btn.classList.remove('text-slate-900', 'border-slate-300');
+            }
+        }
+
+        // Initialize portal layout on load
+        window.onload = function () {
+            renderPortal();
+        };
+    </script>
+</body>
+
+</html>
