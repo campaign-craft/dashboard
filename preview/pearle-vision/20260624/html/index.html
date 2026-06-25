@@ -7,7 +7,7 @@
     <title>Pearle Vision | Phase 2 HTML5 Animated Ads Approval Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght=500;700&family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap');
 
         :root {
             --brand-green: #5e8133;
@@ -64,8 +64,6 @@
         }
 
         .banner-card:hover {
-            border-color: var(--brand-green);
-            box-shadow: 0 20px 30px -10px var(--accent-glow);
             transform: translateY(-2px);
         }
 
@@ -160,7 +158,7 @@
                         2</span>
                     <span class="status-pill bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">HTML5
                         Animation Review</span>
-                    <span class="status-pill bg-amber-500/10 text-amber-500 border border-amber-500/20">60 Folder
+                    <span class="status-pill bg-amber-500/10 text-amber-500 border border-amber-500/20">70 Folder
                         Structures</span>
                 </div>
                 <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 serif-title"
@@ -169,7 +167,7 @@
                 </h1>
                 <p style="color: var(--text-muted);" class="max-w-3xl text-base md:text-lg leading-relaxed font-light">
                     Interactive animation review portal for checking HTML5 code packages. Auditing loop timing, timeline
-                    triggers, and responsive layout scaling across all 60 target variation folders.
+                    triggers, and responsive layout scaling across all 70 target variation folders.
                 </p>
             </div>
 
@@ -309,6 +307,77 @@
         let activeRegion = 'all';
 
         /**
+         * Checks if a dimension has an updated V2 equivalent folder according to image_148049.png and image_7ca4a3.png
+         */
+        function hasV2Version(conceptNum, w, h) {
+            if (conceptNum === "10") {
+                return (w === 300 && h === 600) || (w === 320 && h === 50) || (w === 970 && h === 250);
+            } else if (conceptNum === "12") {
+                return (w === 300 && h === 600) || (w === 970 && h === 250);
+            }
+            return false;
+        }
+
+        /**
+         * Helper function to construct V1 or V2 specific card templates matching image_14d35a.jpg layout
+         */
+        function createCardMarkup(dim, version, folderName, bannerId) {
+            const card = document.createElement('div');
+
+            let cardBorderClass = "border-[1px]";
+            let badgeHtml = "";
+            let labelHtml = "";
+
+            if (version === "V1") {
+                // Sleek border highlighting V1 (Green Accent)
+                cardBorderClass = "border-emerald-500/20 hover:border-emerald-500/60 shadow-[0_4px_12px_rgba(16,185,129,0.02)]";
+                badgeHtml = `<span class="px-2 py-0.5 rounded text-[9px] font-black tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 ml-2">V1</span>`;
+                labelHtml = `<span class="text-[9px] font-bold tracking-widest text-emerald-500 uppercase">${dim.name}</span>`;
+            } else if (version === "V2") {
+                // Sleek Amber/Orange border highlighting V2 (Amber Accent) as shown in image_14d67f.jpg
+                cardBorderClass = "border-amber-500/40 hover:border-amber-500 shadow-[0_4px_12px_rgba(245,158,11,0.05)] hover:shadow-[0_12px_24px_rgba(245,158,11,0.1)]";
+                badgeHtml = `<span class="px-2 py-0.5 rounded text-[9px] font-black tracking-wider bg-amber-500/10 text-amber-500 border border-amber-500/20 ml-2">V2</span>`;
+                labelHtml = `<span class="text-[9px] font-bold tracking-widest text-amber-500 uppercase">${dim.name}</span>`;
+            } else {
+                // Normal layout without version badge
+                cardBorderClass = "border-neutral-800 hover:border-[#5e8133]/60";
+                labelHtml = `<span class="text-[9px] font-bold tracking-widest text-neutral-500 uppercase">${dim.name}</span>`;
+            }
+
+            card.className = `banner-card flex-shrink-0 ${cardBorderClass} transition-all duration-300`;
+
+            card.innerHTML = `
+                <div class="w-full flex justify-between items-center opacity-90 mb-3 text-xs border-b pb-2" style="border-color: var(--border-color)">
+                    <div class="flex items-center">
+                        <span class="font-bold tracking-widest text-[11px]">${dim.w} x ${dim.h}</span>
+                        ${badgeHtml}
+                    </div>
+                    <div class="flex items-center gap-3">
+                        ${labelHtml}
+                        <button onclick="reloadSingleFrame('${bannerId}')" class="text-[9px] text-[#5e8133] hover:text-white font-bold tracking-wider uppercase transition-all flex items-center gap-1 bg-neutral-900/45 px-2 py-1 rounded border border-neutral-800 hover:bg-neutral-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                            </svg>
+                            Replay
+                        </button>
+                    </div>
+                </div>
+                <div class="img-container relative flex items-center justify-center bg-white overflow-hidden" style="width: ${dim.w}px; height: ${dim.h}px;">
+                    <iframe id="${bannerId}"
+                            src="${folderName}/index.html" 
+                            width="${dim.w}" 
+                            height="${dim.h}" 
+                            scrolling="no" 
+                            frameborder="0"
+                            loading="lazy"
+                            class="block max-w-full">
+                    </iframe>
+                </div>
+            `;
+            return card;
+        }
+
+        /**
          * Injects navigation links and layout components dynamically
          */
         function renderPortal() {
@@ -378,61 +447,32 @@
                     flexBanners.className = "flex flex-wrap gap-8 items-start justify-start scale-wrapper origin-top-left transition-all duration-300";
 
                     dimensions.forEach(dim => {
-                        // Assemble exact folder directory based on image_7ca4a3.png format:
-                        // PV-Q3-DIS-Post-[num]-[region]-[campaign]-[size]
                         let campaignName = concept.campaign;
                         if (concept.num === "12a") {
                             campaignName = m.code === "USGM" ? "PromoLaborDay" : "PromoLabourDay";
                         }
 
-                        // Determine if this specific variation folder is updated to V2
-                        let isV2 = false;
-                        if (concept.num === "10") {
-                            if ((dim.w === 300 && dim.h === 600) ||
-                                (dim.w === 320 && dim.h === 50) ||
-                                (dim.w === 970 && dim.h === 250)) {
-                                isV2 = true;
-                            }
-                        } else if (concept.num === "12") {
-                            if ((dim.w === 300 && dim.h === 600) ||
-                                (dim.w === 970 && dim.h === 250)) {
-                                isV2 = true;
-                            }
+                        // Check if a dedicated V2 version exists alongside V1
+                        const isV2Available = hasV2Version(concept.num, dim.w, dim.h);
+
+                        if (isV2Available) {
+                            // Render V1 and V2 berdampingan (side-by-side)
+                            const folderNameV1 = `PV-Q3-DIS-Post-${concept.num}-${m.code}-${campaignName}-${dim.w}x${dim.h}`;
+                            const bannerIdV1 = `iframe-${concept.num}-${m.code}-${dim.w}x${dim.h}-v1`;
+                            const cardV1 = createCardMarkup(dim, "V1", folderNameV1, bannerIdV1);
+                            flexBanners.appendChild(cardV1);
+
+                            const folderNameV2 = `PV-Q3-DIS-Post-${concept.num}-${m.code}-${campaignName}-V2-${dim.w}x${dim.h}`;
+                            const bannerIdV2 = `iframe-${concept.num}-${m.code}-${dim.w}x${dim.h}-v2`;
+                            const cardV2 = createCardMarkup(dim, "V2", folderNameV2, bannerIdV2);
+                            flexBanners.appendChild(cardV2);
+                        } else {
+                            // Render standard banner card alone
+                            const folderName = `PV-Q3-DIS-Post-${concept.num}-${m.code}-${campaignName}-${dim.w}x${dim.h}`;
+                            const bannerId = `iframe-${concept.num}-${m.code}-${dim.w}x${dim.h}`;
+                            const card = createCardMarkup(dim, null, folderName, bannerId);
+                            flexBanners.appendChild(card);
                         }
-
-                        const suffix = isV2 ? "V2-" : "";
-                        const folderName = `PV-Q3-DIS-Post-${concept.num}-${m.code}-${campaignName}-${suffix}${dim.w}x${dim.h}`;
-                        const indexPath = `${folderName}/index.html`;
-                        const bannerId = `iframe-${concept.num}-${m.code}-${dim.w}x${dim.h}`;
-
-                        const bannerCard = document.createElement('div');
-                        bannerCard.className = "banner-card flex-shrink-0";
-                        bannerCard.innerHTML = `
-                            <div class="w-full flex justify-between items-center opacity-70 mb-3 text-xs border-b pb-2" style="border-color: var(--border-color)">
-                                <div class="flex flex-col">
-                                    <span class="font-bold tracking-widest text-[11px]">${dim.w} x ${dim.h}</span>
-                                    <span class="text-[8px] font-mono opacity-55 mt-0.5">${dim.name} ${isV2 ? '<span class="text-[#5e8133] font-bold">[V2]</span>' : ''}</span>
-                                </div>
-                                <button onclick="reloadSingleFrame('${bannerId}')" class="text-[9px] text-[#5e8133] hover:text-white font-bold tracking-wider uppercase transition-all flex items-center gap-1 bg-neutral-900/45 px-2 py-1 rounded border border-neutral-800">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-                                    </svg>
-                                    Replay
-                                </button>
-                            </div>
-                            <div class="img-container relative flex items-center justify-center bg-white" style="width: ${dim.w}px; height: ${dim.h}px; border-color: var(--border-color)">
-                                <iframe id="${bannerId}"
-                                        src="${indexPath}" 
-                                        width="${dim.w}" 
-                                        height="${dim.h}" 
-                                        scrolling="no" 
-                                        frameborder="0"
-                                        loading="lazy"
-                                        class="block max-w-full">
-                                </iframe>
-                            </div>
-                        `;
-                        flexBanners.appendChild(bannerCard);
                     });
 
                     regionDiv.appendChild(flexBanners);
