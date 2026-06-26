@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pearle Vision | Phase 2 HTML5 Animated Ads Approval Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght=500;700&family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap');
+
+        :root {
+            --brand-green: #5e8133;
+            --brand-green-hover: #4d6a29;
+            --bg-body: #0d0f12;
+            --bg-card: #15191e;
+            --border-color: #242b35;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-glow: rgba(94, 129, 51, 0.2);
+        }
+
+        .light-mode {
+            --bg-body: #f7faf6;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-glow: rgba(94, 129, 51, 0.08);
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s ease;
+            scroll-behavior: smooth;
+        }
+
+        .serif-title {
+            font-family: 'Cinzel', serif;
+        }
+
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(16px);
+            background-color: rgba(13, 15, 18, 0.85);
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .sticky-nav {
+            background-color: rgba(247, 250, 246, 0.85);
+        }
+
+        .banner-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .banner-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .iframe-container {
+            background: #ffffff;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        iframe {
+            border: none;
+            display: block;
+            background-color: #ffffff;
+        }
+
+        .status-pill {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .active-dot {
+            position: relative;
+        }
+
+        .active-dot::after {
+            content: '';
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--brand-green);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between">
+
+    <div class="w-full">
+        <!-- Brand Header Top Bar -->
+        <div class="max-w-[1700px] mx-auto px-6 md:px-12 pt-8 pb-6 flex justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <span class="w-3 h-3 rounded-full"
+                    style="background-color: var(--brand-green); box-shadow: 0 0 12px var(--brand-green);"></span>
+                <div>
+                    <span class="text-[10px] font-black tracking-[0.25em] uppercase opacity-75">Pearle Vision
+                        Workspace</span>
+                    <h2 class="text-xs font-semibold opacity-50">HTML5 Motion Review Engine</h2>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button onclick="toggleTheme()"
+                    class="flex items-center gap-2 px-4 py-2 bg-neutral-800 text-white rounded-lg text-xs font-bold hover:opacity-90 transition-all border border-neutral-700 shadow-md"
+                    id="themeBtn">
+                    <span id="themeText">LIGHT MODE</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Hero Header section -->
+        <header
+            class="max-w-[1700px] mx-auto px-6 md:px-12 mb-8 flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-8 border-b"
+            style="border-color: var(--border-color);">
+            <div class="flex-1">
+                <div class="flex flex-wrap items-center gap-3 mb-4">
+                    <span class="status-pill bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Phase
+                        2</span>
+                    <span class="status-pill bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">HTML5
+                        Animation Review</span>
+                    <span class="status-pill bg-amber-500/10 text-amber-500 border border-amber-500/20">70 Folder
+                        Structures</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 serif-title"
+                    style="color: var(--text-main);">
+                    Pearle <span class="font-light italic" style="color: var(--brand-green);">Vision</span>
+                </h1>
+                <p style="color: var(--text-muted);" class="max-w-3xl text-base md:text-lg leading-relaxed font-light">
+                    Interactive animation review portal for checking HTML5 code packages. Auditing loop timing, timeline
+                    triggers, and responsive layout scaling across all 70 target variation folders.
+                </p>
+            </div>
+
+            <!-- Global Workspace Controls -->
+            <div class="flex flex-wrap items-center gap-6 bg-neutral-950/20 p-5 rounded-xl border"
+                style="border-color: var(--border-color);">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] font-bold uppercase tracking-wider opacity-60">Global Region
+                        Filter</label>
+                    <div class="inline-flex rounded-lg bg-neutral-900 p-0.5 border"
+                        style="border-color: var(--border-color);">
+                        <button onclick="filterRegion('all')" id="btn-all"
+                            class="px-3 py-1.5 rounded-md text-xs font-bold bg-neutral-800 text-white transition-all">All
+                            Placements</button>
+                        <button onclick="filterRegion('USGM')" id="btn-USGM"
+                            class="px-3 py-1.5 rounded-md text-xs font-medium text-neutral-400 hover:text-white transition-all">USGM
+                            Only</button>
+                        <button onclick="filterRegion('CA')" id="btn-CA"
+                            class="px-3 py-1.5 rounded-md text-xs font-medium text-neutral-400 hover:text-white transition-all">CA
+                            Only</button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] font-bold uppercase tracking-wider opacity-60">Frame Scale Zoom</label>
+                    <div class="flex items-center gap-3">
+                        <input type="range" min="0.5" max="1" step="0.05" value="1" id="scaleSlider"
+                            oninput="adjustScale(this.value)"
+                            class="w-24 h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-[#5e8133]">
+                        <span id="scaleLabel" class="text-xs font-mono font-bold w-10">100%</span>
+                    </div>
+                </div>
+
+                <div class="flex items-end">
+                    <button onclick="refreshAllAds()"
+                        class="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white rounded-lg transition-all font-bold text-xs">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        REPLAY ALL
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sticky Navigation Bar -->
+        <nav class="sticky-nav">
+            <div
+                class="max-w-[1700px] mx-auto px-6 md:px-12 py-4 flex items-center justify-between gap-6 overflow-x-auto whitespace-nowrap">
+                <div class="flex gap-8" id="sticky-links">
+                    <!-- Nav items rendered dynamically -->
+                </div>
+                <div class="text-[10px] font-bold tracking-widest uppercase opacity-40 hidden md:block">
+                    Scroll To Creative Set
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Banner Display Board -->
+        <main class="max-w-[1700px] mx-auto px-6 md:px-12 py-12 space-y-24" id="main-content">
+            <!-- Concepts injected dynamically via JavaScript to match paths with folder structures -->
+        </main>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="mt-24 py-12 border-t text-center w-full max-w-[1700px] mx-auto"
+        style="border-color: var(--border-color);">
+        <p style="color: var(--text-muted);" class="text-[10px] font-semibold tracking-[0.2em] uppercase">
+            &copy; <span id="currentYear"></span> Pearle Vision &bull; Phase 2 HTML5 Package review &bull; Verified
+            Package Directories
+        </p>
+    </footer>
+
+    <script>
+        // Set dynamic year in footer
+        document.getElementById('currentYear').innerText = new Date().getFullYear();
+
+        // 5 Core Creative concepts matching spelling, casing, and names in folder directories
+        const concepts = [
+            {
+                id: "concept-3a",
+                num: "3a",
+                title: "Annual Exams",
+                campaign: "AnnualExams",
+                description: "Routine vision evaluations and ocular checkups targeting annual patient lifecycle return."
+            },
+            {
+                id: "concept-5",
+                num: "5",
+                title: "Complex Prescription",
+                campaign: "ComplexPrescription",
+                description: "High-contrast dynamic emphasis on complex prescriptions, progressive lens variants, and multi-focal parameters."
+            },
+            {
+                id: "concept-10",
+                num: "10",
+                title: "BTS Protection Plan (Young Kid Photo)",
+                campaign: "BTSProtectionPlan",
+                description: "Back-to-school eye care protection focusing on high-durability frames and active pediatric wearers."
+            },
+            {
+                id: "concept-12a",
+                num: "12a",
+                title: "Labor Day Promotion",
+                campaign: "PromoLabourDay", // Managed dynamically for USGM (PromoLaborDay) and CA (PromoLabourDay)
+                description: "Seasonal promotional execution showcasing seasonal high-tier eyewear incentives."
+            },
+            {
+                id: "concept-12",
+                num: "12",
+                title: "Back-To-School Protection Plan",
+                campaign: "BTSProtectionPlan", // Match BTSProtectionPlan exactly
+                description: "Pediatric-focused framework showcasing resilient frames and warranty coverages for academic returns."
+            }
+        ];
+
+        // 6 standard dimensions matching folder prefixes
+        const dimensions = [
+            { name: "Billboard", w: 970, h: 250 },
+            { name: "Leaderboard", w: 728, h: 90 },
+            { name: "Half Page", w: 300, h: 600 },
+            { name: "Skyscraper", w: 160, h: 600 },
+            { name: "Medium Rectangle", w: 300, h: 250 },
+            { name: "Mobile Banner", w: 320, h: 50 }
+        ];
+
+        // Target markets
+        const markets = [
+            { code: "USGM", name: "United States General Market" },
+            { code: "CA", name: "Canada" }
+        ];
+
+        let globalScale = 1;
+        let activeRegion = 'all';
+
+        /**
+         * Checks if a dimension has an updated V2 equivalent folder according to image_148049.png and image_7ca4a3.png
+         */
+        function hasV2Version(conceptNum, w, h) {
+            if (conceptNum === "10") {
+                return (w === 300 && h === 600) || (w === 320 && h === 50) || (w === 970 && h === 250);
+            } else if (conceptNum === "12") {
+                return (w === 300 && h === 600) || (w === 970 && h === 250);
+            }
+            return false;
+        }
+
+        /**
+         * Helper function to construct V1 or V2 specific card templates matching image_14d35a.jpg layout
+         */
+        function createCardMarkup(dim, version, folderName, bannerId) {
+            const card = document.createElement('div');
+
+            let cardBorderClass = "border-[1px]";
+            let badgeHtml = "";
+            let labelHtml = "";
+
+            if (version === "V1") {
+                // Sleek border highlighting V1 (Green Accent)
+                cardBorderClass = "border-emerald-500/20 hover:border-emerald-500/60 shadow-[0_4px_12px_rgba(16,185,129,0.02)]";
+                badgeHtml = `<span class="px-2 py-0.5 rounded text-[9px] font-black tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 ml-2">V1</span>`;
+                labelHtml = `<span class="text-[9px] font-bold tracking-widest text-emerald-500 uppercase">${dim.name}</span>`;
+            } else if (version === "V2") {
+                // Sleek Amber/Orange border highlighting V2 (Amber Accent) as shown in image_14d67f.jpg
+                cardBorderClass = "border-amber-500/40 hover:border-amber-500 shadow-[0_4px_12px_rgba(245,158,11,0.05)] hover:shadow-[0_12px_24px_rgba(245,158,11,0.1)]";
+                badgeHtml = `<span class="px-2 py-0.5 rounded text-[9px] font-black tracking-wider bg-amber-500/10 text-amber-500 border border-amber-500/20 ml-2">V2</span>`;
+                labelHtml = `<span class="text-[9px] font-bold tracking-widest text-amber-500 uppercase">${dim.name}</span>`;
+            } else {
+                // Normal layout without version badge
+                cardBorderClass = "border-neutral-800 hover:border-[#5e8133]/60";
+                labelHtml = `<span class="text-[9px] font-bold tracking-widest text-neutral-500 uppercase">${dim.name}</span>`;
+            }
+
+            card.className = `banner-card flex-shrink-0 ${cardBorderClass} transition-all duration-300`;
+
+            card.innerHTML = `
+                <div class="w-full flex justify-between items-center opacity-90 mb-3 text-xs border-b pb-2" style="border-color: var(--border-color)">
+                    <div class="flex items-center">
+                        <span class="font-bold tracking-widest text-[11px]">${dim.w} x ${dim.h}</span>
+                        ${badgeHtml}
+                    </div>
+                    <div class="flex items-center gap-3">
+                        ${labelHtml}
+                        <button onclick="reloadSingleFrame('${bannerId}')" class="text-[9px] text-[#5e8133] hover:text-white font-bold tracking-wider uppercase transition-all flex items-center gap-1 bg-neutral-900/45 px-2 py-1 rounded border border-neutral-800 hover:bg-neutral-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                            </svg>
+                            Replay
+                        </button>
+                    </div>
+                </div>
+                <div class="img-container relative flex items-center justify-center bg-white overflow-hidden" style="width: ${dim.w}px; height: ${dim.h}px;">
+                    <iframe id="${bannerId}"
+                            src="${folderName}/index.html" 
+                            width="${dim.w}" 
+                            height="${dim.h}" 
+                            scrolling="no" 
+                            frameborder="0"
+                            loading="lazy"
+                            class="block max-w-full">
+                    </iframe>
+                </div>
+            `;
+            return card;
+        }
+
+        /**
+         * Injects navigation links and layout components dynamically
+         */
+        function renderPortal() {
+            const navContainer = document.getElementById('sticky-links');
+            const mainContent = document.getElementById('main-content');
+
+            navContainer.innerHTML = '';
+            mainContent.innerHTML = '';
+
+            concepts.forEach((concept, index) => {
+                // Render Sticky Navigation Item
+                const navLink = document.createElement('a');
+                navLink.href = `#${concept.id}`;
+                navLink.id = `nav-${concept.id}`;
+                navLink.className = `text-xs font-bold uppercase tracking-widest text-neutral-400 hover:text-white transition-all py-1 cursor-pointer block ${index === 0 ? 'active-dot text-white font-black' : ''}`;
+                navLink.innerHTML = `<span style="color: var(--brand-green)" class="mr-1">Concept ${concept.num}</span> ${concept.title}`;
+
+                // Add smooth scroll behavior to sticky anchors
+                navLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById(concept.id).scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                });
+                navContainer.appendChild(navLink);
+
+                // Render Main Section Block
+                const section = document.createElement('section');
+                section.id = concept.id;
+                section.className = "space-y-12 scroll-mt-28";
+
+                // Section header block
+                section.innerHTML = `
+                    <div class="border-b pb-6" style="border-color: var(--border-color)">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div>
+                                <span class="text-xs font-extrabold tracking-[0.25em] uppercase" style="color: var(--brand-green);">Concept ${concept.num}</span>
+                                <h2 class="text-2xl md:text-3xl font-black mt-1 serif-title">${concept.title}</h2>
+                                <p style="color: var(--text-muted);" class="text-sm mt-2 font-light max-w-2xl">${concept.description}</p>
+                            </div>
+                            <span class="status-pill border bg-neutral-900/40 text-neutral-400 px-4 py-1.5 rounded-lg" style="border-color: var(--border-color)">Interactive HTML5</span>
+                        </div>
+                    </div>
+                `;
+
+                // Layout grid holding regions
+                const regionsContainer = document.createElement('div');
+                regionsContainer.className = "grid grid-cols-1 gap-16";
+
+                markets.forEach(m => {
+                    const regionDiv = document.createElement('div');
+                    regionDiv.className = `region-wrapper space-y-6 transition-all duration-300 ${m.code === 'USGM' ? 'region-usgm' : 'region-ca'}`;
+                    regionDiv.setAttribute('data-region', m.code);
+
+                    regionDiv.innerHTML = `
+                        <div class="flex items-center gap-3 border-l-4 pl-3" style="border-color: var(--brand-green)">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider">${m.name}</span>
+                                <span class="text-[9px] font-black uppercase text-neutral-500 ml-2 tracking-widest">${m.code} Regional Pipeline</span>
+                            </div>
+                        </div>
+                    `;
+
+                    // Banner units flex container
+                    const flexBanners = document.createElement('div');
+                    flexBanners.className = "flex flex-wrap gap-8 items-start justify-start scale-wrapper origin-top-left transition-all duration-300";
+
+                    dimensions.forEach(dim => {
+                        let campaignName = concept.campaign;
+                        if (concept.num === "12a") {
+                            campaignName = m.code === "USGM" ? "PromoLaborDay" : "PromoLabourDay";
+                        }
+
+                        // Check if a dedicated V2 version exists alongside V1
+                        const isV2Available = hasV2Version(concept.num, dim.w, dim.h);
+
+                        if (isV2Available) {
+                            // Render V1 and V2 berdampingan (side-by-side)
+                            const folderNameV1 = `PV-Q3-DIS-Post-${concept.num}-${m.code}-${campaignName}-${dim.w}x${dim.h}`;
+                            const bannerIdV1 = `iframe-${concept.num}-${m.code}-${dim.w}x${dim.h}-v1`;
+                            const cardV1 = createCardMarkup(dim, "V1", folderNameV1, bannerIdV1);
+                            flexBanners.appendChild(cardV1);
+
+                            const folderNameV2 = `PV-Q3-DIS-Post-${concept.num}-${m.code}-${campaignName}-V2-${dim.w}x${dim.h}`;
+                            const bannerIdV2 = `iframe-${concept.num}-${m.code}-${dim.w}x${dim.h}-v2`;
+                            const cardV2 = createCardMarkup(dim, "V2", folderNameV2, bannerIdV2);
+                            flexBanners.appendChild(cardV2);
+                        } else {
+                            // Render standard banner card alone
+                            const folderName = `PV-Q3-DIS-Post-${concept.num}-${m.code}-${campaignName}-${dim.w}x${dim.h}`;
+                            const bannerId = `iframe-${concept.num}-${m.code}-${dim.w}x${dim.h}`;
+                            const card = createCardMarkup(dim, null, folderName, bannerId);
+                            flexBanners.appendChild(card);
+                        }
+                    });
+
+                    regionDiv.appendChild(flexBanners);
+                    regionsContainer.appendChild(regionDiv);
+                });
+
+                section.appendChild(regionsContainer);
+                mainContent.appendChild(section);
+            });
+
+            // Re-apply scale & filter states on portal updates
+            adjustScale(globalScale);
+            filterRegion(activeRegion);
+            setupScrollSpy();
+        }
+
+        /**
+         * Replays a single targeted animation frame
+         */
+        function reloadSingleFrame(frameId) {
+            const frame = document.getElementById(frameId);
+            if (frame) {
+                const currentSrc = frame.src;
+                frame.src = '';
+                setTimeout(() => {
+                    frame.src = currentSrc;
+                }, 50);
+            }
+        }
+
+        /**
+         * Reloads all interactive animation layouts simultaneously
+         */
+        function refreshAllAds() {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                const currentSrc = iframe.src;
+                iframe.src = '';
+                setTimeout(() => {
+                    iframe.src = currentSrc;
+                }, 80);
+            });
+        }
+
+        /**
+         * Modifies the scale multiplier for high-density layouts on small displays
+         */
+        function adjustScale(val) {
+            globalScale = parseFloat(val);
+            document.getElementById('scaleLabel').innerText = `${Math.round(globalScale * 100)}%`;
+
+            const wrappers = document.querySelectorAll('.scale-wrapper');
+            wrappers.forEach(wrap => {
+                wrap.style.transform = `scale(${globalScale})`;
+                // Maintain margin spacing offset based on scale shrinkage
+                const marginNeeded = (1 - globalScale) * -100;
+                wrap.style.marginBottom = `${marginNeeded}%`;
+                wrap.style.marginRight = `${marginNeeded}%`;
+            });
+        }
+
+        /**
+         * Toggle displays between USGM only, CA only, or All Placements
+         */
+        function filterRegion(region) {
+            activeRegion = region;
+
+            // Adjust active filter buttons styling
+            ['all', 'USGM', 'CA'].forEach(r => {
+                const btn = document.getElementById(`btn-${r}`);
+                if (r === region) {
+                    btn.classList.add('bg-neutral-800', 'text-white');
+                    btn.classList.remove('text-neutral-400');
+                } else {
+                    btn.classList.remove('bg-neutral-800', 'text-white');
+                    btn.classList.add('text-neutral-400');
+                }
+            });
+
+            // Perform DOM hide/show sweeps
+            const allRegionWrappers = document.querySelectorAll('.region-wrapper');
+            allRegionWrappers.forEach(el => {
+                const currentDataRegion = el.getAttribute('data-region');
+                if (region === 'all' || currentDataRegion === region) {
+                    el.style.display = 'block';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+        }
+
+        /**
+         * Tracks scrolling and updates active state in navigation headers
+         */
+        function setupScrollSpy() {
+            const sections = document.querySelectorAll('section');
+            const observerOptions = {
+                root: null,
+                rootMargin: '-30% 0px -60% 0px', // Precise middle-of-screen focus
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const activeId = entry.target.id;
+
+                        // Update anchor states
+                        concepts.forEach(concept => {
+                            const link = document.getElementById(`nav-${concept.id}`);
+                            if (link) {
+                                if (concept.id === activeId) {
+                                    link.classList.add('active-dot', 'text-white', 'font-black');
+                                    link.classList.remove('text-neutral-400');
+                                } else {
+                                    link.classList.remove('active-dot', 'text-white', 'font-black');
+                                    link.classList.add('text-neutral-400');
+                                }
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => observer.observe(section));
+        }
+
+        /**
+         * Switches workspace theme modes
+         */
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+            const text = document.getElementById('themeText');
+
+            body.classList.toggle('light-mode');
+
+            if (body.classList.contains('light-mode')) {
+                text.innerText = 'DARK MODE';
+                btn.classList.replace('bg-neutral-800', 'bg-white');
+                btn.classList.add('text-slate-900', 'border-slate-300');
+            } else {
+                text.innerText = 'LIGHT MODE';
+                btn.classList.replace('bg-white', 'bg-neutral-800');
+                btn.classList.remove('text-slate-900', 'border-slate-300');
+            }
+        }
+
+        // Initialize portal layout on load
+        window.onload = function () {
+            renderPortal();
+        };
+    </script>
+</body>
+
+</html>
