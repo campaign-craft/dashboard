@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Kartu Nama Multi-Entri</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root { font-family: 'Inter', sans-serif; }
+        #cardCanvas, #cardBackCanvas {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            width: 100%; 
+            max-width: 525px; 
+            height: auto;
+            aspect-ratio: 1050 / 642; 
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s;
+        }
+        .card-item {
+            cursor: pointer;
+            transition: background-color 0.15s;
+        }
+        .card-item:hover {
+            background-color: #f3f4f6;
+        }
+        .card-item.active {
+            background-color: #e0f2f1;
+            border-left: 4px solid #14b8a6;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-4 sm:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        
+        <h1 class="text-3xl font-bold text-gray-800">Kartu Nama Tribun Network</h1>
+        <h3 class="mt-4 text-sm text-gray-700 mb-8">
+  <a href="https://campaign-craft.github.io/dashboard/home/kartu_nama2/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline cursor-pointer">
+    A4 Business Card Preview Tool
+  </a>
+</h3>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+
+            <!-- Kolom Kiri: Form Input dan Daftar Nama -->
+            <div class="lg:w-1/3 space-y-8">
+                
+                <!-- Input Data Kartu Perorangan -->
+                <div class="p-6 bg-white rounded-xl shadow-lg h-fit">
+                    <h2 class="text-xl font-semibold mb-6 text-gray-700">Detail Kartu User (Perorangan)</h2>
+
+                    <div id="inputForm" class="space-y-4">
+                        <div>
+                            <label for="nameInput" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                            <input type="text" id="nameInput" value="VERA ARIANI" placeholder="Contoh: VERA ARIANI"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+
+                        <div>
+                            <label for="titleInput" class="block text-sm font-medium text-gray-700">Jabatan</label>
+                            <input type="text" id="titleInput" value="UI/UX Designer Senior" placeholder="Contoh: Manajer Pemasaran"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label for="phoneInput" class="block text-sm font-medium text-gray-700">Nomor Telepon (HP User)</label>
+                            <input type="text" id="phoneInput" value="+62 812 3456 7890" placeholder="Contoh: +62 81xxxx"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+
+                        <div>
+                            <label for="emailInput" class="block text-sm font-medium text-gray-700">Email (User)</label>
+                            <input type="email" id="emailInput" value="vera.ariani@perusahaan.com" placeholder="Contoh: nama@domain.com"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        
+                        <h3 class="text-md font-medium text-gray-700 pt-4 border-t mt-4">Detail Kantor (Global)</h3>
+
+                        <div>
+                            <label for="addressInput" class="block text-sm font-medium text-gray-700">Alamat, Telepon, & Fax Kantor</label>
+                            <textarea id="addressInput" rows="3"
+                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">Editorial Office of Tribun Network
+Jl. Palmerah Selatan No. 14, Jakarta 10270
+P : 021 - 5483008 F : 021 - 5495360</textarea>
+                        </div>
+                    </div>
+                    
+                    <button id="updateCardButton"
+                            class="w-full mt-6 px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out">
+                        Simpan Perubahan & Perbarui Preview
+                    </button>
+                    
+                    <button id="addCardButton"
+                            class="w-full mt-3 px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-indigo-600 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        + Tambahkan Kartu Baru ke Daftar
+                    </button>
+                    
+                </div>
+                
+                <!-- Daftar Nama Kartu -->
+                <div class="p-6 bg-white rounded-xl shadow-lg">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Daftar Kartu Nama (<span id="cardCount">0</span>)</h2>
+                    <div id="cardList" class="space-y-2 max-h-96 overflow-y-auto">
+                        <p id="emptyListMessage" class="text-gray-500 italic text-sm">Belum ada kartu dalam daftar.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Kolom Tengah: Preview Kartu -->
+            <div class="lg:w-2/3 flex flex-col items-center justify-start p-6 bg-white rounded-xl shadow-lg">
+                <h2 class="text-xl font-semibold mb-6 text-gray-700">Preview Kartu Nama</h2>
+
+                <div class="flex flex-col md:flex-row gap-6 w-full max-w-[1100px] justify-center">
+                    
+                    <!-- Sisi Depan Kartu -->
+                    <div class="flex flex-col items-center w-full md:w-1/2">
+                        <p class="text-sm font-medium text-gray-500 mb-2">Sisi Depan</p>
+                        <canvas id="cardCanvas"></canvas>
+                    </div>
+
+                    <!-- Sisi Belakang Kartu -->
+                    <div class="flex flex-col items-center w-full md:w-1/2">
+                        <p class="text-sm font-medium text-gray-500 mb-2">Sisi Belakang</p>
+                        <canvas id="cardBackCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Tombol Download -->
+                <div class="mt-6 w-full space-y-3 max-w-[525px]">
+                    <button id="downloadPdfButton"
+                        class="w-full px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out disabled:opacity-50" disabled>
+                        📄 Download PDF (Depan & Belakang) - <span id="downloadNamePdf">...</span>.pdf
+                    </button>
+                    <button id="downloadFrontButton"
+                        class="w-full px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out disabled:opacity-50" disabled>
+                        Download Sisi Depan (<span id="downloadNameFront">...</span>.png)
+                    </button>
+                    <button id="downloadBackButton"
+                        class="w-full px-6 py-3 border border-indigo-500 text-base font-medium rounded-lg shadow-sm text-indigo-600 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out disabled:opacity-50" disabled>
+                        Download Sisi Belakang (<span id="downloadNameBack">...</span>.png)
+                    </button>
+                </div>
+                
+                <p id="selectionMessage" class="mt-4 text-sm text-red-500 hidden">
+                    Silakan pilih nama dari daftar untuk mengunduh kartunya.
+                </p>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- KONSTANTA & SETUP CANVAS ---
+        const CARD_WIDTH = 1050;
+        const CARD_HEIGHT = 642; 
+        const LOGO_SIZE = 100;
+        const LOGO_URL = 'img.png'; 
+        const FRONT_BACKGROUND_URL = 'background.png'; 
+        const BACK_BACKGROUND_URL = 'back.png';       
+        const FALLBACK_COLOR = '#0D67B1';
+
+        const canvas = document.getElementById('cardCanvas');
+        const ctx = canvas.getContext('2d');
+        const canvasBack = document.getElementById('cardBackCanvas');
+        const ctxBack = canvasBack.getContext('2d');
+        
+        function setupCanvas(c, c_ctx) {
+            c.width = CARD_WIDTH;
+            c.height = CARD_HEIGHT;
+            c_ctx.setTransform(1, 0, 0, 1, 0, 0); 
+        }
+
+        setupCanvas(canvas, ctx);
+        setupCanvas(canvasBack, ctxBack);
+        
+        // --- DATA APLIKASI ---
+        let businessCards = [];
+        let activeCardIndex = -1;
+        
+        // --- ELEMEN UI ---
+        const nameInput = document.getElementById('nameInput');
+        const titleInput = document.getElementById('titleInput');
+        const phoneInput = document.getElementById('phoneInput'); 
+        const emailInput = document.getElementById('emailInput');
+        const addressInput = document.getElementById('addressInput'); 
+        
+        const cardList = document.getElementById('cardList');
+        const cardCount = document.getElementById('cardCount');
+        const emptyListMessage = document.getElementById('emptyListMessage');
+        const addCardButton = document.getElementById('addCardButton');
+        const updateCardButton = document.getElementById('updateCardButton');
+        const downloadFrontButton = document.getElementById('downloadFrontButton');
+        const downloadBackButton = document.getElementById('downloadBackButton');
+        const downloadPdfButton = document.getElementById('downloadPdfButton');
+        const downloadNameFront = document.getElementById('downloadNameFront');
+        const downloadNameBack = document.getElementById('downloadNameBack');
+        const downloadNamePdf = document.getElementById('downloadNamePdf');
+        const selectionMessage = document.getElementById('selectionMessage');
+
+        // --- SETUP GAMBAR ---
+        const logoImage = new Image();
+        logoImage.onerror = () => { console.error("Gagal memuat gambar logo."); updatePreview(); };
+        logoImage.onload = updatePreview; 
+        logoImage.src = LOGO_URL; 
+
+        const frontBgImage = new Image();
+        frontBgImage.onerror = () => { console.error("Gagal memuat gambar latar depan."); updatePreview(); };
+        frontBgImage.onload = updatePreview; 
+        frontBgImage.src = FRONT_BACKGROUND_URL;
+        
+        const backBgImage = new Image();
+        backBgImage.onerror = () => { console.error("Gagal memuat gambar latar belakang."); updatePreview(); };
+        backBgImage.onload = updatePreview; 
+        backBgImage.src = BACK_BACKGROUND_URL;
+
+        // --- FUNGSI UTAMA UNTUK MENGGAMBAR ---
+
+        function drawFrontCard(targetCtx) {
+            const data = businessCards[activeCardIndex] || { 
+                name: nameInput.value, 
+                title: titleInput.value, 
+                phone: phoneInput.value, 
+                email: emailInput.value, 
+                address: addressInput.value
+            };
+            
+            if (frontBgImage.complete && frontBgImage.naturalHeight !== 0) {
+                targetCtx.drawImage(frontBgImage, 0, 0, CARD_WIDTH, CARD_HEIGHT);
+            } else {
+                targetCtx.fillStyle = FALLBACK_COLOR;
+                targetCtx.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
+            }
+
+            const name = data.name;
+            const title = data.title;
+            const phone = data.phone;
+            const email = data.email;
+            const address = addressInput.value;
+
+            const contentX = 60;
+            let currentY = 70; 
+            const logoX = contentX;
+            
+            if (logoImage.complete && logoImage.naturalHeight !== 0) {
+                 targetCtx.drawImage(logoImage, logoX, currentY, LOGO_SIZE, LOGO_SIZE);
+            } else {
+                 targetCtx.fillStyle = '#FFFFFF';
+                 targetCtx.fillRect(logoX, currentY, LOGO_SIZE, LOGO_SIZE);
+            }
+            
+            currentY += LOGO_SIZE + 80;
+
+            targetCtx.fillStyle = '#FFFFFF';
+            targetCtx.font = 'bold 50px Inter, sans-serif';
+            targetCtx.fillText(name, contentX, currentY);
+
+            currentY += 40;
+            targetCtx.fillStyle = '#FFFFFF';
+            targetCtx.font = 'bold 26px Inter, sans-serif';
+            targetCtx.fillText(title, contentX, currentY);
+
+            currentY += 120; 
+            targetCtx.fillStyle = '#FFFFFF';
+            targetCtx.font = '22px Inter, sans-serif';
+            const contactX = contentX;
+
+            targetCtx.fillText('HP: ' + phone, contactX, currentY);
+            currentY += 35;
+
+            targetCtx.fillText('Email: ' + email, contactX, currentY);
+            
+            currentY += 50;
+            targetCtx.fillStyle = '#FFFFFF';
+            targetCtx.font = '22px Inter, sans-serif';
+
+            const addressLines = address.split('\n');
+            addressLines.forEach(line => {
+                targetCtx.fillText(line, contactX, currentY);
+                currentY += 30;
+            });
+        }
+        
+        function drawBackCard(targetCtx) {
+            if (backBgImage.complete && backBgImage.naturalHeight !== 0) {
+                targetCtx.drawImage(backBgImage, 0, 0, CARD_WIDTH, CARD_HEIGHT);
+            } else {
+                targetCtx.fillStyle = FALLBACK_COLOR;
+                targetCtx.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
+            }
+        }
+        
+        function updatePreview() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawFrontCard(ctx);
+
+            ctxBack.clearRect(0, 0, canvasBack.width, canvasBack.height);
+            drawBackCard(ctxBack);
+        }
+        
+        // --- FUNGSI MANAJEMEN DAFTAR KARTU ---
+
+        function getCardDataFromInputs() {
+            return {
+                id: Date.now(),
+                name: nameInput.value.trim().toUpperCase(),
+                title: titleInput.value.trim(),
+                phone: phoneInput.value.trim(), 
+                email: emailInput.value.trim()
+            };
+        }
+        
+        function loadCardDataToInputs(cardData) {
+            nameInput.value = cardData.name;
+            titleInput.value = cardData.title;
+            phoneInput.value = cardData.phone || ''; 
+            emailInput.value = cardData.email || '';
+        }
+        
+        function selectCard(index) {
+            if (activeCardIndex !== -1 && activeCardIndex !== index) {
+                const prevItem = document.querySelector(`.card-item[data-index="${activeCardIndex}"]`);
+                if (prevItem) {
+                    prevItem.classList.remove('active');
+                    prevItem.style.borderLeft = 'none';
+                }
+            }
+            
+            activeCardIndex = index;
+            const selectedCard = businessCards[index];
+            
+            if (selectedCard) {
+                loadCardDataToInputs(selectedCard);
+                const currentItem = document.querySelector(`.card-item[data-index="${activeCardIndex}"]`);
+                if (currentItem) {
+                     currentItem.classList.add('active');
+                }
+                updateDownloadButtons(selectedCard.name);
+            } else {
+                clearFormForNewCard(); 
+                updateDownloadButtons(null);
+            }
+
+            updatePreview();
+        }
+        
+        function deleteCard(id) {
+            const indexToDelete = businessCards.findIndex(card => card.id === id);
+            if (indexToDelete > -1) {
+                businessCards.splice(indexToDelete, 1);
+                
+                if (activeCardIndex === indexToDelete) {
+                    const newIndex = indexToDelete > 0 ? indexToDelete - 1 : -1;
+                    activeCardIndex = -1;
+                    selectCard(newIndex);
+                } else if (activeCardIndex > indexToDelete) {
+                    activeCardIndex--;
+                }
+                
+                renderCardList();
+            }
+        }
+        
+        function renderCardList() {
+            cardList.innerHTML = '';
+            
+            if (businessCards.length === 0) {
+                emptyListMessage.classList.remove('hidden');
+                cardCount.textContent = '0';
+                return;
+            }
+            
+            emptyListMessage.classList.add('hidden');
+            cardCount.textContent = businessCards.length;
+
+            businessCards.forEach((card, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `card-item p-3 border rounded-lg flex justify-between items-center ${index === activeCardIndex ? 'active' : ''}`;
+                itemDiv.setAttribute('data-index', index);
+                
+                const textContent = document.createElement('div');
+                textContent.innerHTML = `<p class="text-sm">${card.name}</p><p class="text-xs text-gray-500">${card.title || 'Tanpa Jabatan'}</p>`;
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500 hover:text-red-700" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 10-2 0v6a1 1 0 102 0V8z" clip-rule="evenodd" /></svg>`;
+                deleteButton.className = 'p-1 hover:bg-red-100 rounded-full ml-3 flex-shrink-0';
+                
+                deleteButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteCard(card.id);
+                });
+
+                itemDiv.addEventListener('click', () => selectCard(index));
+                
+                itemDiv.appendChild(textContent);
+                itemDiv.appendChild(deleteButton);
+                cardList.appendChild(itemDiv);
+            });
+        }
+        
+        function clearFormForNewCard() {
+             nameInput.value = '';
+             titleInput.value = '';
+             phoneInput.value = '';
+             emailInput.value = '';
+             nameInput.focus();
+        }
+
+        // --- HANDLER EVENT ---
+
+        addCardButton.addEventListener('click', () => {
+            const newCard = getCardDataFromInputs();
+            if (newCard.name === '') {
+                console.error('Nama Lengkap tidak boleh kosong.');
+                nameInput.focus();
+                return;
+            }
+            
+            businessCards.push(newCard);
+            renderCardList();
+            selectCard(businessCards.length - 1); 
+            clearFormForNewCard();
+        });
+        
+        updateCardButton.addEventListener('click', () => {
+            if (activeCardIndex === -1) {
+                console.warn('Silakan pilih kartu dari daftar atau tambahkan kartu baru.');
+                return;
+            }
+            
+            const updatedData = getCardDataFromInputs();
+            businessCards[activeCardIndex].name = updatedData.name;
+            businessCards[activeCardIndex].title = updatedData.title;
+            businessCards[activeCardIndex].phone = updatedData.phone;
+            businessCards[activeCardIndex].email = updatedData.email;
+            
+            renderCardList();
+            updatePreview();
+            updateDownloadButtons(updatedData.name);
+        });
+        
+        // --- FUNGSI DOWNLOAD ---
+
+        function updateDownloadButtons(name) {
+             if (name && activeCardIndex !== -1) {
+                 const baseFilename = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                 downloadNameFront.textContent = baseFilename + '-depan';
+                 downloadNameBack.textContent = baseFilename + '-belakang';
+                 downloadNamePdf.textContent = baseFilename;
+                 downloadFrontButton.disabled = false;
+                 downloadBackButton.disabled = false;
+                 downloadPdfButton.disabled = false;
+                 selectionMessage.classList.add('hidden');
+             } else {
+                 downloadNameFront.textContent = '...';
+                 downloadNameBack.textContent = '...';
+                 downloadNamePdf.textContent = '...';
+                 downloadFrontButton.disabled = true;
+                 downloadBackButton.disabled = true;
+                 downloadPdfButton.disabled = true;
+                 selectionMessage.classList.remove('hidden');
+             }
+        }
+        
+        const DOWNLOAD_SCALE = 3; // Upgrade resolusi download PNG menjadi 300% (3x) dari ukuran asli
+
+        function handleDownload(drawFunction, suffix) {
+             if (activeCardIndex === -1) {
+                console.error("Tidak ada kartu yang dipilih untuk diunduh.");
+                return;
+             }
+             
+             const activeCardName = businessCards[activeCardIndex].name;
+             const baseFilename = activeCardName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+             const filename = baseFilename + suffix + '.png';
+
+             try {
+                // Buat canvas sementara beresolusi tinggi (3x) khusus untuk hasil unduhan,
+                // tanpa mengubah canvas preview yang sedang ditampilkan.
+                const exportCanvas = document.createElement('canvas');
+                exportCanvas.width = CARD_WIDTH * DOWNLOAD_SCALE;
+                exportCanvas.height = CARD_HEIGHT * DOWNLOAD_SCALE;
+                const exportCtx = exportCanvas.getContext('2d');
+                exportCtx.setTransform(1, 0, 0, 1, 0, 0);
+                exportCtx.scale(DOWNLOAD_SCALE, DOWNLOAD_SCALE);
+
+                drawFunction(exportCtx);
+
+                const imageURL = exportCanvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.href = imageURL;
+                a.download = filename;
+
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                console.log(`Berhasil mengunduh: ${filename}`);
+
+            } catch (error) {
+                console.error("Gagal mengunduh kartu:", error);
+                console.log("Terjadi kesalahan saat mencoba mengunduh kartu. Silakan cek konsol.");
+            }
+        }
+
+        downloadFrontButton.addEventListener('click', () => handleDownload(drawFrontCard, '-depan'));
+        downloadBackButton.addEventListener('click', () => handleDownload(drawBackCard, '-belakang'));
+        
+        // --- FUNGSI DOWNLOAD PDF ---
+        downloadPdfButton.addEventListener('click', async () => {
+            if (activeCardIndex === -1) {
+                console.error("Tidak ada kartu yang dipilih untuk diunduh.");
+                return;
+            }
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                
+                const cardWidthMM = 90;
+                const cardHeightMM = 55;
+                
+                const pdf = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'mm',
+                    format: [cardWidthMM, cardHeightMM]
+                });
+                
+                const activeCardName = businessCards[activeCardIndex].name;
+                const baseFilename = activeCardName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                
+                const frontImageData = canvas.toDataURL('image/png');
+                pdf.addImage(frontImageData, 'PNG', 0, 0, cardWidthMM, cardHeightMM);
+                
+                pdf.addPage([cardWidthMM, cardHeightMM], 'landscape');
+                const backImageData = canvasBack.toDataURL('image/png');
+                pdf.addImage(backImageData, 'PNG', 0, 0, cardWidthMM, cardHeightMM);
+                
+                pdf.save(`${baseFilename}.pdf`);
+                
+                console.log(`Berhasil mengunduh PDF: ${baseFilename}.pdf`);
+                
+            } catch (error) {
+                console.error("Gagal mengunduh PDF:", error);
+                alert("Terjadi kesalahan saat mencoba mengunduh PDF. Silakan cek konsol.");
+            }
+        });
+
+        // --- INISIALISASI ---
+
+        window.onload = () => {
+             window.addEventListener('resize', () => {
+                 setupCanvas(canvas, ctx);
+                 setupCanvas(canvasBack, ctxBack);
+                 updatePreview();
+             });
+             
+             renderCardList();
+             selectCard(-1);
+        };
+
+    </script>
+</body>
+</html>
