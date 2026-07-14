@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Card Preview Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .upload-section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .upload-area {
+            border: 3px dashed #ddd;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .upload-area:hover {
+            border-color: #999;
+            background: #f5f5f5;
+        }
+
+        .upload-area.drag-over {
+            border-color: #333;
+            background: #f0f0f0;
+        }
+
+        .upload-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .upload-text {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn-upload {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+
+        .btn-upload:hover {
+            background: #555;
+        }
+
+        .info-box {
+            background: #f9f9f9;
+            border-left: 4px solid #333;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .info-box li {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .preview-section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            overflow: auto;
+            width: 100%;
+        }
+
+        #previewCanvas {
+            border: 1px solid #ddd;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .btn-download {
+            background: #333;
+            color: white;
+        }
+
+        .btn-download:hover {
+            background: #555;
+        }
+
+        .btn-reset {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-reset:hover {
+            background: #e0e0e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .status {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+
+        .status.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status.warning {
+            background: #fff9c4;
+            color: #f57f17;
+        }
+
+        .card-counter {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .card-counter span {
+            font-weight: bold;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .upload-section {
+                padding: 15px;
+            }
+
+            .preview-section {
+                padding: 15px 0; /* Hilangkan padding kanan kiri agar canvas full layar di mobile */
+            }
+
+            .canvas-container {
+                margin: 15px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎴 Business Card Preview Tool</h1>
+            <p>Upload dan preview kartu nama Anda dalam layout A4 vertikal</p>
+        </div>
+
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📤</div>
+                <div class="upload-text">Drag & Drop kartu nama di sini</div>
+                <div class="upload-subtext">atau</div>
+                <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
+                    Pilih File
+                </button>
+                <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
+            </div>
+
+            <div class="card-counter" id="cardCounter">
+                Kartu yang diupload: <span id="cardCount">0</span> / 4 (Total preview: <span id="totalCards">0</span>/8)
+            </div>
+
+            <div class="info-box">
+                <strong>ℹ️ Informasi Layout:</strong>
+                <ul>
+                    <li>Ukuran Business Card: 90 x 55 mm</li>
+                    <li>Ukuran Canvas A4: 210 x 297 mm (2480 x 3508 px @ 300 DPI)</li>
+                    <li>Layout: 1 kolom vertikal full-width tanpa margin samping</li>
+                    <li>Sisi belakang otomatis menggunakan template <strong>back.jpg</strong></li>
+                    <li>Format output: JPG dengan dimensi 100%</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="preview-section">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #333;">Preview Canvas A4</h2>
+            
+            <div id="statusMessage"></div>
+
+            <div class="canvas-container">
+                <canvas id="previewCanvas" width="2480" height="3508"></canvas>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-download" id="downloadBtn" onclick="downloadImage()" disabled>
+                    💾 Download JPG
+                </button>
+                <button class="btn btn-reset" onclick="resetCanvas()">
+                    🔄 Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('previewCanvas');
+        const ctx = canvas.getContext('2d');
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const cardCount = document.getElementById('cardCount');
+
+        let uploadedImages = [];
+        const MAX_CARDS = 4; // Maksimal 4 upload, ditumpuk vertikal berpasangan dengan back.jpg
+        
+        // Menggunakan file referensi yang disediakan oleh pengguna secara verbatim
+        const BACK_IMAGE_URL = 'back.jpg'; 
+        const DEMO_IMAGE_URL = 'image_6dc99e.jpg'; 
+        
+        let backImage = null;
+
+        // Ukuran piksel dasar (300 DPI untuk A4 standar)
+        const A4_WIDTH = 2480;
+        const A4_HEIGHT = 3508;
+        
+        // Ukuran per-kartu dihitung agar membagi halaman A4 secara vertikal sama besar (tanpa margin samping)
+        const CARD_WIDTH = A4_WIDTH;
+        const CARD_HEIGHT = Math.round(A4_HEIGHT / 2); // 1754 px per kartu sehingga 2 kartu (depan & belakang) pas 3508 px
+
+        const loadInitialImages = () => {
+            // Load back template image
+            backImage = new Image();
+            backImage.crossOrigin = 'anonymous';
+            backImage.onload = () => {
+                console.log('Template back.jpg loaded successfully');
+                checkAndRenderInitial();
+            };
+            backImage.onerror = () => {
+                console.error('Failed to load back.jpg');
+            };
+            backImage.src = BACK_IMAGE_URL;
+
+            // Load demo card (image_6dc99e.jpg) sebagai tampilan awal agar langsung berisi data
+            const demoImg = new Image();
+            demoImg.crossOrigin = 'anonymous';
+            demoImg.onload = () => {
+                uploadedImages.push(demoImg);
+                updateCardCounter();
+                checkAndRenderInitial();
+            };
+            demoImg.onerror = () => {
+                console.error('Failed to load image_6dc99e.jpg');
+            };
+            demoImg.src = DEMO_IMAGE_URL;
+        };
+
+        function checkAndRenderInitial() {
+            if (backImage && backImage.complete && uploadedImages.length > 0) {
+                renderCards();
+            }
+        }
+
+        // Jalankan pemuatan aset saat halaman siap
+        window.onload = function() {
+            loadInitialImages();
+        };
+
+        // Initialize canvas awal
+        function initCanvas() {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, A4_WIDTH, A4_HEIGHT);
+        }
+
+        initCanvas();
+
+        fileInput.addEventListener('change', handleFiles);
+
+        // Menangani fitur Drag & Drop file gambar
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            handleFiles({ target: { files } });
+        });
+
+        function handleFiles(e) {
+            const files = Array.from(e.target.files);
+            
+            if (uploadedImages.length >= MAX_CARDS) {
+                showStatus('warning', `Maksimal ${MAX_CARDS} kartu nama sudah tercapai!`);
+                return;
+            }
+
+            const remainingSlots = MAX_CARDS - uploadedImages.length;
+            const filesToProcess = files.slice(0, remainingSlots);
+
+            if (files.length > remainingSlots) {
+                showStatus('warning', `Hanya ${remainingSlots} kartu yang dapat ditambahkan. Sisanya diabaikan.`);
+            }
+
+            let loadedCount = 0;
+            filesToProcess.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            uploadedImages.push(img);
+                            loadedCount++;
+                            
+                            if (loadedCount === filesToProcess.length) {
+                                renderCards();
+                                updateCardCounter();
+                                showStatus('success', `${loadedCount} kartu berhasil diupload!`);
+                            }
+                        };
+                        img.src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            fileInput.value = '';
+        }
+
+        function renderCards() {
+            const numCards = uploadedImages.length;
+            if (numCards === 0) {
+                initCanvas();
+                return;
+            }
+
+            // Atur tinggi canvas dinamis agar selalu memuat pas pasangannya tanpa ruang kosong berlebih
+            canvas.height = numCards * 2 * CARD_HEIGHT;
+
+            // Bersihkan canvas
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, A4_WIDTH, canvas.height);
+
+            uploadedImages.forEach((img, index) => {
+                // Tentukan koordinat Y vertikal untuk pasangan Depan (Front) & Belakang (Back)
+                const yFront = index * 2 * CARD_HEIGHT;
+                const yBack = yFront + CARD_HEIGHT;
+
+                // Render Sisi DEPAN (Full Width, No Margin Kanan-Kiri)
+                drawCardImage(img, 0, yFront);
+
+                // Render Sisi BELAKANG (Full Width, No Margin Kanan-Kiri)
+                if (backImage && backImage.complete) {
+                    drawCardImage(backImage, 0, yBack);
+                } else {
+                    // Placeholder jika back.jpg belum termuat
+                    ctx.fillStyle = '#f0f0f0';
+                    ctx.fillRect(0, yBack, CARD_WIDTH, CARD_HEIGHT);
+                    
+                    ctx.fillStyle = '#999';
+                    ctx.font = 'bold 60px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Memuat template belakang...', CARD_WIDTH / 2, yBack + CARD_HEIGHT / 2);
+                }
+            });
+
+            downloadBtn.disabled = false;
+        }
+
+        function drawCardImage(img, x, y) {
+            const imgAspect = img.width / img.height;
+            const cardAspect = CARD_WIDTH / CARD_HEIGHT;
+
+            let drawWidth, drawHeight, offsetX, offsetY;
+
+            if (imgAspect > cardAspect) {
+                // Jika gambar lebih lebar daripada rasio slot kartu nama
+                drawHeight = CARD_HEIGHT;
+                drawWidth = drawHeight * imgAspect;
+                offsetX = -(drawWidth - CARD_WIDTH) / 2;
+                offsetY = 0;
+            } else {
+                // Jika gambar lebih tinggi dibanding rasio slot kartu nama
+                drawWidth = CARD_WIDTH;
+                drawHeight = drawWidth / imgAspect;
+                offsetX = 0;
+                offsetY = -(drawHeight - CARD_HEIGHT) / 2;
+            }
+
+            // Kliping gambar agar presisi memenuhi area slot tanpa keluar batas
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(x, y, CARD_WIDTH, CARD_HEIGHT);
+            ctx.clip();
+            ctx.drawImage(img, x + offsetX, y + offsetY, drawWidth, drawHeight);
+            ctx.restore();
+
+            // Gambar border pemisah antar kartu yang halus di sekeliling area
+            ctx.strokeStyle = '#222';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(x, y, CARD_WIDTH, CARD_HEIGHT);
+        }
+
+        function updateCardCounter() {
+            cardCount.textContent = uploadedImages.length;
+            document.getElementById('totalCards').textContent = uploadedImages.length * 2;
+        }
+
+        function showStatus(type, message) {
+            statusMessage.className = `status ${type}`;
+            statusMessage.textContent = message;
+            setTimeout(() => {
+                statusMessage.className = '';
+                statusMessage.textContent = '';
+            }, 3000);
+        }
+
+        function downloadImage() {
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Business_Cards_A4_${Date.now()}.jpg`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showStatus('success', 'File berhasil didownload!');
+            }, 'image/jpeg', 1.0);
+        }
+
+        function resetCanvas() {
+            if (uploadedImages.length > 0) {
+                uploadedImages = [];
+                initCanvas();
+                downloadBtn.disabled = true;
+                updateCardCounter();
+                showStatus('success', 'Canvas berhasil direset!');
+            }
+        }
+    </script>
+</body>
+</html>
