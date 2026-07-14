@@ -134,7 +134,7 @@ P : 021 - 5483008 F : 021 - 5495360</textarea>
                 <div class="mt-6 w-full space-y-3 max-w-[525px]">
                     <button id="downloadAllPdfButton"
                         class="w-full px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition duration-150 ease-in-out disabled:opacity-50" disabled>
-                        📚 Download Semua Kartu (PDF) - <span id="downloadAllCount">0</span> kartu + 1 belakang
+                        📚 Download Semua Kartu (PDF) - <span id="downloadAllCount">0</span> kartu (per halaman) + 1 belakang
                     </button>
                     <button id="downloadPdfButton"
                         class="w-full px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out disabled:opacity-50" disabled>
@@ -578,8 +578,9 @@ P : 021 - 5483008 F : 021 - 5495360</textarea>
         });
 
         // --- FUNGSI DOWNLOAD PDF GABUNGAN (SEMUA KARTU) ---
-        // Layout: kartu 1, di bawahnya kartu 2, di bawahnya kartu 3, dst,
-        // dan di baris paling akhir adalah satu sisi belakang (back.png) untuk semuanya.
+        // Setiap kartu mendapat halaman/artboard-nya sendiri (kartu 1 di halaman 1,
+        // kartu 2 di halaman 2, dst), dan halaman paling akhir berisi satu sisi
+        // belakang (back.png) untuk semuanya.
         downloadAllPdfButton.addEventListener('click', async () => {
             if (businessCards.length === 0) {
                 console.error("Belum ada kartu dalam daftar.");
@@ -592,30 +593,30 @@ P : 021 - 5483008 F : 021 - 5495360</textarea>
 
                 const cardWidthMM = 90;
                 const cardHeightMM = 55;
-                const totalRows = businessCards.length + 1; // + 1 baris untuk sisi belakang
-                const totalHeightMM = cardHeightMM * totalRows;
 
                 const pdf = new jsPDF({
-                    orientation: 'portrait',
+                    orientation: 'landscape',
                     unit: 'mm',
-                    format: [cardWidthMM, totalHeightMM]
+                    format: [cardWidthMM, cardHeightMM]
                 });
 
-                // Kartu depan, satu per satu, ditumpuk ke bawah, masing-masing resolusi 3x
+                // Satu kartu depan per halaman, masing-masing resolusi 3x
                 businessCards.forEach((card, index) => {
+                    if (index > 0) {
+                        pdf.addPage([cardWidthMM, cardHeightMM], 'landscape');
+                    }
                     const imageData = renderCardToDataURL(drawFrontCard, card);
-                    const yPos = index * cardHeightMM;
-                    pdf.addImage(imageData, 'PNG', 0, yPos, cardWidthMM, cardHeightMM);
+                    pdf.addImage(imageData, 'PNG', 0, 0, cardWidthMM, cardHeightMM);
                 });
 
-                // Satu sisi belakang di baris paling akhir
+                // Halaman terakhir: satu sisi belakang untuk semua kartu
+                pdf.addPage([cardWidthMM, cardHeightMM], 'landscape');
                 const backImageData = renderCardToDataURL(drawBackCard);
-                const backYPos = businessCards.length * cardHeightMM;
-                pdf.addImage(backImageData, 'PNG', 0, backYPos, cardWidthMM, cardHeightMM);
+                pdf.addImage(backImageData, 'PNG', 0, 0, cardWidthMM, cardHeightMM);
 
                 pdf.save('semua-kartu-nama.pdf');
 
-                console.log(`Berhasil mengunduh PDF gabungan: ${businessCards.length} kartu + 1 belakang`);
+                console.log(`Berhasil mengunduh PDF gabungan: ${businessCards.length} halaman kartu + 1 halaman belakang`);
 
             } catch (error) {
                 console.error("Gagal mengunduh PDF gabungan:", error);
