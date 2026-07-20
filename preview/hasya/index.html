@@ -134,6 +134,13 @@ body{
     color:var(--text-soft);
     font-weight:700;
 }
+.surah-qori{
+    margin-top:6px;
+    font-size:0.7rem;
+    color:var(--purple);
+    font-weight:700;
+    font-family:'Fredoka', sans-serif;
+}
 
 /* ── Progress path ── */
 .progress-wrap{ max-width:460px; margin:20px auto 4px; padding:0 24px; }
@@ -430,6 +437,7 @@ body{
         <h1 class="surah-title-ar" id="surahNameArabic">سُورَةُ النبأ</h1>
         <p class="surah-title-id" id="surahInfo">Surah An-Naba</p>
         <p class="surah-sub" id="surahAyahCount">40 Ayat</p>
+        <p class="surah-qori">🎙️ Qori: Syekh Mahmud Khalil Al-Husary</p>
 
         <div class="progress-wrap">
             <div class="progress-label">
@@ -580,7 +588,7 @@ async function fetchSurah(id) {
         stopPlayback();
         document.getElementById('loading').style.display = 'flex';
         document.getElementById('app').style.display = 'none';
-        const url = 'https://api.alquran.cloud/v1/surah/' + id + '/editions/quran-simple,ar.alafasy,en.transliteration,id.indonesian';
+        const url = 'https://api.alquran.cloud/v1/surah/' + id + '/editions/quran-simple,ar.husary,en.transliteration,id.indonesian';
         const res = await fetch(url);
         const result = await res.json();
         const [arabicData, audioData, translit, translation] = result.data;
