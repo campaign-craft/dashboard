@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Rasio & Skala Kertas Pro</title>
+    <!-- Tailwind CSS for crisp modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font Family -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons for clean UI components -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .paper-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- Main Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-indigo-600/10 text-indigo-400 rounded-xl border border-indigo-500/20">
+                    <i data-lucide="layers" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight text-white">RasioKertas<span class="text-indigo-400">Pro</span></h1>
+                    <p class="text-xs text-slate-400">Kalkulator Konversi Skala Bebas Distorsi & Preset Kolom Koran</p>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center space-x-2 text-xs bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-700/50 text-slate-300">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse mr-1"></span>
+                Sistem Konversi Real-Time Aktif
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 w-full flex-grow">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Panel: Configurations and Inputs -->
+            <div class="lg:col-span-5 space-y-6">
+                <!-- Card 1: Base & Target Dimensions -->
+                <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/60 backdrop-blur-sm shadow-xl">
+                    <div class="flex items-center space-x-2 mb-5">
+                        <i data-lucide="sliders" class="text-indigo-400 w-5 h-5"></i>
+                        <h2 class="text-base font-semibold text-white">Konfigurasi Ukuran Kertas</h2>
+                    </div>
+
+                    <!-- Preset Selector -->
+                    <div class="mb-5">
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Preset Dokumen Asal</label>
+                        <select id="presetSelect" onchange="applyPreset()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                            <option value="A4" selected>A4 (210 x 297 mm) - Standar Default</option>
+                            <option value="A3">A3 (297 x 420 mm)</option>
+                            <option value="A5">A5 (148 x 210 mm)</option>
+                            <option value="F4">F4 / Folio (215 x 330 mm)</option>
+                            <option value="Letter">Letter (216 x 279 mm)</option>
+                            <option value="Custom">Kustom Sendiri (Input Manual)</option>
+                        </select>
+                    </div>
+
+                    <!-- Base Dimensions (Read-only / Editable if Custom) -->
+                    <div class="grid grid-cols-2 gap-4 mb-5">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Lebar Asal (mm)</label>
+                            <input type="number" id="baseW" value="210" oninput="hitungSemua()" class="w-full bg-slate-900/60 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" disabled>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tinggi Asal (mm)</label>
+                            <input type="number" id="baseH" value="297" oninput="hitungSemua()" class="w-full bg-slate-900/60 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" disabled>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-700/50 my-5"></div>
+
+                    <!-- NEW: Tribun Column Preset Quick Selector -->
+                    <div class="mb-5">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-xs font-semibold text-indigo-400 uppercase tracking-wider">Preset Kolom Koran (Tribun)</label>
+                            <span class="text-[10px] text-slate-500">Klik untuk langsung set lebar target</span>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button type="button" id="tribun-btn-1" onclick="selectTribunColumn(1, 40)" class="tribun-col-btn bg-slate-900 text-slate-300 border border-slate-700 hover:border-indigo-500 px-2 py-1.5 rounded-lg text-xs font-medium transition-all text-center">
+                                1 Kolom <span class="block text-[9px] text-slate-500 font-normal">40 mm</span>
+                            </button>
+                            <button type="button" id="tribun-btn-2" onclick="selectTribunColumn(2, 84)" class="tribun-col-btn bg-slate-900 text-slate-300 border border-slate-700 hover:border-indigo-500 px-2 py-1.5 rounded-lg text-xs font-medium transition-all text-center">
+                                2 Kolom <span class="block text-[9px] text-slate-500 font-normal">84 mm</span>
+                            </button>
+                            <button type="button" id="tribun-btn-3" onclick="selectTribunColumn(3, 128)" class="tribun-col-btn bg-indigo-600 text-white border border-indigo-500 hover:border-indigo-500 px-2 py-1.5 rounded-lg text-xs font-medium transition-all text-center">
+                                3 Kolom <span class="block text-[9px] text-indigo-200 font-normal">128 mm</span>
+                            </button>
+                            <button type="button" id="tribun-btn-4" onclick="selectTribunColumn(4, 172)" class="tribun-col-btn bg-slate-900 text-slate-300 border border-slate-700 hover:border-indigo-500 px-2 py-1.5 rounded-lg text-xs font-medium transition-all text-center">
+                                4 Kolom <span class="block text-[9px] text-slate-500 font-normal">172 mm</span>
+                            </button>
+                            <button type="button" id="tribun-btn-5" onclick="selectTribunColumn(5, 216)" class="tribun-col-btn bg-slate-900 text-slate-300 border border-slate-700 hover:border-indigo-500 px-2 py-1.5 rounded-lg text-xs font-medium transition-all text-center">
+                                5 Kolom <span class="block text-[9px] text-slate-500 font-normal">216 mm</span>
+                            </button>
+                            <button type="button" id="tribun-btn-6" onclick="selectTribunColumn(6, 260)" class="tribun-col-btn bg-slate-900 text-slate-300 border border-slate-700 hover:border-indigo-500 px-2 py-1.5 rounded-lg text-xs font-medium transition-all text-center">
+                                6 Kolom <span class="block text-[9px] text-slate-500 font-normal">260 mm</span>
+                            </button>
+                            <button type="button" id="tribun-btn-7" onclick="selectTribunColumn(7, 304)" class="tribun-col-btn bg-slate-900 text-slate-300 border border-slate-700 hover:border-indigo-500 px-2 py-1.5 rounded-lg text-xs font-medium transition-all text-center col-span-2">
+                                7 Kolom <span class="block text-[9px] text-slate-500 font-normal">304 mm</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Target Dimensions -->
+                    <div class="flex items-center justify-between mb-4">
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Ukuran Target Custom (mm)</label>
+                        <span class="text-xs text-indigo-400 cursor-pointer hover:underline" onclick="swapDimensions()">Balik Lanskap/Potret</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="targetW" class="block text-[10px] text-slate-500 font-medium mb-1">Lebar Target (W)</label>
+                            <input type="number" id="targetW" value="128" oninput="clearTribunHighlights(); hitungSemua();" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                        </div>
+                        <div>
+                            <label for="targetH" class="block text-[10px] text-slate-500 font-medium mb-1">Tinggi Target (H)</label>
+                            <input type="number" id="targetH" value="160" oninput="hitungSemua()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Math Scaling Umpama -->
+                <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/60 backdrop-blur-sm shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                        <i data-lucide="binary" class="w-24 h-24"></i>
+                    </div>
+                    <div class="flex items-center space-x-2 mb-5">
+                        <i data-lucide="pencil-ruler" class="text-indigo-400 w-5 h-5"></i>
+                        <h2 class="text-base font-semibold text-white">Logika Skala Custom Anda</h2>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Jika Lebar Target Anda Di-set Jadi:</label>
+                            <div class="relative">
+                                <input type="number" id="scaleW" value="200" oninput="hitungSemua()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 pr-12">
+                                <span class="absolute right-3.5 top-2.5 text-xs text-slate-500 font-medium">unit</span>
+                            </div>
+                            <p class="text-[10px] text-slate-500 mt-1">Umpama lebar canvas mentah / lebar koordinat media Anda.</p>
+                        </div>
+
+                        <div class="bg-slate-900/80 rounded-xl p-4 border border-indigo-500/20">
+                            <span class="block text-[10px] text-indigo-400 font-semibold tracking-wider uppercase mb-1">Maka Tinggi Pasangannya (Y) Harus:</span>
+                            <div class="flex items-baseline justify-between">
+                                <span class="text-2xl font-black text-white" id="resultY">250</span>
+                                <button onclick="copyToClipboard('resultY', 'Tinggi Pasangan')" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded transition-colors">
+                                    <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Real-time Visualizer and Warnings -->
+            <div class="lg:col-span-7 space-y-6">
+                <!-- Distort Warning & Metrics Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Ratio Analysis Card -->
+                    <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/60 backdrop-blur-sm shadow-xl flex flex-col justify-between">
+                        <div>
+                            <span class="block text-[10px] text-slate-400 font-bold tracking-wider uppercase mb-2">Hasil Perbandingan Rasio</span>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-lg font-bold text-slate-200" id="ratioAsal">1 : 1.41</span>
+                                <span class="text-xs text-slate-500">vs</span>
+                                <span class="text-lg font-bold text-indigo-400" id="ratioTarget">1 : 1.25</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-700/50 flex items-center space-x-2" id="distortionBadge">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Recommended Scale Factor Card -->
+                    <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/60 backdrop-blur-sm shadow-xl flex flex-col justify-between">
+                        <div>
+                            <span class="block text-[10px] text-slate-400 font-bold tracking-wider uppercase mb-2">Rasio Penyusutan Maksimal</span>
+                            <div class="flex items-baseline space-x-1.5">
+                                <span class="text-3xl font-black text-white" id="scaleFactorPercent">61%</span>
+                                <span class="text-xs text-slate-400">dari A4</span>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-2">Batas aman agar semua konten masuk tanpa terpotong di media baru.</p>
+                    </div>
+                </div>
+
+                <!-- Live Paper Preview -->
+                <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/60 backdrop-blur-sm shadow-xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="eye" class="text-indigo-400 w-5 h-5"></i>
+                            <h2 class="text-base font-semibold text-white">Visualizer Perbandingan Proporsi</h2>
+                        </div>
+                        <span class="text-xs text-slate-400">Aspek Rasio Sebenarnya</span>
+                    </div>
+
+                    <!-- SVG Canvas Container -->
+                    <div class="bg-slate-900 rounded-xl p-8 flex justify-center items-center border border-slate-800 relative h-72">
+                        <svg id="visualizerSvg" class="w-full h-full max-h-60" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
+                            <!-- Rendered Dynamically by JS -->
+                        </svg>
+
+                        <!-- Legend -->
+                        <div class="absolute bottom-3 left-3 flex space-x-4 text-[10px]">
+                            <div class="flex items-center space-x-1">
+                                <span class="w-3 h-3 bg-indigo-600/20 border border-indigo-500 rounded-sm"></span>
+                                <span class="text-slate-400">Target (<span id="legendTarget">128x160</span>)</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <span class="w-3 h-3 bg-transparent border border-dashed border-slate-600 rounded-sm"></span>
+                                <span class="text-slate-400">Template Asal (<span id="legendBase">A4</span>)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smart Calculator: Font Resizer -->
+                <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/60 backdrop-blur-sm shadow-xl">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i data-lucide="type" class="text-indigo-400 w-5 h-5"></i>
+                        <h2 class="text-base font-semibold text-white">Simulasi Ukuran Font Aman</h2>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-4">Masukkan ukuran font asli Anda di layout A4 untuk mengetahui berapa ukuran pasnya di canvas baru.</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-slate-500 font-semibold mb-2">Ukuran Font Asli (pt / px)</label>
+                            <input type="number" id="baseFontSize" value="12" oninput="hitungSemua()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="bg-slate-900/60 rounded-xl p-3 border border-slate-700 flex flex-col justify-center">
+                            <span class="block text-[10px] text-slate-500 font-semibold uppercase">Rekomendasi Font Baru:</span>
+                            <div class="flex items-baseline justify-between mt-1">
+                                <span class="text-xl font-bold text-emerald-400" id="recomFontSize">7.31 pt</span>
+                                <span class="text-[9px] text-slate-500" id="fontWarning">Masih terbaca nyaman</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer with informative math values -->
+    <footer class="bg-slate-950 border-t border-slate-900/80 py-6 mt-12 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>RasioKertasPro • Dibuat menggunakan algoritma perbandingan senilai linear. Anti-stretch sistem.</p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-emerald-600 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-semibold flex items-center space-x-2 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none z-50">
+        <i data-lucide="check-circle" class="w-4 h-4"></i>
+        <span id="toastMsg">Berhasil disalin!</span>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Preset databases (mm)
+        const presets = {
+            "A4": { w: 210, h: 297 },
+            "A3": { w: 297, h: 420 },
+            "A5": { w: 148, h: 210 },
+            "F4": { w: 215, h: 330 },
+            "Letter": { w: 216, h: 279 },
+            "Custom": null
+        };
+
+        // Standard Tribun Newspaper Columns mapping
+        const tribunColumns = {
+            1: 40,
+            2: 84,
+            3: 128,
+            4: 172,
+            5: 216,
+            6: 260,
+            7: 304
+        };
+
+        function selectTribunColumn(cols, width) {
+            document.getElementById('targetW').value = width;
+            
+            // Clear all buttons first
+            const buttons = document.querySelectorAll('.tribun-col-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-500');
+                btn.classList.add('bg-slate-900', 'text-slate-300', 'border-slate-700');
+                
+                // Reset small spans styles
+                const span = btn.querySelector('span');
+                if (span) {
+                    span.classList.remove('text-indigo-200');
+                    span.classList.add('text-slate-500');
+                }
+            });
+
+            // Highlight active button
+            const activeBtn = document.getElementById(`tribun-btn-${cols}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-900', 'text-slate-300', 'border-slate-700');
+                activeBtn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-500');
+                
+                const span = activeBtn.querySelector('span');
+                if (span) {
+                    span.classList.remove('text-slate-500');
+                    span.classList.add('text-indigo-200');
+                }
+            }
+
+            hitungSemua();
+        }
+
+        function clearTribunHighlights() {
+            // Remove selection if user types customized target manual
+            const buttons = document.querySelectorAll('.tribun-col-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-500');
+                btn.classList.add('bg-slate-900', 'text-slate-300', 'border-slate-700');
+                
+                const span = btn.querySelector('span');
+                if (span) {
+                    span.classList.remove('text-indigo-200');
+                    span.classList.add('text-slate-500');
+                }
+            });
+        }
+
+        function applyPreset() {
+            const selector = document.getElementById('presetSelect');
+            const baseWInput = document.getElementById('baseW');
+            const baseHInput = document.getElementById('baseH');
+            const presetVal = selector.value;
+
+            if (presetVal === "Custom") {
+                baseWInput.disabled = false;
+                baseHInput.disabled = false;
+                baseWInput.classList.remove('bg-slate-900/60');
+                baseWInput.classList.add('bg-slate-900');
+                baseHInput.classList.remove('bg-slate-900/60');
+                baseHInput.classList.add('bg-slate-900');
+            } else {
+                baseWInput.disabled = true;
+                baseHInput.disabled = true;
+                baseWInput.classList.add('bg-slate-900/60');
+                baseWInput.classList.remove('bg-slate-900');
+                baseHInput.classList.add('bg-slate-900/60');
+                baseHInput.classList.remove('bg-slate-900');
+                
+                baseWInput.value = presets[presetVal].w;
+                baseHInput.value = presets[presetVal].h;
+            }
+            hitungSemua();
+        }
+
+        function swapDimensions() {
+            const targetW = document.getElementById('targetW');
+            const targetH = document.getElementById('targetH');
+            const temp = targetW.value;
+            targetW.value = targetH.value;
+            targetH.value = temp;
+            clearTribunHighlights();
+            hitungSemua();
+        }
+
+        function hitungSemua() {
+            // Read all inputs
+            const baseW = parseFloat(document.getElementById('baseW').value) || 1;
+            const baseH = parseFloat(document.getElementById('baseH').value) || 1;
+            const targetW = parseFloat(document.getElementById('targetW').value) || 1;
+            const targetH = parseFloat(document.getElementById('targetH').value) || 1;
+            const scaleW = parseFloat(document.getElementById('scaleW').value) || 1;
+            const baseFontSize = parseFloat(document.getElementById('baseFontSize').value) || 1;
+
+            // 1. Hitung Skala Custom Umpama (Y = (Target H * Scale W) / Target W)
+            const resultY = (targetH * scaleW) / targetW;
+            const resultYEl = document.getElementById('resultY');
+            resultYEl.innerText = Number.isInteger(resultY) ? resultY : resultY.toFixed(2);
+
+            // 2. Analisis Rasio & Distorsi
+            const rasioAsalVal = baseH / baseW;
+            const rasioTargetVal = targetH / targetW;
+            
+            document.getElementById('ratioAsal').innerText = `1 : ${rasioAsalVal.toFixed(2)}`;
+            document.getElementById('ratioTarget').innerText = `1 : ${rasioTargetVal.toFixed(2)}`;
+
+            const distortionPercent = Math.abs((rasioTargetVal - rasioAsalVal) / rasioAsalVal) * 100;
+            const distortionBadge = document.getElementById('distortionBadge');
+
+            if (distortionPercent < 2) {
+                distortionBadge.innerHTML = `
+                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-1"></i> Rasio Proporsional
+                    </span>
+                    <span class="text-[10px] text-slate-500">Rasio sangat dekat. Aman!</span>
+                `;
+            } else {
+                distortionBadge.innerHTML = `
+                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                        <i data-lucide="alert-triangle" class="w-3.5 h-3.5 mr-1"></i> Rawan Distorsi (${distortionPercent.toFixed(0)}%)
+                    </span>
+                    <span class="text-[10px] text-slate-400">Butuh atur margin/re-layout.</span>
+                `;
+            }
+            
+            // 3. Hitung Penyusutan Maksimum (Scale Factor)
+            const factorW = targetW / baseW;
+            const factorH = targetH / baseH;
+            const worstScaleFactor = Math.min(factorW, factorH); // Ambil penyusutan terdalam
+            document.getElementById('scaleFactorPercent').innerText = `${Math.round(worstScaleFactor * 100)}%`;
+
+            // 4. Hitung Simulasi Font Baru
+            const recomFont = baseFontSize * worstScaleFactor;
+            const recomFontSizeEl = document.getElementById('recomFontSize');
+            recomFontSizeEl.innerText = `${recomFont.toFixed(2)} pt`;
+
+            const fontWarningEl = document.getElementById('fontWarning');
+            if (recomFont >= 8) {
+                fontWarningEl.innerText = "Sangat Nyaman dibaca";
+                fontWarningEl.className = "text-[9px] text-emerald-400 font-semibold";
+            } else if (recomFont >= 6.5) {
+                fontWarningEl.innerText = "Batas aman mata normal";
+                fontWarningEl.className = "text-[9px] text-amber-400 font-semibold";
+            } else {
+                fontWarningEl.innerText = "Terlalu kecil! Naikkan font dasar";
+                fontWarningEl.className = "text-[9px] text-red-400 font-semibold";
+            }
+
+            // Update legends
+            document.getElementById('legendTarget').innerText = `${targetW}x${targetH} mm`;
+            const presetText = document.getElementById('presetSelect').value;
+            document.getElementById('legendBase').innerText = presetText === 'Custom' ? 'Custom' : presetText;
+
+            // 5. Draw Visualizer
+            drawVisualizer(baseW, baseH, targetW, targetH);
+            
+            // Reload icons
+            lucide.createIcons();
+        }
+
+        function drawVisualizer(bw, bh, tw, th) {
+            const svg = document.getElementById('visualizerSvg');
+            svg.innerHTML = ''; // Clear SVG
+
+            const pad = 20;
+            const maxW = 400 - (pad * 2);
+            const maxH = 300 - (pad * 2);
+
+            // Tentukan rasio penskalaan agar muat di dalam viewport SVG (400x300)
+            const scaleFactor = Math.min(maxW / Math.max(bw, tw), maxH / Math.max(bh, th));
+
+            // Dimensi untuk Canvas Template Asal
+            const rectBaseW = bw * scaleFactor;
+            const rectBaseH = bh * scaleFactor;
+
+            // Dimensi untuk Canvas Target
+            const rectTargetW = tw * scaleFactor;
+            const rectTargetH = th * scaleFactor;
+
+            // Hitung posisi centering agar seimbang di tengah SVG
+            const baseX = (400 - rectBaseW) / 2;
+            const baseY = (300 - rectBaseH) / 2;
+
+            const targetX = (400 - rectTargetW) / 2;
+            const targetY = (300 - rectTargetH) / 2;
+
+            // DRAW TEMPLATE ASAL (Dashed border background)
+            const baseRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            baseRect.setAttribute('x', baseX);
+            baseRect.setAttribute('y', baseY);
+            baseRect.setAttribute('width', rectBaseW);
+            baseRect.setAttribute('height', rectBaseH);
+            baseRect.setAttribute('fill', 'none');
+            baseRect.setAttribute('stroke', '#475569');
+            baseRect.setAttribute('stroke-width', '2');
+            baseRect.setAttribute('stroke-dasharray', '5,5');
+            baseRect.setAttribute('rx', '4');
+            svg.appendChild(baseRect);
+
+            // DRAW TARGET CANVAS (Filled/Solid premium aesthetic)
+            const targetRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            targetRect.setAttribute('x', targetX);
+            targetRect.setAttribute('y', targetY);
+            targetRect.setAttribute('width', rectTargetW);
+            targetRect.setAttribute('height', rectTargetH);
+            targetRect.setAttribute('fill', 'rgba(99, 102, 241, 0.15)');
+            targetRect.setAttribute('stroke', '#6366f1');
+            targetRect.setAttribute('stroke-width', '2.5');
+            targetRect.setAttribute('rx', '4');
+            svg.appendChild(targetRect);
+
+            // Label Info di Atas Garis
+            const textBase = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            textBase.setAttribute('x', baseX + 8);
+            textBase.setAttribute('y', baseY + 18);
+            textBase.setAttribute('fill', '#94a3b8');
+            textBase.setAttribute('font-size', '10px');
+            textBase.setAttribute('font-weight', 'bold');
+            textBase.textContent = "ASAL";
+            svg.appendChild(textBase);
+
+            const textTarget = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            textTarget.setAttribute('x', targetX + 8);
+            textTarget.setAttribute('y', targetY + 18);
+            textTarget.setAttribute('fill', '#818cf8');
+            textTarget.setAttribute('font-size', '10px');
+            textTarget.setAttribute('font-weight', 'bold');
+            textTarget.textContent = "TARGET";
+            svg.appendChild(textTarget);
+        }
+
+        function copyToClipboard(elementId, label) {
+            const val = document.getElementById(elementId).innerText;
+            
+            // Create temporary input for executing copy
+            const tempInput = document.createElement('input');
+            tempInput.value = val;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            // Toast feedback
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.innerText = `${label} (${val}) berhasil disalin!`;
+            
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 2500);
+        }
+
+        // Run calculation loop on load
+        window.onload = function() {
+            hitungSemua();
+        }
+    </script>
+</body>
+</html>
