@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TribunCrop - Modern Image Editor</title>
+    <title>TribunCrop v2.5 - Modern Image Editor with Zoom Out & Fit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -34,7 +34,7 @@
             background: #4b5563;
         }
 
-        /* Grid Rule of Thirds styling inside the cropper */
+        /* Grid Rule of Thirds styling inside canvas */
         .grid-line-h,
         .grid-line-v {
             position: absolute;
@@ -55,10 +55,19 @@
             top: 0;
         }
 
-        /* Premium custom glowing borders */
+        /* Glowing interactive elements */
         .glow-active {
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
+            border-color: rgba(59, 130, 246, 0.6);
+        }
+
+        .canvas-checkerboard {
+            background-image: linear-gradient(45deg, #182032 25%, transparent 25%),
+                linear-gradient(-45deg, #182032 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #182032 75%),
+                linear-gradient(-45deg, transparent 75%, #182032 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
         }
     </style>
 </head>
@@ -79,9 +88,10 @@
                 <div>
                     <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
                         TribunCrop <span
-                            class="text-xs bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/20">v2.0</span>
+                            class="text-xs bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/20 font-mono">v2.5
+                            Pro</span>
                     </h1>
-                    <p class="text-xs text-slate-400">Editor Pemotong Gambar Berstandar Tribunnews</p>
+                    <p class="text-xs text-slate-400">Editor Pemotong & Fitting Gambar Berstandar Tribunnews</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -96,79 +106,145 @@
 
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-        <!-- Left Sidebar: Controls & Options -->
-        <section class="lg:col-span-4 flex flex-col gap-6">
+        <!-- Left Sidebar: Settings & Controls -->
+        <section class="lg:col-span-4 flex flex-col gap-5">
 
-            <!-- File Input & Dropzone -->
+            <!-- Dropzone / File Loader -->
             <div id="dropzone"
-                class="bg-slate-950 border-2 border-dashed border-slate-800 hover:border-blue-500/50 transition-all duration-300 rounded-2xl p-6 text-center group cursor-pointer relative overflow-hidden">
+                class="bg-slate-950 border-2 border-dashed border-slate-800 hover:border-blue-500/50 transition-all duration-300 rounded-2xl p-5 text-center group cursor-pointer relative overflow-hidden">
                 <input type="file" id="imageInput" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" />
-                <div class="py-4 flex flex-col items-center">
+                <div class="py-3 flex flex-col items-center">
                     <div
-                        class="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-slate-800 group-hover:border-blue-500/30">
-                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="w-11 h-11 rounded-xl bg-slate-900 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 border border-slate-800 group-hover:border-blue-500/30">
+                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
                             </path>
                         </svg>
                     </div>
-                    <h3 class="text-sm font-semibold text-slate-200">Unggah Gambar Artikel</h3>
-                    <p class="text-xs text-slate-400 mt-1 max-w-[240px] mx-auto">Klik untuk memilih file, seret gambar
-                        ke sini, atau langsung <span class="text-blue-400 font-medium">Paste (Ctrl+V)</span></p>
-                    <span id="paste-info"
-                        class="text-[10px] text-slate-500 mt-3 block bg-slate-900/50 px-2 py-1 rounded">Dukungan penuh
-                        Clipboard Paste</span>
+                    <h3 class="text-xs font-semibold text-slate-200">Unggah Gambar Artikel</h3>
+                    <p class="text-[11px] text-slate-400 mt-1">Pilih file, seret ke sini, atau <span
+                            class="text-blue-400 font-medium">Paste (Ctrl+V)</span></p>
                 </div>
             </div>
 
+            <!-- Control Settings Panel -->
             <div id="controlPanel" class="bg-slate-950 border border-slate-800 rounded-2xl p-5 flex flex-col gap-5">
+
+                <!-- Fit vs Cover Quick Mode Switcher -->
                 <div>
-                    <h3 class="text-sm font-semibold text-white mb-1">Pengaturan Resolusi</h3>
-                    <p class="text-xs text-slate-400">Tentukan dimensi gambar target yang diinginkan</p>
+                    <label class="block text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-2">Mode
+                        Tampilan Sisi (Fit / Crop)</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" id="btnFitMode" onclick="setFittingMode('fit')"
+                            class="bg-blue-600 text-white border border-blue-500 p-2.5 rounded-xl transition-all text-xs font-bold flex items-center justify-center gap-1.5 shadow-lg shadow-blue-900/30">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4">
+                                </path>
+                            </svg>
+                            🔲 Fit (Utuh / Zoom Out)
+                        </button>
+                        <button type="button" id="btnCoverMode" onclick="setFittingMode('cover')"
+                            class="bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 p-2.5 rounded-xl transition-all text-xs font-semibold flex items-center justify-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m0 0l-2-1m2 1v2.5M14 4l-2 1m0 0l-2-1m2 1v2.5M4 7l2-1m0 0l2 1m-2-1v2.5M4 13l2-1m0 0l2 1m-2-1v2.5">
+                                </path>
+                            </svg>
+                            ✂️ Cover (Potong Penuh)
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-1.5 leading-relaxed">
+                        <span id="fitHintText" class="text-blue-400 font-medium">Mode Fit:</span> Menampilkan seluruh
+                        foto tanpa dipotong. Area kosong akan diisi warna latar (Putih/Blur/Lainnya).
+                    </p>
+                </div>
+
+                <!-- Background Padding Fill Colors (When Zoomed Out / Fit Mode) -->
+                <div>
+                    <label class="block text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-2">Warna
+                        Latar Kanan-Kiri / Padding</label>
+                    <div class="grid grid-cols-5 gap-1.5">
+                        <button type="button" onclick="setBackgroundFill('white')" id="bgBtn-white"
+                            title="Putih Solid (Rekomendasi)"
+                            class="h-9 rounded-lg bg-white border-2 border-blue-500 flex items-center justify-center text-slate-900 font-bold text-xs shadow">
+                            ⚪
+                        </button>
+                        <button type="button" onclick="setBackgroundFill('black')" id="bgBtn-black" title="Hitam Solid"
+                            class="h-9 rounded-lg bg-black border border-slate-700 flex items-center justify-center text-white text-xs">
+                            ⬛
+                        </button>
+                        <button type="button" onclick="setBackgroundFill('blur')" id="bgBtn-blur"
+                            title="Blur Gambar Asli (Modern)"
+                            class="h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xs">
+                            🌀
+                        </button>
+                        <button type="button" onclick="setBackgroundFill('transparent')" id="bgBtn-transparent"
+                            title="Transparan (PNG)"
+                            class="h-9 rounded-lg canvas-checkerboard border border-slate-700 flex items-center justify-center text-xs">
+                            🏁
+                        </button>
+                        <label title="Pilih Warna Kostum"
+                            class="h-9 rounded-lg bg-gradient-to-tr from-purple-500 to-pink-500 border border-slate-700 flex items-center justify-center text-xs cursor-pointer relative overflow-hidden">
+                            🎨
+                            <input type="color" id="customColorPicker" value="#ffffff"
+                                onchange="setBackgroundFill('custom', this.value)"
+                                class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+                        </label>
+                    </div>
+                    <div class="flex justify-between items-center mt-1.5">
+                        <span id="bgStatusText" class="text-[10px] text-slate-400 font-medium">Latar: Putih
+                            Solid</span>
+                    </div>
                 </div>
 
                 <!-- Custom Dimensions Input -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div
-                        class="bg-slate-900 border border-slate-800 rounded-xl p-2.5 focus-within:border-blue-500/50 transition-colors">
-                        <label for="widthInput"
-                            class="block text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-1">Lebar
-                            (px)</label>
-                        <input type="number" id="widthInput" value="700"
-                            class="bg-transparent text-white font-bold w-full focus:outline-none text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                    </div>
-                    <div
-                        class="bg-slate-900 border border-slate-800 rounded-xl p-2.5 focus-within:border-blue-500/50 transition-colors">
-                        <label for="heightInput"
-                            class="block text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-1">Tinggi
-                            (px)</label>
-                        <input type="number" id="heightInput" value="393"
-                            class="bg-transparent text-white font-bold w-full focus:outline-none text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                <div>
+                    <label class="block text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-2">Dimensi
+                        Hasil Target (Pixel)</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div
+                            class="bg-slate-900 border border-slate-800 rounded-xl p-2.5 focus-within:border-blue-500/50 transition-colors">
+                            <label for="widthInput"
+                                class="block text-[9px] text-slate-400 uppercase tracking-wider font-semibold mb-1">Lebar
+                                (px)</label>
+                            <input type="number" id="widthInput" value="700"
+                                class="bg-transparent text-white font-bold w-full focus:outline-none text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        </div>
+                        <div
+                            class="bg-slate-900 border border-slate-800 rounded-xl p-2.5 focus-within:border-blue-500/50 transition-colors">
+                            <label for="heightInput"
+                                class="block text-[9px] text-slate-400 uppercase tracking-wider font-semibold mb-1">Tinggi
+                                (px)</label>
+                            <input type="number" id="heightInput" value="393"
+                                class="bg-transparent text-white font-bold w-full focus:outline-none text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        </div>
                     </div>
                 </div>
 
-                <!-- Preset Options for Tribunnews & Others -->
+                <!-- Preset Options -->
                 <div>
                     <span class="block text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-2">Preset
-                        Aspect Ratio</span>
+                        Ukuran</span>
                     <div class="grid grid-cols-2 gap-2">
                         <button type="button" onclick="applyPreset(700, 393)"
-                            class="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-left p-2.5 rounded-xl transition-all flex flex-col gap-0.5">
+                            class="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-left p-2 rounded-xl transition-all flex flex-col gap-0.5">
                             <span class="font-bold text-slate-200">700 x 393</span>
                             <span class="text-[10px] text-blue-400">Tribunnews Utama</span>
                         </button>
                         <button type="button" onclick="applyPreset(1200, 630)"
-                            class="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-left p-2.5 rounded-xl transition-all flex flex-col gap-0.5">
+                            class="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-left p-2 rounded-xl transition-all flex flex-col gap-0.5">
                             <span class="font-bold text-slate-200">1200 x 630</span>
                             <span class="text-[10px] text-slate-400">FB / Open Graph</span>
                         </button>
                         <button type="button" onclick="applyPreset(1080, 1080)"
-                            class="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-left p-2.5 rounded-xl transition-all flex flex-col gap-0.5">
+                            class="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-left p-2 rounded-xl transition-all flex flex-col gap-0.5">
                             <span class="font-bold text-slate-200">1080 x 1080</span>
                             <span class="text-[10px] text-slate-400">Square 1:1</span>
                         </button>
                         <button type="button" onclick="applyPreset(600, 400)"
-                            class="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-left p-2.5 rounded-xl transition-all flex flex-col gap-0.5">
+                            class="text-xs bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-left p-2 rounded-xl transition-all flex flex-col gap-0.5">
                             <span class="font-bold text-slate-200">600 x 400</span>
                             <span class="text-[10px] text-slate-400">Landscape 3:2</span>
                         </button>
@@ -183,7 +259,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                         </svg>
-                        Unduh Hasil Crop
+                        Unduh Hasil Gambar
                     </button>
                     <button id="copyButton"
                         class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20 text-sm">
@@ -198,11 +274,12 @@
             </div>
         </section>
 
+        <!-- Right Main Workspace: Editor Window & Interactive Canvas -->
         <section class="lg:col-span-8 flex flex-col gap-6">
 
-            <!-- Workspace Editor Window -->
+            <!-- Placeholder Screen -->
             <div id="editorPlaceholder"
-                class="bg-slate-950 border border-slate-800 rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[450px]">
+                class="bg-slate-950 border border-slate-800 rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[480px]">
                 <div
                     class="w-16 h-16 rounded-2xl bg-slate-900/50 border border-slate-800/80 flex items-center justify-center text-slate-500 mb-4 animate-bounce">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,81 +289,116 @@
                     </svg>
                 </div>
                 <h2 class="text-base font-bold text-slate-300">Belum Ada Gambar yang Dimuat</h2>
-                <p class="text-xs text-slate-500 mt-2 max-w-[340px] leading-relaxed">Pilih file gambar menggunakan
-                    tombol unggah atau salin lalu tempel langsung di layar ini untuk memulai proses penyuntingan gambar.
+                <p class="text-xs text-slate-500 mt-2 max-w-[340px] leading-relaxed">Unggah file atau langsung tempel
+                    <span class="text-blue-400 font-medium">(Ctrl + V)</span> gambar ke dalam layar ini. Foto vertikal
+                    otomatis dapat di-zoom out dengan padding putih di kanan/kiri!
                 </p>
             </div>
 
-            <!-- Main Editor Screen Wrapper -->
-            <div id="canvas-wrapper" class="hidden flex flex-col gap-6">
-                <!-- Editor Frame -->
+            <!-- Main Interactive Editor Box -->
+            <div id="canvas-wrapper" class="hidden flex flex-col gap-4">
                 <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 overflow-hidden relative">
-                    <div class="flex items-center justify-between mb-3 px-1">
-                        <span class="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Canvas Pemotongan
-                        </span>
-                        <span id="resolutionIndicator"
-                            class="text-[10px] font-mono bg-slate-900 px-2 py-0.5 rounded border border-slate-800 text-slate-400">
-                            Loading...
-                        </span>
+
+                    <!-- Canvas Top Bar Status -->
+                    <div class="flex flex-wrap items-center justify-between mb-3 gap-2 px-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-blue-500"></span> Canvas Fitting
+                            </span>
+                            <span id="resolutionIndicator"
+                                class="text-[10px] font-mono bg-slate-900 px-2 py-0.5 rounded border border-slate-800 text-slate-400">
+                                Asli: -
+                            </span>
+                        </div>
+
+                        <!-- Quick Canvas Controls -->
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" onclick="rotateImage(-90)" title="Putar Kiri 90°"
+                                class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-1.5 rounded-lg text-xs">
+                                ↺
+                            </button>
+                            <button type="button" onclick="rotateImage(90)" title="Putar Kanan 90°"
+                                class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 p-1.5 rounded-lg text-xs">
+                                ↻
+                            </button>
+                            <button type="button" onclick="resetPosition()" title="Reset Posisi & Zoom"
+                                class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-2 py-1 rounded-lg text-[10px] font-semibold">
+                                🔄 Reset
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Canvas Interactive Area -->
-                    <div class="relative w-full overflow-hidden rounded-xl border border-slate-900 bg-[#07090e] flex items-center justify-center select-none"
+                    <!-- Interactive Main Canvas Container -->
+                    <div class="relative w-full overflow-hidden rounded-xl border border-slate-900 bg-[#07090e] flex items-center justify-center select-none py-2"
                         id="canvas-container">
-                        <canvas id="imageCanvas" class="max-w-full h-auto block"></canvas>
-                        <!-- Overlay Mask for Crop Area -->
-                        <div id="cropper-mask" class="absolute inset-0 pointer-events-none bg-slate-950/45"></div>
-                        <!-- Resizable Crop Box -->
-                        <div id="cropper-area"
-                            class="absolute border-2 border-blue-500 cursor-move shadow-[0_0_0_9999px_rgba(11,15,25,0.7)] pointer-events-auto transition-shadow hover:shadow-[0_0_0_9999px_rgba(11,15,25,0.7),0_0_15px_rgba(59,130,246,0.5)]">
-                            <!-- Rule-of-Thirds Grid Lines -->
+                        <canvas id="interactiveCanvas"
+                            class="max-w-full h-auto block rounded cursor-grab active:cursor-grabbing shadow-2xl transition-all"></canvas>
+
+                        <!-- Rule of Thirds Grid Overlay Toggleable -->
+                        <div id="gridOverlay"
+                            class="absolute inset-0 pointer-events-none hidden max-w-full h-auto mx-auto">
                             <div class="grid-line-h" style="top: 33.33%;"></div>
                             <div class="grid-line-h" style="top: 66.66%;"></div>
                             <div class="grid-line-v" style="left: 33.33%;"></div>
                             <div class="grid-line-v" style="left: 66.66%;"></div>
+                        </div>
+                    </div>
 
-                            <!-- Anchor Resizer (Bottom Right Handle) -->
-                            <div
-                                class="cropper-handle absolute w-5 h-5 bg-white border-2 border-blue-500 rounded-md bottom-[-10px] right-[-10px] cursor-se-resize flex items-center justify-center shadow-lg group">
-                                <span class="block w-1 h-1 bg-slate-400 rounded-full"></span>
-                            </div>
+                    <!-- Zoom Slider & Interactive Tools -->
+                    <div
+                        class="mt-4 pt-3 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 px-1">
+                        <div class="flex items-center gap-3 w-full sm:w-auto">
+                            <span class="text-xs font-semibold text-slate-400">Zoom:</span>
+                            <button type="button" onclick="adjustZoom(-0.1)"
+                                class="w-7 h-7 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-xs font-bold text-slate-300 flex items-center justify-center">-</button>
+                            <input type="range" id="zoomSlider" min="0.1" max="3" step="0.02" value="1"
+                                class="w-full sm:w-48 accent-blue-500 bg-slate-800 rounded-lg h-1.5 cursor-pointer" />
+                            <button type="button" onclick="adjustZoom(0.1)"
+                                class="w-7 h-7 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-xs font-bold text-slate-300 flex items-center justify-center">+</button>
+                            <span id="zoomPercent" class="text-xs font-mono text-blue-400 w-12 font-bold">100%</span>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <label class="text-[11px] text-slate-400 flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" id="toggleGrid" onchange="toggleGridOverlay()"
+                                    class="rounded bg-slate-900 border-slate-800 text-blue-600 focus:ring-0">
+                                Garis Bantu Grid (Rule of Thirds)
+                            </label>
                         </div>
                     </div>
                 </div>
 
-                <div id="preview-container" class="hidden bg-slate-950 border border-slate-800 rounded-2xl p-5">
-                    <div class="flex items-center justify-between mb-4">
+                <!-- Live Preview Result Box -->
+                <div id="preview-container" class="bg-slate-950 border border-slate-800 rounded-2xl p-4">
+                    <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
                             <div
-                                class="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                    </path>
-                                </svg>
+                                class="w-5 h-5 rounded-md bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-xs">
+                                ✓
                             </div>
-                            <h3 class="text-sm font-semibold text-white">Live Preview Hasil Crop</h3>
+                            <h3 class="text-xs font-semibold text-white">Live Preview Output Target</h3>
                         </div>
                         <span id="previewDimensions"
-                            class="text-[10px] font-mono bg-emerald-950/30 text-emerald-400 border border-emerald-900/50 px-2 py-0.5 rounded">700
-                            x 393 px</span>
+                            class="text-[10px] font-mono bg-emerald-950/30 text-emerald-400 border border-emerald-900/50 px-2 py-0.5 rounded">
+                            700 x 393 px
+                        </span>
                     </div>
-                    <div class="flex justify-center items-center p-3 border border-slate-900 rounded-xl bg-slate-950">
-                        <canvas id="previewCanvas" class="max-w-full h-auto rounded-lg shadow-inner"></canvas>
+                    <div
+                        class="flex justify-center items-center p-2 border border-slate-900 rounded-xl bg-[#06080e]">
+                        <canvas id="previewCanvas" class="max-w-full h-auto rounded shadow-inner"></canvas>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2"></div>
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <script>
+        // Global State Variables
         const imageInput = document.getElementById('imageInput');
-        const imageCanvas = document.getElementById('imageCanvas');
+        const interactiveCanvas = document.getElementById('interactiveCanvas');
         const previewCanvas = document.getElementById('previewCanvas');
         const controlPanel = document.getElementById('controlPanel');
         const actionButtons = document.getElementById('actionButtons');
@@ -296,58 +408,158 @@
         const copyButton = document.getElementById('copyButton');
         const widthInput = document.getElementById('widthInput');
         const heightInput = document.getElementById('heightInput');
-        const cropperArea = document.getElementById('cropper-area');
-        const previewContainer = document.getElementById('preview-container');
-        const cropperHandle = cropperArea.querySelector('.cropper-handle');
         const resolutionIndicator = document.getElementById('resolutionIndicator');
         const previewDimensions = document.getElementById('previewDimensions');
         const dropzone = document.getElementById('dropzone');
+        const zoomSlider = document.getElementById('zoomSlider');
+        const zoomPercent = document.getElementById('zoomPercent');
+        const bgStatusText = document.getElementById('bgStatusText');
 
         let originalImage = null;
-        let scale = 1;
-        let isDragging = false;
-        let isResizing = false;
-        let startX, startY;
-        let aspectRatio;
+        let targetWidth = 700;
+        let targetHeight = 393;
 
-        let defaultWidth = 700;
-        let defaultHeight = 393;
+        // Image Transformation State
+        let imgScale = 1.0;
+        let fitMode = 'fit'; // 'fit' (Zoom Out/Pad) or 'cover' (Crop/Fill)
+        let bgType = 'white'; // 'white', 'black', 'blur', 'transparent', 'custom'
+        let bgColor = '#ffffff';
+        let imgOffsetX = 0;
+        let imgOffsetY = 0;
+        let rotationAngle = 0; // 0, 90, 180, 270
+
+        // Interaction state
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
 
         // Apply Aspect Ratio Presets dynamically
         function applyPreset(w, h) {
-            defaultWidth = w;
-            defaultHeight = h;
+            targetWidth = w;
+            targetHeight = h;
             widthInput.value = w;
             heightInput.value = h;
-            aspectRatio = w / h;
             previewDimensions.textContent = `${w} x ${h} px`;
 
             if (originalImage) {
-                setupCropper();
-                updatePreview();
-                showToast(`Preset rasio diubah ke ${w}x${h}`, 'info');
+                recalculateFitScale();
+                renderAllCanvases();
+                showToast(`Preset dimensi diubah ke ${w}x${h}`, 'info');
             }
         }
 
-        // Handle Image Load Process
+        // Set Fitting Mode: 'fit' (Zoom Out completely with padding) vs 'cover' (Crop full)
+        function setFittingMode(mode) {
+            fitMode = mode;
+
+            const btnFit = document.getElementById('btnFitMode');
+            const btnCover = document.getElementById('btnCoverMode');
+            const hintText = document.getElementById('fitHintText');
+
+            if (mode === 'fit') {
+                btnFit.className = "bg-blue-600 text-white border border-blue-500 p-2.5 rounded-xl transition-all text-xs font-bold flex items-center justify-center gap-1.5 shadow-lg shadow-blue-900/30";
+                btnCover.className = "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 p-2.5 rounded-xl transition-all text-xs font-semibold flex items-center justify-center gap-1.5";
+                hintText.innerHTML = `<span class="text-blue-400 font-medium">Mode Fit (Utuh):</span> Foto ditampilkan 100% tanpa dipotong. Kanan/kiri diisi warna latar.`;
+            } else {
+                btnCover.className = "bg-blue-600 text-white border border-blue-500 p-2.5 rounded-xl transition-all text-xs font-bold flex items-center justify-center gap-1.5 shadow-lg shadow-blue-900/30";
+                btnFit.className = "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 p-2.5 rounded-xl transition-all text-xs font-semibold flex items-center justify-center gap-1.5";
+                hintText.innerHTML = `<span class="text-blue-400 font-medium">Mode Cover (Potong):</span> Foto dipotong hingga memenuhi seluruh bingkai target.`;
+            }
+
+            if (originalImage) {
+                recalculateFitScale();
+                renderAllCanvases();
+            }
+        }
+
+        // Set Background Fill Options for Zoom Out padding
+        function setBackgroundFill(type, color = '#ffffff') {
+            bgType = type;
+            bgColor = color;
+
+            // Highlight selected button
+            const buttons = ['white', 'black', 'blur', 'transparent'];
+            buttons.forEach(b => {
+                const btn = document.getElementById(`bgBtn-${b}`);
+                if (btn) {
+                    if (b === type) {
+                        btn.classList.add('border-blue-500', 'ring-2', 'ring-blue-500/40');
+                        btn.classList.remove('border-slate-700');
+                    } else {
+                        btn.classList.remove('border-blue-500', 'ring-2', 'ring-blue-500/40');
+                        btn.classList.add('border-slate-700');
+                    }
+                }
+            });
+
+            // Update status text
+            const labelMap = {
+                'white': 'Putih Solid',
+                'black': 'Hitam Solid',
+                'blur': 'Blur Gambar Asli',
+                'transparent': 'Transparan (PNG)',
+                'custom': `Warna Custom (${color})`
+            };
+            bgStatusText.textContent = `Latar: ${labelMap[type] || 'Putih Solid'}`;
+
+            if (originalImage) {
+                renderAllCanvases();
+            }
+        }
+
+        // Recalculate automatic base scale based on mode
+        function recalculateFitScale() {
+            if (!originalImage) return;
+
+            let imgW = originalImage.naturalWidth;
+            let imgH = originalImage.naturalHeight;
+
+            // Swap dimensions if rotated 90 or 270 deg
+            if (rotationAngle === 90 || rotationAngle === 270) {
+                const temp = imgW;
+                imgW = imgH;
+                imgH = temp;
+            }
+
+            const scaleX = targetWidth / imgW;
+            const scaleY = targetHeight / imgH;
+
+            if (fitMode === 'fit') {
+                // Show entire image without cutting (Zoom out to fit smallest scale)
+                imgScale = Math.min(scaleX, scaleY);
+            } else {
+                // Cover full area (Crop to fit largest scale)
+                imgScale = Math.max(scaleX, scaleY);
+            }
+
+            imgOffsetX = 0;
+            imgOffsetY = 0;
+            updateZoomUI();
+        }
+
+        function updateZoomUI() {
+            zoomSlider.value = imgScale;
+            zoomPercent.textContent = `${Math.round(imgScale * 100)}%`;
+        }
+
+        // Handle Image Load
         function loadImage(file) {
             const reader = new FileReader();
             reader.onload = function (e) {
                 const img = new Image();
                 img.onload = function () {
                     originalImage = img;
-                    aspectRatio = defaultWidth / defaultHeight;
+                    rotationAngle = 0;
 
                     // Adjust Visibility
                     editorPlaceholder.classList.add('hidden');
                     canvasWrapper.classList.remove('hidden');
-                    previewContainer.classList.remove('hidden');
                     actionButtons.classList.remove('hidden');
 
-                    // Draw to Main Canvas
-                    drawCanvas(img);
-                    setupCropper();
-                    updatePreview();
+                    resolutionIndicator.textContent = `Asli: ${img.naturalWidth} x ${img.naturalHeight} px`;
+
+                    recalculateFitScale();
+                    renderAllCanvases();
 
                     showToast('Gambar berhasil dimuat!', 'success');
                 };
@@ -356,12 +568,13 @@
             reader.readAsDataURL(file);
         }
 
-        // Handle File Input Selection
+        // File Input listener
         imageInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) loadImage(file);
         });
 
+        // Drag & Drop
         ['dragenter', 'dragover'].forEach(eventName => {
             dropzone.addEventListener(eventName, (e) => {
                 e.preventDefault();
@@ -404,83 +617,108 @@
             }
         }
 
-        // Draw Image to Sandbox Canvas
-        function drawCanvas(img) {
-            const ctx = imageCanvas.getContext('2d');
-            imageCanvas.width = img.naturalWidth;
-            imageCanvas.height = img.naturalHeight;
-            ctx.drawImage(img, 0, 0);
-
-            // Responsive Canvas Display Width calculation
-            const containerWidth = document.getElementById('canvas-container').offsetWidth;
-            scale = containerWidth / img.naturalWidth;
-
-            resolutionIndicator.textContent = `Asli: ${img.naturalWidth} x ${img.naturalHeight} px`;
-        }
-
-        function setupCropper() {
-            const canvasWidth = imageCanvas.offsetWidth;
-            const canvasHeight = imageCanvas.offsetHeight;
-
-            const cropperWidth = parseInt(widthInput.value, 10);
-            const cropperHeight = parseInt(heightInput.value, 10);
-
-            let displayWidth = cropperWidth * scale;
-            let displayHeight = cropperHeight * scale;
-
-            // Restrict cropper bounding boundaries
-            if (displayWidth > canvasWidth) {
-                displayWidth = canvasWidth;
-                displayHeight = displayWidth / aspectRatio;
-            }
-            if (displayHeight > canvasHeight) {
-                displayHeight = canvasHeight;
-                displayWidth = displayHeight * aspectRatio;
-            }
-
-            cropperArea.style.width = displayWidth + 'px';
-            cropperArea.style.height = displayHeight + 'px';
-            cropperArea.style.left = (canvasWidth - displayWidth) / 2 + 'px';
-            cropperArea.style.top = (canvasHeight - displayHeight) / 2 + 'px';
-
-            updatePreview();
-        }
-
-        // Live Real-Time Preview Rendering
-        function updatePreview() {
+        // Core Drawing Routine to target canvas
+        function drawToCanvas(canvas, exportW, exportH) {
             if (!originalImage) return;
 
-            const cropperRect = cropperArea.getBoundingClientRect();
-            const canvasRect = imageCanvas.getBoundingClientRect();
+            canvas.width = exportW;
+            canvas.height = exportH;
+            const ctx = canvas.getContext('2d');
 
-            // Transform preview coordinate calculations based on real dimensions scale
-            const x = (cropperRect.left - canvasRect.left) / scale;
-            const y = (cropperRect.top - canvasRect.top) / scale;
-            const width = cropperRect.width / scale;
-            const height = cropperRect.height / scale;
+            // 1. Clear background
+            ctx.clearRect(0, 0, exportW, exportH);
 
-            previewCanvas.width = defaultWidth;
-            previewCanvas.height = defaultHeight;
+            // 2. Draw selected background fill mode (For Zoom Out / Padding)
+            if (bgType === 'white') {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, exportW, exportH);
+            } else if (bgType === 'black') {
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, exportW, exportH);
+            } else if (bgType === 'custom') {
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, exportW, exportH);
+            } else if (bgType === 'blur') {
+                // Render blurred background version of the same photo
+                ctx.save();
+                ctx.filter = 'blur(20px) brightness(0.7)';
+                const coverScale = Math.max(exportW / originalImage.naturalWidth, exportH / originalImage.naturalHeight);
+                const bgW = originalImage.naturalWidth * coverScale * 1.1;
+                const bgH = originalImage.naturalHeight * coverScale * 1.1;
+                ctx.drawImage(originalImage, (exportW - bgW) / 2, (exportH - bgH) / 2, bgW, bgH);
+                ctx.restore();
+            } else if (bgType === 'transparent') {
+                // Left transparent
+            }
 
-            const ctx = previewCanvas.getContext('2d');
-            ctx.drawImage(originalImage, x, y, width, height, 0, 0, previewCanvas.width, previewCanvas.height);
+            // 3. Render Main Image with scale, offset, rotation
+            ctx.save();
+            ctx.translate(exportW / 2 + imgOffsetX, exportH / 2 + imgOffsetY);
+            ctx.rotate((rotationAngle * Math.PI) / 180);
+
+            const drawW = originalImage.naturalWidth * imgScale;
+            const drawH = originalImage.naturalHeight * imgScale;
+
+            ctx.drawImage(originalImage, -drawW / 2, -drawH / 2, drawW, drawH);
+            ctx.restore();
         }
 
-        // Event handler for Manual input configuration changes
-        widthInput.addEventListener('input', () => {
-            const newWidth = parseInt(widthInput.value, 10) || 1;
-            const newHeight = newWidth / aspectRatio;
-            heightInput.value = Math.round(newHeight);
-            setupCropper();
+        // Render both interactive canvas and preview canvas
+        function renderAllCanvases() {
+            if (!originalImage) return;
+
+            // Render interactive editor canvas
+            drawToCanvas(interactiveCanvas, targetWidth, targetHeight);
+
+            // Render live output preview canvas
+            drawToCanvas(previewCanvas, targetWidth, targetHeight);
+        }
+
+        // Zoom adjustment via slider
+        zoomSlider.addEventListener('input', (e) => {
+            imgScale = parseFloat(e.target.value);
+            zoomPercent.textContent = `${Math.round(imgScale * 100)}%`;
+            renderAllCanvases();
         });
 
-        heightInput.addEventListener('input', () => {
-            const newHeight = parseInt(heightInput.value, 10) || 1;
-            const newWidth = newHeight * aspectRatio;
-            widthInput.value = Math.round(newWidth);
-            setupCropper();
-        });
+        function adjustZoom(delta) {
+            imgScale = Math.max(0.1, Math.min(3, imgScale + delta));
+            updateZoomUI();
+            renderAllCanvases();
+        }
 
+        // Mouse Wheel Zoom over canvas
+        interactiveCanvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY < 0 ? 0.05 : -0.05;
+            adjustZoom(delta);
+        }, { passive: false });
+
+        // Rotation & Reset
+        function rotateImage(deg) {
+            rotationAngle = (rotationAngle + deg + 360) % 360;
+            recalculateFitScale();
+            renderAllCanvases();
+        }
+
+        function resetPosition() {
+            rotationAngle = 0;
+            recalculateFitScale();
+            renderAllCanvases();
+            showToast('Posisi & Zoom telah direset', 'info');
+        }
+
+        function toggleGridOverlay() {
+            const grid = document.getElementById('gridOverlay');
+            const chk = document.getElementById('toggleGrid');
+            if (chk.checked) {
+                grid.classList.remove('hidden');
+            } else {
+                grid.classList.add('hidden');
+            }
+        }
+
+        // Mouse & Touch Dragging Image Position
         function getCoords(e) {
             if (e.touches && e.touches.length > 0) {
                 return { x: e.touches[0].clientX, y: e.touches[0].clientY };
@@ -488,138 +726,83 @@
             return { x: e.clientX, y: e.clientY };
         }
 
-        function startInteraction(e) {
-            const coords = getCoords(e);
-            if (e.target === cropperHandle) {
-                isResizing = true;
-                e.preventDefault();
-                return;
-            }
+        function startDrag(e) {
             isDragging = true;
-            startX = coords.x - cropperArea.getBoundingClientRect().left;
-            startY = coords.y - cropperArea.getBoundingClientRect().top;
-            e.preventDefault();
-        }
-
-        cropperArea.addEventListener('mousedown', startInteraction);
-        cropperArea.addEventListener('touchstart', startInteraction, { passive: false });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            isResizing = false;
-        });
-
-        document.addEventListener('touchend', () => {
-            isDragging = false;
-            isResizing = false;
-        });
-
-        // Main Interaction Move Logic (Dragging & Resizing bounded calculations)
-        function moveInteraction(e) {
-            if (!isDragging && !isResizing) return;
-
             const coords = getCoords(e);
-            const rect = imageCanvas.getBoundingClientRect();
+            startX = coords.x - imgOffsetX;
+            startY = coords.y - imgOffsetY;
+        }
 
-            if (isResizing) {
-                const newWidth = coords.x - cropperArea.getBoundingClientRect().left;
-                const newHeight = newWidth / aspectRatio;
-
-                let finalWidth = newWidth;
-                let finalHeight = newHeight;
-
-                if (cropperArea.getBoundingClientRect().left + finalWidth > rect.right) {
-                    finalWidth = rect.right - cropperArea.getBoundingClientRect().left;
-                    finalHeight = finalWidth / aspectRatio;
-                }
-                if (cropperArea.getBoundingClientRect().top + finalHeight > rect.bottom) {
-                    finalHeight = rect.bottom - cropperArea.getBoundingClientRect().top;
-                    finalWidth = finalHeight * aspectRatio;
-                }
-
-                if (finalWidth > 20 && finalHeight > 20) {
-                    cropperArea.style.width = finalWidth + 'px';
-                    cropperArea.style.height = finalHeight + 'px';
-
-                    // Update input values without triggering cascade re-renders
-                    widthInput.value = Math.round(finalWidth / scale);
-                    heightInput.value = Math.round(finalHeight / scale);
-                }
-            } else if (isDragging) {
-                const newX = coords.x - startX;
-                const newY = coords.y - startY;
-                const cropperRect = cropperArea.getBoundingClientRect();
-
-                let finalX = Math.max(0, Math.min(newX - rect.left, rect.width - cropperRect.width));
-                let finalY = Math.max(0, Math.min(newY - rect.top, rect.height - cropperRect.height));
-
-                cropperArea.style.left = finalX + 'px';
-                cropperArea.style.top = finalY + 'px';
-            }
-
-            updatePreview();
+        function moveDrag(e) {
+            if (!isDragging) return;
+            const coords = getCoords(e);
+            imgOffsetX = coords.x - startX;
+            imgOffsetY = coords.y - startY;
+            renderAllCanvases();
             e.preventDefault();
         }
 
-        document.addEventListener('mousemove', moveInteraction);
-        document.addEventListener('touchmove', moveInteraction, { passive: false });
+        function stopDrag() {
+            isDragging = false;
+        }
 
+        interactiveCanvas.addEventListener('mousedown', startDrag);
+        interactiveCanvas.addEventListener('touchstart', startDrag, { passive: false });
+
+        document.addEventListener('mousemove', moveDrag);
+        document.addEventListener('touchmove', moveDrag, { passive: false });
+
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchend', stopDrag);
+
+        // Input Dimension Listeners
+        widthInput.addEventListener('input', () => {
+            targetWidth = parseInt(widthInput.value, 10) || 700;
+            previewDimensions.textContent = `${targetWidth} x ${targetHeight} px`;
+            recalculateFitScale();
+            renderAllCanvases();
+        });
+
+        heightInput.addEventListener('input', () => {
+            targetHeight = parseInt(heightInput.value, 10) || 393;
+            previewDimensions.textContent = `${targetWidth} x ${targetHeight} px`;
+            recalculateFitScale();
+            renderAllCanvases();
+        });
+
+        // Export & Download
         downloadButton.addEventListener('click', () => {
             if (!originalImage) return;
 
-            const cropperRect = cropperArea.getBoundingClientRect();
-            const canvasRect = imageCanvas.getBoundingClientRect();
-
-            const x = (cropperRect.left - canvasRect.left) / scale;
-            const y = (cropperRect.top - canvasRect.top) / scale;
-            const width = cropperRect.width / scale;
-            const height = cropperRect.height / scale;
-
-            const outputCanvas = document.createElement('canvas');
-            outputCanvas.width = defaultWidth;
-            outputCanvas.height = defaultHeight;
-            const ctx = outputCanvas.getContext('2d');
-
-            ctx.drawImage(originalImage, x, y, width, height, 0, 0, outputCanvas.width, outputCanvas.height);
+            const exportCanvas = document.createElement('canvas');
+            drawToCanvas(exportCanvas, targetWidth, targetHeight);
 
             const link = document.createElement('a');
-            link.download = `artikel-tribunnews-${defaultWidth}x${defaultHeight}.png`;
-            link.href = outputCanvas.toDataURL('image/png');
+            link.download = `artikel-tribunnews-${targetWidth}x${targetHeight}.png`;
+            link.href = exportCanvas.toDataURL('image/png');
             link.click();
 
             showToast('Gambar berhasil diunduh!', 'success');
         });
 
-        // Copy cropped image context back into OS clipboard securely
+        // Copy to Clipboard
         copyButton.addEventListener('click', () => {
             if (!originalImage) return;
 
-            const cropperRect = cropperArea.getBoundingClientRect();
-            const canvasRect = imageCanvas.getBoundingClientRect();
+            const exportCanvas = document.createElement('canvas');
+            drawToCanvas(exportCanvas, targetWidth, targetHeight);
 
-            const x = (cropperRect.left - canvasRect.left) / scale;
-            const y = (cropperRect.top - canvasRect.top) / scale;
-            const width = cropperRect.width / scale;
-            const height = cropperRect.height / scale;
-
-            const outputCanvas = document.createElement('canvas');
-            outputCanvas.width = defaultWidth;
-            outputCanvas.height = defaultHeight;
-            const ctx = outputCanvas.getContext('2d');
-
-            ctx.drawImage(originalImage, x, y, width, height, 0, 0, outputCanvas.width, outputCanvas.height);
-
-            outputCanvas.toBlob((blob) => {
+            exportCanvas.toBlob((blob) => {
                 if (blob) {
                     try {
                         const item = new ClipboardItem({ 'image/png': blob });
                         navigator.clipboard.write([item]).then(() => {
                             showToast('Gambar tersalin ke clipboard!', 'success');
                         }).catch(err => {
-                            fallbackCopyToClipboard(outputCanvas);
+                            fallbackCopyToClipboard(exportCanvas);
                         });
                     } catch (e) {
-                        fallbackCopyToClipboard(outputCanvas);
+                        fallbackCopyToClipboard(exportCanvas);
                     }
                 } else {
                     showToast('Gagal memproses gambar.', 'error');
@@ -627,32 +810,22 @@
             }, 'image/png');
         });
 
-        // Fallback for older browsers or restricted iframe sandboxes
         function fallbackCopyToClipboard(canvas) {
-            showToast('API Clipboard tidak didukung, mencoba alternatif...', 'info');
-            canvas.toBlob((blob) => {
-                if (blob) {
-                    const reader = new FileReader();
-                    reader.onload = function () {
-                        try {
-                            // Creating temporary text field for clipboard copy workaround
-                            const imgUrl = canvas.toDataURL('image/png');
-                            const tempInput = document.createElement('input');
-                            tempInput.value = imgUrl;
-                            document.body.appendChild(tempInput);
-                            tempInput.select();
-                            document.execCommand('copy');
-                            document.body.removeChild(tempInput);
-                            showToast('Tersalin sebagai DataURL (Base64)!', 'info');
-                        } catch (e) {
-                            showToast('Gagal menyalin gambar secara otomatis.', 'error');
-                        }
-                    };
-                    reader.readAsDataURL(blob);
-                }
-            });
+            try {
+                const imgUrl = canvas.toDataURL('image/png');
+                const tempInput = document.createElement('input');
+                tempInput.value = imgUrl;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                showToast('Tersalin sebagai DataURL (Base64)!', 'info');
+            } catch (e) {
+                showToast('Gagal menyalin gambar secara otomatis.', 'error');
+            }
         }
 
+        // Toast Messages
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -676,23 +849,19 @@
 
             container.appendChild(toast);
 
-            // Trigger animation frame sequence
             setTimeout(() => {
                 toast.classList.remove('translate-y-2', 'opacity-0');
             }, 10);
 
-            // Auto-destruction routine
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-[-10px]');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
 
-        // Recalculate dimensions and positions dynamically on window resizing
         window.addEventListener('resize', () => {
             if (originalImage) {
-                drawCanvas(originalImage);
-                setupCropper();
+                renderAllCanvases();
             }
         });
     </script>
