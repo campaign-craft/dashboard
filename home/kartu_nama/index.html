@@ -56,25 +56,25 @@
                     <div id="inputForm" class="space-y-4">
                         <div>
                             <label for="nameInput" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
-                            <input type="text" id="nameInput" value="VERA ARIANI" placeholder="Contoh: VERA ARIANI"
+                            <input type="text" id="nameInput" value="NADHIRA AYU SAVITRI" placeholder="Contoh: VERA ARIANI"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
 
                         <div>
                             <label for="titleInput" class="block text-sm font-medium text-gray-700">Jabatan</label>
-                            <input type="text" id="titleInput" value="UI/UX Designer Senior" placeholder="Contoh: Manajer Pemasaran"
+                            <input type="text" id="titleInput" value="Strategic Marketing Product and Package Group Head" placeholder="Contoh: Manajer Pemasaran"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         
                         <div>
                             <label for="phoneInput" class="block text-sm font-medium text-gray-700">Nomor Telepon (HP User)</label>
-                            <input type="text" id="phoneInput" value="+62 812 3456 7890" placeholder="Contoh: +62 81xxxx"
+                            <input type="text" id="phoneInput" value="+62 812 8201 2281" placeholder="Contoh: +62 81xxxx"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
 
                         <div>
                             <label for="emailInput" class="block text-sm font-medium text-gray-700">Email (User)</label>
-                            <input type="email" id="emailInput" value="vera.ariani@perusahaan.com" placeholder="Contoh: nama@domain.com"
+                            <input type="email" id="emailInput" value="nadhira@tribunnews.com" placeholder="Contoh: nama@domain.com"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         
@@ -84,7 +84,7 @@
                             <label for="addressInput" class="block text-sm font-medium text-gray-700">Alamat, Telepon, & Fax Kantor</label>
                             <textarea id="addressInput" rows="3"
                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500">Editorial Office of Tribun Network
-Jl. Palmerah Selatan No. 14, Jakarta 10270
+JL Palmerah Selatan No.14, Jakarta 10270
 P : 021 - 5483008 F : 021 - 5495360</textarea>
                         </div>
                     </div>
@@ -478,9 +478,31 @@ P : 021 - 5483008 F : 021 - 5495360</textarea>
              }
         }
         
-        const DOWNLOAD_SCALE = 3; // Upgrade resolusi download PNG menjadi 300% (3x) dari ukuran asli
+        // ==============================================
+        // OPTIMASI: Resolusi tinggi tapi file kecil
+        // ==============================================
+        const PNG_DOWNLOAD_SCALE = 3;       // 3x untuk PNG (untuk cetak berkualitas)
+        const PDF_DOWNLOAD_SCALE = 2;       // 2x untuk PDF (cukup untuk cetak, jauh lebih kecil dari 3x)
+        const PDF_JPEG_QUALITY = 0.92;      // Kompresi JPEG 92% - kualitas sangat bagus, ukuran masih kecil
 
-        function handleDownload(drawFunction, suffix) {
+        function renderCardToDataURL(drawFn, overrideData, scale = PDF_DOWNLOAD_SCALE, format = 'jpeg', quality = PDF_JPEG_QUALITY) {
+            const exportCanvas = document.createElement('canvas');
+            const w = CARD_WIDTH * scale;
+            const h = CARD_HEIGHT * scale;
+            exportCanvas.width = w;
+            exportCanvas.height = h;
+            const exportCtx = exportCanvas.getContext('2d');
+            exportCtx.setTransform(1, 0, 0, 1, 0, 0);
+            exportCtx.scale(scale, scale);
+            drawFn(exportCtx, overrideData);
+            
+            if (format === 'jpeg') {
+                return exportCanvas.toDataURL('image/jpeg', quality);
+            }
+            return exportCanvas.toDataURL('image/png');
+        }
+
+        function handleDownload(drawFunction, suffix, scale = PNG_DOWNLOAD_SCALE) {
              if (activeCardIndex === -1) {
                 console.error("Tidak ada kartu yang dipilih untuk diunduh.");
                 return;
@@ -491,14 +513,12 @@ P : 021 - 5483008 F : 021 - 5495360</textarea>
              const filename = baseFilename + suffix + '.png';
 
              try {
-                // Buat canvas sementara beresolusi tinggi (3x) khusus untuk hasil unduhan,
-                // tanpa mengubah canvas preview yang sedang ditampilkan.
                 const exportCanvas = document.createElement('canvas');
-                exportCanvas.width = CARD_WIDTH * DOWNLOAD_SCALE;
-                exportCanvas.height = CARD_HEIGHT * DOWNLOAD_SCALE;
+                exportCanvas.width = CARD_WIDTH * scale;
+                exportCanvas.height = CARD_HEIGHT * scale;
                 const exportCtx = exportCanvas.getContext('2d');
                 exportCtx.setTransform(1, 0, 0, 1, 0, 0);
-                exportCtx.scale(DOWNLOAD_SCALE, DOWNLOAD_SCALE);
+                exportCtx.scale(scale, scale);
 
                 drawFunction(exportCtx);
 
@@ -524,20 +544,6 @@ P : 021 - 5483008 F : 021 - 5495360</textarea>
         
         // --- FUNGSI DOWNLOAD PDF ---
 
-        // Menggambar kartu (depan atau belakang) ke kanvas sementara beresolusi tinggi (3x)
-        // lalu mengembalikan data URL PNG-nya. Dipakai untuk PDF satuan maupun gabungan
-        // agar hasil cetak PDF juga naik ke resolusi 3x, sama seperti hasil download PNG.
-        function renderCardToDataURL(drawFn, overrideData) {
-            const exportCanvas = document.createElement('canvas');
-            exportCanvas.width = CARD_WIDTH * DOWNLOAD_SCALE;
-            exportCanvas.height = CARD_HEIGHT * DOWNLOAD_SCALE;
-            const exportCtx = exportCanvas.getContext('2d');
-            exportCtx.setTransform(1, 0, 0, 1, 0, 0);
-            exportCtx.scale(DOWNLOAD_SCALE, DOWNLOAD_SCALE);
-            drawFn(exportCtx, overrideData);
-            return exportCanvas.toDataURL('image/png');
-        }
-
         downloadPdfButton.addEventListener('click', async () => {
             if (activeCardIndex === -1) {
                 console.error("Tidak ada kartu yang dipilih untuk diunduh.");
@@ -553,19 +559,21 @@ P : 021 - 5483008 F : 021 - 5495360</textarea>
                 const pdf = new jsPDF({
                     orientation: 'landscape',
                     unit: 'mm',
-                    format: [cardWidthMM, cardHeightMM]
+                    format: [cardWidthMM, cardHeightMM],
+                    compress: true,
+                    floatPrecision: 2 // Kurangi presisi untuk ukuran lebih kecil
                 });
                 
                 const activeCardName = businessCards[activeCardIndex].name;
                 const baseFilename = activeCardName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
                 
-                // Render sisi depan & belakang pada resolusi 3x sebelum dimasukkan ke PDF
-                const frontImageData = renderCardToDataURL(drawFrontCard, businessCards[activeCardIndex]);
-                pdf.addImage(frontImageData, 'PNG', 0, 0, cardWidthMM, cardHeightMM);
+                // Render sisi depan & belakang dengan resolusi 2x + JPEG 92%
+                const frontImageData = renderCardToDataURL(drawFrontCard, businessCards[activeCardIndex], PDF_DOWNLOAD_SCALE, 'jpeg', PDF_JPEG_QUALITY);
+                pdf.addImage(frontImageData, 'JPEG', 0, 0, cardWidthMM, cardHeightMM);
                 
                 pdf.addPage([cardWidthMM, cardHeightMM], 'landscape');
-                const backImageData = renderCardToDataURL(drawBackCard);
-                pdf.addImage(backImageData, 'PNG', 0, 0, cardWidthMM, cardHeightMM);
+                const backImageData = renderCardToDataURL(drawBackCard, null, PDF_DOWNLOAD_SCALE, 'jpeg', PDF_JPEG_QUALITY);
+                pdf.addImage(backImageData, 'JPEG', 0, 0, cardWidthMM, cardHeightMM);
                 
                 pdf.save(`${baseFilename}.pdf`);
                 
@@ -578,9 +586,6 @@ P : 021 - 5483008 F : 021 - 5495360</textarea>
         });
 
         // --- FUNGSI DOWNLOAD PDF GABUNGAN (SEMUA KARTU) ---
-        // Setiap kartu mendapat halaman/artboard-nya sendiri (kartu 1 di halaman 1,
-        // kartu 2 di halaman 2, dst), dan halaman paling akhir berisi satu sisi
-        // belakang (back.png) untuk semuanya.
         downloadAllPdfButton.addEventListener('click', async () => {
             if (businessCards.length === 0) {
                 console.error("Belum ada kartu dalam daftar.");
@@ -597,22 +602,24 @@ P : 021 - 5483008 F : 021 - 5495360</textarea>
                 const pdf = new jsPDF({
                     orientation: 'landscape',
                     unit: 'mm',
-                    format: [cardWidthMM, cardHeightMM]
+                    format: [cardWidthMM, cardHeightMM],
+                    compress: true,
+                    floatPrecision: 2
                 });
 
-                // Satu kartu depan per halaman, masing-masing resolusi 3x
+                // Satu kartu depan per halaman dengan resolusi 2x + JPEG 92%
                 businessCards.forEach((card, index) => {
                     if (index > 0) {
                         pdf.addPage([cardWidthMM, cardHeightMM], 'landscape');
                     }
-                    const imageData = renderCardToDataURL(drawFrontCard, card);
-                    pdf.addImage(imageData, 'PNG', 0, 0, cardWidthMM, cardHeightMM);
+                    const imageData = renderCardToDataURL(drawFrontCard, card, PDF_DOWNLOAD_SCALE, 'jpeg', PDF_JPEG_QUALITY);
+                    pdf.addImage(imageData, 'JPEG', 0, 0, cardWidthMM, cardHeightMM);
                 });
 
                 // Halaman terakhir: satu sisi belakang untuk semua kartu
                 pdf.addPage([cardWidthMM, cardHeightMM], 'landscape');
-                const backImageData = renderCardToDataURL(drawBackCard);
-                pdf.addImage(backImageData, 'PNG', 0, 0, cardWidthMM, cardHeightMM);
+                const backImageData = renderCardToDataURL(drawBackCard, null, PDF_DOWNLOAD_SCALE, 'jpeg', PDF_JPEG_QUALITY);
+                pdf.addImage(backImageData, 'JPEG', 0, 0, cardWidthMM, cardHeightMM);
 
                 pdf.save('semua-kartu-nama.pdf');
 
