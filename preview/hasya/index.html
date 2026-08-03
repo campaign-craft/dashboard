@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="https://oakandpine.xyz/icon.png">
@@ -558,7 +559,10 @@ body{
 </div>
 
 <script>
-const bgDecor = document.getElementById('bgDecor');
+// Helper function untuk mendapatkan elemen dengan aman
+function $(id) { return document.getElementById(id); }
+
+const bgDecor = $('bgDecor');
 const cloudSvg = (color) => '<svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg"><ellipse cx="30" cy="38" rx="26" ry="16" fill="' + color + '"/><ellipse cx="55" cy="28" rx="22" ry="20" fill="' + color + '"/><ellipse cx="75" cy="40" rx="20" ry="14" fill="' + color + '"/></svg>';
 const cloudSpecs = [
     { top: '8%',  w: 130, dur: 46, delay: -6,  op: 0.9 },
@@ -587,69 +591,113 @@ let currentVerseNum = 0;
 const SURAH_ID = 78;
 const accentCycle = ['#FF6F59', '#2FC3B2', '#FFC93C', '#8C6FCE'];
 
-const audio = document.getElementById('audioPlayer');
-const playBtn = document.getElementById('playBtn');
-const playIcon = document.getElementById('playIcon');
-const stopBtn = document.getElementById('stopBtn');
-const playStatusDot = document.getElementById('playStatusDot');
-const npText = document.getElementById('npText');
-const startInput = document.getElementById('startVerse');
-const endInput = document.getElementById('endVerse');
-const speedInput = document.getElementById('playbackSpeed');
-const loopCheckbox = document.getElementById('loopMode');
-const showArabicToggle = document.getElementById('showArabic');
-const showTransToggle = document.getElementById('showTranslation');
-const verseContainer = document.getElementById('verseContainer');
-const modalOverlay = document.getElementById('modalOverlay');
-const closeSettingsBtn = document.getElementById('closeSettingsBtn');
-const floatingPlayer = document.getElementById('floatingPlayer');
-const exitDialog = document.getElementById('exitDialog');
-const progressFill = document.getElementById('progressFill');
-const progressStar = document.getElementById('progressStar');
-const progressCount = document.getElementById('progressCount');
+// Ambil semua elemen dengan aman
+const audio = $('audioPlayer');
+const playBtn = $('playBtn');
+const playIcon = $('playIcon');
+const stopBtn = $('stopBtn');
+const playStatusDot = $('playStatusDot');
+const npText = $('npText');
+const startInput = $('startVerse');
+const endInput = $('endVerse');
+const speedInput = $('playbackSpeed');
+const loopCheckbox = $('loopMode');
+const showArabicToggle = $('showArabic');
+const showTransToggle = $('showTranslation');
+const verseContainer = $('verseContainer');
+const modalOverlay = $('modalOverlay');
+const closeSettingsBtn = $('closeSettingsBtn');
+const floatingPlayer = $('floatingPlayer');
+const exitDialog = $('exitDialog');
+const progressFill = $('progressFill');
+const progressStar = $('progressStar');
+const progressCount = $('progressCount');
+const loading = $('loading');
+const app = $('app');
+const loadingText = $('loadingText');
 
 async function fetchSurah(id) {
     try {
-        stopPlayback();
-        document.getElementById('loading').style.display = 'flex';
-        document.getElementById('app').style.display = 'none';
+        // Reset state
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+        isPlaying = false;
+        currentVerseNum = 0;
+        
+        // Tampilkan loading
+        if (loading) loading.style.display = 'flex';
+        if (app) app.style.display = 'none';
+        if (loadingText) loadingText.textContent = 'Menyiapkan kabar gembira untuk Hasya ✨';
+
         const url = 'https://api.alquran.cloud/v1/surah/' + id + '/editions/quran-simple,ar.husary,en.transliteration,id.indonesian';
         const res = await fetch(url);
+        
+        if (!res.ok) {
+            throw new Error('Gagal mengambil data: ' + res.status);
+        }
+        
         const result = await res.json();
+        
+        if (!result.data || result.data.length < 4) {
+            throw new Error('Data tidak lengkap');
+        }
+        
         const [arabicData, audioData, translit, translation] = result.data;
 
-        document.getElementById('surahNameArabic').textContent = audioData.name;
-        document.getElementById('surahInfo').textContent = 'Surah ' + audioData.englishName;
+        // Update header - dengan pengecekan elemen
+        const surahNameArabic = document.querySelector('.surah-title-ar');
+        const surahInfo = document.querySelector('.surah-title-id');
+        const surahAyahCount = $('surahAyahCount');
+        
+        if (surahNameArabic) surahNameArabic.textContent = audioData.name || 'سُورَةُ النبأ';
+        if (surahInfo) surahInfo.textContent = 'Surah ' + (audioData.englishName || 'An-Naba');
 
-        const total = audioData.numberOfAyahs;
-        document.getElementById('surahAyahCount').textContent = total + ' Ayat';
-        startInput.value = 1;
-        endInput.value = total;
-        startInput.max = total;
-        endInput.max = total;
+        const total = audioData.numberOfAyahs || 40;
+        if (surahAyahCount) surahAyahCount.textContent = total + ' Ayat';
+        
+        if (startInput) {
+            startInput.value = 1;
+            startInput.max = total;
+        }
+        if (endInput) {
+            endInput.value = total;
+            endInput.max = total;
+        }
 
         verses = translit.ayahs.map((ayah, i) => ({
-            nomorAyat: ayah.numberInSurah,
-            teksArab: arabicData.ayahs[i].text,
-            teksLatin: ayah.text,
-            terjemahan: translation.ayahs[i].text,
-            audio: audioData.ayahs[i].audio
+            nomorAyat: ayah.numberInSurah || (i + 1),
+            teksArab: arabicData.ayahs[i]?.text || '',
+            teksLatin: ayah.text || '',
+            terjemahan: translation.ayahs[i]?.text || '',
+            audio: audioData.ayahs[i]?.audio || ''
         }));
 
         renderVerses();
         updateProgress();
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
+        
+        // Sembunyikan loading, tampilkan app
+        if (loading) loading.style.display = 'none';
+        if (app) app.style.display = 'block';
+        
     } catch (e) {
-        console.error(e);
-        document.getElementById('loadingText').textContent = 'Yah, gagal memuat. Coba periksa koneksimu ya 🙏';
+        console.error('Error:', e);
+        if (loadingText) {
+            loadingText.textContent = 'Yah, gagal memuat. Coba periksa koneksimu ya 🙏\nError: ' + e.message;
+        }
+        // Tetap tampilkan loading dengan pesan error
+        if (loading) loading.style.display = 'flex';
+        if (app) app.style.display = 'none';
     }
 }
 
 function renderVerses() {
+    if (!verseContainer) return;
+    
     verseContainer.innerHTML = '';
-    const showTrans = showTransToggle.checked;
-    const showArabic = showArabicToggle.checked;
+    const showTrans = showTransToggle ? showTransToggle.checked : true;
+    const showArabic = showArabicToggle ? showArabicToggle.checked : true;
 
     verses.forEach((v, idx) => {
         const color = accentCycle[idx % accentCycle.length];
@@ -662,7 +710,10 @@ function renderVerses() {
             '<div class="verse-arabic" style="' + (showArabic ? '' : 'display:none') + '">' + v.teksArab + '</div>' +
             '<div class="verse-latin">' + v.teksLatin + '</div>' +
             '<div class="verse-translation" style="' + (showTrans ? '' : 'display:none') + '">' + v.terjemahan + '</div>';
-        div.onclick = () => { startInput.value = v.nomorAyat; playVerse(v.nomorAyat); };
+        div.onclick = () => { 
+            if (startInput) startInput.value = v.nomorAyat; 
+            playVerse(v.nomorAyat); 
+        };
         verseContainer.appendChild(div);
     });
 }
@@ -670,14 +721,14 @@ function renderVerses() {
 function updateProgress() {
     const total = verses.length;
     const pct = total ? Math.min(100, (currentVerseNum / total) * 100) : 0;
-    progressFill.style.width = pct + '%';
-    progressStar.style.left = pct + '%';
-    progressCount.textContent = 'Ayat ' + currentVerseNum + '/' + total;
+    if (progressFill) progressFill.style.width = pct + '%';
+    if (progressStar) progressStar.style.left = pct + '%';
+    if (progressCount) progressCount.textContent = 'Ayat ' + currentVerseNum + '/' + total;
 }
 
 function playVerse(num) {
     const verse = verses.find(v => v.nomorAyat == num);
-    if (!verse) return;
+    if (!verse || !verse.audio) return;
 
     document.querySelectorAll('.verse-card').forEach(el => el.classList.remove('active-verse'));
     const activeEl = document.getElementById('verse-' + num);
@@ -687,70 +738,105 @@ function playVerse(num) {
     }
 
     currentVerseNum = parseInt(num);
-    audio.src = verse.audio;
-    audio.playbackRate = parseFloat(speedInput.value);
-    audio.play().catch(console.error);
+    if (audio) {
+        audio.src = verse.audio;
+        audio.playbackRate = parseFloat(speedInput ? speedInput.value : 1);
+        audio.play().catch(err => console.log('Play error:', err));
+    }
     isPlaying = true;
     updateUI();
     updateProgress();
 }
 
-audio.onended = () => {
-    const start = parseInt(startInput.value);
-    const end = parseInt(endInput.value);
-    let next = currentVerseNum + 1;
-    if (next > end) {
-        if (loopCheckbox.checked) next = start;
-        else { stopPlayback(); return; }
-    }
-    playVerse(next);
-};
+if (audio) {
+    audio.onended = () => {
+        const start = parseInt(startInput ? startInput.value : 1);
+        const end = parseInt(endInput ? endInput.value : verses.length);
+        let next = currentVerseNum + 1;
+        if (next > end) {
+            if (loopCheckbox && loopCheckbox.checked) next = start;
+            else { stopPlayback(); return; }
+        }
+        playVerse(next);
+    };
+}
 
 function togglePlay() {
-    if (isPlaying) { audio.pause(); isPlaying = false; }
-    else {
-        const start = parseInt(startInput.value);
-        const end = parseInt(endInput.value);
-        if (currentVerseNum < start || currentVerseNum > end) playVerse(start);
-        else { audio.play().catch(console.error); isPlaying = true; }
+    if (!audio) return;
+    
+    if (isPlaying) { 
+        audio.pause(); 
+        isPlaying = false; 
+    } else {
+        const start = parseInt(startInput ? startInput.value : 1);
+        const end = parseInt(endInput ? endInput.value : verses.length);
+        if (currentVerseNum < start || currentVerseNum > end) {
+            playVerse(start);
+        } else { 
+            audio.play().catch(console.error); 
+            isPlaying = true; 
+        }
     }
     updateUI();
 }
 
 function stopPlayback() {
-    audio.pause(); audio.currentTime = 0;
-    isPlaying = false; currentVerseNum = 0;
+    if (audio) {
+        audio.pause(); 
+        audio.currentTime = 0;
+    }
+    isPlaying = false; 
+    currentVerseNum = 0;
     document.querySelectorAll('.verse-card').forEach(el => el.classList.remove('active-verse'));
     updateUI();
     updateProgress();
 }
 
 function updateUI() {
-    playIcon.textContent = isPlaying ? '⏸' : '▶';
-    npText.textContent = isPlaying ? 'Ayat ' + currentVerseNum + ' — Hasya semangat!' : 'Ketuk Ayat untuk Mulai';
-    playStatusDot.classList.toggle('playing', isPlaying);
+    if (playIcon) playIcon.textContent = isPlaying ? '⏸' : '▶';
+    if (npText) npText.textContent = isPlaying ? 'Ayat ' + currentVerseNum + ' — Hasya semangat!' : 'Ketuk Ayat untuk Mulai';
+    if (playStatusDot) playStatusDot.classList.toggle('playing', isPlaying);
 }
 
-floatingPlayer.onclick = (e) => {
-    if (e.target.closest('#playBtn') || e.target.closest('#stopBtn')) return;
-    openSettings();
-};
+// Event listeners dengan pengecekan
+if (floatingPlayer) {
+    floatingPlayer.onclick = (e) => {
+        if (e.target.closest('#playBtn') || e.target.closest('#stopBtn')) return;
+        openSettings();
+    };
+}
 
 function openSettings() {
-    modalOverlay.classList.add('open');
-    history.pushState({ modal: 'settings' }, '');
-}
-closeSettingsBtn.onclick = closeSettings;
-modalOverlay.onclick = (e) => { if (e.target === modalOverlay) closeSettings(); };
-function closeSettings() {
-    modalOverlay.classList.remove('open');
+    if (modalOverlay) {
+        modalOverlay.classList.add('open');
+        history.pushState({ modal: 'settings' }, '');
+    }
 }
 
-function pushAppState() { history.pushState({ app: true }, ''); }
-function initBackGuard() { pushAppState(); }
+if (closeSettingsBtn) {
+    closeSettingsBtn.onclick = closeSettings;
+}
+
+if (modalOverlay) {
+    modalOverlay.onclick = (e) => { 
+        if (e.target === modalOverlay) closeSettings(); 
+    };
+}
+
+function closeSettings() {
+    if (modalOverlay) modalOverlay.classList.remove('open');
+}
+
+function pushAppState() { 
+    history.pushState({ app: true }, ''); 
+}
+
+function initBackGuard() { 
+    pushAppState(); 
+}
 
 window.addEventListener('popstate', () => {
-    if (modalOverlay.classList.contains('open')) {
+    if (modalOverlay && modalOverlay.classList.contains('open')) {
         closeSettings();
         pushAppState();
         return;
@@ -758,30 +844,59 @@ window.addEventListener('popstate', () => {
     showExitDialog();
 });
 
-function showExitDialog() { exitDialog.classList.add('open'); }
-function hideExitDialog() { exitDialog.classList.remove('open'); pushAppState(); }
+function showExitDialog() { 
+    if (exitDialog) exitDialog.classList.add('open'); 
+}
 
-document.getElementById('exitStayBtn').onclick = hideExitDialog;
-document.getElementById('exitLeaveBtn').onclick = () => { history.back(); };
+function hideExitDialog() { 
+    if (exitDialog) exitDialog.classList.remove('open'); 
+    pushAppState(); 
+}
+
+const exitStayBtn = $('exitStayBtn');
+const exitLeaveBtn = $('exitLeaveBtn');
+
+if (exitStayBtn) exitStayBtn.onclick = hideExitDialog;
+if (exitLeaveBtn) exitLeaveBtn.onclick = () => { history.back(); };
 
 window.addEventListener('beforeunload', (e) => {
     if (isPlaying) { e.preventDefault(); e.returnValue = ''; }
 });
 
-showArabicToggle.onchange = renderVerses;
-showTransToggle.onchange = renderVerses;
-speedInput.onchange = () => { audio.playbackRate = parseFloat(speedInput.value); };
-playBtn.onclick = (e) => { e.stopPropagation(); togglePlay(); };
-stopBtn.onclick = (e) => { e.stopPropagation(); stopPlayback(); };
+if (showArabicToggle) showArabicToggle.onchange = renderVerses;
+if (showTransToggle) showTransToggle.onchange = renderVerses;
+if (speedInput) {
+    speedInput.onchange = () => { 
+        if (audio) audio.playbackRate = parseFloat(speedInput.value); 
+    };
+}
+if (playBtn) {
+    playBtn.onclick = (e) => { 
+        e.stopPropagation(); 
+        togglePlay(); 
+    };
+}
+if (stopBtn) {
+    stopBtn.onclick = (e) => { 
+        e.stopPropagation(); 
+        stopPlayback(); 
+    };
+}
 
+// Jalankan aplikasi
 fetchSurah(SURAH_ID);
 initBackGuard();
 
+// Service worker - dengan try catch
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
-            .then(reg => console.log('Service Worker terdaftar!', reg))
-            .catch(err => console.log('Registrasi SW gagal:', err));
+        try {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(reg => console.log('Service Worker terdaftar!', reg))
+                .catch(err => console.log('Registrasi SW gagal (tidak masalah):', err));
+        } catch(e) {
+            console.log('Service worker tidak tersedia');
+        }
     });
 }
 </script>
