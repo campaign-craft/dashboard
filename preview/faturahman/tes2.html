@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            background: #f0f0f0;
+        }
+
+        #container {
+            max-width: 900px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        #pdf-viewer {
+            width: 100%;
+            height: 800px;
+            border: 1px solid #ccc;
+            background: white;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
+        }
+
+        .controls button {
+            padding: 8px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .controls button:hover {
+            background: #45a049;
+        }
+
+        .controls span {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .controls input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div class="controls">
+            <button onclick="prevPage()">◀ Previous</button>
+            <span>
+                Page <input type="number" id="pageInput" value="1" min="1" onchange="goToPage()">
+                of <span id="totalPages">0</span>
+            </span>
+            <button onclick="nextPage()">Next ▶</button>
+        </div>
+        <canvas id="pdf-viewer"></canvas>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // SET PDF URL - Ganti dengan file PDF kamu
+        const pdfUrl = 'faturahman.pdf';
+
+        let pdfDoc = null;
+        let currentPage = 1;
+        const canvas = document.getElementById('pdf-viewer');
+        const ctx = canvas.getContext('2d');
+
+        // Load PDF
+        pdfjsLib.getDocument(pdfUrl).promise.then(function (pdf) {
+            pdfDoc = pdf;
+            document.getElementById('totalPages').textContent = pdf.numPages;
+            renderPage(currentPage);
+        });
+
+        function renderPage(num) {
+            if (!pdfDoc) return;
+
+            pdfDoc.getPage(num).then(function (page) {
+                const viewport = page.getViewport({ scale: 1.5 });
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                page.render(renderContext);
+
+                document.getElementById('pageInput').value = num;
+                currentPage = num;
+            });
+        }
+
+        function nextPage() {
+            if (!pdfDoc) return;
+            if (currentPage < pdfDoc.numPages) {
+                renderPage(currentPage + 1);
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                renderPage(currentPage - 1);
+            }
+        }
+
+        function goToPage() {
+            const input = document.getElementById('pageInput');
+            let page = parseInt(input.value);
+            if (pdfDoc && page >= 1 && page <= pdfDoc.numPages) {
+                renderPage(page);
+            } else {
+                input.value = currentPage;
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextPage();
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prevPage();
+        });
+    </script>
+</body>
+
+</html>
