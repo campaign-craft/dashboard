@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="https://oakandpine.xyz/icon.png">
-<title>Hafalan Quran Anak — Surah An-Naba</title>
+<title>Hafalan Hasya — Surah An-Naba</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
 
@@ -65,7 +65,7 @@ body{
 }
 
 /* ══════════════════════════════════════
-   LOADING
+   LOADING — dengan nama Hasya
 ══════════════════════════════════════ */
 #loading{
     position:fixed; inset:0; z-index:300;
@@ -84,7 +84,19 @@ body{
     0%,100%{ transform:translateY(0); }
     50%{ transform:translateY(-14px) rotate(10deg); }
 }
-#loadingText{ font-family:'Fredoka', sans-serif; font-weight:600; font-size:1rem; color:var(--text-dark); text-align:center; padding:0 30px; }
+#loadingText{ font-family:'Fredoka', sans-serif; font-weight:600; font-size:1.1rem; color:var(--text-dark); text-align:center; padding:0 30px; }
+.loading-hasya {
+    font-family:'Fredoka', sans-serif;
+    background: var(--secondary);
+    padding: 6px 18px;
+    border-radius: 60px;
+    color: var(--text-dark);
+    font-weight: 700;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 0 #e6b02e;
+    letter-spacing: 1px;
+    margin-top: 8px;
+}
 
 /* ══════════════════════════════════════
    APP SHELL
@@ -140,6 +152,17 @@ body{
     color:var(--purple);
     font-weight:700;
     font-family:'Fredoka', sans-serif;
+}
+.hasya-greeting {
+    font-family:'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    background: linear-gradient(135deg, var(--mint), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
 }
 
 /* ── Progress path ── */
@@ -428,25 +451,27 @@ body{
 
 <div id="loading">
     <div class="loading-stars"><span>⭐</span><span>🌟</span><span>⭐</span></div>
-    <p id="loadingText">Menyiapkan kabar gembira dari Surah An-Naba...</p>
+    <p id="loadingText">Menyiapkan kabar gembira untuk Hasya ✨</p>
+    <div class="loading-hasya">🌟 Hasya 🌟</div>
 </div>
 
 <div id="app" style="display:none;">
     <div class="app-header">
         <div class="header-badge">🌙 Juz 30 · Kabar Yang Besar</div>
-        <h1 class="surah-title-ar" id="surahNameArabic">سُورَةُ النبأ</h1>
-        <p class="surah-title-id" id="surahInfo">Surah An-Naba</p>
+        <h1 class="surah-title-ar">سُورَةُ النبأ</h1>
+        <p class="surah-title-id">Surah An-Naba</p>
         <p class="surah-sub" id="surahAyahCount">40 Ayat</p>
         <p class="surah-qori">🎙️ Qori: Syekh Mahmud Khalil Al-Husary</p>
+        <div class="hasya-greeting">👋 Hafalan Spesial untuk Hasya</div>
 
         <div class="progress-wrap">
             <div class="progress-label">
-                <span>Perjalanan Hafalanmu</span>
+                <span>🚀 Perjalanan Hasya</span>
                 <span id="progressCount">Ayat 0/40</span>
             </div>
             <div class="progress-track">
                 <div class="progress-fill" id="progressFill"></div>
-                <div class="progress-star" id="progressStar">🚀</div>
+                <div class="progress-star" id="progressStar">⭐</div>
             </div>
         </div>
     </div>
@@ -458,7 +483,7 @@ body{
             <div class="np-dot" id="playStatusDot"></div>
             <div>
                 <div class="np-text" id="npText">Ketuk Ayat untuk Mulai</div>
-                <div class="np-hint">Ketuk di sini untuk pengaturan ⚙️</div>
+                <div class="np-hint">⚙️ Ketuk untuk pengaturan</div>
             </div>
         </div>
         <div class="player-actions">
@@ -471,7 +496,7 @@ body{
         <div class="exit-card">
             <div class="exit-icon">🥺</div>
             <div class="exit-title">Yah, mau berhenti dulu?</div>
-            <div class="exit-sub">Hafalanmu sedang berjalan.<br>Yuk lanjutkan sedikit lagi!</div>
+            <div class="exit-sub">Hafalan Hasya sedang berjalan.<br>Yuk lanjutkan sedikit lagi!</div>
             <div class="exit-btns">
                 <button class="exit-btn stay" id="exitStayBtn">Lanjut Yuk!</button>
                 <button class="exit-btn leave" id="exitLeaveBtn">Nanti Lagi</button>
@@ -483,7 +508,7 @@ body{
         <div class="modal-content">
             <div class="modal-handle"></div>
             <div class="modal-header">
-                <h2>Pengaturan Hafalan 🎛️</h2>
+                <h2>🎛️ Pengaturan Hasya</h2>
                 <button class="icon-btn" id="closeSettingsBtn">✕</button>
             </div>
 
@@ -525,7 +550,7 @@ body{
                 </label>
             </div>
 
-            <p class="modal-note">Ketuk di luar kotak ini untuk menutup ✨</p>
+            <p class="modal-note">✨ Tetap semangat, Hasya! ✨</p>
         </div>
     </div>
 
@@ -702,7 +727,7 @@ function stopPlayback() {
 
 function updateUI() {
     playIcon.textContent = isPlaying ? '⏸' : '▶';
-    npText.textContent = isPlaying ? 'Ayat ' + currentVerseNum + ' sedang diputar' : 'Ketuk Ayat untuk Mulai';
+    npText.textContent = isPlaying ? 'Ayat ' + currentVerseNum + ' — Hasya semangat!' : 'Ketuk Ayat untuk Mulai';
     playStatusDot.classList.toggle('playing', isPlaying);
 }
 
