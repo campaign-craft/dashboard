@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribun - Cek & Crop Materi Iklan Cetak</title>
+    <!-- Font Modern: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PDF Lib & PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    
+    <!-- Cropper.js (Vanilla JS Library) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+    <style>
+        :root {
+            --primary-blue: #0066B1;
+            --primary-blue-hover: #005696;
+            --secondary-red: #db1f25;
+            --bg-gray: #f8fafc;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --card-shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-gray);
+            color: var(--text-dark);
+            line-height: 1.5;
+            padding: 20px;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-weight: 800; font-size: 1.8rem; color: var(--primary-blue); margin-bottom: 6px; }
+        .header p { color: var(--text-muted); font-size: 0.95rem; }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow-lg);
+            padding: 25px 30px;
+            margin-bottom: 25px;
+        }
+
+        /* Media Selector Compact */
+        .media-selector {
+            display: flex;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 12px;
+            gap: 4px;
+            margin-bottom: 20px;
+        }
+
+        .media-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            color: var(--text-muted);
+        }
+
+        .media-option.active { background: white; color: var(--primary-blue); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+        /* Compact Upload Area */
+        .upload-section {
+            border: 2px dashed #e2e8f0;
+            border-radius: 16px;
+            padding: 25px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #ffffff;
+        }
+
+        .upload-section:hover { border-color: var(--primary-blue); background: #f0f9ff; }
+        .upload-section.drag-over { border-color: var(--primary-blue); background: #e0f2fe; transform: scale(1.01); }
+
+        .upload-icon {
+            width: 44px; height: 44px;
+            background: #eff6ff; color: var(--primary-blue);
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; margin: 0 auto 12px; font-size: 20px;
+        }
+
+        .upload-section h3 { font-weight: 700; margin-bottom: 4px; font-size: 1.05rem; }
+        .upload-section p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px; }
+
+        .btn-primary {
+            background: var(--primary-blue); color: white; border: none;
+            padding: 10px 22px; border-radius: 10px;
+            font-weight: 600; font-size: 0.9rem; cursor: pointer;
+            transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
+        }
+
+        .btn-primary:hover { background: var(--primary-blue-hover); transform: translateY(-1px); }
+        
+        .btn-secondary {
+            background: #f1f5f9; color: var(--text-dark); border: 1px solid #cbd5e1;
+            padding: 8px 16px; border-radius: 8px;
+            font-weight: 600; font-size: 0.85rem; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover { background: #e2e8f0; }
+
+        .btn-success {
+            background: #16a34a; color: white; border: none;
+            padding: 10px 20px; border-radius: 10px;
+            font-weight: 600; font-size: 0.9rem; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-success:hover { background: #15803d; }
+
+        /* Results Layout */
+        .grid-results {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 25px;
+            margin-top: 25px;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 25px;
+        }
+
+        @media (max-width: 680px) { .grid-results { grid-template-columns: 1fr; } }
+
+        .preview-container {
+            background: #f8fafc;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 250px; border: 1px solid #e2e8f0;
+            position: relative;
+        }
+
+        .preview-image, #pdfCanvas {
+            max-width: 100%; max-height: 320px;
+            object-fit: contain;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .result-stats { display: flex; flex-direction: column; gap: 10px; }
+        .stat-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+        .stat-label { color: var(--text-muted); font-size: 0.88rem; }
+        .stat-value { font-weight: 700; font-size: 0.95rem; }
+
+        .status-badge { 
+            margin-top: 10px; 
+            padding: 16px; 
+            border-radius: 14px; 
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .status-badge.success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .status-badge.warning { background: #fffbeb; color: #92400e; border: 1px solid #fef3c7; }
+        .status-badge.danger { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+        .status-icon { width: 28px; height: 28px; }
+        .status-title { display: block; font-weight: 800; font-size: 1rem; }
+        .status-desc { font-size: 0.82rem; opacity: 0.95; }
+
+        .tools-panel {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tools-title { font-weight: 700; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .tools-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.75);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px; backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: white; border-radius: 20px;
+            width: 100%; max-width: 850px; max-height: 90vh;
+            display: flex; flex-direction: column;
+            overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+
+        .modal-header {
+            padding: 18px 24px; border-bottom: 1px solid #e2e8f0;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); }
+        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); }
+
+        .modal-body {
+            padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px; align-items: center;
+        }
+
+        .cropper-wrapper {
+            max-width: 100%; max-height: 400px; background: #0f172a; border-radius: 10px; overflow: hidden;
+        }
+
+        .cropper-wrapper img { max-width: 100%; display: block; }
+
+        .crop-controls {
+            width: 100%; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;
+            background: #f1f5f9; padding: 12px 16px; border-radius: 12px;
+        }
+
+        .target-col-selector { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; }
+        .target-col-selector select { padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 600; }
+
+        .dim-info { font-weight: 700; color: var(--primary-blue); font-size: 0.9rem; }
+
+        .modal-footer {
+            padding: 16px 24px; border-top: 1px solid #e2e8f0;
+            display: flex; justify-content: flex-end; gap: 10px; background: #f8fafc;
+        }
+
+        .specs-table {
+            width: 100%; border-collapse: separate; border-spacing: 0;
+            background: white; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .specs-table th { background: #f8fafc; padding: 12px; text-align: left; font-weight: 600; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
+        .specs-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        .max-height-row { background: #f0f9ff; font-weight: 700; color: var(--primary-blue); }
+
+        .loader { display: none; text-align: center; padding: 20px; color: var(--primary-blue); font-weight: 600; }
+        .spinner { width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top: 3px solid var(--primary-blue); border-radius: 50%; margin: 0 auto 10px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📰 Materi Iklan Cetak</h1>
+            <p>Verifikasi & Tool Crop/Fit Ukuran Kolom Tribun Network</p>
+        </header>
+
+        <main class="card">
+            <div class="media-selector">
+                <div class="media-option active" data-media="umum">Tribun Umum</div>
+                <div class="media-option" data-media="jabar">Tribun Jabar</div>
+            </div>
+
+            <div class="upload-section" id="uploadArea">
+                <div class="upload-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                </div>
+                <h3>Pilih Materi Iklan</h3>
+                <p>JPG, PNG, TIFF, atau PDF</p>
+                <input type="file" id="fileInput" style="display:none" accept=".jpg,.jpeg,.png,.pdf,.tiff,.tif">
+                <button class="btn-primary">Browse File</button>
+            </div>
+
+            <div id="loader" class="loader">
+                <div class="spinner"></div>
+                Memproses...
+            </div>
+
+            <div id="resultsContent" style="display: none;">
+                <div class="grid-results">
+                    <div class="preview-container">
+                        <img id="previewImage" class="preview-image" alt="Preview" style="display:none">
+                        <canvas id="pdfCanvas" style="display:none"></canvas>
+                    </div>
+                    
+                    <div class="result-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Lebar</span>
+                            <span id="resWidth" class="stat-value">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Tinggi</span>
+                            <span id="resHeight" class="stat-value">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Media</span>
+                            <span id="resMedia" class="stat-value">-</span>
+                        </div>
+
+                        <div id="statusBadge" class="status-badge">
+                            <div id="statusIconContainer" class="status-icon"></div>
+                            <span id="statusTitle" class="status-title"></span>
+                            <span id="statusDesc" class="status-desc"></span>
+                        </div>
+
+                        <!-- Panel Tools Tambahan -->
+                        <div class="tools-panel" id="toolsPanel">
+                            <span class="tools-title">🛠️ Alat penyesuaian ukuran</span>
+                            <div class="tools-actions">
+                                <button class="btn-primary" id="btnOpenCrop" style="width:100%;">
+                                    ✂️ Crop & Fit ke Standar
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <section style="margin-top: 30px;">
+            <h3 style="font-size: 1rem; margin-bottom: 15px; color: var(--text-dark);">📏 Referensi Ukuran</h3>
+            <table class="specs-table">
+                <thead><tr><th>Kolom</th><th>Lebar (mm)</th></tr></thead>
+                <tbody id="specsBody"></tbody>
+            </table>
+        </section>
+    </div>
+
+    <!-- Modal Interactive Crop -->
+    <div class="modal-overlay" id="cropModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✂️ Crop & Fit Materi Iklan</h3>
+                <button class="modal-close" id="btnCloseModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="cropper-wrapper">
+                    <img id="cropperTarget" src="" alt="Target Crop">
+                </div>
+                
+                <div class="crop-controls">
+                    <div class="target-col-selector">
+                        <label for="selectTargetCol">Target Kolom:</label>
+                        <select id="selectTargetCol"></select>
+                    </div>
+                    <div class="dim-info" id="cropDimensionsDisplay">
+                        Hasil: - x - mm
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btnCancelCrop">Batal</button>
+                <button class="btn-success" id="btnApplyCrop">💾 Unduh Hasil (JPG)</button>
+                <button class="btn-primary" id="btnApplyPdf">📄 Unduh Hasil (PDF)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+        const ICONS = {
+            success: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+            warning: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
+            danger: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`
+        };
+
+        const COLUMN_SPECS = {
+            umum: { name: "Tribun Umum", columns: [{ col: 1, width: 40 }, { col: 2, width: 84 }, { col: 3, width: 128 }, { col: 4, width: 172 }, { col: 5, width: 216 }, { col: 6, width: 260 }, { col: 7, width: 304 }], maxHeight: 540 },
+            jabar: { name: "Tribun Jabar", columns: [{ col: 1, width: 34 }, { col: 2, width: 73 }, { col: 3, width: 112 }, { col: 4, width: 150 }, { col: 5, width: 188 }, { col: 6, width: 227 }, { col: 7, width: 265 }, { col: 8, width: 304 }], maxHeight: 540 }
+        };
+
+        let currentMedia = 'umum';
+        let currentData = null;
+        let cropper = null;
+        let activeImageSrc = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSpecs();
+            const area = document.getElementById('uploadArea');
+            const input = document.getElementById('fileInput');
+
+            area.onclick = () => input.click();
+            input.onchange = (e) => handleFiles(e.target.files);
+
+            area.ondragover = (e) => { e.preventDefault(); area.classList.add('drag-over'); };
+            area.ondragleave = () => area.classList.remove('drag-over');
+            area.ondrop = (e) => { e.preventDefault(); area.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); };
+
+            document.querySelectorAll('.media-option').forEach(opt => {
+                opt.onclick = function() {
+                    document.querySelectorAll('.media-option').forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                    currentMedia = this.dataset.media;
+                    renderSpecs();
+                    if (currentData) analyze(currentData);
+                };
+            });
+
+            // Modal & Crop Listeners
+            document.getElementById('btnOpenCrop').onclick = openCropModal;
+            document.getElementById('btnCloseModal').onclick = closeCropModal;
+            document.getElementById('btnCancelCrop').onclick = closeCropModal;
+            document.getElementById('selectTargetCol').onchange = onTargetColChange;
+            document.getElementById('btnApplyCrop').onclick = () => exportCropped('image/jpeg');
+            document.getElementById('btnApplyPdf').onclick = () => exportCropped('pdf');
+        });
+
+        async function handleFiles(files) {
+            if (!files.length) return;
+            const file = files[0];
+            showLoading(true);
+            document.getElementById('resultsContent').style.display = 'none';
+
+            if (file.type === 'application/pdf') {
+                await processPDF(file);
+            } else if (file.type.startsWith('image/') || file.type.includes('tiff')) {
+                processImage(file);
+            }
+        }
+
+        async function processPDF(file) {
+            try {
+                const arr = await file.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(arr);
+                const page = pdfDoc.getPages()[0];
+                const { width, height } = page.getSize();
+
+                const loadingTask = pdfjsLib.getDocument({ data: arr });
+                const pdf = await loadingTask.promise;
+                const pdfPage = await pdf.getPage(1);
+
+                const canvas = document.getElementById('pdfCanvas');
+                const context = canvas.getContext('2d');
+                const viewport = pdfPage.getViewport({ scale: 2.0 }); // Higher render scale for cropping clarity
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                await pdfPage.render({ canvasContext: context, viewport: viewport }).promise;
+
+                activeImageSrc = canvas.toDataURL('image/png');
+
+                const data = {
+                    w: Math.round(width * 0.352778),
+                    h: Math.round(height * 0.352778),
+                    isPdf: true
+                };
+
+                currentData = data;
+                analyze(data);
+            } catch (e) {
+                console.error(e);
+                alert("Gagal memproses PDF.");
+                showLoading(false);
+            }
+        }
+
+        function processImage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    activeImageSrc = e.target.result;
+                    const data = {
+                        w: Math.round((img.naturalWidth / 300) * 25.4),
+                        h: Math.round((img.naturalHeight / 300) * 25.4),
+                        src: e.target.result,
+                        isPdf: false
+                    };
+                    currentData = data;
+                    analyze(data);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function analyze(data) {
+            showLoading(false);
+            const specs = COLUMN_SPECS[currentMedia];
+
+            let match = specs.columns[0];
+            let diff = Math.abs(data.w - match.width);
+            specs.columns.forEach(c => {
+                let d = Math.abs(data.w - c.width);
+                if (d < diff) { diff = d; match = c; }
+            });
+
+            document.getElementById('resultsContent').style.display = 'block';
+            document.getElementById('resWidth').textContent = data.w + ' mm';
+            document.getElementById('resHeight').textContent = data.h + ' mm';
+            document.getElementById('resMedia').textContent = specs.name;
+
+            const previewImg = document.getElementById('previewImage');
+            const pdfCanvas = document.getElementById('pdfCanvas');
+
+            if (data.isPdf) {
+                previewImg.style.display = 'none';
+                pdfCanvas.style.display = 'block';
+            } else {
+                previewImg.style.display = 'block';
+                previewImg.src = data.src;
+                pdfCanvas.style.display = 'none';
+            }
+
+            updateStatus(match, diff, data.h, specs.maxHeight);
+        }
+
+        function updateStatus(match, diff, h, maxH) {
+            const badge = document.getElementById('statusBadge');
+            const iconContainer = document.getElementById('statusIconContainer');
+            const title = document.getElementById('statusTitle');
+            const desc = document.getElementById('statusDesc');
+
+            let type = 'success';
+            if (h > maxH) type = 'danger';
+            else if (diff > 3) type = 'warning';
+
+            badge.className = `status-badge ${type}`;
+            iconContainer.innerHTML = ICONS[type];
+            title.textContent = `${match.col} Kolom x ${h} mm`;
+
+            if (type === 'danger') {
+                desc.textContent = `Tinggi melebihi batas maksimal ${maxH}mm.`;
+            } else if (type === 'warning') {
+                desc.textContent = `Lebar tidak standar (Selisih ${diff}mm dari standar ${match.width}mm). Guna tool Crop dibawah.`;
+            } else {
+                desc.textContent = `Ukuran sesuai standar lebar ${match.width}mm.`;
+            }
+        }
+
+        /* --- CROPPER ENGINE --- */
+        function openCropModal() {
+            if (!activeImageSrc) return;
+
+            const modal = document.getElementById('cropModal');
+            const cropperImg = document.getElementById('cropperTarget');
+            const selectTargetCol = document.getElementById('selectTargetCol');
+
+            cropperImg.src = activeImageSrc;
+            modal.style.display = 'flex';
+
+            // Populate Target Column Options
+            const specs = COLUMN_SPECS[currentMedia];
+            selectTargetCol.innerHTML = specs.columns.map(c => 
+                `<option value="${c.width}">${c.col} Kolom (${c.width} mm)</option>`
+            ).join('');
+
+            // Set default target to nearest column
+            let bestMatch = specs.columns[0];
+            let diff = Math.abs(currentData.w - bestMatch.width);
+            specs.columns.forEach(c => {
+                let d = Math.abs(currentData.w - c.width);
+                if (d < diff) { diff = d; bestMatch = c; }
+            });
+            selectTargetCol.value = bestMatch.width;
+
+            if (cropper) cropper.destroy();
+
+            cropper = new Cropper(cropperImg, {
+                viewMode: 1,
+                autoCropArea: 0.95,
+                responsive: true,
+                crop(event) {
+                    updateCropStats();
+                }
+            });
+        }
+
+        function updateCropStats() {
+            if (!cropper) return;
+            const cropData = cropper.getCropBoxData();
+            const targetWidthMm = parseFloat(document.getElementById('selectTargetCol').value);
+            
+            // Calculate equivalent height based on aspect ratio
+            const currentRatio = cropData.width / cropData.height;
+            const calculatedHeightMm = Math.round(targetWidthMm / currentRatio);
+
+            document.getElementById('cropDimensionsDisplay').textContent = 
+                `Target: ${targetWidthMm} mm × ${calculatedHeightMm} mm`;
+        }
+
+        function onTargetColChange() {
+            updateCropStats();
+        }
+
+        function closeCropModal() {
+            document.getElementById('cropModal').style.display = 'none';
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+        }
+
+        async function exportCropped(format) {
+            if (!cropper) return;
+
+            const targetWidthMm = parseFloat(document.getElementById('selectTargetCol').value);
+            
+            // Calculate output pixels based on 300 DPI print standard (1 inch = 25.4 mm)
+            // 300 DPI = ~11.81 pixels per mm
+            const targetWidthPx = Math.round(targetWidthMm * 11.811);
+
+            const croppedCanvas = cropper.getCroppedCanvas({
+                width: targetWidthPx,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
+            });
+
+            if (format === 'image/jpeg') {
+                const dataUrl = croppedCanvas.toDataURL('image/jpeg', 0.95);
+                downloadFile(dataUrl, `iklan-fitted-${targetWidthMm}mm.jpg`);
+            } else if (format === 'pdf') {
+                const imgData = croppedCanvas.toDataURL('image/jpeg', 0.95);
+                const pdfDoc = await PDFLib.PDFDocument.create();
+                
+                const currentRatio = croppedCanvas.width / croppedCanvas.height;
+                const targetHeightMm = targetWidthMm / currentRatio;
+
+                // PDF Units: 1 pt = 1/72 inch. (1 mm = 2.83465 pt)
+                const pdfW = targetWidthMm * 2.83465;
+                const pdfH = targetHeightMm * 2.83465;
+
+                const page = pdfDoc.addPage([pdfW, pdfH]);
+                const pdfImg = await pdfDoc.embedJpg(imgData);
+
+                page.drawImage(pdfImg, {
+                    x: 0,
+                    y: 0,
+                    width: pdfW,
+                    height: pdfH
+                });
+
+                const pdfBytes = await pdfDoc.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `iklan-fitted-${targetWidthMm}mm.pdf`;
+                link.click();
+            }
+
+            closeCropModal();
+        }
+
+        function downloadFile(dataUrl, filename) {
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function renderSpecs() {
+            const specs = COLUMN_SPECS[currentMedia];
+            document.getElementById('specsBody').innerHTML = specs.columns.map(c => `<tr><td>${c.col} Kolom</td><td>${c.width} mm</td></tr>`).join('') + `<tr class="max-height-row"><td>Tinggi Maksimal</td><td>${specs.maxHeight} mm</td></tr>`;
+        }
+
+        function showLoading(show) { document.getElementById('loader').style.display = show ? 'block' : 'none'; }
+    </script>
+</body>
+</html>
