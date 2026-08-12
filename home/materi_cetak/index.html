@@ -3,14 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tribun - Cek Materi Iklan Cetak</title>
+    <title>Tribun - Cek & Crop Materi Iklan Cetak (CMYK Validator)</title>
     <!-- Font Modern: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- PDF Lib untuk Metadata & PDF.js untuk Rendering Preview -->
+    
+    <!-- PDF Lib & PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    
+    <!-- Cropper.js (Vanilla JS Library) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
     <style>
         :root {
             --primary-blue: #0066B1;
@@ -23,7 +29,6 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-gray);
@@ -32,17 +37,16 @@
             padding: 20px;
         }
 
-        .container { max-width: 850px; margin: 0 auto; }
-
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { font-weight: 800; font-size: 1.8rem; color: var(--primary-blue); margin-bottom: 8px; }
-        .header p { color: var(--text-muted); font-size: 1rem; }
+        .container { max-width: 920px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-weight: 800; font-size: 1.8rem; color: var(--primary-blue); margin-bottom: 6px; }
+        .header p { color: var(--text-muted); font-size: 0.95rem; }
 
         .card {
             background: white;
             border-radius: 20px;
             box-shadow: var(--card-shadow-lg);
-            padding: 30px;
+            padding: 25px 30px;
             margin-bottom: 25px;
         }
 
@@ -53,7 +57,7 @@
             padding: 4px;
             border-radius: 12px;
             gap: 4px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .media-option {
@@ -72,9 +76,9 @@
 
         /* Compact Upload Area */
         .upload-section {
-            border: 2px dashed #e2e8f0;
+            border: 2px dashed #cbd5e1;
             border-radius: 16px;
-            padding: 30px 20px;
+            padding: 28px 20px;
             text-align: center;
             transition: all 0.3s ease;
             cursor: pointer;
@@ -85,73 +89,171 @@
         .upload-section.drag-over { border-color: var(--primary-blue); background: #e0f2fe; transform: scale(1.01); }
 
         .upload-icon {
-            width: 48px; height: 48px;
+            width: 46px; height: 46px;
             background: #eff6ff; color: var(--primary-blue);
             display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; margin: 0 auto 15px; font-size: 20px;
+            border-radius: 50%; margin: 0 auto 12px; font-size: 20px;
         }
 
-        .upload-section h3 { font-weight: 700; margin-bottom: 4px; font-size: 1.1rem; }
-        .upload-section p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px; }
+        .upload-section h3 { font-weight: 700; margin-bottom: 4px; font-size: 1.05rem; }
+        .upload-section p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px; }
 
+        /* Buttons Styling */
         .btn-primary {
             background: var(--primary-blue); color: white; border: none;
-            padding: 10px 24px; border-radius: 10px;
+            padding: 10px 22px; border-radius: 10px;
             font-weight: 600; font-size: 0.9rem; cursor: pointer;
+            transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-primary:hover { background: var(--primary-blue-hover); transform: translateY(-1px); }
+
+        .btn-secondary {
+            background: #f1f5f9; color: var(--text-dark); border: 1px solid #cbd5e1;
+            padding: 9px 18px; border-radius: 10px;
+            font-weight: 600; font-size: 0.88rem; cursor: pointer;
             transition: all 0.2s;
         }
+        .btn-secondary:hover { background: #e2e8f0; }
 
-        .btn-primary:hover { background: var(--primary-blue-hover); transform: translateY(-1px); }
+        .btn-success {
+            background: #16a34a; color: white; border: none;
+            padding: 10px 20px; border-radius: 10px;
+            font-weight: 600; font-size: 0.9rem; cursor: pointer;
+            transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn-success:hover { background: #15803d; }
+
+        .btn-warning {
+            background: #d97706; color: white; border: none;
+            padding: 10px 20px; border-radius: 10px;
+            font-weight: 600; font-size: 0.9rem; cursor: pointer;
+            transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn-warning:hover { background: #b45309; }
 
         /* Results Layout */
         .grid-results {
             display: grid;
-            grid-template-columns: 1fr 1.2fr;
+            grid-template-columns: 1.1fr 1fr;
             gap: 25px;
-            margin-top: 30px;
+            margin-top: 25px;
             border-top: 1px solid #f1f5f9;
             padding-top: 25px;
         }
 
-        @media (max-width: 600px) { .grid-results { grid-template-columns: 1fr; } }
+        @media (max-width: 720px) { .grid-results { grid-template-columns: 1fr; } }
 
         .preview-container {
             background: #f8fafc;
             border-radius: 12px;
             overflow: hidden;
             display: flex; align-items: center; justify-content: center;
-            min-height: 250px; border: 1px solid #e2e8f0;
+            min-height: 260px; border: 1px solid #e2e8f0;
             position: relative;
         }
 
         .preview-image, #pdfCanvas {
-            max-width: 100%; max-height: 350px;
+            max-width: 100%; max-height: 330px;
             object-fit: contain;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
-        .result-stats { display: flex; flex-direction: column; gap: 12px; }
-        .stat-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
-        .stat-label { color: var(--text-muted); font-size: 0.9rem; }
+        /* Stats Grid */
+        .result-stats { display: flex; flex-direction: column; gap: 10px; }
+        .stat-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+        .stat-label { color: var(--text-muted); font-size: 0.88rem; }
         .stat-value { font-weight: 700; font-size: 0.95rem; }
 
+        /* Color Space Badge */
+        .color-badge {
+            padding: 3px 10px; border-radius: 20px; font-weight: 700; font-size: 0.78rem; text-transform: uppercase;
+        }
+        .color-badge.cmyk { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+        .color-badge.rgb { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+        .color-badge.gray { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
         .status-badge { 
-            margin-top: 15px; 
-            padding: 20px; 
-            border-radius: 16px; 
+            margin-top: 8px; 
+            padding: 16px; 
+            border-radius: 14px; 
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .status-badge.success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
         .status-badge.warning { background: #fffbeb; color: #92400e; border: 1px solid #fef3c7; }
         .status-badge.danger { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
 
-        .status-icon { width: 32px; height: 32px; margin-bottom: 4px; }
-        .status-title { display: block; font-weight: 800; font-size: 1.1rem; }
-        .status-desc { font-size: 0.85rem; opacity: 0.9; }
+        .status-icon { width: 28px; height: 28px; }
+        .status-title { display: block; font-weight: 800; font-size: 1rem; }
+        .status-desc { font-size: 0.82rem; opacity: 0.95; }
+
+        .tools-panel {
+            margin-top: 12px;
+            padding: 14px;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tools-title { font-weight: 700; font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.75);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px; backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: white; border-radius: 20px;
+            width: 100%; max-width: 880px; max-height: 92vh;
+            display: flex; flex-direction: column;
+            overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+
+        .modal-header {
+            padding: 16px 24px; border-bottom: 1px solid #e2e8f0;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); }
+        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); }
+
+        .modal-body {
+            padding: 18px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; align-items: center;
+        }
+
+        .cropper-wrapper {
+            max-width: 100%; max-height: 380px; background: #0f172a; border-radius: 10px; overflow: hidden;
+        }
+
+        .cropper-wrapper img { max-width: 100%; display: block; }
+
+        .crop-controls {
+            width: 100%; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;
+            background: #f1f5f9; padding: 12px 16px; border-radius: 12px;
+        }
+
+        .target-col-selector { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; }
+        .target-col-selector select { padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600; background: white; }
+
+        .dim-info { font-weight: 700; color: var(--primary-blue); font-size: 0.9rem; }
+
+        .cmyk-notice {
+            width: 100%; padding: 10px 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px;
+            font-size: 0.82rem; color: #1e40af; display: flex; align-items: center; gap: 8px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px; border-top: 1px solid #e2e8f0;
+            display: flex; justify-content: flex-end; gap: 10px; background: #f8fafc; flex-wrap: wrap;
+        }
 
         .specs-table {
             width: 100%; border-collapse: separate; border-spacing: 0;
@@ -163,17 +265,22 @@
         .specs-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
         .max-height-row { background: #f0f9ff; font-weight: 700; color: var(--primary-blue); }
 
+        .toast-msg {
+            position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 12px 20px;
+            border-radius: 10px; font-size: 0.88rem; font-weight: 500; display: none; z-index: 2000;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+        }
+
         .loader { display: none; text-align: center; padding: 20px; color: var(--primary-blue); font-weight: 600; }
-        .spinner { width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top: 3px solid var(--primary-blue); border-radius: 50%; margin: 0 auto 10px; animation: spin 1s linear infinite; }
+        .spinner { width: 26px; height: 26px; border: 3px solid #e2e8f0; border-top: 3px solid var(--primary-blue); border-radius: 50%; margin: 0 auto 10px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-
     <div class="container">
         <header class="header">
-            <h1>📰 Materi Iklan Cetak</h1>
-            <p>Verifikasi ukuran kolom otomatis Tribun Network</p>
+            <h1>📰 Materi Iklan Cetak Tribun</h1>
+            <p>Pemeriksaan Ukuran Kolom, Deteksi Warna CMYK & Converter Cetak</p>
         </header>
 
         <main class="card">
@@ -184,17 +291,17 @@
 
             <div class="upload-section" id="uploadArea">
                 <div class="upload-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                 </div>
-                <h3>Pilih Materi Iklan</h3>
-                <p>JPG, PNG, TIFF, atau PDF</p>
+                <h3>Pilih / Drop Materi Iklan</h3>
+                <p>Mendukung format JPG, PNG, TIFF, atau PDF</p>
                 <input type="file" id="fileInput" style="display:none" accept=".jpg,.jpeg,.png,.pdf,.tiff,.tif">
                 <button class="btn-primary">Browse File</button>
             </div>
 
             <div id="loader" class="loader">
                 <div class="spinner"></div>
-                Memproses...
+                Analyzing Color Space & Dimensions...
             </div>
 
             <div id="resultsContent" style="display: none;">
@@ -206,6 +313,10 @@
                     
                     <div class="result-stats">
                         <div class="stat-item">
+                            <span class="stat-label">Mode Warna</span>
+                            <span id="resColorSpace" class="stat-value"><span class="color-badge gray">-</span></span>
+                        </div>
+                        <div class="stat-item">
                             <span class="stat-label">Lebar</span>
                             <span id="resWidth" class="stat-value">-</span>
                         </div>
@@ -214,7 +325,7 @@
                             <span id="resHeight" class="stat-value">-</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-label">Media</span>
+                            <span class="stat-label">Media Target</span>
                             <span id="resMedia" class="stat-value">-</span>
                         </div>
 
@@ -223,13 +334,22 @@
                             <span id="statusTitle" class="status-title"></span>
                             <span id="statusDesc" class="status-desc"></span>
                         </div>
+
+                        <!-- Tools Panel -->
+                        <div class="tools-panel" id="toolsPanel">
+                            <span class="tools-title">🛠️ Penyesuaian Ukuran & Warna</span>
+                            <button class="btn-primary" id="btnOpenCrop" style="width:100%;">
+                                ✂️ Fit / Crop & Convert ke CMYK
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </main>
 
         <section style="margin-top: 30px;">
-            <h3 style="font-size: 1rem; margin-bottom: 15px; color: var(--text-dark);">📏 Referensi Ukuran</h3>
+            <h3 style="font-size: 1rem; margin-bottom: 15px; color: var(--text-dark);">📏 Referensi Standar Lebar Kolom</h3>
             <table class="specs-table">
                 <thead><tr><th>Kolom</th><th>Lebar (mm)</th></tr></thead>
                 <tbody id="specsBody"></tbody>
@@ -237,8 +357,43 @@
         </section>
     </div>
 
+    <!-- Modal Interactive Crop -->
+    <div class="modal-overlay" id="cropModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✂️ Editor Crop & Konversi Standar Cetak</h3>
+                <button class="modal-close" id="btnCloseModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="cropper-wrapper">
+                    <img id="cropperTarget" src="" alt="Target Crop">
+                </div>
+                
+                <div class="crop-controls">
+                    <div class="target-col-selector">
+                        <label for="selectTargetCol">Target Kolom:</label>
+                        <select id="selectTargetCol"></select>
+                    </div>
+                    <div class="dim-info" id="cropDimensionsDisplay">
+                        Output: - x - mm
+                    </div>
+                </div>
+
+                <div class="cmyk-notice">
+                    <span>✨ Output hasil download otomatis dikonversi ke **DeviceCMYK (Standar Cetak Percetakan)** 300 DPI.</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btnCancelCrop">Batal</button>
+                <button class="btn-success" id="btnApplyPdf">📄 Export PDF (CMYK)</button>
+                <button class="btn-warning" id="btnApplyTiff">🖼️ Export TIFF (CMYK 300 DPI)</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-msg" id="toastMsg"></div>
+
     <script>
-        // Setup PDF.js Worker
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
         const ICONS = {
@@ -254,6 +409,8 @@
 
         let currentMedia = 'umum';
         let currentData = null;
+        let cropper = null;
+        let activeImageSrc = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             renderSpecs();
@@ -276,7 +433,77 @@
                     if (currentData) analyze(currentData);
                 };
             });
+
+            // Modal & Crop Listeners
+            document.getElementById('btnOpenCrop').onclick = openCropModal;
+            document.getElementById('btnCloseModal').onclick = closeCropModal;
+            document.getElementById('btnCancelCrop').onclick = closeCropModal;
+            document.getElementById('selectTargetCol').onchange = onTargetColChange;
+            document.getElementById('btnApplyPdf').onclick = () => exportCMYK('pdf');
+            document.getElementById('btnApplyTiff').onclick = () => exportCMYK('tiff');
         });
+
+        async function detectColorSpace(file, arrayBuffer) {
+            const fileType = file.type;
+            const view = new DataView(arrayBuffer);
+
+            // 1. PDF Color Space Check
+            if (fileType === 'application/pdf') {
+                const text = new TextDecoder().decode(new Uint8Array(arrayBuffer.slice(0, Math.min(arrayBuffer.byteLength, 500000))));
+                if (text.includes('/DeviceCMYK') || text.includes('/DefaultCMYK')) {
+                    return 'CMYK';
+                }
+                return 'RGB';
+            }
+
+            // 2. JPEG Header Detection
+            if (fileType === 'image/jpeg' || fileType === 'image/jpg') {
+                let offset = 0;
+                if (view.getUint16(offset) === 0xFFD8) { // JPEG SOI
+                    offset += 2;
+                    while (offset < view.byteLength) {
+                        const marker = view.getUint16(offset);
+                        offset += 2;
+                        // SOF0 (0xFFC0), SOF1 (0xFFC1), SOF2 (0xFFC2)
+                        if (marker >= 0xFFC0 && marker <= 0xFFC3) {
+                            offset += 3; // Length (2) + Precision (1)
+                            const components = view.getUint8(offset + 4);
+                            if (components === 4) return 'CMYK';
+                            if (components === 3) return 'RGB';
+                            if (components === 1) return 'Grayscale';
+                            break;
+                        } else if ((marker & 0xFF00) === 0xFF00) {
+                            const length = view.getUint16(offset);
+                            offset += length;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // 3. TIFF Tag Parsing
+            if (fileType.includes('tiff') || fileType.includes('tif')) {
+                const isLittleEndian = view.getUint16(0) === 0x4949;
+                const ifdOffset = view.getUint32(4, isLittleEndian);
+                if (ifdOffset < view.byteLength) {
+                    const numEntries = view.getUint16(ifdOffset, isLittleEndian);
+                    for (let i = 0; i < numEntries; i++) {
+                        const entryOffset = ifdOffset + 2 + (i * 12);
+                        const tag = view.getUint16(entryOffset, isLittleEndian);
+                        if (tag === 262) { // PhotometricInterpretation
+                            const val = view.getUint16(entryOffset + 8, isLittleEndian);
+                            if (val === 5) return 'CMYK';
+                            if (val === 2) return 'RGB';
+                            if (val === 0 || val === 1) return 'Grayscale';
+                        }
+                    }
+                }
+            }
+
+            // PNG and standard Web Formats default to RGB
+            return 'RGB';
+        }
 
         async function handleFiles(files) {
             if (!files.length) return;
@@ -284,55 +511,68 @@
             showLoading(true);
             document.getElementById('resultsContent').style.display = 'none';
 
-            if (file.type === 'application/pdf') {
-                await processPDF(file);
-            } else if (file.type.startsWith('image/') || file.type.includes('tiff')) {
-                processImage(file);
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const colorSpace = await detectColorSpace(file, arrayBuffer);
+
+                if (file.type === 'application/pdf') {
+                    await processPDF(file, arrayBuffer, colorSpace);
+                } else if (file.type.startsWith('image/') || file.type.includes('tiff')) {
+                    processImage(file, arrayBuffer, colorSpace);
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Gagal membaca file.");
+                showLoading(false);
             }
         }
 
-        async function processPDF(file) {
+        async function processPDF(file, arrayBuffer, colorSpace) {
             try {
-                const arr = await file.arrayBuffer();
-                const pdfDoc = await PDFLib.PDFDocument.load(arr);
+                const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
                 const page = pdfDoc.getPages()[0];
                 const { width, height } = page.getSize();
-                
-                const loadingTask = pdfjsLib.getDocument({ data: arr });
+
+                const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
                 const pdf = await loadingTask.promise;
                 const pdfPage = await pdf.getPage(1);
-                
+
                 const canvas = document.getElementById('pdfCanvas');
                 const context = canvas.getContext('2d');
-                const viewport = pdfPage.getViewport({ scale: 1.5 });
+                const viewport = pdfPage.getViewport({ scale: 2.0 });
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
 
                 await pdfPage.render({ canvasContext: context, viewport: viewport }).promise;
 
+                activeImageSrc = canvas.toDataURL('image/png');
+
                 const data = {
                     w: Math.round(width * 0.352778),
                     h: Math.round(height * 0.352778),
+                    colorSpace: colorSpace,
                     isPdf: true
                 };
-                
+
                 currentData = data;
                 analyze(data);
             } catch (e) {
                 console.error(e);
-                alert("Gagal memproses PDF.");
+                showToast("Gagal memproses file PDF.");
                 showLoading(false);
             }
         }
 
-        function processImage(file) {
+        function processImage(file, arrayBuffer, colorSpace) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
+                    activeImageSrc = e.target.result;
                     const data = {
                         w: Math.round((img.naturalWidth / 300) * 25.4),
                         h: Math.round((img.naturalHeight / 300) * 25.4),
+                        colorSpace: colorSpace,
                         src: e.target.result,
                         isPdf: false
                     };
@@ -347,7 +587,7 @@
         function analyze(data) {
             showLoading(false);
             const specs = COLUMN_SPECS[currentMedia];
-            
+
             let match = specs.columns[0];
             let diff = Math.abs(data.w - match.width);
             specs.columns.forEach(c => {
@@ -359,6 +599,16 @@
             document.getElementById('resWidth').textContent = data.w + ' mm';
             document.getElementById('resHeight').textContent = data.h + ' mm';
             document.getElementById('resMedia').textContent = specs.name;
+
+            // Render Color Space Badge
+            const csContainer = document.getElementById('resColorSpace');
+            if (data.colorSpace === 'CMYK') {
+                csContainer.innerHTML = `<span class="color-badge cmyk">CMYK (Standar Cetak)</span>`;
+            } else if (data.colorSpace === 'RGB') {
+                csContainer.innerHTML = `<span class="color-badge rgb">RGB (Perlu Konversi)</span>`;
+            } else {
+                csContainer.innerHTML = `<span class="color-badge gray">${data.colorSpace}</span>`;
+            }
 
             const previewImg = document.getElementById('previewImage');
             const pdfCanvas = document.getElementById('pdfCanvas');
@@ -372,35 +622,282 @@
                 pdfCanvas.style.display = 'none';
             }
 
-            updateStatus(match, diff, data.h, specs.maxHeight);
+            updateStatus(match, diff, data.h, specs.maxHeight, data.colorSpace);
         }
 
-        function updateStatus(match, diff, h, maxH) {
+        function updateStatus(match, diff, h, maxH, colorSpace) {
             const badge = document.getElementById('statusBadge');
             const iconContainer = document.getElementById('statusIconContainer');
             const title = document.getElementById('statusTitle');
             const desc = document.getElementById('statusDesc');
 
             let type = 'success';
-            if (h > maxH) type = 'danger';
-            else if (diff > 3) type = 'warning';
+            let descTxt = '';
+
+            if (h > maxH) {
+                type = 'danger';
+                descTxt = `Tinggi melebihi batas maksimal ${maxH}mm.`;
+            } else if (diff > 3) {
+                type = 'warning';
+                descTxt = `Lebar ${currentData.w}mm belum standar (Selisih ${diff}mm dari ${match.width}mm).`;
+            } else {
+                descTxt = `Ukuran pas standar ${match.col} Kolom (${match.width}mm).`;
+            }
+
+            if (colorSpace === 'RGB') {
+                if (type === 'success') type = 'warning';
+                descTxt += ` ⚠️ Format RGB terdeteksi, gunakan tombol konversi dibawah untuk mengubah ke CMYK cetak.`;
+            }
 
             badge.className = `status-badge ${type}`;
             iconContainer.innerHTML = ICONS[type];
             title.textContent = `${match.col} Kolom x ${h} mm`;
-            
-            if (type === 'danger') {
-                desc.textContent = `Tinggi melebihi batas maksimal ${maxH}mm.`;
-            } else if (type === 'warning') {
-                desc.textContent = `Lebar tidak standar (Selisih ${diff}mm dari ${match.width}mm).`;
-            } else {
-                desc.textContent = `Ukuran sesuai standar lebar ${match.width}mm.`;
+            desc.textContent = descTxt;
+        }
+
+        function openCropModal() {
+            if (!activeImageSrc) return;
+
+            const modal = document.getElementById('cropModal');
+            const cropperImg = document.getElementById('cropperTarget');
+            const selectTargetCol = document.getElementById('selectTargetCol');
+
+            cropperImg.src = activeImageSrc;
+            modal.style.display = 'flex';
+
+            const specs = COLUMN_SPECS[currentMedia];
+            selectTargetCol.innerHTML = specs.columns.map(c => 
+                `<option value="${c.width}">${c.col} Kolom (${c.width} mm)</option>`
+            ).join('');
+
+            let bestMatch = specs.columns[0];
+            let diff = Math.abs(currentData.w - bestMatch.width);
+            specs.columns.forEach(c => {
+                let d = Math.abs(currentData.w - c.width);
+                if (d < diff) { diff = d; bestMatch = c; }
+            });
+            selectTargetCol.value = bestMatch.width;
+
+            if (cropper) cropper.destroy();
+
+            cropper = new Cropper(cropperImg, {
+                viewMode: 1,
+                autoCropArea: 0.95,
+                responsive: true,
+                crop() { updateCropStats(); }
+            });
+        }
+
+        function updateCropStats() {
+            if (!cropper) return;
+            const cropData = cropper.getCropBoxData();
+            const targetWidthMm = parseFloat(document.getElementById('selectTargetCol').value);
+            const currentRatio = cropData.width / cropData.height;
+            const calculatedHeightMm = Math.round(targetWidthMm / currentRatio);
+
+            document.getElementById('cropDimensionsDisplay').textContent = 
+                `Output: ${targetWidthMm} mm × ${calculatedHeightMm} mm`;
+        }
+
+        function onTargetColChange() { updateCropStats(); }
+
+        function closeCropModal() {
+            document.getElementById('cropModal').style.display = 'none';
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
             }
+        }
+
+        function convertRgbToCmykPixels(rgbaData, width, height) {
+            const cmykBuffer = new Uint8Array(width * height * 4);
+            let cmykIndex = 0;
+
+            for (let i = 0; i < rgbaData.length; i += 4) {
+                const r = rgbaData[i] / 255;
+                const g = rgbaData[i + 1] / 255;
+                const b = rgbaData[i + 2] / 255;
+
+                const k = 1 - Math.max(r, g, b);
+                let c = 0, m = 0, y = 0;
+
+                if (k < 1) {
+                    c = (1 - r - k) / (1 - k);
+                    m = (1 - g - k) / (1 - k);
+                    y = (1 - b - k) / (1 - k);
+                }
+
+                cmykBuffer[cmykIndex++] = Math.round(c * 255);
+                cmykBuffer[cmykIndex++] = Math.round(m * 255);
+                cmykBuffer[cmykIndex++] = Math.round(y * 255);
+                cmykBuffer[cmykIndex++] = Math.round(k * 255);
+            }
+            return cmykBuffer;
+        }
+
+        async function exportCMYK(format) {
+            if (!cropper) return;
+            showToast("Mengolah konversi CMYK...");
+
+            const targetWidthMm = parseFloat(document.getElementById('selectTargetCol').value);
+            const targetWidthPx = Math.round(targetWidthMm * 11.811); // 300 DPI scale
+
+            const croppedCanvas = cropper.getCroppedCanvas({
+                width: targetWidthPx,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
+            });
+
+            const ctx = croppedCanvas.getContext('2d');
+            const imgData = ctx.getImageData(0, 0, croppedCanvas.width, croppedCanvas.height);
+            const cmykBytes = convertRgbToCmykPixels(imgData.data, croppedCanvas.width, croppedCanvas.height);
+
+            const currentRatio = croppedCanvas.width / croppedCanvas.height;
+            const targetHeightMm = targetWidthMm / currentRatio;
+
+            if (format === 'pdf') {
+                await generateDeviceCmykPdf(cmykBytes, croppedCanvas.width, croppedCanvas.height, targetWidthMm, targetHeightMm);
+            } else if (format === 'tiff') {
+                generateCmykTiff(cmykBytes, croppedCanvas.width, croppedCanvas.height, targetWidthMm);
+            }
+
+            closeCropModal();
+        }
+
+        async function generateDeviceCmykPdf(cmykBytes, pxWidth, pxHeight, mmWidth, mmHeight) {
+            try {
+                const pdfDoc = await PDFLib.PDFDocument.create();
+
+                // Build DeviceCMYK Image XObject Stream
+                const imageStream = pdfDoc.context.flateStream(cmykBytes, {
+                    Type: 'XObject',
+                    Subtype: 'Image',
+                    Width: pxWidth,
+                    Height: pxHeight,
+                    ColorSpace: 'DeviceCMYK',
+                    BitsPerComponent: 8,
+                });
+
+                const imageRef = pdfDoc.context.register(imageStream);
+
+                // 1 mm = 2.83465 PDF points
+                const pdfW = mmWidth * 2.83465;
+                const pdfH = mmHeight * 2.83465;
+                const page = pdfDoc.addPage([pdfW, pdfH]);
+
+                const xObjectKey = PDFLib.PDFName.of('CMYKImg');
+                page.node.setXObject(xObjectKey, imageRef);
+
+                page.pushOperators(
+                    PDFLib.pushGraphicsState(),
+                    PDFLib.translate(0, 0),
+                    PDFLib.scale(pdfW, pdfH),
+                    PDFLib.drawObject(xObjectKey),
+                    PDFLib.popGraphicsState()
+                );
+
+                const pdfBytes = await pdfDoc.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                downloadBlob(blob, `iklan-cmyk-${mmWidth}mm.pdf`);
+                showToast("Berhasil mendownload PDF CMYK!");
+            } catch (err) {
+                console.error(err);
+                showToast("Gagal memproses PDF CMYK.");
+            }
+        }
+
+        function generateCmykTiff(cmykBytes, width, height, mmWidth) {
+            const headerSize = 8;
+            const numTags = 12;
+            const ifdSize = 2 + (numTags * 12) + 4;
+            const extraDataSize = 8 + 8 + 8; // BitsPerSample array + XRes + YRes
+            const dataOffset = headerSize + ifdSize + extraDataSize;
+            const totalSize = dataOffset + cmykBytes.length;
+
+            const buffer = new ArrayBuffer(totalSize);
+            const view = new DataView(buffer);
+            const bytes = new Uint8Array(buffer);
+
+            // 1. TIFF Header ("II", Magic 42, IFD0 Offset)
+            view.setUint16(0, 0x4949, true);
+            view.setUint16(2, 42, true);
+            view.setUint32(4, 8, true);
+
+            // 2. IFD0 Entries
+            let p = 8;
+            view.setUint16(p, numTags, true); p += 2;
+
+            function writeTag(tag, type, count, val) {
+                view.setUint16(p, tag, true);
+                view.setUint16(p + 2, type, true);
+                view.setUint32(p + 4, count, true);
+                view.setUint32(p + 8, val, true);
+                p += 12;
+            }
+
+            const bitsOffset = headerSize + ifdSize;
+            const xResOffset = bitsOffset + 8;
+            const yResOffset = xResOffset + 8;
+
+            writeTag(256, 3, 1, width);                          // ImageWidth
+            writeTag(257, 3, 1, height);                         // ImageLength
+            writeTag(258, 3, 4, bitsOffset);                     // BitsPerSample [8,8,8,8]
+            writeTag(259, 3, 1, 1);                              // Compression (None)
+            writeTag(262, 3, 1, 5);                              // PhotometricInterpretation (CMYK)
+            writeTag(273, 4, 1, dataOffset);                     // StripOffsets
+            writeTag(277, 3, 1, 4);                              // SamplesPerPixel (4)
+            writeTag(278, 4, 1, height);                         // RowsPerStrip
+            writeTag(279, 4, 1, cmykBytes.length);               // StripByteCounts
+            writeTag(282, 5, 1, xResOffset);                     // XResolution (300/1)
+            writeTag(283, 5, 1, yResOffset);                     // YResolution (300/1)
+            writeTag(296, 3, 1, 2);                              // ResolutionUnit (Inch)
+
+            view.setUint32(p, 0, true); // Next IFD = 0
+
+            // 3. Extra Values Area
+            // BitsPerSample: [8, 8, 8, 8]
+            view.setUint16(bitsOffset, 8, true);
+            view.setUint16(bitsOffset + 2, 8, true);
+            view.setUint16(bitsOffset + 4, 8, true);
+            view.setUint16(bitsOffset + 6, 8, true);
+
+            // XResolution: 300 / 1
+            view.setUint32(xResOffset, 300, true);
+            view.setUint32(xResOffset + 4, 1, true);
+
+            // YResolution: 300 / 1
+            view.setUint32(yResOffset, 300, true);
+            view.setUint32(yResOffset + 4, 1, true);
+
+            // 4. Pixel CMYK Raw Buffer
+            bytes.set(cmykBytes, dataOffset);
+
+            const blob = new Blob([buffer], { type: 'image/tiff' });
+            downloadBlob(blob, `iklan-cmyk-${mmWidth}mm.tif`);
+            showToast("Berhasil mendownload TIFF CMYK 300 DPI!");
+        }
+
+        function downloadBlob(blob, filename) {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastMsg');
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3500);
         }
 
         function renderSpecs() {
             const specs = COLUMN_SPECS[currentMedia];
-            document.getElementById('specsBody').innerHTML = specs.columns.map(c => `<tr><td>${c.col} Kolom</td><td>${c.width} mm</td></tr>`).join('') + `<tr class="max-height-row"><td>Tinggi Maksimal</td><td>${specs.maxHeight} mm</td></tr>`;
+            document.getElementById('specsBody').innerHTML = specs.columns.map(c => 
+                `<tr><td>${c.col} Kolom</td><td>${c.width} mm</td></tr>`
+            ).join('') + `<tr class="max-height-row"><td>Tinggi Maksimal</td><td>${specs.maxHeight} mm</td></tr>`;
         }
 
         function showLoading(show) { document.getElementById('loader').style.display = show ? 'block' : 'none'; }
