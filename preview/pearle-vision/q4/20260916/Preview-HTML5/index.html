@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pearle Vision | Q4 HTML5 Digital Ads Approval Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght=500;700&family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap');
+
+        :root {
+            --brand-green: #5e8133;
+            --brand-green-hover: #4d6a29;
+            --bg-body: #0d0f12;
+            --bg-card: #15191e;
+            --border-color: #242b35;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-glow: rgba(94, 129, 51, 0.25);
+        }
+
+        .light-mode {
+            --bg-body: #f7faf6;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-glow: rgba(94, 129, 51, 0.08);
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s ease;
+            scroll-behavior: smooth;
+        }
+
+        .serif-title {
+            font-family: 'Cinzel', serif;
+        }
+
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(16px);
+            background-color: rgba(13, 15, 18, 0.88);
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .sticky-nav {
+            background-color: rgba(247, 250, 246, 0.88);
+        }
+
+        .banner-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .banner-card:hover {
+            border-color: var(--brand-green);
+            box-shadow: 0 20px 30px -10px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        .iframe-container {
+            background: #000000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+
+        }
+
+        .iframe-container iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: hidden;
+            background-color: #000000;
+        }
+
+        .status-pill {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .active-dot {
+            position: relative;
+        }
+
+        .active-dot::after {
+            content: '';
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--brand-green);
+        }
+
+        /* Fallback component for missing local HTML5 files */
+        .fallback-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 16px;
+            background: rgba(239, 68, 68, 0.05);
+            border: 2px dashed rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .fallback-box code {
+            background: rgba(239, 68, 68, 0.12);
+            padding: 3px 6px;
+            border-radius: 4px;
+            margin-top: 6px;
+            word-break: break-all;
+            user-select: all;
+            font-family: monospace;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between">
+
+    <div class="w-full">
+        <!-- Brand Header Top Bar -->
+        <div class="max-w-[1700px] mx-auto px-6 md:px-12 pt-8 pb-6 flex justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <span class="w-3 h-3 rounded-full"
+                    style="background-color: var(--brand-green); box-shadow: 0 0 12px var(--brand-green);"></span>
+                <div>
+                    <span class="text-[10px] font-black tracking-[0.25em] uppercase opacity-75">Pearle Vision
+                        Workspace</span>
+                    <h2 class="text-xs font-semibold opacity-50">Q4 HTML5 Creative Review Engine</h2>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <!-- Replay all HTML5 animations button -->
+                <button onclick="reloadAllIframes()"
+                    class="flex items-center gap-2 px-4 py-2 bg-emerald-600/20 text-emerald-400 rounded-lg text-xs font-bold hover:bg-emerald-600/30 transition-all border border-emerald-500/30 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>REPLAY ALL ANIMATIONS</span>
+                </button>
+
+                <!-- Theme switch handler -->
+                <button onclick="toggleTheme()"
+                    class="flex items-center gap-2 px-4 py-2 bg-neutral-800 text-white rounded-lg text-xs font-bold hover:opacity-90 transition-all border border-neutral-700 shadow-md"
+                    id="themeBtn">
+                    <span id="themeText">LIGHT MODE</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Hero Header section -->
+        <header
+            class="max-w-[1700px] mx-auto px-6 md:px-12 mb-8 flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-8 border-b"
+            style="border-color: var(--border-color);">
+            <div class="flex-1">
+                <div class="flex flex-wrap items-center gap-3 mb-4">
+                    <span class="status-pill bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Q4
+                        Campaign</span>
+                    <span class="status-pill bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">HTML5 Banner
+                        Suite</span>
+                    <span class="status-pill bg-amber-500/10 text-amber-500 border border-amber-500/20">60
+                        Variations</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-4 serif-title"
+                    style="color: var(--text-main);">
+                    Pearle <span class="font-light italic" style="color: var(--brand-green);">Vision Q4</span>
+                </h1>
+                <p style="color: var(--text-muted);" class="max-w-3xl text-base md:text-lg leading-relaxed font-light">
+                    HTML5 display ad layout review portal for Pearle Vision Q4 creative assets. Interactively review
+                    rich media banner concepts across United States General Market (USGM) and Canada (CA) campaign
+                    pipelines.
+                </p>
+            </div>
+
+            <!-- Global Display Workspace Controls -->
+            <div class="flex flex-wrap items-center gap-4 bg-neutral-950/20 p-4 rounded-xl border"
+                style="border-color: var(--border-color);">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] font-bold uppercase tracking-wider opacity-60">Global Region
+                        Filter</label>
+                    <div class="inline-flex rounded-lg bg-neutral-900 p-0.5 border"
+                        style="border-color: var(--border-color);">
+                        <button onclick="filterRegion('all')" id="btn-all"
+                            class="px-3 py-1.5 rounded-md text-xs font-bold bg-neutral-800 text-white transition-all">All
+                            Placements</button>
+                        <button onclick="filterRegion('USGM')" id="btn-USGM"
+                            class="px-3 py-1.5 rounded-md text-xs font-medium text-neutral-400 hover:text-white transition-all">USGM
+                            Only</button>
+                        <button onclick="filterRegion('CA')" id="btn-CA"
+                            class="px-3 py-1.5 rounded-md text-xs font-medium text-neutral-400 hover:text-white transition-all">CA
+                            Only</button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] font-bold uppercase tracking-wider opacity-60">Layout Scale</label>
+                    <div class="flex items-center gap-3">
+                        <input type="range" min="0.5" max="1" step="0.05" value="1" id="scaleSlider"
+                            oninput="adjustScale(this.value)"
+                            class="w-24 h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-[#5e8133]">
+                        <span id="scaleLabel" class="text-xs font-mono font-bold w-10">100%</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sticky Navigation Bar -->
+        <nav class="sticky-nav">
+            <div
+                class="max-w-[1700px] mx-auto px-6 md:px-12 py-4 flex items-center justify-between gap-6 overflow-x-auto whitespace-nowrap">
+                <div class="flex gap-8" id="sticky-links">
+                    <!-- Nav items rendered dynamically -->
+                </div>
+                <div class="text-[10px] font-bold tracking-widest uppercase opacity-40 hidden md:block">
+                    Scroll To Concept
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Banner Display Board -->
+        <main class="max-w-[1700px] mx-auto px-6 md:px-12 py-12 space-y-24" id="main-content">
+            <!-- Concepts injected dynamically via JavaScript -->
+        </main>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="mt-24 py-12 border-t text-center w-full max-w-[1700px] mx-auto"
+        style="border-color: var(--border-color);">
+        <p style="color: var(--text-muted);" class="text-[10px] font-semibold tracking-[0.2em] uppercase">
+            &copy; <span id="currentYear"></span> Pearle Vision &bull; Q4 HTML5 Campaign Review Portal &bull; Verified
+            Local Assets
+        </p>
+    </footer>
+
+    <script>
+        // Set dynamic year in footer
+        document.getElementById('currentYear').innerText = new Date().getFullYear();
+
+        /**
+         * Q4 Creative Concepts matched to folder naming convention:
+         * Folder schema: PV-Q4-DIS-Post-[num]-[region]-[campaign]_[width]x[height]
+         * Target index file: [folder_name]/index.html
+         */
+        const concepts = [
+            {
+                id: "concept-4",
+                num: "4",
+                title: "Off Expiring Benefits",
+                campaign: "OffExpiringBenefits",
+                description: "Q4 HTML5 campaign focusing on maximizing expiring vision insurance benefits before year-end."
+            },
+            {
+                id: "concept-5",
+                num: "5",
+                title: "Eye Health",
+                campaign: "EyeHealth",
+                description: "Q4 HTML5 layout emphasizing comprehensive eye health evaluations and general vision care."
+            },
+            {
+                id: "concept-8",
+                num: "8",
+                title: "Use Your Benefits",
+                campaign: "UseYourBenefits",
+                description: "Direct call-to-action urging patients to utilize their annual vision benefits before they reset."
+            },
+            {
+                id: "concept-15-40",
+                num: "15",
+                title: "40% Off Offer",
+                campaign: "40Offer",
+                description: "Q4 promotional layout highlighting the 40% Off special campaign offer."
+            },
+            {
+                id: "concept-15-50",
+                num: "15",
+                title: "50% Off Offer",
+                campaign: "50Offer",
+                description: "Q4 promotional layout highlighting the 50% Off special campaign offer."
+            }
+        ];
+
+        // Standard display dimensions matching Q4 banner folder structure
+        const dimensions = [
+            { name: "Billboard", w: 970, h: 250 },
+            { name: "Leaderboard", w: 728, h: 90 },
+            { name: "Half Page", w: 300, h: 600 },
+            { name: "Skyscraper", w: 160, h: 600 },
+            { name: "Medium Rectangle", w: 300, h: 250 },
+            { name: "Mobile Banner", w: 320, h: 50 }
+        ];
+
+        // Target markets
+        const markets = [
+            { code: "USGM", name: "United States General Market" },
+            { code: "CA", name: "Canada" }
+        ];
+
+        let globalScale = 1;
+        let activeRegion = 'all';
+
+        /**
+         * Reloads a single iframe banner element
+         */
+        function reloadIframe(iframeId) {
+            const frame = document.getElementById(iframeId);
+            if (frame) {
+                const currentSrc = frame.src;
+                frame.src = 'about:blank';
+                setTimeout(() => {
+                    frame.src = currentSrc;
+                }, 50);
+            }
+        }
+
+        /**
+         * Reloads all iframe banner elements on the page to restart HTML5 animations
+         */
+        function reloadAllIframes() {
+            const frames = document.querySelectorAll('.banner-iframe');
+            frames.forEach(frame => {
+                const currentSrc = frame.src;
+                frame.src = 'about:blank';
+                setTimeout(() => {
+                    frame.src = currentSrc;
+                }, 50);
+            });
+        }
+
+        /**
+         * Handles broken or missing local iframe source files gracefully
+         */
+        function handleIframeError(containerId, folderPath, width, height) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            container.innerHTML = `
+                <div class="fallback-box w-full h-full" style="width: ${width}px; height: ${height}px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500/70 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <span class="text-[9px] uppercase tracking-wider text-red-500 font-bold">Index File Not Found</span>
+                    <span class="text-[9px] text-neutral-500 mt-0.5">Expected HTML5 Path:</span>
+                    <code>${folderPath}/index.html</code>
+                </div>
+            `;
+        }
+
+        /**
+         * Injects navigation links and layout components dynamically
+         */
+        function renderPortal() {
+            const navContainer = document.getElementById('sticky-links');
+            const mainContent = document.getElementById('main-content');
+
+            navContainer.innerHTML = '';
+            mainContent.innerHTML = '';
+
+            concepts.forEach((concept, index) => {
+                // Render Sticky Navigation Item
+                const navLink = document.createElement('a');
+                navLink.href = `#${concept.id}`;
+                navLink.id = `nav-${concept.id}`;
+                navLink.className = `text-xs font-bold uppercase tracking-widest text-neutral-400 hover:text-white transition-all py-1 cursor-pointer block ${index === 0 ? 'active-dot text-white font-black' : ''}`;
+                navLink.innerHTML = `<span style="color: var(--brand-green)" class="mr-1">Concept ${concept.num}</span> ${concept.title}`;
+
+                // Smooth scroll anchor behavior
+                navLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById(concept.id).scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                });
+                navContainer.appendChild(navLink);
+
+                // Render Section Block
+                const section = document.createElement('section');
+                section.id = concept.id;
+                section.className = "space-y-12 scroll-mt-28";
+
+                // Section header block
+                section.innerHTML = `
+                    <div class="border-b pb-6" style="border-color: var(--border-color)">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div>
+                                <span class="text-xs font-extrabold tracking-[0.25em] uppercase" style="color: var(--brand-green);">Concept ${concept.num}</span>
+                                <h2 class="text-2xl md:text-3xl font-black mt-1 serif-title">${concept.title}</h2>
+                                <p style="color: var(--text-muted);" class="text-sm mt-2 font-light max-w-2xl">${concept.description}</p>
+                            </div>
+                            <span class="status-pill border bg-neutral-900/40 text-emerald-400 border-emerald-500/30 px-4 py-1.5 rounded-lg flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                HTML5 Banner Suite
+                            </span>
+                        </div>
+                    </div>
+                `;
+
+                // Layout grid holding regions
+                const regionsContainer = document.createElement('div');
+                regionsContainer.className = "grid grid-cols-1 gap-16";
+
+                markets.forEach(m => {
+                    const regionDiv = document.createElement('div');
+                    regionDiv.className = `region-wrapper space-y-6 transition-all duration-300 ${m.code === 'USGM' ? 'region-usgm' : 'region-ca'}`;
+                    regionDiv.setAttribute('data-region', m.code);
+
+                    regionDiv.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="w-1.5 h-6 rounded bg-[#5e8133]"></span>
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider">${m.name}</span>
+                                <span class="text-[9px] font-black uppercase text-neutral-500 ml-2 tracking-widest">${m.code} Variant</span>
+                            </div>
+                        </div>
+                    `;
+
+                    // Banner units flex container
+                    const flexBanners = document.createElement('div');
+                    flexBanners.className = "flex flex-wrap gap-8 items-start justify-start scale-wrapper origin-top-left transition-all duration-300";
+
+                    dimensions.forEach((dim, dimIdx) => {
+                        /**
+                         * Q4 HTML5 Naming Convention:
+                         * Folder: PV-Q4-DIS-Post-[num]-[region]-[campaign]_[width]x[height]
+                         * Path: PV-Q4-DIS-Post-[num]-[region]-[campaign]_[width]x[height]/index.html
+                         */
+                        const campaignStr = typeof concept.campaign === 'object' ? concept.campaign[m.code] : concept.campaign;
+                        const sizeStr = `${dim.w}x${dim.h}`;
+                        const folderName = `PV-Q4-DIS-Post-${concept.num}-${m.code}-${campaignStr}_${sizeStr}`;
+                        const iframePath = `${folderName}/index.html`;
+                        const iframeId = `iframe-${concept.id}-${m.code}-${dim.w}x${dim.h}`;
+                        const containerId = `container-${concept.id}-${m.code}-${dim.w}x${dim.h}`;
+
+                        const bannerCard = document.createElement('div');
+                        bannerCard.className = "banner-card flex-shrink-0";
+                        bannerCard.innerHTML = `
+                            <div class="w-full flex justify-between items-center opacity-75 mb-3 text-xs border-b pb-2" style="border-color: var(--border-color)">
+                                <span class="font-bold tracking-widest text-[10px]">${dim.w} x ${dim.h} &bull; ${dim.name}</span>
+                                <button onclick="reloadIframe('${iframeId}')" class="text-neutral-400 hover:text-emerald-400 transition-colors p-1" title="Reload Animation">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div id="${containerId}" class="iframe-container relative flex items-center justify-center" style="width: ${dim.w}px; height: ${dim.h}px;">
+                                <iframe id="${iframeId}"
+                                        src="${iframePath}" 
+                                        width="${dim.w}" 
+                                        height="${dim.h}"
+                                        frameborder="0"
+                                        scrolling="no"
+                                        title="${folderName}"
+                                        class="banner-iframe"
+                                        onerror="handleIframeError('${containerId}', '${folderName}', ${dim.w}, ${dim.h})">
+                                </iframe>
+                            </div>
+                        `;
+                        flexBanners.appendChild(bannerCard);
+                    });
+
+                    regionDiv.appendChild(flexBanners);
+                    regionsContainer.appendChild(regionDiv);
+                });
+
+                section.appendChild(regionsContainer);
+                mainContent.appendChild(section);
+            });
+
+            // Apply scaling, filtering, and scroll spying
+            adjustScale(globalScale);
+            filterRegion(activeRegion);
+            setupScrollSpy();
+        }
+
+        /**
+         * Modifies the scale multiplier for dense visual previews
+         */
+        function adjustScale(val) {
+            globalScale = parseFloat(val);
+            document.getElementById('scaleLabel').innerText = `${Math.round(globalScale * 100)}%`;
+
+            const wrappers = document.querySelectorAll('.scale-wrapper');
+            wrappers.forEach(wrap => {
+                wrap.style.transform = `scale(${globalScale})`;
+                const marginNeeded = (1 - globalScale) * -100;
+                wrap.style.marginBottom = `${marginNeeded}%`;
+                wrap.style.marginRight = `${marginNeeded}%`;
+            });
+        }
+
+        /**
+         * Filter regions between USGM only, CA only, or All Placements
+         */
+        function filterRegion(region) {
+            activeRegion = region;
+
+            ['all', 'USGM', 'CA'].forEach(r => {
+                const btn = document.getElementById(`btn-${r}`);
+                if (r === region) {
+                    btn.classList.add('bg-neutral-800', 'text-white');
+                    btn.classList.remove('text-neutral-400');
+                } else {
+                    btn.classList.remove('bg-neutral-800', 'text-white');
+                    btn.classList.add('text-neutral-400');
+                }
+            });
+
+            const allRegionWrappers = document.querySelectorAll('.region-wrapper');
+            allRegionWrappers.forEach(el => {
+                const currentDataRegion = el.getAttribute('data-region');
+                if (region === 'all' || currentDataRegion === region) {
+                    el.style.display = 'block';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+        }
+
+        /**
+         * Tracks scroll position and updates current active concept in top navigation bar
+         */
+        function setupScrollSpy() {
+            const sections = document.querySelectorAll('section');
+            const observerOptions = {
+                root: null,
+                rootMargin: '-30% 0px -60% 0px',
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const activeId = entry.target.id;
+
+                        concepts.forEach(concept => {
+                            const link = document.getElementById(`nav-${concept.id}`);
+                            if (link) {
+                                if (concept.id === activeId) {
+                                    link.classList.add('active-dot', 'text-white', 'font-black');
+                                    link.classList.remove('text-neutral-400');
+                                } else {
+                                    link.classList.remove('active-dot', 'text-white', 'font-black');
+                                    link.classList.add('text-neutral-400');
+                                }
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => observer.observe(section));
+        }
+
+        /**
+         * Toggles portal theme between Dark and Light mode
+         */
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+            const text = document.getElementById('themeText');
+
+            body.classList.toggle('light-mode');
+
+            if (body.classList.contains('light-mode')) {
+                text.innerText = 'DARK MODE';
+                btn.classList.replace('bg-neutral-800', 'bg-white');
+                btn.classList.add('text-slate-900', 'border-slate-300');
+            } else {
+                text.innerText = 'LIGHT MODE';
+                btn.classList.replace('bg-white', 'bg-neutral-800');
+                btn.classList.remove('text-slate-900', 'border-slate-300');
+            }
+        }
+
+        // Initialize portal layout on window load
+        window.onload = function () {
+            renderPortal();
+        };
+    </script>
+</body>
+
+</html>
