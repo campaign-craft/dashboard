@@ -1,0 +1,158 @@
+/* Canva skin: loaded after index.html's inline styles and play.css.
+   Gradient top bar, dark icon sidebar, gray workspace with a white page, purple selection, flat elements. */
+
+:root{
+  --ink:#0e1318;--ink-faint:#9aa0ab;
+  --blush:#f3ecff;--blush-2:#e4d4ff;--pink:#8b3dff;--pink-deep:#7d2ae8;
+  --peach:#fff0e0;--butter:#fff3bf;--butter-deep:#ffc533;
+  --mint:#d8f6f3;--mint-deep:#00c4cc;--sky:#dbeaff;--sky-deep:#4a9dff;
+  --lilac:#ece3ff;--lilac-deep:#8b3dff;--coral:#ff6b6b;
+  --spring:cubic-bezier(.2,.9,.3,1.1);
+  --shadow:0 4px 16px rgba(14,19,24,.16),0 1px 3px rgba(14,19,24,.1);
+  --font:"Figtree",system-ui,sans-serif;
+  --cv-purple:#7d2ae8;--cv-teal:#00c4cc;--cv-side:#18191b;--cv-bar:56px;--cv-rail:72px;
+}
+::selection{background:#d9c2ff}
+body{background:#ebecf0;color:var(--ink)}
+body.fancy-cursor{cursor:default!important}
+body.fancy-cursor a,body.fancy-cursor button{cursor:pointer!important}
+body.fancy-cursor.tool-pen,body.fancy-cursor.tool-frame,body.fancy-cursor.tool-sticker,body.fancy-cursor.tool-comment,body.fancy-cursor.tool-text{cursor:crosshair!important}
+
+/* no wobble anywhere: flat, crisp shapes */
+.wob::before,.slot .box::before,.ushape::before,.fan .fcard::before,.dot::before,.tray::before,.pages::before,.toolbar .blob{filter:none!important}
+.spark{display:none!important}
+
+/* ---------- top bar ---------- */
+body::before{content:"";position:fixed;left:0;right:0;top:0;height:var(--cv-bar);z-index:59;background:linear-gradient(90deg,var(--cv-teal) 0%,#4f7cf0 45%,var(--cv-purple) 100%);box-shadow:0 1px 4px rgba(14,19,24,.2)}
+.pages{left:12px;top:0;height:var(--cv-bar);padding:0;gap:2px;filter:none}
+.pages::before{display:none}
+.pages .file{font-family:"Pacifico","Caveat",cursive;font-weight:400;font-size:25px;color:#fff;rotate:0deg;margin-right:14px;letter-spacing:0}
+.pages .chip{color:#fff;font-weight:600;font-size:14px;padding:8px 13px;border-radius:8px;--wb:transparent}
+.pages .chip::before{border-radius:inherit}
+.pages .chip.wob:hover{--wb:rgba(255,255,255,.18);transform:none}
+.pages .chip.wob.active{--wb:rgba(255,255,255,.28)}
+
+.people{right:14px;top:0;height:var(--cv-bar)}
+.people .dot{width:34px;height:34px;font-size:14px;filter:none;margin-left:0}
+.people .dot+.dot{margin-left:-6px}
+.dot::before{box-shadow:0 0 0 2px #fff}
+.dot.j{--c:#ffb3d1;--cs:#fff}
+.dot.you,.dot.you.mint{--cs:#fff}
+.dot:hover{transform:none}
+.dot .lbl{right:auto;left:50%;top:calc(100% + 12px);transform:translate(-50%,-6px) scale(.95);background:var(--ink);color:#fff;border-radius:6px;box-shadow:none;font-weight:600}
+.dot:hover .lbl{transform:translate(-50%,0) scale(1)}
+.people .share{appearance:none;border:0;margin-left:14px;height:36px;padding:0 18px;border-radius:8px;background:#fff;color:var(--ink);font:700 14px var(--font);cursor:pointer;transition:background .2s}
+.people .share:hover{background:#f1eaff}
+
+/* collaborator-style cursor with a name flag */
+.cur .bub{color:#fff;background:var(--c);border-radius:4px 14px 14px 14px;font-size:12px;font-weight:600;padding:4px 10px;box-shadow:none;left:12px;top:14px}
+.cur .tipv path{fill:var(--c);stroke:#fff;stroke-width:1}
+.cur.host{--c:#8b3dff;--cs:#7d2ae8}
+.cur.visitor{display:none!important}
+.cur.peer-cur{--c:#00c4cc;--cs:#009ea5}
+.cur.peer-cur.lilac{--c:#8b3dff;--cs:#7d2ae8}
+.cur.peer-cur.sky{--c:#4a9dff;--cs:#2d7fe6}
+
+/* ---------- left sidebar (the old toolbar) ---------- */
+.toolbar{left:0;right:auto;top:var(--cv-bar);bottom:0;transform:none;width:var(--cv-rail);max-width:none;flex-direction:column;justify-content:flex-start;gap:4px;padding:10px 4px;background:var(--cv-side);border-radius:0;filter:none;z-index:60}
+.toolbar .blob{display:none}
+.toolbar .tool{width:64px;height:64px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:transparent}
+.toolbar .tool svg{width:22px;height:22px;stroke:#e9eaee;stroke-width:1.9}
+.toolbar .tool .tip{position:static;transform:none;opacity:1;background:none;color:#d3d6dc;font-size:11px;font-weight:500;padding:0;border-radius:0;pointer-events:none;white-space:nowrap}
+.toolbar .tool:hover{transform:none;background:rgba(255,255,255,.09)}
+.toolbar .tool:hover .tip{transform:none}
+.toolbar .tool.active{background:transparent}
+.toolbar .tool.picked,body.tool-move .toolbar .tool[data-tool="move"]{background:#3a3b3f;box-shadow:none}
+.toolbar .tool.picked svg,body.tool-move .toolbar .tool[data-tool="move"] svg{stroke:#fff}
+.toolbar .tool.picked .tip,body.tool-move .toolbar .tool[data-tool="move"] .tip{color:#fff}
+.toolbar .tbsep{width:40px;height:1px;margin:6px 0;background:rgba(255,255,255,.14)}
+.toolbar .clear-pill{margin:8px 0 0;width:60px;padding:8px 0;border-radius:8px;font-size:12px;font-weight:600;color:#fff;--wb:#3a3b3f;text-align:center;animation:none}
+.toolbar .clear-pill::before{border-radius:inherit}
+.toolbar .clear-pill.on{display:block}
+.toolbar .clear-pill:hover{--wb:#4b4c51;transform:none}
+
+/* sticker tray becomes a side panel next to the sidebar */
+.tray{left:var(--cv-rail);top:var(--cv-bar);bottom:auto;width:264px;flex-wrap:wrap;gap:4px;padding:16px;background:#fff;border-radius:0 0 14px 0;box-shadow:var(--shadow);transform:translateX(-14px)}
+.tray.on{transform:none}
+.tray::before{position:static;inset:auto;flex:0 0 100%;content:"Stickers";background:none;box-shadow:none;border-radius:0;font-weight:700;font-size:15px;margin:0 0 8px 2px;z-index:auto}
+.tray button{border-radius:10px}
+.tray button:hover{transform:scale(1.1);background:var(--blush)}
+.tray button.on{background:var(--blush-2)}
+.hint{bottom:56px;background:var(--ink);color:#fff;border-radius:8px;box-shadow:none;font-weight:600}
+
+/* bottom status bar: notes, zoom, page count */
+.statusbar{position:fixed;left:var(--cv-rail);right:0;bottom:0;height:40px;z-index:59;background:#fff;border-top:1px solid #dfe1e6;display:flex;align-items:center;gap:6px;padding:0 14px;font-size:13px;font-weight:500;color:#3a3d45;user-select:none}
+.statusbar .sb{padding:6px 10px;border-radius:6px}
+.statusbar .sp{flex:1}
+.statusbar .zbar{position:relative;width:120px;height:4px;border-radius:4px;background:#dcdfe5;margin:0 6px}
+.statusbar .zbar b{position:absolute;left:0;top:0;bottom:0;width:58%;border-radius:4px;background:var(--ink)}
+.statusbar .zbar b::after{content:"";position:absolute;right:-6px;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:#fff;box-shadow:0 0 0 1.5px var(--ink)}
+.statusbar .pct{min-width:40px;text-align:right}
+
+/* ---------- workspace + white page ---------- */
+.canvas{padding:84px 28px 72px calc(var(--cv-rail) + 28px)}
+.stage{background:#fff;padding:40px 40px 48px;box-shadow:0 0 0 1px rgba(14,19,24,.06),0 4px 24px rgba(14,19,24,.1);border-radius:2px}
+.stage::before{position:absolute;left:0;bottom:100%;margin-bottom:9px;font-size:12.5px;font-weight:600;color:#5b606b;white-space:nowrap}
+.page[data-page="home"] .stage::before{content:"Page 1 – Home"}
+.page[data-page="about"] .stage::before{content:"Page 2 – About"}
+.page[data-page="work"] .stage::before{content:"Page 3 – Work"}
+.page[data-page="hi"] .stage::before{content:"Page 4 – Say hi"}
+.stage.home{min-height:calc(100vh - 216px)}
+.stage.about{padding-top:48px}
+.stage.hi{padding:40px;min-height:calc(100vh - 216px)}
+
+/* ---------- elements: flat, purple selection ---------- */
+.slot{--r:16px;--edge:var(--cv-purple)}
+.slot .tag{display:none}
+.slot .box{outline:2px solid var(--cv-purple);outline-offset:0}
+.slot .box::before{box-shadow:inset 0 0 0 1px rgba(14,19,24,.08)}
+.work-intro .box::before,.pullq .box::before{box-shadow:none}
+.slot .h,.ushape .h{width:12px;height:12px;background:#fff;border:2px solid var(--cv-purple);box-shadow:0 1px 3px rgba(14,19,24,.3)}
+.slot .h.tl{left:-7px;top:-7px}.slot .h.tr{right:-7px;top:-7px}.slot .h.bl{left:-7px;bottom:-7px}.slot .h.br{right:-7px;bottom:-7px}
+.slot .pill,.ushape .pill{background:var(--ink);border-radius:6px;font-weight:600}
+.slot.done:hover .box{outline-color:rgba(139,61,255,.75);outline-width:2px}
+.tile.done:hover{transform:none}
+.caret{background:var(--cv-purple)}
+
+.me{--r:50%}
+.me .content{inset:0;border-radius:50%}
+.me.done{rotate:0deg}
+.photo .content{border-radius:16px}
+.caption{rotate:0deg}
+.row .card:nth-child(odd),.row .card:nth-child(even){rotate:0deg;translate:none}
+.tags span:nth-child(2n){rotate:0deg}
+.menu a,.social a,.hi-links a{border-radius:8px}
+.menu a:hover,.social a:hover,.hi-links a:hover{transform:scale(1.03)}
+.tile .go{color:var(--cv-purple)}
+
+/* ---------- play layer: Canva-ish ---------- */
+.play .unote{border-radius:3px;background:#ffe27a;box-shadow:0 6px 14px rgba(14,19,24,.18)}
+.shared .unote{border-radius:3px;box-shadow:0 6px 14px rgba(14,19,24,.18)}
+.ushape{border-radius:12px}
+.ushape.drawing{outline:2px solid var(--ucs);outline-offset:0}
+.utext.editing{outline:2px solid var(--ucs);outline-offset:3px;border-radius:2px}
+.uitem .x{background:var(--ink);border-radius:6px}
+
+/* ---------- phone page menu ---------- */
+.fan{padding-top:72px}
+.fan-scrim{background:rgba(14,19,24,.55);backdrop-filter:blur(2px)}
+.fan .fcard,.fan .fsec .fcard{rotate:0deg;translate:none;border-radius:12px;background:#fff!important;box-shadow:0 1px 3px rgba(14,19,24,.14);margin-bottom:8px;font-size:18px;padding:16px 18px}
+.fan .fcard::before{display:none}
+.fan .fcard.on{outline:2px solid var(--cv-purple);outline-offset:-2px}
+.fan .fcard.on::after{color:var(--cv-purple)}
+
+@media (max-width:860px){
+  .pages .file::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16' fill='none' stroke='%23ffffff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.2 3.6c2.4 2.3 5.3 5.6 8.1 8.9 0.3 0.4 0.9 0.5 1.3 0.1 2.6-3.3 5.5-6.4 8.2-9.3'/%3E%3C/svg%3E")}
+  .pages{left:12px;top:0}
+  .toolbar{left:0;right:0;top:auto;bottom:0;width:auto;height:64px;flex-direction:row;justify-content:center;gap:0;padding:4px 6px}
+  .toolbar .tool{width:52px;height:56px}
+  .toolbar .tbsep{display:none}
+  .toolbar .clear-pill{margin:0 0 0 6px;width:auto;padding:8px 10px}
+  .statusbar{display:none}
+  .tray{left:8px;right:8px;top:auto;bottom:72px;width:auto;border-radius:14px;transform:translateY(12px)}
+  .tray.on{transform:none}
+  .hint{bottom:76px}
+  .canvas{padding:76px 12px 90px}
+  .stage,.stage.hi{padding:24px 16px}
+  .stage.home,.stage.hi{min-height:calc(100vh - 190px)}
+}

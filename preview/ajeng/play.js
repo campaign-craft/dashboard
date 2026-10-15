@@ -63,6 +63,13 @@
   pick('move');
   addEventListener('keydown', e => { if (e.key === 'Escape') { const ed = document.activeElement; if (ed && ed.isContentEditable) ed.blur(); else pick('move'); } });
 
+  // Share button in the top bar: copies the page link
+  const shareBtn = $('#share');
+  if (shareBtn) shareBtn.addEventListener('click', () => {
+    try { navigator.clipboard.writeText(location.href); } catch (e) {}
+    hint.textContent = 'Link copied'; hint.classList.add('on');
+    setTimeout(() => { hint.textContent = HINTS[tool] || ''; hint.classList.toggle('on', !!HINTS[tool] && tool !== 'sticker'); }, 1600);
+  });
   const toCanvas = (x, y) => { const r = canvas.getBoundingClientRect(); return [x - r.left, y - r.top]; };
   // keep notes off the page's buttons and links: slide a note up (or down) until it no longer covers one
   window.__avoidButtons = el => {
@@ -75,7 +82,7 @@
     const dy = (r.top - up > 60 || up <= down) ? -up : down;
     el.style.top = (parseFloat(el.style.top) + dy) + 'px';
   };
-  const isChrome = t => t.closest('.pages, .toolbar, .people, .tray, .hint, .hlabel, .lb, .subfloat, .fan, .fan-scrim, .studio-back');
+  const isChrome = t => t.closest('.pages, .toolbar, .people, .tray, .hint, .hlabel, .lb, .subfloat, .fan, .fan-scrim, .studio-back, .statusbar');
   // with a drawing tool picked, a click on the page places things; it never follows a link or presses a button underneath
   let armed = null, drew = false;
   addEventListener('click', e => { if (drew) { drew = false; e.preventDefault(); e.stopPropagation(); } }, true);
@@ -236,7 +243,7 @@
   const SPARK_COLORS = ['var(--pink)', 'var(--sky-deep)', 'var(--butter-deep)', 'var(--mint-deep)', 'var(--lilac-deep)', 'var(--coral)'];
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches, fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
   let lx = 0, ly = 0, lt = 0;
-  if (fine && !reduced) addEventListener('pointermove', e => {
+  if (false && fine && !reduced) addEventListener('pointermove', e => {
     const now = performance.now(); const d = Math.hypot(e.clientX - lx, e.clientY - ly);
     if (d < 16 || now - lt < 30) return;
     lx = e.clientX; ly = e.clientY; lt = now;
