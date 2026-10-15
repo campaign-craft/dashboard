@@ -1,0 +1,108 @@
+/* ===== Vectorplus — rebrand: palet, font, ikon. Tidak menyentuh logika/fitur. ===== */
+/*FONTFACE*/
+:root,:root:not([data-theme="dark"]){
+  --ink:#2c2c2c;--muted:#6b6b6b;--green:#1473e6;--lime:#1473e6;--line:#e1e1e1;--paper:#f5f5f5;--white:#fff;--card:#fff;
+  --greenText:#0d66d0;--onGreen:#fff;--onLime:#fff;--headerBg:#ffffffe6;--hover:#eaeaea;--focus:#4b9cf5;
+  --soft:#f8f8f8;--soft2:#fff;--softStrong:#e5f0fd;--dash:#b3b3b3;--greenHover:#0d66d0;
+  --errInk:#d31510;--errBg:#fdecea;--checkA:#fff;--checkB:#ececec;--wire:#1473e6;--swatchLine:#0002;--track:#e1e1e1;
+  --warnBg:#fff4e0;--warnInk:#6b4400;--warnLine:#f5d99d;color-scheme:light;
+  --vp-font:"Source Sans 3","Adobe Clean","Source Sans Pro",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-family:var(--vp-font)}
+:root[data-theme="dark"]{
+  --ink:#f0f0f0;--muted:#a6a6a6;--green:#2680eb;--lime:#2680eb;--line:#3d3d3d;--paper:#1b1b1b;--white:#262626;--card:#262626;
+  --greenText:#6cb2ff;--onGreen:#fff;--onLime:#fff;--headerBg:#262626e6;--hover:#333;--focus:#5aa9fa;
+  --soft:#2c2c2c;--soft2:#202020;--softStrong:#1c3454;--dash:#585858;--greenHover:#378ef0;
+  --errInk:#ff8f85;--errBg:#3c1f1d;--checkA:#262626;--checkB:#303030;--wire:#6cb2ff;--swatchLine:#ffffff40;--track:#3d3d3d;
+  --warnBg:#3a2f18;--warnInk:#f0d9a0;--warnLine:#5c4a22;color-scheme:dark}
+
+body,button,input,select,summary{font-family:var(--vp-font)}
+body{font-size:16px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1{font-weight:700;letter-spacing:-.6px}
+h2{font-weight:700;letter-spacing:0}
+p{font-size:14.5px}
+.step{letter-spacing:.8px}
+.num,.field output{font-weight:600}
+
+/* Bentuk: bersih, datar, sudut lebih rapat */
+header{padding:12px 4vw;background:var(--headerBg);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);position:sticky;top:0;z-index:20}
+.card,.settingsPanel{border-radius:10px}
+button{border-radius:8px;font-weight:600;border-color:#d0d0d0;background:var(--card);transition:background .12s,border-color .12s,color .12s}
+:root[data-theme="dark"] button{border-color:#4a4a4a}
+button:hover{background:var(--hover);border-color:#b3b3b3}
+:root[data-theme="dark"] button:hover{border-color:#6a6a6a}
+.primary,.download,.tipApply,.tipApply:hover{border-radius:999px;background:var(--green);border-color:var(--green);color:#fff}
+.primary:hover,.download:hover{background:var(--greenHover);border-color:var(--greenHover);color:#fff}
+.download,.tipApply{font-weight:700}
+.primary{padding:13px}
+.tools button[aria-pressed=true],.preset[aria-pressed=true]{border-color:var(--green)}
+.tools button[aria-pressed=true]{background:var(--green);color:#fff}
+.preset[aria-pressed=true]{background:var(--softStrong);box-shadow:inset 3px 0 var(--green)}
+.drop{border-radius:10px;border-width:1.5px;background:var(--soft)}
+.drop:hover{border-color:var(--green);background:var(--softStrong)}
+.textbtn{border:0;background:none;color:var(--greenText);font-weight:600;text-decoration:none;border-radius:4px}
+.textbtn:hover{background:none;text-decoration:underline;text-underline-offset:3px}
+.cancel{border-radius:999px}
+.formatSwitch{border-radius:8px}
+.tag{display:none}
+input[type=range]{accent-color:var(--green)}
+.dropOverlay,[class*="dragOver"]{background:#1473e62b}
+:root[data-theme="dark"] .dropOverlay{background:#2680eb33}
+
+/* Wordmark */
+.brand{font-size:21px;font-weight:700;letter-spacing:-.4px;gap:10px;color:var(--ink)}
+.brand svg{width:30px;height:30px;flex:none}
+.brand .vp-plus{color:var(--green);font-weight:700}
+.offline{color:var(--muted);font-size:12.5px}
+.offline:before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:#2d9d78;margin-right:8px;vertical-align:1px}
+
+/* Ikon (garis 1.6, ujung bulat) lewat mask — teks & logika tombol tidak berubah */
+:root{
+  --i-moon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16.5 11.6A7 7 0 0 1 8.4 3.5a7 7 0 1 0 8.1 8.1z'/%3E%3C/svg%3E");
+  --i-sun:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round'%3E%3Ccircle cx='10' cy='10' r='3.4'/%3E%3Cpath d='M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.7 4.7l1.4 1.4M13.9 13.9l1.4 1.4M4.7 15.3l1.4-1.4M13.9 6.1l1.4-1.4'/%3E%3C/svg%3E");
+  --i-help:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='10' cy='10' r='7.5'/%3E%3Cpath d='M7.9 7.8a2.2 2.2 0 1 1 3.3 1.9c-.8.5-1.2.9-1.2 1.8M10 14.2v.1'/%3E%3C/svg%3E");
+  --i-down:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 3.5v9M6.2 9l3.8 3.8L13.8 9M4 16.5h12'/%3E%3C/svg%3E");
+  --i-share:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 12.5v-9M6.5 6.8 10 3.3l3.5 3.5M4.5 10.5v5.2c0 .6.4 1 1 1h9c.6 0 1-.4 1-1v-5.2'/%3E%3C/svg%3E");
+  --i-layers:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m10 3 7 3.6-7 3.6-7-3.6zM3 10.2l7 3.6 7-3.6M3 13.6 10 17l7-3.4'/%3E%3C/svg%3E");
+  --i-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2.8' y='3.8' width='14.4' height='12.4' rx='2'/%3E%3Ccircle cx='7.2' cy='8' r='1.4'/%3E%3Cpath d='m3.5 14.5 4.3-4 3 2.6 2.4-2.2 3.3 3.2'/%3E%3C/svg%3E");
+  --i-sliders:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M3 6h6.5M13.5 6H17M3 14h2.5M9.5 14H17'/%3E%3Ccircle cx='11.5' cy='6' r='2'/%3E%3Ccircle cx='7.5' cy='14' r='2'/%3E%3C/svg%3E");
+  --i-pen:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 16c1.5-6 5-9.5 10.5-11'/%3E%3Crect x='2.6' y='14.6' width='2.8' height='2.8' rx='.4'/%3E%3Crect x='13.2' y='3.4' width='2.8' height='2.8' rx='.4'/%3E%3C/svg%3E");
+  --i-grid:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='14' height='14' rx='2'/%3E%3Cpath d='M3 10h14M10 3v14'/%3E%3C/svg%3E");
+  --i-fit:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 7V3.5H7M13 3.5h3.5V7M16.5 13v3.5H13M7 16.5H3.5V13'/%3E%3C/svg%3E");
+  --i-spark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 2.8 11.8 8l5.2 1.8-5.2 1.8L10 17l-1.8-5.4L3 9.8 8.2 8z'/%3E%3C/svg%3E");
+  --i-x:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='m5 5 10 10M15 5 5 15'/%3E%3C/svg%3E");
+  --i-eye:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.8 10S5 4.5 10 4.5 18.2 10 18.2 10 15 15.5 10 15.5 1.8 10 1.8 10z'/%3E%3Ccircle cx='10' cy='10' r='2.4'/%3E%3C/svg%3E");
+}
+#themeToggle,#help,#openBatch,#sample,#openSettings,#download,#shareFile,#mobileShare,#batchZip,#batchZipEps,#wire,#bg,#fit,#tipsButton,#defectNext,#run,#mobileAction,#batchStart,.close{display:inline-flex;align-items:center;justify-content:center;gap:7px}
+#themeToggle:before,#help:before,#openBatch:before,#sample:before,#openSettings:before,#download:before,#shareFile:before,#mobileShare:before,#batchZip:before,#batchZipEps:before,#wire:before,#bg:before,#fit:before,#tipsButton:before,#defectNext:before,#run:before,#mobileAction:before,#batchStart:before,.close:before{content:'';width:16px;height:16px;flex:none;background:currentColor;-webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat}
+#themeToggle{--ic:var(--i-moon)}:root[data-theme="dark"] #themeToggle{--ic:var(--i-sun)}
+#help{--ic:var(--i-help)}
+#openBatch{--ic:var(--i-layers)}
+#sample{--ic:var(--i-image)}
+#openSettings{--ic:var(--i-sliders)}
+#download,#batchZip,#batchZipEps{--ic:var(--i-down)}
+#shareFile,#mobileShare{--ic:var(--i-share)}
+#wire{--ic:var(--i-pen)}
+#bg{--ic:var(--i-grid)}
+#fit{--ic:var(--i-fit)}
+#tipsButton,#defectNext{--ic:var(--i-spark)}
+#run,#mobileAction,#batchStart{--ic:var(--i-spark)}
+.close{--ic:var(--i-x)}
+.textbtn#openBatch,.textbtn#sample{justify-content:flex-start}
+#help,#themeToggle{padding:8px 13px}
+
+/* Ilustrasi kosong & ikon unggah */
+.drop svg{width:32px;height:32px;color:var(--green);stroke-width:1.6}
+
+/* Sisa warna lama (hijau) -> netral */
+.viewport.dark{background:#2b2b2b}
+.empty{color:#8a8a8a}.empty p{color:#8a8a8a}.empty svg{color:#b0b0b0}
+:root[data-theme="dark"] .empty,:root[data-theme="dark"] .empty p{color:#9a9a9a}
+:root[data-theme="dark"] .empty svg{color:#6a6a6a}
+.dot{background:#a0a0a0}
+dialog::backdrop{background:#00000066}
+dialog.fallbackDialog[open]{box-shadow:0 0 0 100vmax #00000066}
+#mobileActions{box-shadow:0 -4px 18px #0000000f}
+#settingsDialog{box-shadow:0 -8px 30px #0000002e}
+.tips{box-shadow:0 10px 30px #00000033}
+body.dropping:after{background:#1473e62b}
+.card,.settingsPanel,.tips{box-shadow:none}
