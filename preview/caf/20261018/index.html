@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">CAF | Digital Ads Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+        
+        :root {
+            --bg-body: #0a0a0a;
+            --bg-card: #171717;
+            --border-color: #262626;
+            --text-main: #ffffff;
+            --text-muted: #a3a3a3;
+            --accent-color: #ff3b21;
+            --accent-glow: rgba(255, 59, 33, 0.25);
+        }
+
+        .light-mode {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-color: #ff3b21;
+            --accent-glow: rgba(255, 59, 33, 0.15);
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s ease;
+        }
+
+        .banner-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            height: fit-content;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .banner-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px var(--accent-glow);
+        }
+
+        .asset-container {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        iframe, img {
+            border: none;
+            display: block;
+            object-fit: contain;
+        }
+
+        .status-pill {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .tab-btn {
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background-color: #ff3b21;
+            color: #ffffff;
+            border-color: #ff3b21;
+            box-shadow: 0 4px 14px rgba(255, 59, 33, 0.35);
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #404040; border-radius: 4px; }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+    <div class="max-w-[1600px] mx-auto">
+        
+        <!-- Navigation / Theme Toggle -->
+        <div class="flex justify-between items-center mb-10">
+            <div class="flex items-center gap-3">
+                <span class="w-3 h-3 rounded-full bg-[#ff3b21] animate-pulse"></span>
+                <span class="text-xs font-black uppercase tracking-widest opacity-80" style="color: var(--text-muted);">Charities Aid Foundation</span>
+            </div>
+            <button onclick="toggleTheme()" class="flex items-center gap-3 px-5 py-2.5 bg-neutral-800 text-white rounded-full text-xs font-bold hover:bg-neutral-700 transition-all border border-neutral-700 shadow-lg" id="themeBtn">
+                <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <span id="themeText">SWITCH TO LIGHT MODE</span>
+            </button>
+        </div>
+
+        <!-- Hero Header -->
+        <header class="mb-12 flex flex-col lg:flex-row lg:items-end justify-between gap-10 border-b border-neutral-800 pb-12">
+            <div class="flex-1">
+                <div id="pillsContainer" class="flex flex-wrap items-center gap-3 mb-6"></div>
+                <h1 class="text-5xl font-black tracking-tight mb-4" style="color: var(--text-main);">
+                    <span id="clientName">CAF</span> 
+                    <span class="text-[#ff3b21] font-light">— Digital Ads Preview</span>
+                </h1>
+                <p id="clientDescription" style="color: var(--text-muted);" class="max-w-3xl text-xl leading-relaxed"></p>
+            </div>
+            
+            <div class="flex flex-col items-center lg:items-end gap-4">
+                <button onclick="refreshAllAds()" class="flex items-center gap-3 px-8 py-4 bg-[#ff3b21] hover:bg-[#e03018] active:scale-95 text-white rounded-2xl transition-all shadow-2xl shadow-[#ff3b21]/30 text-base font-black group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="group-active:rotate-180 transition-transform duration-500">
+                        <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+                        <path d="M21 3v5h-5"></path>
+                    </svg>
+                    REPLAY ALL BANNERS
+                </button>
+            </div>
+        </header>
+
+        <!-- Campaign Filter Tabs -->
+        <div class="mb-12 flex flex-wrap items-center justify-between gap-4 p-2 rounded-2xl border border-neutral-800" style="background: var(--bg-card);">
+            <div class="flex flex-wrap items-center gap-2" id="campaignTabs">
+                <button onclick="switchCampaign('all')" id="tab-all" class="tab-btn active px-6 py-3 rounded-xl text-xs font-bold border border-transparent">
+                    ALL CAMPAIGNS (18)
+                </button>
+                <button onclick="switchCampaign('hnwg')" id="tab-hnwg" class="tab-btn px-6 py-3 rounded-xl text-xs font-bold border border-neutral-700/50 hover:border-[#ff3b21]/50 text-neutral-300">
+                    HIGH NET-WORTH GIVERS (9)
+                </button>
+                <button onclick="switchCampaign('pa')" id="tab-pa" class="tab-btn px-6 py-3 rounded-xl text-xs font-bold border border-neutral-700/50 hover:border-[#ff3b21]/50 text-neutral-300">
+                    PROFESSIONAL ADVISORS (9)
+                </button>
+            </div>
+            <div class="px-4 text-xs font-semibold tracking-wider text-neutral-400" id="bannerCounter">
+                Showing 18 display units
+            </div>
+        </div>
+
+        <!-- Main Layout Grid -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-12">
+            <!-- Sidebar: Vertical Skyscrapers -->
+            <div class="xl:col-span-3 space-y-10">
+                <h2 style="color: var(--text-muted);" class="text-sm font-black uppercase tracking-[0.3em] flex items-center gap-3">
+                    <span class="w-10 h-[2px] bg-[#ff3b21]"></span> Skyscrapers
+                </h2>
+                <div id="skyscrapersGrid" class="flex flex-wrap justify-center xl:justify-start gap-8"></div>
+            </div>
+
+            <!-- Content Area: Horizontals & Rectangles -->
+            <div class="xl:col-span-9 space-y-16">
+                <!-- Section 1: Horizontal Placements -->
+                <div class="space-y-10">
+                    <h2 style="color: var(--text-muted);" class="text-sm font-black uppercase tracking-[0.3em] flex items-center gap-3">
+                        <span class="w-10 h-[2px] bg-[#ff3b21]"></span> Horizontal Placements
+                    </h2>
+                    <div id="horizontalsGrid" class="flex flex-wrap gap-8 items-start"></div>
+                </div>
+
+                <!-- Section 2: Rectangles & Mobile -->
+                <div class="space-y-10">
+                    <h2 style="color: var(--text-muted);" class="text-sm font-black uppercase tracking-[0.3em] flex items-center gap-3">
+                        <span class="w-10 h-[2px] bg-[#ff3b21]"></span> Rectangles & Mobile
+                    </h2>
+                    <div id="rectanglesGrid" class="flex flex-wrap gap-8 justify-center lg:justify-start items-start"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Info -->
+        <section class="mt-24 p-12 rounded-[32px] border transition-all duration-500" style="background: var(--bg-card); border-color: var(--border-color);">
+            <div id="footerGrid" class="grid grid-cols-1 md:grid-cols-4 gap-12"></div>
+        </section>
+    </div>
+
+    <script>
+        // =========================================================================
+        // CONFIGURATION DATA (CAF - CHARITIES AID FOUNDATION)
+        // =========================================================================
+        const CONFIG = {
+            clientName: "Charities Aid Foundation (CAF)",
+            description: "HTML5 Display Campaign Ad Suite across 2 target audiences: High Net-Worth Givers (HNWG) and Professional Advisors (PA). Optimized for programmatic and direct media placements.",
+            pills: [
+                { text: "Philanthropy & Giving", color: "red" },
+                { text: "2 Campaign Sets", color: "emerald" },
+                { text: "18 Banners (HTML5)", color: "neutral" }
+            ],
+            footerFeatures: [
+                { title: "Targeted Audience", text: "Tailored messaging for High Net-Worth Individuals and Wealth Advisors." },
+                { title: "HTML5 Standards", text: "Built with responsive vector assets and smooth GSAP/CSS animations." },
+                { title: "Cross-Device QA", text: "Tested across mobile, tablet, and desktop display network specs." },
+                { title: "Interactive QA", text: "Replay button resets all banner iFrames simultaneously for smooth reviews." }
+            ],
+            banners: [
+                // -----------------------------------------------------------------
+                // CAMPAIGN 1: High Net-Worth Givers (HNWG)
+                // -----------------------------------------------------------------
+                { campaign: "hnwg", campaignLabel: "HNWG", width: 120, height: 600, label: "Skyscraper", category: "skyscraper", type: "iframe", src: "CAF_BGSH_HNWG_120x600_HTML5_Lark_V1/index.html" },
+                { campaign: "hnwg", campaignLabel: "HNWG", width: 160, height: 600, label: "Wide Sky", category: "skyscraper", type: "iframe", src: "CAF_BGSH_HNWG_160x600_HTML5_Lark_V1/index.html" },
+                { campaign: "hnwg", campaignLabel: "HNWG", width: 300, height: 600, label: "Half Page", category: "skyscraper", type: "iframe", src: "CAF_BGSH_HNWG_300x600_HTML5_Lark_V1/index.html" },
+                
+                { campaign: "hnwg", campaignLabel: "HNWG", width: 970, height: 250, label: "Billboard", category: "horizontal", type: "iframe", src: "CAF_BGSH_HNWG_970x250_HTML5_Lark_V1/index.html" },
+                { campaign: "hnwg", campaignLabel: "HNWG", width: 728, height: 90, label: "Leaderboard", category: "horizontal", type: "iframe", src: "CAF_BGSH_HNWG_728x90_HTML5_Lark_V1/index.html" },
+                
+                { campaign: "hnwg", campaignLabel: "HNWG", width: 300, height: 250, label: "Medium Rec", category: "rectangle", type: "iframe", src: "CAF_BGSH_HNWG_300x250_HTML5_Lark_V1/index.html" },
+                { campaign: "hnwg", campaignLabel: "HNWG", width: 320, height: 480, label: "Mobile Interstitial", category: "rectangle", type: "iframe", src: "CAF_BGSH_HNWG_320x480_HTML5_Lark_V1/index.html" },
+                { campaign: "hnwg", campaignLabel: "HNWG", width: 320, height: 50, label: "Mobile Banner", category: "rectangle", type: "iframe", src: "CAF_BGSH_HNWG_320x50_HTML5_Lark_V1/index.html" },
+                { campaign: "hnwg", campaignLabel: "HNWG", width: 300, height: 50, label: "Mobile Smartphone", category: "rectangle", type: "iframe", src: "CAF_BGSH_HNWG_300x50_HTML5_Lark_V1/index.html" },
+
+                // -----------------------------------------------------------------
+                // CAMPAIGN 2: Professional Advisors (PA)
+                // -----------------------------------------------------------------
+                { campaign: "pa", campaignLabel: "Professional Advisors", width: 120, height: 600, label: "Skyscraper", category: "skyscraper", type: "iframe", src: "CAF_BGSH_PA_120x600_HTML5_Lark_V1/index.html" },
+                { campaign: "pa", campaignLabel: "Professional Advisors", width: 160, height: 600, label: "Wide Sky", category: "skyscraper", type: "iframe", src: "CAF_BGSH_PA_160x600_HTML5_Lark_V1/index.html" },
+                { campaign: "pa", campaignLabel: "Professional Advisors", width: 300, height: 600, label: "Half Page", category: "skyscraper", type: "iframe", src: "CAF_BGSH_PA_300x600_HTML5_Lark_V1/index.html" },
+                
+                { campaign: "pa", campaignLabel: "Professional Advisors", width: 970, height: 250, label: "Billboard", category: "horizontal", type: "iframe", src: "CAF_BGSH_PA_970x250_HTML5_Lark_V1/index.html" },
+                { campaign: "pa", campaignLabel: "Professional Advisors", width: 728, height: 90, label: "Leaderboard", category: "horizontal", type: "iframe", src: "CAF_BGSH_PA_728x90_HTML5_Lark_V1/index.html" },
+                
+                { campaign: "pa", campaignLabel: "Professional Advisors", width: 300, height: 250, label: "Medium Rec", category: "rectangle", type: "iframe", src: "CAF_BGSH_PA_300x250_HTML5_Lark_V1/index.html" },
+                { campaign: "pa", campaignLabel: "Professional Advisors", width: 320, height: 480, label: "Mobile Interstitial", category: "rectangle", type: "iframe", src: "CAF_BGSH_PA_320x480_HTML5_Lark_V1/index.html" },
+                { campaign: "pa", campaignLabel: "Professional Advisors", width: 320, height: 50, label: "Mobile Banner", category: "rectangle", type: "iframe", src: "CAF_BGSH_PA_320x50_HTML5_Lark_V1/index.html" },
+                { campaign: "pa", campaignLabel: "Professional Advisors", width: 300, height: 50, label: "Mobile Smartphone", category: "rectangle", type: "iframe", src: "CAF_BGSH_PA_300x50_HTML5_Lark_V1/index.html" }
+            ]
+        };
+
+        let currentFilter = 'all';
+
+        function initPage() {
+            document.title = `${CONFIG.clientName} | Digital Ads Preview`;
+            document.getElementById('clientName').innerText = CONFIG.clientName;
+            document.getElementById('clientDescription').innerText = CONFIG.description;
+
+            // Render Pills
+            const pillsContainer = document.getElementById('pillsContainer');
+            pillsContainer.innerHTML = CONFIG.pills.map(p => {
+                const colorMap = {
+                    red: "bg-[#ff3b21]/15 text-[#ff3b21] border-[#ff3b21]/30",
+                    emerald: "bg-emerald-500/15 text-emerald-500 border-emerald-500/20",
+                    neutral: "bg-neutral-500/15 text-neutral-400 border-neutral-500/20"
+                };
+                return `<span class="status-pill border ${colorMap[p.color] || colorMap.neutral}">${p.text}</span>`;
+            }).join('');
+
+            // Render Footer
+            const footerGrid = document.getElementById('footerGrid');
+            footerGrid.innerHTML = CONFIG.footerFeatures.map(f => `
+                <div class="space-y-3">
+                    <h3 class="text-[#ff3b21] font-black text-xs uppercase tracking-widest">${f.title}</h3>
+                    <p style="color: var(--text-muted);" class="text-sm font-medium leading-relaxed">${f.text}</p>
+                </div>
+            `).join('');
+
+            renderBanners();
+        }
+
+        function renderBanners() {
+            const skyGrid = document.getElementById('skyscrapersGrid');
+            const horizGrid = document.getElementById('horizontalsGrid');
+            const rectGrid = document.getElementById('rectanglesGrid');
+
+            skyGrid.innerHTML = '';
+            horizGrid.innerHTML = '';
+            rectGrid.innerHTML = '';
+
+            const filteredBanners = CONFIG.banners.filter(b => currentFilter === 'all' || b.campaign === currentFilter);
+            document.getElementById('bannerCounter').innerText = `Showing ${filteredBanners.length} display unit${filteredBanners.length !== 1 ? 's' : ''}`;
+
+            filteredBanners.forEach(b => {
+                const cardHTML = `
+                    <div class="banner-card w-full lg:w-fit">
+                        <div class="w-full flex justify-between items-center opacity-80 mb-2 gap-2">
+                            <span class="font-bold text-xs tracking-widest">${b.width} x ${b.height}</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[9px] font-bold px-2 py-0.5 rounded bg-neutral-800 text-neutral-300 border border-neutral-700">${b.campaignLabel}</span>
+                                <span class="text-[9px] font-black uppercase text-[#ff3b21]">${b.label}</span>
+                            </div>
+                        </div>
+                        <div class="asset-container max-w-full overflow-x-auto" style="width: ${b.width}px; height: ${b.height}px;">
+                            ${b.type === 'iframe' 
+                                ? `<iframe src="${b.src}" width="${b.width}" height="${b.height}" scrolling="no" loading="lazy"></iframe>`
+                                : `<img src="${b.src}" width="${b.width}" height="${b.height}" alt="${b.width}x${b.height} ${b.label}" loading="lazy">`
+                            }
+                        </div>
+                    </div>
+                `;
+
+                if (b.category === 'skyscraper') {
+                    skyGrid.innerHTML += cardHTML;
+                } else if (b.category === 'horizontal') {
+                    horizGrid.innerHTML += cardHTML;
+                } else {
+                    rectGrid.innerHTML += cardHTML;
+                }
+            });
+        }
+
+        function switchCampaign(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${filter}`).classList.add('active');
+            renderBanners();
+        }
+
+        function refreshAllAds() {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                const currentSrc = iframe.src;
+                iframe.src = '';
+                setTimeout(() => { iframe.src = currentSrc; }, 80);
+            });
+
+            const imgs = document.querySelectorAll('img');
+            imgs.forEach(img => {
+                const currentSrc = img.src.split('?')[0];
+                img.src = `${currentSrc}?v=${new Date().getTime()}`;
+            });
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+            const text = document.getElementById('themeText');
+            const icon = document.getElementById('themeIcon');
+            
+            body.classList.toggle('light-mode');
+            
+            if(body.classList.contains('light-mode')) {
+                text.innerText = 'SWITCH TO DARK MODE';
+                icon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+                btn.classList.replace('bg-neutral-800', 'bg-white');
+                btn.classList.add('text-slate-900', 'border-slate-300');
+            } else {
+                text.innerText = 'SWITCH TO LIGHT MODE';
+                icon.innerHTML = `<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>`;
+                btn.classList.replace('bg-white', 'bg-neutral-800');
+                btn.classList.remove('text-slate-900', 'border-slate-300');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
