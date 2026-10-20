@@ -146,15 +146,28 @@ async function loadFile(f){
   const bmp=await createImageBitmap(f);
   const c=document.createElement('canvas');c.width=S.w=bmp.width;c.height=S.h=bmp.height;
   const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(bmp,0,0);
-  S.src=c;S.px=x.getImageData(0,0,S.w,S.h).data;
-  S.hasA=false;for(let i=3;i<S.px.length;i+=4){if(S.px[i]<250){S.hasA=true;break}}
-  S.bg=[S.px[0],S.px[1],S.px[2]];
-  const v=$('cv');v.width=S.w;v.height=S.h;v.getContext('2d').drawImage(c,0,0);
+  const d0=x.getImageData(0,0,S.w,S.h).data;S.orig=c;S.key='';
+  let tr=0;for(let i=3;i<d0.length;i+=4){if(d0[i]<250)tr++}
+  S.hasA0=tr>d0.length/4*0.005;
+  S.bg=[d0[0],d0[1],d0[2]];S.bgOpaque=d0[3]>250;
+  buildWork();
   $('empty').classList.add('hide');$('stage').classList.remove('hide');
   $('name').value=(f.name||'aset').replace(/\.[^.]+$/,'')||'aset';
   fit();run();
 }
 
+function buildWork(){
+  const rm=$('rmbg').checked&&S.bgOpaque,key=rm+'|'+$('tol').value;
+  if(S.key===key&&S.src)return;S.key=key;
+  const c=document.createElement('canvas');c.width=S.w;c.height=S.h;
+  const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(S.orig,0,0);
+  const id=x.getImageData(0,0,S.w,S.h),p=id.data;
+  if(rm){const t=+$('tol').value,b=S.bg;
+    for(let i=0;i<p.length;i+=4){if(Math.abs(p[i]-b[0])+Math.abs(p[i+1]-b[1])+Math.abs(p[i+2]-b[2])<=t)p[i+3]=0}
+    x.putImageData(id,0,0)}
+  S.src=c;S.px=p;S.hasA=rm||S.hasA0;
+  const v=$('cv');v.width=S.w;v.height=S.h;const vx=v.getContext('2d');vx.clearRect(0,0,S.w,S.h);vx.drawImage(c,0,0);
+}
 function isFg(i,th,tol){
   const p=S.px,a=p[i*4+3];if(a<=th)return false;
   if(S.hasA)return true;
@@ -204,7 +217,7 @@ function sortReading(a){
   return rows.flatMap(r=>r.l.sort((p,q)=>p.x-q.x));
 }
 function run(){
-  if(!S.src)return;
+  if(!S.orig)return;buildWork();
   const th=+$('th').value,tol=+$('tol').value,pad=+$('pad').value,trim=$('trim').checked;
   const tolD=Math.max(tol,+$('tol').value);
   let raw=[];
@@ -271,7 +284,7 @@ function crop(b){
   x.imageSmoothingEnabled=!$('crisp').checked;x.imageSmoothingQuality='high';
   if($('fmt').value==='jpg'){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height)}
   x.drawImage(S.src,b.x,b.y,b.w,b.h,0,0,c.width,c.height);
-  if($('rmbg').checked&&!S.hasA){
+  if(false){
     const id=x.getImageData(0,0,c.width,c.height),p=id.data,t=+$('tol').value;
     for(let i=0;i<p.length;i+=4){
       if(Math.abs(p[i]-S.bg[0])+Math.abs(p[i+1]-S.bg[1])+Math.abs(p[i+2]-S.bg[2])<=t)p[i+3]=0;
@@ -287,9 +300,14 @@ function blobOf(c){
 const pad=(n,t)=>String(n).padStart(String(t).length<2?2:String(t).length,'0');
 function fname(i){return `${$('name').value.trim()||'aset'}_${pad(i+1,S.boxes.length)}.${$('fmt').value}`}
 async function save(name,data){
-  if(!dl)return toast('Unduhan tidak tersedia di tampilan ini');
-  try{await dl.save({filename:name,data});toast('File siap disimpan')}
-  catch(e){if(e&&e.code!=='declined')toast('Gagal menyimpan: '+(e.message||e.code))}
+  if(dl){
+    try{await dl.save({filename:name,data});toast('File siap disimpan')}
+    catch(e){if(e&&e.code!=='declined')toast('Gagal menyimpan: '+(e.message||e.code))}
+    return;
+  }
+  const a=document.createElement('a'),u=URL.createObjectURL(data);
+  a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),5000);toast('Mengunduh '+name);
 }
 async function one(b,i){const bl=await blobOf(crop(b));if(bl)save(fname(i),bl)}
 async function zipAll(){
@@ -315,7 +333,7 @@ const rr=debounce(run,60);
 const lab={th:v=>v,gap:v=>v+' px',min:v=>v+' px',pad:v=>v+' px',tol:v=>v};
 tw.forEach(id=>$(id).oninput=()=>{$('v'+id).textContent=lab[id]($(id).value);rr()});
 $('trim').onchange=run;
-$('rmbg').onchange=()=>{$('tolw').style.opacity=$('rmbg').checked?1:.55};
+$('rmbg').onchange=()=>{$('tolw').style.opacity=$('rmbg').checked?1:.55;run()};
 $('tolw').style.opacity=.55;
 
 $('pick').onclick=()=>{try{$('file').value='';$('file').click()}catch(e){toast('Seret gambar ke area preview')}};
