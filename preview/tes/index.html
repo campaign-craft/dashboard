@@ -63,6 +63,7 @@ input[type=range]{width:100%;accent-color:var(--ac)}
 .sw input:focus-visible+i{outline:2px solid var(--ac2);outline-offset:2px}
 .hint{color:var(--mut);font-size:12px;margin:0}
 .hide{display:none!important}
+.sr{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0,0,0,0);pointer-events:none}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#1b2142;border:1px solid var(--ac);padding:10px 16px;border-radius:10px;font-weight:600;z-index:9}
 @media(prefers-reduced-motion:reduce){.sw i,.sw i::after{transition:none}}
 </style>
@@ -72,7 +73,7 @@ input[type=range]{width:100%;accent-color:var(--ac)}
 <section class="main">
   <div class="top">
     <h1>Asset Extractor</h1>
-    <input type="file" id="file" accept="image/*" class="hide">
+    <input type="file" id="file" accept="image/*,.png,.jpg,.jpeg,.webp,.gif" class="sr" tabindex="-1">
     <button class="btn" id="pick">Buka gambar</button>
     <button class="btn" id="all">Pilih semua</button>
     <button class="btn" id="none">Kosongkan</button>
@@ -135,7 +136,7 @@ const $=id=>document.getElementById(id);
 const S={w:0,h:0,src:null,px:null,hasA:false,bg:[0,0,0],boxes:[],zoom:1,method:'ccl'};
 const tw=['th','gap','min','pad','tol'];
 let dl=null;
-claude.use('downloads').then(d=>{dl=d}).catch(()=>{});
+try{if(typeof claude!=='undefined'&&claude.use){Promise.resolve(claude.use('downloads')).then(d=>{dl=d}).catch(()=>{})}}catch(e){}
 
 function toast(t){const e=$('toast');e.textContent=t;e.classList.remove('hide');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.add('hide'),2600)}
 function debounce(f,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>f(...a),ms)}}
@@ -317,7 +318,9 @@ $('trim').onchange=run;
 $('rmbg').onchange=()=>{$('tolw').style.opacity=$('rmbg').checked?1:.55};
 $('tolw').style.opacity=.55;
 
-$('pick').onclick=()=>$('file').click();$('file').onchange=e=>loadFile(e.target.files[0]);
+$('pick').onclick=()=>{try{$('file').value='';$('file').click()}catch(e){toast('Seret gambar ke area preview')}};
+$('file').onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)loadFile(f).catch(()=>toast('Gagal membaca gambar'))};
+$('empty').onclick=()=>$('pick').click();
 $('all').onclick=()=>{S.boxes.forEach(b=>b.on=true);draw()};
 $('none').onclick=()=>{S.boxes.forEach(b=>b.on=false);draw()};
 $('fit').onclick=fit;$('zi').onclick=()=>zoom(1.25);$('zo').onclick=()=>zoom(.8);
